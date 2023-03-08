@@ -275,7 +275,7 @@ private:
                         attributeParam.append(clang::Lexer::getSpelling(*token, sourceManager, langOpts));
                         state = State::NestedParens;
                     } else if (token->getKind() == clang::tok::TokenKind::r_paren) {
-                        attributeParams.emplace_back(attributeParam);
+                        if (!attributeParam.empty()) { attributeParams.emplace_back(attributeParam); }
                         if (!attributeNamespace.empty()) {
                             result.emplace_back(attributeNamespace + "::" + attributeName, attributeParams);
                         } else {
@@ -286,7 +286,7 @@ private:
                         attributeName.clear();
                         state = State::None;
                     } else if (token->getKind() == clang::tok::TokenKind::comma) {
-                        attributeParams.emplace_back(attributeParam);
+                        if (!attributeParam.empty()) { attributeParams.emplace_back(attributeParam); }
                         attributeParam.clear();
                         state = State::Arguments;
                     } else {
@@ -308,7 +308,7 @@ private:
                             state = State::NestedParens;
                         }
                     } else if (token->getKind() == clang::tok::TokenKind::comma) {
-                        attributeParams.emplace_back(attributeParam);
+                        if (!attributeParam.empty()) { attributeParams.emplace_back(attributeParam); }
                         attributeParam.clear();
                         state = State::Arguments;
                     } else {

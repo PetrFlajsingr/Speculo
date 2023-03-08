@@ -55,7 +55,6 @@ template<typename E>
 #include <iostream>
 
 
-
 int main() {
     /* std::cout << to_string(pf::SomeEnum::Value1) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value2) << std::endl;
@@ -139,6 +138,12 @@ int main() {
         static_assert(!A::IsRvalueReference);
         static_assert(A::IsPtr);
         static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
+    }
+    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
+    using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+    for (const auto &attr: A::Attributes) {
+        std::cout << attr.name << std::endl;
+        for (const auto &arg: attr.arguments) { std::cout << arg << std::endl; }
     }
 
     return 0;
