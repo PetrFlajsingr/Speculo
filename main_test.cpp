@@ -54,6 +54,8 @@ template<typename E>
 
 #include <iostream>
 
+
+
 int main() {
     /* std::cout << to_string(pf::SomeEnum::Value1) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value2) << std::endl;
@@ -73,7 +75,8 @@ int main() {
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
-        static_assert(!A::IsReference);
+        static_assert(!A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
         static_assert(std::same_as<A::Type, pf::SomeEnum>);
     }
@@ -82,7 +85,8 @@ int main() {
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
-        static_assert(!A::IsReference);
+        static_assert(!A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
         static_assert(std::same_as<A::Type, const pf::SomeEnum>);
     }
@@ -91,16 +95,28 @@ int main() {
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
-        static_assert(A::IsReference);
+        static_assert(A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
         static_assert(std::same_as<A::Type, pf::SomeEnum &>);
+    }
+    {
+        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum &&);
+        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        std::cout << A::FullName << std::endl;
+        static_assert(!A::IsConst);
+        static_assert(!A::IsLvalueReference);
+        static_assert(A::IsRvalueReference);
+        static_assert(!A::IsPtr);
+        static_assert(std::same_as<A::Type, pf::SomeEnum &&>);
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum &);
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
-        static_assert(A::IsReference);
+        static_assert(A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
         static_assert(std::same_as<A::Type, const pf::SomeEnum &>);
     }
@@ -109,7 +125,8 @@ int main() {
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
-        static_assert(!A::IsReference);
+        static_assert(!A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(A::IsPtr);
         static_assert(std::same_as<A::Type, pf::SomeEnum *>);
     }
@@ -118,7 +135,8 @@ int main() {
         using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
-        static_assert(!A::IsReference);
+        static_assert(!A::IsLvalueReference);
+        static_assert(!A::IsRvalueReference);
         static_assert(A::IsPtr);
         static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
     }

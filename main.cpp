@@ -392,7 +392,8 @@ struct ::pf::meta::details::StaticTypeInfo<{type_id}> {{
     constexpr static bool IsUnion = false;
     constexpr static bool IsPrimitiveType = false;
 
-    constexpr static bool IsReference = false;
+    constexpr static bool IsLvalueReference = false;
+    constexpr static bool IsRvalueReference = false;
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
 
@@ -410,12 +411,16 @@ struct ::pf::meta::details::StaticTypeInfo<{const_type_id}>
     : ::pf::meta::details::StaticTypeInfo_ConstWrap<{const_type_id}, {type_id}> {{}};
 // &
 template<>
-struct ::pf::meta::details::StaticTypeInfo<{ref_type_id}>
-    : ::pf::meta::details::StaticTypeInfo_RefWrap<{ref_type_id}, {type_id}> {{}};
+struct ::pf::meta::details::StaticTypeInfo<{lref_type_id}>
+    : ::pf::meta::details::StaticTypeInfo_LRefWrap<{lref_type_id}, {type_id}> {{}};
+// &&
+template<>
+struct ::pf::meta::details::StaticTypeInfo<{rref_type_id}>
+    : ::pf::meta::details::StaticTypeInfo_RRefWrap<{rref_type_id}, {type_id}> {{}};
 // const &
 template<>
-struct ::pf::meta::details::StaticTypeInfo<{const_ref_type_id}>
-    : ::pf::meta::details::StaticTypeInfo_RefWrap<{const_ref_type_id}, {const_type_id}> {{}};
+struct ::pf::meta::details::StaticTypeInfo<{const_lref_type_id}>
+    : ::pf::meta::details::StaticTypeInfo_LRefWrap<{const_lref_type_id}, {const_type_id}> {{}};
 // *
 template<>
 struct ::pf::meta::details::StaticTypeInfo<{ptr_type_id}>
@@ -437,11 +442,15 @@ template<>
 }}
 template<>
 [[nodiscard]] consteval ID getTypeId<{type} &>() {{
-    return {ref_type_id};
+    return {lref_type_id};
+}}
+template<>
+[[nodiscard]] consteval ID getTypeId<{type} &&>() {{
+    return {rref_type_id};
 }}
 template<>
 [[nodiscard]] consteval ID getTypeId<const {type} &>() {{
-    return {const_ref_type_id};
+    return {const_lref_type_id};
 }}
 template<>
 [[nodiscard]] consteval ID getTypeId<{type} *>() {{
@@ -595,24 +604,25 @@ public:
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
         const auto const_type_id = idToString(gen.generateTypeId());
-        const auto ref_type_id = idToString(gen.generateTypeId());
-        const auto const_ref_type_id = idToString(gen.generateTypeId());
+        const auto lref_type_id = idToString(gen.generateTypeId());
+        const auto const_lref_type_id = idToString(gen.generateTypeId());
+        const auto rref_type_id = idToString(gen.generateTypeId());
         const auto ptr_type_id = idToString(gen.generateTypeId());
         const auto const_ptr_type_id = idToString(gen.generateTypeId());
 
         std::cout << fmt::format(StaticEnumTypeInfoTemplate, "type_id"_a = idToString(typeId), "type"_a = result.fullName,
                                  "attributes"_a = stringifyAttributes(result.attributes), "name"_a = result.name,
                                  "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType,
-                                 "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = const_type_id, "ref_type_id"_a = ref_type_id,
-                                 "const_ref_type_id"_a = const_ref_type_id, "ptr_type_id"_a = ptr_type_id,
-                                 "const_ptr_type_id"_a = const_ptr_type_id)
+                                 "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
+                                 "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
+                                 "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id)
                   << std::endl;
 
         std::cout << "namespace pf::meta::details {" << std::endl;
         std::cout << fmt::format(GetTypeIDTemplate, "type"_a = result.fullName, "type_id"_a = idToString(typeId),
-                                 "const_type_id"_a = const_type_id, "ref_type_id"_a = ref_type_id,
-                                 "const_ref_type_id"_a = const_ref_type_id, "ptr_type_id"_a = ptr_type_id,
-                                 "const_ptr_type_id"_a = const_ptr_type_id);
+                                 "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
+                                 "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
+                                 "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id);
         for (const auto &[name, id]: valueIds) {
             std::cout << fmt::format(GetConstantIDTemplate, "constant"_a = name, "value_id"_a = id);
             std::cout << std::endl;

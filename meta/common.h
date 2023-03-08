@@ -120,12 +120,20 @@ namespace pf::meta {
             constexpr static auto FullName = StringLiteral{"const "} + ::pf::meta::details::StaticTypeInfo<ParentID>::FullName;
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
-        struct StaticTypeInfo_RefWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
+        struct StaticTypeInfo_LRefWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
             using Type = typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type &;
             constexpr static ID TypeID = I;
-            constexpr static bool IsReference = true;
+            constexpr static bool IsLvalueReference = true;
             constexpr static auto Name = ::pf::meta::details::StaticTypeInfo<ParentID>::Name + StringLiteral{"&"};
             constexpr static auto FullName = ::pf::meta::details::StaticTypeInfo<ParentID>::FullName + StringLiteral{"&"};
+        };
+        template<::pf::meta::ID I, ::pf::meta::ID ParentID>
+        struct StaticTypeInfo_RRefWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
+            using Type = typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type &&;
+            constexpr static ID TypeID = I;
+            constexpr static bool IsRvalueReference = true;
+            constexpr static auto Name = ::pf::meta::details::StaticTypeInfo<ParentID>::Name + StringLiteral{"&&"};
+            constexpr static auto FullName = ::pf::meta::details::StaticTypeInfo<ParentID>::FullName + StringLiteral{"&&"};
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
         struct StaticTypeInfo_PtrWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {

@@ -14,13 +14,12 @@
 
 
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xafafa67272652d65u, 0x7d9187d494177363u}> {
-    constexpr static ID ValueID = ::pf::meta::ID{0xafafa67272652d65u, 0x7d9187d494177363u};
-    constexpr static ID TypeID = ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xcc073f67063f642cu, 0xd756cd448f263e94u}> {
+    constexpr static ID ValueID = ::pf::meta::ID{0xcc073f67063f642cu, 0xd756cd448f263e94u};
+    constexpr static ID TypeID = ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu};
     using Type = pf::SomeEnum;
 
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(
-            pf::meta::Attribute{"test", {}}, pf::meta::Attribute{"test2", {}}, pf::meta::Attribute{"test3", {}});
+    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"test", {}}, pf::meta::Attribute{"test2", {}}, pf::meta::Attribute{"test3", {}});
 
     constexpr static bool IsEnum = false;
     constexpr static bool IsEnumValue = true;
@@ -37,9 +36,9 @@ struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xafafa67272652d65u, 0
 
 
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x4011408ec41db1du, 0x9fc502ae89044213u}> {
-    constexpr static ID ValueID = ::pf::meta::ID{0x4011408ec41db1du, 0x9fc502ae89044213u};
-    constexpr static ID TypeID = ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x780c890665069166u, 0x1678f1f66bd4366au}> {
+    constexpr static ID ValueID = ::pf::meta::ID{0x780c890665069166u, 0x1678f1f66bd4366au};
+    constexpr static ID TypeID = ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu};
     using Type = pf::SomeEnum;
 
     constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>();
@@ -59,16 +58,11 @@ struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x4011408ec41db1du, 0x
 
 
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu}> {
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu}> {
     using Type = pf::SomeEnum;
-    constexpr static ID TypeID = ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu};
+    constexpr static ID TypeID = ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu};
 
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(
-            pf::meta::Attribute{"pf::operators",
-                                {R"(()()()((())))", R"([[nodiscard]])", R"(1ll)", R"(1.011)", R"([]{}())", R"("yeet")", R"('a')",
-                                 R"([][][]:::3214234...[][][][])"}},
-            pf::meta::Attribute{"pf::hihi", {R"()"}}, pf::meta::Attribute{"pf::operators2", {R"(1ll)", R"(1.011)", R"("yeet")"}},
-            pf::meta::Attribute{"pf::hihi2", {}});
+    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"pf::operators", {R"(()()()((())))", R"([[nodiscard]])", R"(1ll)", R"(1.011)", R"([]{}())", R"("yeet")", R"('a')", R"([][][]:::3214234...[][][][])"}}, pf::meta::Attribute{"pf::hihi", {R"()"}}, pf::meta::Attribute{"pf::operators2", {R"(1ll)", R"(1.011)", R"("yeet")"}}, pf::meta::Attribute{"pf::hihi2", {}});
 
     constexpr static bool IsEnum = true;
     constexpr static bool IsEnumValue = false;
@@ -76,7 +70,8 @@ struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x9aa85b2fe87e7774u, 0
     constexpr static bool IsUnion = false;
     constexpr static bool IsPrimitiveType = false;
 
-    constexpr static bool IsReference = false;
+    constexpr static bool IsLvalueReference = false;
+    constexpr static bool IsRvalueReference = false;
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
 
@@ -85,76 +80,79 @@ struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x9aa85b2fe87e7774u, 0
 
     using UnderlyingType = bool;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(
-            ::pf::meta::ID{0xafafa67272652d65u, 0x7d9187d494177363u}, ::pf::meta::ID{0x4011408ec41db1du, 0x9fc502ae89044213u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(::pf::meta::ID{0xcc073f67063f642cu, 0xd756cd448f263e94u}, ::pf::meta::ID{0x780c890665069166u, 0x1678f1f66bd4366au});
 };
 
 // const
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xf1ae0dfc5ffc0ab2u, 0x676af8fa3a2dec39u}>
-    : ::pf::meta::details::StaticTypeInfo_ConstWrap<::pf::meta::ID{0xf1ae0dfc5ffc0ab2u, 0x676af8fa3a2dec39u},
-                                                    ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu}> {};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x115a2df9fa8f998du, 0xe7dc8dfd5aaae3cau}>
+    : ::pf::meta::details::StaticTypeInfo_ConstWrap<::pf::meta::ID{0x115a2df9fa8f998du, 0xe7dc8dfd5aaae3cau}, ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu}> {};
 // &
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x870ce4e038c7df85u, 0xc192a883e4f7e4f2u}>
-    : ::pf::meta::details::StaticTypeInfo_RefWrap<::pf::meta::ID{0x870ce4e038c7df85u, 0xc192a883e4f7e4f2u},
-                                                  ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu}> {};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x9fcdde06baefea85u, 0xc114a3d8a63646dfu}>
+    : ::pf::meta::details::StaticTypeInfo_LRefWrap<::pf::meta::ID{0x9fcdde06baefea85u, 0xc114a3d8a63646dfu}, ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu}> {};
+// &&
+template<>
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xa6cc46b9cdc67d9cu, 0x19ca11972f87a14bu}>
+    : ::pf::meta::details::StaticTypeInfo_RRefWrap<::pf::meta::ID{0xa6cc46b9cdc67d9cu, 0x19ca11972f87a14bu}, ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu}> {};
 // const &
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xb6c69e20ea91fe01u, 0x39c9aa80daaeb2b9u}>
-    : ::pf::meta::details::StaticTypeInfo_RefWrap<::pf::meta::ID{0xb6c69e20ea91fe01u, 0x39c9aa80daaeb2b9u},
-                                                  ::pf::meta::ID{0xf1ae0dfc5ffc0ab2u, 0x676af8fa3a2dec39u}> {};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x8088d105d5ba32f2u, 0xb1d52392137ec11u}>
+    : ::pf::meta::details::StaticTypeInfo_LRefWrap<::pf::meta::ID{0x8088d105d5ba32f2u, 0xb1d52392137ec11u}, ::pf::meta::ID{0x115a2df9fa8f998du, 0xe7dc8dfd5aaae3cau}> {};
 // *
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xb59a36df8e86c60eu, 0x919300a23ffed989u}>
-    : ::pf::meta::details::StaticTypeInfo_PtrWrap<::pf::meta::ID{0xb59a36df8e86c60eu, 0x919300a23ffed989u},
-                                                  ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu}> {};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0xefbfa073e74cdb6bu, 0xc2fae69f777a1ca3u}>
+    : ::pf::meta::details::StaticTypeInfo_PtrWrap<::pf::meta::ID{0xefbfa073e74cdb6bu, 0xc2fae69f777a1ca3u}, ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu}> {};
 // const *
 template<>
-struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x987fdd869da978bcu, 0xf77e7c7469b2342bu}>
-    : ::pf::meta::details::StaticTypeInfo_PtrWrap<::pf::meta::ID{0x987fdd869da978bcu, 0xf77e7c7469b2342bu},
-                                                  ::pf::meta::ID{0xf1ae0dfc5ffc0ab2u, 0x676af8fa3a2dec39u}> {};
+struct ::pf::meta::details::StaticTypeInfo<::pf::meta::ID{0x609b663948213b5u, 0x652e38fc0812908bu}>
+    : ::pf::meta::details::StaticTypeInfo_PtrWrap<::pf::meta::ID{0x609b663948213b5u, 0x652e38fc0812908bu}, ::pf::meta::ID{0x115a2df9fa8f998du, 0xe7dc8dfd5aaae3cau}> {};
 
 
 namespace pf::meta::details {
 
     template<>
     [[nodiscard]] consteval ID getTypeId<pf::SomeEnum>() {
-        return ::pf::meta::ID{0x9aa85b2fe87e7774u, 0x908962efc4f89fadu};
+        return ::pf::meta::ID{0xd6141ba1b7763609u, 0xdabcaaac9048c16fu};
     }
     template<>
     [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum>() {
-        return ::pf::meta::ID{0xf1ae0dfc5ffc0ab2u, 0x676af8fa3a2dec39u};
+        return ::pf::meta::ID{0x115a2df9fa8f998du, 0xe7dc8dfd5aaae3cau};
     }
     template<>
     [[nodiscard]] consteval ID getTypeId<pf::SomeEnum &>() {
-        return ::pf::meta::ID{0x870ce4e038c7df85u, 0xc192a883e4f7e4f2u};
+        return ::pf::meta::ID{0x9fcdde06baefea85u, 0xc114a3d8a63646dfu};
+    }
+    template<>
+    [[nodiscard]] consteval ID getTypeId<pf::SomeEnum &&>() {
+        return ::pf::meta::ID{0xa6cc46b9cdc67d9cu, 0x19ca11972f87a14bu};
     }
     template<>
     [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum &>() {
-        return ::pf::meta::ID{0xb6c69e20ea91fe01u, 0x39c9aa80daaeb2b9u};
+        return ::pf::meta::ID{0x8088d105d5ba32f2u, 0xb1d52392137ec11u};
     }
     template<>
     [[nodiscard]] consteval ID getTypeId<pf::SomeEnum *>() {
-        return ::pf::meta::ID{0xb59a36df8e86c60eu, 0x919300a23ffed989u};
+        return ::pf::meta::ID{0xefbfa073e74cdb6bu, 0xc2fae69f777a1ca3u};
     }
     template<>
     [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum *>() {
-        return ::pf::meta::ID{0x987fdd869da978bcu, 0xf77e7c7469b2342bu};
+        return ::pf::meta::ID{0x609b663948213b5u, 0x652e38fc0812908bu};
     }
 
     template<>
     [[nodiscard]] consteval ID getConstantId<pf::SomeEnum::Value1>() {
-        return ::pf::meta::ID{0xafafa67272652d65u, 0x7d9187d494177363u};
+        return ::pf::meta::ID{0xcc073f67063f642cu, 0xd756cd448f263e94u};
     }
 
 
     template<>
     [[nodiscard]] consteval ID getConstantId<pf::SomeEnum::Value2>() {
-        return ::pf::meta::ID{0x4011408ec41db1du, 0x9fc502ae89044213u};
+        return ::pf::meta::ID{0x780c890665069166u, 0x1678f1f66bd4366au};
     }
 
-}// namespace pf::meta::details
+}
+
 
 
 #endif//PF_META_TEST_META_H
