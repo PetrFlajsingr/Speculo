@@ -2,22 +2,22 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-#include "test_meta.h"
+#include "test.meta.h"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 
 namespace pf::meta {
     template<Info I>
     concept Named = requires {
-        { details::StaticTypeInfo<I.implId>::Name } -> std::convertible_to<std::string_view>;
+        { details::StaticInfo<I.implId>::Name } -> std::convertible_to<std::string_view>;
     };
     template<Info I>
-    concept Enum = details::StaticTypeInfo<I.implId>::IsEnum;
+    concept Enum = details::StaticInfo<I.implId>::IsEnum;
 
     template<Info I>
         requires(Enum<I>)
     [[nodiscard]] consteval RangeOf<Info> auto members_of() {
-        using impl = details::StaticTypeInfo<I.implId>;
+        using impl = details::StaticInfo<I.implId>;
         static_assert(impl::IsEnum);
         return impl::EnumValues;
     }
@@ -25,7 +25,7 @@ namespace pf::meta {
     template<Info I>
         requires(Named<I>)
     [[nodiscard]] consteval std::string_view name_of() {
-        using impl = details::StaticTypeInfo<I.implId>;
+        using impl = details::StaticInfo<I.implId>;
         return impl::Name;
     }
 
@@ -71,7 +71,7 @@ int main() {
 
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -81,7 +81,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -91,7 +91,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum &);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(A::IsLvalueReference);
@@ -101,7 +101,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum &&);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -111,7 +111,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum &);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(A::IsLvalueReference);
@@ -121,7 +121,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -131,7 +131,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum *);
-        using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -140,7 +140,7 @@ int main() {
         static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
     }
     constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
-    using A = pf::meta::details::StaticTypeInfo<enumInfo.implId>;
+    using A = pf::meta::details::StaticInfo<enumInfo.implId>;
     for (const auto &attr: A::Attributes) {
         std::cout << attr.name << std::endl;
         for (const auto &arg: attr.arguments) { std::cout << arg << std::endl; }

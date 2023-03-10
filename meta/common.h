@@ -20,11 +20,11 @@
 #define PF_REFLECT_VALUE(V)                                                                                                                \
     ::pf::meta::Info { ::pf::meta::details::getConstantId<V>() }
 
-#define PF_SPLICE_TYPE(I) ::pf::meta::details::StaticTypeInfo<I.implId>::Type
+#define PF_SPLICE_TYPE(I) ::pf::meta::details::StaticInfo<I.implId>::Type
 
 #define PF_SPLICE_VALUE(I)                                                                                                                 \
     []<::pf::meta::Info i>() consteval {                                                                                                   \
-        using impl = ::pf::meta::details::StaticTypeInfo<i.implId>;                                                                        \
+        using impl = ::pf::meta::details::StaticInfo<i.implId>;                                                                        \
         return impl::Value;                                                                                                                \
     }.template operator()<I>()
 
@@ -107,41 +107,41 @@ namespace pf::meta {
         constexpr bool AlwaysFalseT = false;
 
         template<ID ID>
-        struct StaticTypeInfo {
+        struct StaticInfo {
             static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type");
         };
         // TODO: name modification (add const, & etc)
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
-        struct StaticTypeInfo_ConstWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
-            using Type = const typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type;
+        struct StaticInfo_ConstWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = const typename ::pf::meta::details::StaticInfo<ParentID>::Type;
             constexpr static ID TypeID = I;
             constexpr static bool IsConst = true;
-            constexpr static auto Name = StringLiteral{"const "} + ::pf::meta::details::StaticTypeInfo<ParentID>::Name;
-            constexpr static auto FullName = StringLiteral{"const "} + ::pf::meta::details::StaticTypeInfo<ParentID>::FullName;
+            constexpr static auto Name = StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::Name;
+            constexpr static auto FullName = StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::FullName;
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
-        struct StaticTypeInfo_LRefWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
-            using Type = typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type &;
+        struct StaticInfo_LRefWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = typename ::pf::meta::details::StaticInfo<ParentID>::Type &;
             constexpr static ID TypeID = I;
             constexpr static bool IsLvalueReference = true;
-            constexpr static auto Name = ::pf::meta::details::StaticTypeInfo<ParentID>::Name + StringLiteral{"&"};
-            constexpr static auto FullName = ::pf::meta::details::StaticTypeInfo<ParentID>::FullName + StringLiteral{"&"};
+            constexpr static auto Name = ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"&"};
+            constexpr static auto FullName = ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"&"};
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
-        struct StaticTypeInfo_RRefWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
-            using Type = typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type &&;
+        struct StaticInfo_RRefWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = typename ::pf::meta::details::StaticInfo<ParentID>::Type &&;
             constexpr static ID TypeID = I;
             constexpr static bool IsRvalueReference = true;
-            constexpr static auto Name = ::pf::meta::details::StaticTypeInfo<ParentID>::Name + StringLiteral{"&&"};
-            constexpr static auto FullName = ::pf::meta::details::StaticTypeInfo<ParentID>::FullName + StringLiteral{"&&"};
+            constexpr static auto Name = ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"&&"};
+            constexpr static auto FullName = ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"&&"};
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
-        struct StaticTypeInfo_PtrWrap : ::pf::meta::details::StaticTypeInfo<ParentID> {
-            using Type = typename ::pf::meta::details::StaticTypeInfo<ParentID>::Type *;
+        struct StaticInfo_PtrWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = typename ::pf::meta::details::StaticInfo<ParentID>::Type *;
             constexpr static ID TypeID = I;
             constexpr static bool IsPtr = true;
-            constexpr static auto Name = ::pf::meta::details::StaticTypeInfo<ParentID>::Name + StringLiteral{"*"};
-            constexpr static auto FullName = ::pf::meta::details::StaticTypeInfo<ParentID>::FullName + StringLiteral{"*"};
+            constexpr static auto Name = ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"*"};
+            constexpr static auto FullName = ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"*"};
         };
         template<typename T>
         [[nodiscard]] consteval ID getTypeId() {
