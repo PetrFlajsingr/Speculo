@@ -600,7 +600,7 @@ public:
         //std::cout << decl.getNameAsString() << std::endl;
 
         const auto definition = decl.getDefinition();
-        if (definition == nullptr) { return std::nullopt; }
+        if (definition != &decl) { return std::nullopt; }
 
         EnumTypeInfo result{};
         result.fullName = definition->getQualifiedNameAsString();

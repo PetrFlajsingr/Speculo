@@ -27,5 +27,4 @@ namespace pf {
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
-    enum class E10 { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, Y, Z };
 }// namespace pf
