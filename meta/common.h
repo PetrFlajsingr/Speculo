@@ -110,7 +110,7 @@ namespace pf::meta {
         struct StaticInfo {
             static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type");
         };
-        // TODO: name modification (add const, & etc)
+
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
         struct StaticInfo_ConstWrap : ::pf::meta::details::StaticInfo<ParentID> {
             using Type = const typename ::pf::meta::details::StaticInfo<ParentID>::Type;

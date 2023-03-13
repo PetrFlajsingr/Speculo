@@ -591,6 +591,7 @@ public:
                                                                                // ParseRecord(astContext, *recordDecl);
             }
 
+
             const auto declContext = clang::dyn_cast<clang::DeclContext>(decl);
             if (declContext) { Walk(astContext, *declContext); }
         }
