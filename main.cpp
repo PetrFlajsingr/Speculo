@@ -15,6 +15,8 @@
 
 #include "meta/common.h"
 
+#include "format.h"
+
 static llvm::cl::opt<std::string> InputSource(llvm::cl::Required, "in-source", llvm::cl::desc("Specify input filename"),
                                               llvm::cl::value_desc("filename"));
 static llvm::cl::opt<std::string> OutputHeader("out-header", llvm::cl::desc("Specify header output filename"),
@@ -23,6 +25,8 @@ static llvm::cl::opt<std::string> OutputSource("out-source", llvm::cl::desc("Spe
                                                llvm::cl::value_desc("filename"), llvm::cl::init("output.cpp"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
+                                          llvm::cl::value_desc("bool"), llvm::cl::init(false));
 
 static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
@@ -793,6 +797,10 @@ int main(int argc, const char **argv) {
     ActionFactory factory{outStream};
     tool.run(&factory);
     *outStream << MetaFileEpilogue;
+
+    outStream->close();
+
+    if (FormatOutput) { format(std::string{OutputHeader}); }
 
     return 0;
 }
