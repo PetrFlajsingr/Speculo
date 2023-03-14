@@ -62,8 +62,7 @@ struct Variable {
     std::string type;
 };
 
-struct MemberVariable : Variable {
-};
+struct MemberVariable : Variable {};
 
 struct Function {
     std::string fullName;
@@ -421,6 +420,7 @@ public:
         const auto w2 = dis(gen);
         return pf::meta::ID{w1, w2};
     }
+    [[nodiscard]] std::uint64_t generateRandomInt() { return dis(gen); }
 
 private:
     std::mt19937_64 gen;
@@ -433,6 +433,9 @@ constexpr auto StaticEnumTypeInfoTemplate = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
 struct ::pf::meta::details::StaticInfo<{type_id}> {{
+    struct details {{
+        {details}
+    }};
     using Type = {type};
     constexpr static ID TypeID = {type_id};
 
@@ -531,6 +534,9 @@ constexpr auto StaticEnumValueInfoTemplate = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
 struct ::pf::meta::details::StaticInfo<{value_id}> {{
+    struct details {{
+        {details}
+    }};
     constexpr static ID ValueID = {value_id};
     constexpr static ID TypeID = {type_id};
     using Type = {type};
@@ -651,18 +657,25 @@ public:
         using namespace fmt::literals;
         TypeIdGenerator gen{};
 
-        const auto stringifyAttributes = [](const std::vector<Attribute> &attrs) {
+        const auto stringifyAttributes = [](const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames) {
+            // TODO assert size == size
             std::string result{};
-            for (const auto &attr: attrs) {
-                result.append("pf::meta::Attribute{");
-                result.append(fmt::format(R"("{}")", attr.name));
-                result.append(", {");
-                for (const auto &arg: attr.arguments) { result.append(fmt::format("R\"({})\"", arg)).append(", "); }
-                if (!attr.arguments.empty()) { result = result.substr(0, result.length() - 2); }
-                result.append("}");
-                result.append("}, ");
+            for (auto i = 0ull; i < attrs.size(); ++i) {
+                const auto &attr = attrs[i];
+                const auto &argArrayName = argArrayNames[i];
+                result.append(fmt::format(R"(pf::meta::Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )", attr.name,
+                                          argArrayName));
             }
             if (!attrs.empty()) { result = result.substr(0, result.length() - 2); }
+            return result;
+        };
+
+        const auto createAttributeArgArray = [](std::string_view name, const Attribute &attr) {
+            std::string result{};
+            result.append(fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
+            for (const auto &arg: attr.arguments) { result.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", "); }
+            if (!attr.arguments.empty()) { result = result.substr(0, result.length() - 2); }
+            result.append(");");
             return result;
         };
 
@@ -681,11 +694,20 @@ public:
 
             const auto valueStr = std::visit([](auto val) { return fmt::format("{}", val); }, info.value);
 
-            *outStream << fmt::format(StaticEnumValueInfoTemplate, "type"_a = result.fullName, "value_id"_a = idToString(valueId),
-                                      "source_line"_a = result.sourceLocation.line, "source_column"_a = result.sourceLocation.column,
-                                      "type_id"_a = idToString(typeId), "attributes"_a = stringifyAttributes(info.attributes),
-                                      "name"_a = name, "full_name"_a = fullName, "underlying_type"_a = result.underlyingType,
-                                      "underlying_value"_a = valueStr, "value"_a = fullName);
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: info.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", gen.generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(createAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = stringifyAttributes(info.attributes, argsArrayNames);
+
+            *outStream << fmt::format(StaticEnumValueInfoTemplate, "details"_a = detailsContents, "type"_a = result.fullName,
+                                      "value_id"_a = idToString(valueId), "source_line"_a = result.sourceLocation.line,
+                                      "source_column"_a = result.sourceLocation.column, "type_id"_a = idToString(typeId),
+                                      "attributes"_a = attributesStr, "name"_a = name, "full_name"_a = fullName,
+                                      "underlying_type"_a = result.underlyingType, "underlying_value"_a = valueStr, "value"_a = fullName);
         }
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
@@ -696,9 +718,18 @@ public:
         const auto ptr_type_id = idToString(gen.generateTypeId());
         const auto const_ptr_type_id = idToString(gen.generateTypeId());
 
-        *outStream << fmt::format(StaticEnumTypeInfoTemplate, "type_id"_a = idToString(typeId), "type"_a = result.fullName,
-                                  "source_line"_a = result.sourceLocation.line, "source_column"_a = result.sourceLocation.column,
-                                  "attributes"_a = stringifyAttributes(result.attributes), "name"_a = result.name,
+        std::vector<std::string> argsArrayNames;
+        std::string detailsContents;
+        for (const auto &attr: result.attributes) {
+            const auto argsArrayName = fmt::format("ArgArray_{}", gen.generateRandomInt());
+            argsArrayNames.push_back(argsArrayName);
+            detailsContents.append(createAttributeArgArray(argsArrayName, attr)).append("\n");
+        }
+        const auto attributesStr = stringifyAttributes(result.attributes, argsArrayNames);
+
+        *outStream << fmt::format(StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId),
+                                  "type"_a = result.fullName, "source_line"_a = result.sourceLocation.line,
+                                  "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = result.name,
                                   "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType,
                                   "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
                                   "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
