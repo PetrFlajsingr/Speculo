@@ -32,7 +32,7 @@ namespace pf::meta {
 
         constexpr ID(std::uint64_t w1, std::uint64_t w2) : id{w1, w2} {}
 
-        [[nodiscard]] constexpr bool isValid() const { return id[0] == 0x0u && id[1] == 0x0u; }
+        [[nodiscard]] constexpr bool isValid() const { return id[0] != 0x0u && id[1] != 0x0u; }
         [[nodiscard]] constexpr bool operator==(const ID &other) const noexcept = default;
         std::array<std::uint64_t, 2> id;
     };
