@@ -28,12 +28,15 @@
 namespace pf::meta {
     struct ID {
         constexpr ID() : ID{0x0u, 0x0u} {}
+
         constexpr explicit ID(const std::array<std::uint64_t, 2> &data) : id{data} {}
 
         constexpr ID(std::uint64_t w1, std::uint64_t w2) : id{w1, w2} {}
 
         [[nodiscard]] constexpr bool isValid() const { return id[0] != 0x0u && id[1] != 0x0u; }
+
         [[nodiscard]] constexpr bool operator==(const ID &other) const noexcept = default;
+
         std::array<std::uint64_t, 2> id;
     };
 
@@ -54,7 +57,8 @@ namespace pf::meta {
             constexpr static ID TypeID = I;
             constexpr static bool IsConst = true;
             constexpr static auto Name = StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::Name;
-            constexpr static auto FullName = StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::FullName;
+            constexpr static auto FullName =
+                    StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::FullName;
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
         struct StaticInfo_LRefWrap : ::pf::meta::details::StaticInfo<ParentID> {
@@ -63,6 +67,17 @@ namespace pf::meta {
             constexpr static bool IsLvalueReference = true;
             constexpr static auto Name = ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"&"};
             constexpr static auto FullName = ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"&"};
+        };
+        template<::pf::meta::ID I, ::pf::meta::ID ParentID>
+        struct StaticInfo_ConstLRefWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = const typename ::pf::meta::details::StaticInfo<ParentID>::Type &;
+            constexpr static ID TypeID = I;
+            constexpr static bool IsLvalueReference = true;
+            constexpr static bool IsConst = true;
+            constexpr static auto Name =
+                    StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"&"};
+            constexpr static auto FullName =
+                    StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"&"};
         };
         template<::pf::meta::ID I, ::pf::meta::ID ParentID>
         struct StaticInfo_RRefWrap : ::pf::meta::details::StaticInfo<ParentID> {
@@ -80,11 +95,24 @@ namespace pf::meta {
             constexpr static auto Name = ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"*"};
             constexpr static auto FullName = ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"*"};
         };
+        template<::pf::meta::ID I, ::pf::meta::ID ParentID>
+        struct StaticInfo_ConstPtrWrap : ::pf::meta::details::StaticInfo<ParentID> {
+            using Type = const typename ::pf::meta::details::StaticInfo<ParentID>::Type *;
+            constexpr static ID TypeID = I;
+            constexpr static bool IsPtr = true;
+            constexpr static bool IsConst = true;
+            constexpr static auto Name =
+                    StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::Name + StringLiteral{"*"};
+            constexpr static auto FullName =
+                    StringLiteral{"const "} + ::pf::meta::details::StaticInfo<ParentID>::FullName + StringLiteral{"*"};
+        };
+
         template<typename T>
         [[nodiscard]] consteval ID getTypeId() {
             static_assert(AlwaysFalseT<T>, "Static reflection not generated for type");
             return {};
         }
+
         template<auto V>
         [[nodiscard]] consteval ID getConstantId() {
             static_assert(AlwaysFalseV<V>, "Static reflection not generated for value");
@@ -104,12 +132,14 @@ namespace pf::meta {
 
     struct Info {
         constexpr explicit(false) Info(ID id) : implId{id} {}
+
         ID implId;
     };
 
     struct Attribute {
         constexpr Attribute(std::string_view n, std::span<const std::string_view> args)
-            : name{n}, arguments{args} {}
+                : name{n}, arguments{args} {}
+
         std::string_view name;
         std::span<const std::string_view> arguments;
     };

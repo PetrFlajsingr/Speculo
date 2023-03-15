@@ -161,6 +161,5 @@ int main() {
     static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
     static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool*)>());
     PF_SPLICE_TYPE(boolInfo) hihi = false;
-
     return 0;
 }

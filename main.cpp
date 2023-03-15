@@ -25,11 +25,12 @@ static llvm::cl::opt<std::string> OutputSource("out-source", llvm::cl::desc("Spe
                                                llvm::cl::value_desc("filename"), llvm::cl::init("output.cpp"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
-static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
-                                          llvm::cl::value_desc("bool"), llvm::cl::init(false));
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
+                                        llvm::cl::init(false));
 
 static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
+
 
 struct Attribute {
     std::string name;
@@ -42,6 +43,7 @@ struct TypeInfo {
     struct {
         unsigned int line;
         unsigned int column;
+        std::string filename;
     } sourceLocation;
 };
 
@@ -431,18 +433,19 @@ private:
     std::uniform_int_distribution<std::uint64_t> dis;
 };
 
-[[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("::pf::meta::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+[[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("pf::meta::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
 constexpr auto StaticEnumTypeInfoTemplate = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
-struct ::pf::meta::details::StaticInfo<{type_id}> {{
+struct pf::meta::details::StaticInfo<{type_id}> {{
     struct details {{
         {details}
     }};
     using Type = {type};
     constexpr static ID TypeID = {type_id};
 
+    constexpr static auto SourceFile = R"path({source_file})path";
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
@@ -459,8 +462,8 @@ struct ::pf::meta::details::StaticInfo<{type_id}> {{
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
 
-    constexpr static auto Name = ::pf::StringLiteral{{"{name}"}};
-    constexpr static auto FullName = ::pf::StringLiteral{{"{full_name}"}};
+    constexpr static auto Name = pf::StringLiteral{{"{name}"}};
+    constexpr static auto FullName = pf::StringLiteral{{"{full_name}"}};
 
     using UnderlyingType = {underlying_type};
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
@@ -469,28 +472,28 @@ struct ::pf::meta::details::StaticInfo<{type_id}> {{
 
 // const
 template<>
-struct ::pf::meta::details::StaticInfo<{const_type_id}>
-    : ::pf::meta::details::StaticInfo_ConstWrap<{const_type_id}, {type_id}> {{}};
+struct pf::meta::details::StaticInfo<{const_type_id}>
+    : pf::meta::details::StaticInfo_ConstWrap<{const_type_id}, {type_id}> {{}};
 // &
 template<>
-struct ::pf::meta::details::StaticInfo<{lref_type_id}>
-    : ::pf::meta::details::StaticInfo_LRefWrap<{lref_type_id}, {type_id}> {{}};
+struct pf::meta::details::StaticInfo<{lref_type_id}>
+    : pf::meta::details::StaticInfo_LRefWrap<{lref_type_id}, {type_id}> {{}};
 // &&
 template<>
-struct ::pf::meta::details::StaticInfo<{rref_type_id}>
-    : ::pf::meta::details::StaticInfo_RRefWrap<{rref_type_id}, {type_id}> {{}};
+struct pf::meta::details::StaticInfo<{rref_type_id}>
+    : pf::meta::details::StaticInfo_RRefWrap<{rref_type_id}, {type_id}> {{}};
 // const &
 template<>
-struct ::pf::meta::details::StaticInfo<{const_lref_type_id}>
-    : ::pf::meta::details::StaticInfo_LRefWrap<{const_lref_type_id}, {const_type_id}> {{}};
+struct pf::meta::details::StaticInfo<{const_lref_type_id}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<{const_lref_type_id}, {type_id}> {{}};
 // *
 template<>
-struct ::pf::meta::details::StaticInfo<{ptr_type_id}>
-    : ::pf::meta::details::StaticInfo_PtrWrap<{ptr_type_id}, {type_id}> {{}};
+struct pf::meta::details::StaticInfo<{ptr_type_id}>
+    : pf::meta::details::StaticInfo_PtrWrap<{ptr_type_id}, {type_id}> {{}};
 // const *
 template<>
-struct ::pf::meta::details::StaticInfo<{const_ptr_type_id}>
-    : ::pf::meta::details::StaticInfo_PtrWrap<{const_ptr_type_id}, {const_type_id}> {{}};
+struct pf::meta::details::StaticInfo<{const_ptr_type_id}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
 
 /****************************** {full_name} END ******************************/
 )fmt";
@@ -537,7 +540,7 @@ return {value_id};
 constexpr auto StaticEnumValueInfoTemplate = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
-struct ::pf::meta::details::StaticInfo<{value_id}> {{
+struct pf::meta::details::StaticInfo<{value_id}> {{
     struct details {{
         {details}
     }};
@@ -545,6 +548,7 @@ struct ::pf::meta::details::StaticInfo<{value_id}> {{
     constexpr static ID TypeID = {type_id};
     using Type = {type};
 
+    constexpr static auto SourceFile = R"path({source_file})path";
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
@@ -624,6 +628,7 @@ public:
 
         result.sourceLocation.line = sourceManager.getPresumedLineNumber(definition->getSourceRange().getBegin());
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(definition->getSourceRange().getBegin());
+        result.sourceLocation.filename = sourceManager.getFilename(definition->getSourceRange().getBegin());
 
 
         // auto namespaceCtx = definition->getEnclosingNamespaceContext();
@@ -708,10 +713,11 @@ public:
             const auto attributesStr = stringifyAttributes(info.attributes, argsArrayNames);
 
             *outStream << fmt::format(StaticEnumValueInfoTemplate, "details"_a = detailsContents, "type"_a = result.fullName,
-                                      "value_id"_a = idToString(valueId), "source_line"_a = result.sourceLocation.line,
-                                      "source_column"_a = result.sourceLocation.column, "type_id"_a = idToString(typeId),
-                                      "attributes"_a = attributesStr, "name"_a = name, "full_name"_a = fullName,
-                                      "underlying_type"_a = result.underlyingType, "underlying_value"_a = valueStr, "value"_a = fullName);
+                                      "value_id"_a = idToString(valueId), "source_file"_a = result.sourceLocation.filename,
+                                      "source_line"_a = result.sourceLocation.line, "source_column"_a = result.sourceLocation.column,
+                                      "type_id"_a = idToString(typeId), "attributes"_a = attributesStr, "name"_a = name,
+                                      "full_name"_a = fullName, "underlying_type"_a = result.underlyingType,
+                                      "underlying_value"_a = valueStr, "value"_a = fullName);
         }
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
@@ -731,13 +737,13 @@ public:
         }
         const auto attributesStr = stringifyAttributes(result.attributes, argsArrayNames);
 
-        *outStream << fmt::format(StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId),
-                                  "type"_a = result.fullName, "source_line"_a = result.sourceLocation.line,
-                                  "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = result.name,
-                                  "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType,
-                                  "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
-                                  "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
-                                  "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id);
+        *outStream << fmt::format(
+                StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId), "type"_a = result.fullName,
+                "source_file"_a = result.sourceLocation.filename, "source_line"_a = result.sourceLocation.line,
+                "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = result.name,
+                "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType, "enum_value_ids"_a = valueIdsStr,
+                "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id, "const_lref_type_id"_a = const_lref_type_id,
+                "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id);
 
         *outStream << "namespace pf::meta::details {";
         *outStream << fmt::format(GetTypeIDTemplate, "full_name"_a = result.fullName, "type"_a = result.fullName,
