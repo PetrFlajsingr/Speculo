@@ -31,6 +31,12 @@ namespace pf::meta {
         return static_cast<std::string_view>(impl::Name);
     }
 
+    template<Info I>
+    [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
+        using impl = details::StaticInfo<I.implId>;
+        return std::span<const Attribute>(impl::Attributes);
+    }
+
     template<Info I1, Info I2>
     [[nodiscard]] consteval bool reflects_same() {
         using impl1 = details::StaticInfo<I1.implId>;
@@ -153,7 +159,8 @@ int main() {
     }
     constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
     using A = pf::meta::details::StaticInfo<enumInfo.implId>;
-    for (const auto &attr: A::Attributes) {
+
+    for (const auto &attr: pf::meta::attributes_of<enumInfo>()) {
         std::cout << attr.name << std::endl;
         for (const auto &arg: attr.arguments) { std::cout << arg << std::endl; }
     }
