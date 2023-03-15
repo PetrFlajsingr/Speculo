@@ -13,7 +13,7 @@
 
 #include <fmt/core.h>
 
-#include "meta/common.h"
+#include "meta/Info.h"
 
 #include "format.h"
 
@@ -25,10 +25,12 @@ static llvm::cl::opt<std::string> OutputSource("out-source", llvm::cl::desc("Spe
                                                llvm::cl::value_desc("filename"), llvm::cl::init("output.cpp"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
-static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
+                                        llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
 
-static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
+static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"),
+                                                 llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
 
 
@@ -68,7 +70,8 @@ struct Variable {
     std::string type;
 };
 
-struct MemberVariable : Variable {};
+struct MemberVariable : Variable {
+};
 
 struct Function {
     std::string fullName;
@@ -88,7 +91,9 @@ struct Constructor {
 };
 
 struct RecordTypeInfo : public TypeInfo {
-    enum class Type { Struct, Class, Union };
+    enum class Type {
+        Struct, Class, Union
+    };
     Type type;
 
     std::vector<Constructor> constructors;
@@ -106,6 +111,7 @@ public:
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, std::vector<Attribute>> valueAttributes;
     };
+
     [[nodiscard]] EnumAttributes parseEnumAttributes(clang::ASTContext &astContext, const clang::EnumDecl &decl) const {
         EnumAttributes result{};
 
@@ -125,7 +131,9 @@ private:
         std::vector<Attribute> attributes;
         clang::SourceLocation end;
     };
-    [[nodiscard]] EnumTypeAttributeParseResult parseEnumTypeAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
+
+    [[nodiscard]] EnumTypeAttributeParseResult
+    parseEnumTypeAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
         EnumTypeAttributeParseResult result;
 
         // skipping first raw_identifier, which is just `enum`/`enum class`
@@ -140,8 +148,10 @@ private:
                     // found enum name, thus we're out of enum type's attributes
                     break;
                 }
-                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
-                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result.attributes));
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start,
+                                                                                      srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}),
+                                      std::back_inserter(result.attributes));
                     srcRange.setBegin(*end);
                     foundAttributes = true;
                 }
@@ -150,8 +160,10 @@ private:
         result.end = srcRange.getBegin();
         return result;
     }
-    [[nodiscard]] std::unordered_map<std::string, std::vector<Attribute>> parseEnumValueAttributes(clang::ASTContext &astContext,
-                                                                                                   clang::SourceRange srcRange) const {
+
+    [[nodiscard]] std::unordered_map<std::string, std::vector<Attribute>>
+    parseEnumValueAttributes(clang::ASTContext &astContext,
+                             clang::SourceRange srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
@@ -173,7 +185,8 @@ private:
             auto token = clang::Lexer::findNextToken(srcRange.getBegin(), sourceManager, langOpts);
             while (token->getKind() != clang::tok::TokenKind::raw_identifier) {
                 token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts);
-                if (!token.has_value() || token->getKind() == clang::tok::TokenKind::eof || token->getLocation() > srcRange.getEnd()) {
+                if (!token.has_value() || token->getKind() == clang::tok::TokenKind::eof ||
+                    token->getLocation() > srcRange.getEnd()) {
                     foundValue = false;
                     break;
                 }
@@ -189,11 +202,13 @@ private:
                 foundAttributes = false;
                 if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
                     if (contains(astContext, clang::SourceRange{srcRange.getBegin(), *start},
-                                 pf::make_array<clang::tok::TokenKind>(clang::tok::TokenKind::comma, clang::tok::TokenKind::r_brace))) {
+                                 pf::make_array<clang::tok::TokenKind>(clang::tok::TokenKind::comma,
+                                                                       clang::tok::TokenKind::r_brace))) {
                         // found value divider, these attributes belong to a different value
                         break;
                     }
-                    if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start,
+                                                                                          srcRange.getEnd()}); end.has_value()) {
                         std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}),
                                           std::back_inserter(valueAttributes.second));
                         srcRange.setBegin(*end);
@@ -264,11 +279,14 @@ private:
         return std::nullopt;
     }
 
-    [[nodiscard]] std::vector<Attribute> parseAttributes(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
+    [[nodiscard]] std::vector<Attribute>
+    parseAttributes(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
-        enum class State { Start, None, Using, UsingEnd, Name, Arguments, NestedParens };
+        enum class State {
+            Start, None, Using, UsingEnd, Name, Arguments, NestedParens
+        };
         State state = State::Start;
 
         std::vector<Attribute> result;
@@ -292,20 +310,24 @@ private:
                             attributeName = spelling;
                         }
                     }
-                } break;
+                }
+                    break;
                 case State::None: {
                     if (token->getKind() == clang::tok::TokenKind::raw_identifier) {
                         state = State::Name;
                         attributeName = clang::Lexer::getSpelling(*token, sourceManager, langOpts);
                     }
-                } break;
+                }
+                    break;
                 case State::Using: {
                     attributeNamespace = clang::Lexer::getSpelling(*token, sourceManager, langOpts);
                     state = State::UsingEnd;
-                } break;
+                }
+                    break;
                 case State::UsingEnd: {
                     state = State::None;
-                } break;
+                }
+                    break;
                 case State::Name: {
                     if (token->getKind() == clang::tok::TokenKind::coloncolon ||
                         token->getKind() == clang::tok::TokenKind::raw_identifier) {
@@ -323,7 +345,8 @@ private:
                         attributeName.clear();
                         state = State::None;
                     }
-                } break;
+                }
+                    break;
                 case State::Arguments: {
                     if (token->getKind() == clang::tok::TokenKind::l_paren) {
                         nestedParensCnt = 1;
@@ -348,7 +371,8 @@ private:
                         attributeParam.append(clang::Lexer::getSpelling(*token, sourceManager, langOpts));
                         state = State::Arguments;
                     }
-                } break;
+                }
+                    break;
                 case State::NestedParens: {
                     if (token->getKind() == clang::tok::TokenKind::l_paren) {
                         ++nestedParensCnt;
@@ -370,7 +394,8 @@ private:
                         attributeParam.append(clang::Lexer::getSpelling(*token, sourceManager, langOpts));
                         state = State::NestedParens;
                     }
-                } break;
+                }
+                    break;
             }
 
 
@@ -391,22 +416,27 @@ private:
         auto token = clang::Lexer::findNextToken(range.getBegin(), sourceManager, langOpts);
         for (auto i = token->getLocation(); i != range.getEnd();) {
             if (!token.has_value()) { return false; }
-            if (std::ranges::any_of(kinds, [tokKind = token->getKind()](auto k) { return k == tokKind; })) { return true; }
+            if (std::ranges::any_of(kinds,
+                                    [tokKind = token->getKind()](auto k) { return k == tokKind; })) { return true; }
             token = clang::Lexer::findNextToken(i, sourceManager, langOpts);
             i = token->getLocation();
         }
         return false;
     }
+
     [[nodiscard]] clang::SourceLocation advanceByTokens(clang::ASTContext &astContext, const clang::SourceLocation &loc,
                                                         std::size_t count) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto token = clang::Lexer::findNextToken(loc, sourceManager, langOpts);
-        for (std::size_t i = 0; i < count - 1; ++i) { token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts); }
+        for (std::size_t i = 0; i < count - 1; ++i) {
+            token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts);
+        }
         return token->getLocation();
     }
 
-    [[nodiscard]] std::optional<clang::Token> getToken(clang::ASTContext &astContext, const clang::SourceLocation &loc) const {
+    [[nodiscard]] std::optional<clang::Token>
+    getToken(clang::ASTContext &astContext, const clang::SourceLocation &loc) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         return clang::Lexer::findNextToken(loc, sourceManager, langOpts);
@@ -421,11 +451,13 @@ public:
         std::seed_seq ss{rd(), rd(), rd()};
         gen = std::mt19937_64{ss};
     }
-    [[nodiscard]] pf::meta::ID generateTypeId() {
+
+    [[nodiscard]] pf::meta::details::ID generateTypeId() {
         const auto w1 = dis(gen);
         const auto w2 = dis(gen);
-        return pf::meta::ID{w1, w2};
+        return pf::meta::details::ID{w1, w2};
     }
+
     [[nodiscard]] std::uint64_t generateRandomInt() { return dis(gen); }
 
 private:
@@ -433,7 +465,9 @@ private:
     std::uniform_int_distribution<std::uint64_t> dis;
 };
 
-[[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("pf::meta::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+[[nodiscard]] std::string idToString(pf::meta::details::ID id) {
+    return fmt::format("pf::meta::details::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
+}
 
 constexpr auto StaticEnumTypeInfoTemplate = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -572,11 +606,15 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
 constexpr auto MetaFilePrologue = R"fmt(
 #pragma once
 
-#include "meta/common.h"
-#include "test.h"
+#include "test.h" // FIXME: include file from tool input
 #include <pf_common/array.h>
 #include <pf_common/concepts/ranges.h>
 #include <type_traits>
+#include "meta/details/StaticInfo.h"
+#include "meta/details/StaticInfo_Wrappers.h"
+#include "meta/details/ID.h"
+#include "meta/Attribute.h"
+#include "meta/Info.h"
 )fmt";
 constexpr auto MetaFileEpilogue = R"fmt(
 
@@ -598,11 +636,12 @@ public:
             auto &sourceManager = astContext.getSourceManager();
             if (static_cast<bool>(IgnoreIncludes) && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
-            if (const auto enumDecl = clang::dyn_cast<clang::EnumDecl>(decl); enumDecl != nullptr && !enumDecl->isInvalidDecl()) {// enum
+            if (const auto enumDecl = clang::dyn_cast<clang::EnumDecl>(decl); enumDecl != nullptr &&
+                                                                              !enumDecl->isInvalidDecl()) {// enum
                 ParseEnum(astContext, *enumDecl);
             } else if (const auto recordDecl = clang::dyn_cast<clang::RecordDecl>(decl);
-                       recordDecl != nullptr && !recordDecl->isInvalidDecl()) {// struct union class
-                                                                               // ParseRecord(astContext, *recordDecl);
+                    recordDecl != nullptr && !recordDecl->isInvalidDecl()) {// struct union class
+                // ParseRecord(astContext, *recordDecl);
             }
 
 
@@ -661,19 +700,23 @@ public:
             auto enumAttributes = attributeParser.parseEnumAttributes(astContext, decl);
             result.attributes = std::move(enumAttributes.attributes);
 
-            for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }
+            for (auto [name, attributes]: enumAttributes.valueAttributes) {
+                result.values[name].attributes = std::move(attributes);
+            }
         }
         using namespace fmt::literals;
         TypeIdGenerator gen{};
 
-        const auto stringifyAttributes = [](const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames) {
+        const auto stringifyAttributes = [](const std::vector<Attribute> &attrs,
+                                            const std::vector<std::string> &argArrayNames) {
             // TODO assert size == size
             std::string result{};
             for (auto i = 0ull; i < attrs.size(); ++i) {
                 const auto &attr = attrs[i];
                 const auto &argArrayName = argArrayNames[i];
-                result.append(fmt::format(R"(pf::meta::Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )", attr.name,
-                                          argArrayName));
+                result.append(fmt::format(
+                        R"(pf::meta::Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )", attr.name,
+                        argArrayName));
             }
             if (!attrs.empty()) { result = result.substr(0, result.length() - 2); }
             return result;
@@ -682,7 +725,9 @@ public:
         const auto createAttributeArgArray = [](std::string_view name, const Attribute &attr) {
             std::string result{};
             result.append(fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
-            for (const auto &arg: attr.arguments) { result.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", "); }
+            for (const auto &arg: attr.arguments) {
+                result.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", ");
+            }
             if (!attr.arguments.empty()) { result = result.substr(0, result.length() - 2); }
             result.append(");");
             return result;
@@ -712,9 +757,12 @@ public:
             }
             const auto attributesStr = stringifyAttributes(info.attributes, argsArrayNames);
 
-            *outStream << fmt::format(StaticEnumValueInfoTemplate, "details"_a = detailsContents, "type"_a = result.fullName,
-                                      "value_id"_a = idToString(valueId), "source_file"_a = result.sourceLocation.filename,
-                                      "source_line"_a = result.sourceLocation.line, "source_column"_a = result.sourceLocation.column,
+            *outStream << fmt::format(StaticEnumValueInfoTemplate, "details"_a = detailsContents,
+                                      "type"_a = result.fullName,
+                                      "value_id"_a = idToString(valueId),
+                                      "source_file"_a = result.sourceLocation.filename,
+                                      "source_line"_a = result.sourceLocation.line,
+                                      "source_column"_a = result.sourceLocation.column,
                                       "type_id"_a = idToString(typeId), "attributes"_a = attributesStr, "name"_a = name,
                                       "full_name"_a = fullName, "underlying_type"_a = result.underlyingType,
                                       "underlying_value"_a = valueStr, "value"_a = fullName);
@@ -738,21 +786,28 @@ public:
         const auto attributesStr = stringifyAttributes(result.attributes, argsArrayNames);
 
         *outStream << fmt::format(
-                StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId), "type"_a = result.fullName,
+                StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId),
+                "type"_a = result.fullName,
                 "source_file"_a = result.sourceLocation.filename, "source_line"_a = result.sourceLocation.line,
-                "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = result.name,
-                "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType, "enum_value_ids"_a = valueIdsStr,
-                "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id, "const_lref_type_id"_a = const_lref_type_id,
-                "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id);
+                "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr,
+                "name"_a = result.name,
+                "full_name"_a = result.fullName, "underlying_type"_a = result.underlyingType,
+                "enum_value_ids"_a = valueIdsStr,
+                "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
+                "const_lref_type_id"_a = const_lref_type_id,
+                "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
+                "const_ptr_type_id"_a = const_ptr_type_id);
 
         *outStream << "namespace pf::meta::details {";
         *outStream << fmt::format(GetTypeIDTemplate, "full_name"_a = result.fullName, "type"_a = result.fullName,
-                                  "type_id"_a = idToString(typeId), "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
+                                  "type_id"_a = idToString(typeId), "const_type_id"_a = const_type_id,
+                                  "lref_type_id"_a = lref_type_id,
                                   "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
                                   "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id);
         for (const auto &[name, id]: valueIds) {
-            *outStream << fmt::format(GetConstantIDTemplate, "full_name"_a = fmt::format("{}::{}", result.fullName, name),
-                                      "constant"_a = name, "value_id"_a = id);
+            *outStream
+                    << fmt::format(GetConstantIDTemplate, "full_name"_a = fmt::format("{}::{}", result.fullName, name),
+                                   "constant"_a = name, "value_id"_a = id);
         }
         *outStream << "}";
 
@@ -767,7 +822,8 @@ class ASTAction : public clang::ASTFrontendAction {
 public:
     explicit ASTAction(std::shared_ptr<llvm::raw_fd_ostream> oStream) : outStream{std::move(oStream)} {}
 
-    std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
+    std::unique_ptr<clang::ASTConsumer>
+    CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
         return std::make_unique<ASTConsumer>(outStream);
     };
 
@@ -779,6 +835,7 @@ private:
 class ActionFactory : public clang::tooling::FrontendActionFactory {
 public:
     explicit ActionFactory(std::shared_ptr<llvm::raw_fd_ostream> oStream) : outStream{std::move(oStream)} {}
+
     std::unique_ptr<clang::FrontendAction> create() override { return std::make_unique<ASTAction>(outStream); }
 
 private:
@@ -794,7 +851,8 @@ int main(int argc, const char **argv) {
     clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
     std::error_code errorCode;
-    auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader}, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+    auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader}, errorCode,
+                                                            llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         llvm::errs() << "Failed to open output file: " << errorCode.message();
         return 1;

@@ -1,0 +1,41 @@
+//
+// Created by xflajs00 on 15.03.2023.
+//
+
+#ifndef PF_META_DETAILS_ID_H
+#define PF_META_DETAILS_ID_H
+
+#include <array>
+#include "meta_helpers.h"
+
+namespace pf::meta::details {
+
+    struct ID {
+        constexpr ID() : ID{0x0u, 0x0u} {}
+
+        constexpr explicit ID(const std::array<std::uint64_t, 2> &data) : id{data} {}
+
+        constexpr ID(std::uint64_t w1, std::uint64_t w2) : id{w1, w2} {}
+
+        [[nodiscard]] constexpr bool isValid() const { return id[0] != 0x0u && id[1] != 0x0u; }
+
+        [[nodiscard]] constexpr bool operator==(const ID &other) const noexcept = default;
+
+        std::array<std::uint64_t, 2> id;
+    };
+
+    template<typename T>
+    [[nodiscard]] consteval ID getTypeId() {
+        static_assert(AlwaysFalseT<T>, "Static reflection not generated for type");
+        return {};
+    }
+
+    template<auto V>
+    [[nodiscard]] consteval ID getConstantId() {
+        static_assert(AlwaysFalseV<V>, "Static reflection not generated for value");
+        return {};
+    }
+
+}
+
+#endif //PF_META_DETAILS_ID_H

@@ -7,6 +7,9 @@
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 
+#include "meta/reflect.h"
+#include "meta/template_for.h"
+
 namespace pf::meta {
     template<Info I>
     concept Named = requires {
