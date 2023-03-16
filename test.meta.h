@@ -1,30 +1,34 @@
 
 #pragma once
 
-#include "meta/common.h"
-#include "test.h"
+#include "test.h" // FIXME: include file from tool input
 #include <pf_common/array.h>
 #include <pf_common/concepts/ranges.h>
 #include <type_traits>
+#include "meta/details/StaticInfo.h"
+#include "meta/details/StaticInfo_Wrappers.h"
+#include "meta/details/ID.h"
+#include "meta/Attribute.h"
+#include "meta/Info.h"
 
 /****************************** pf::SomeEnum::Value1 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xfe8402588de925e7u, 0x4826ff24708315d4u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa3e270a698504255u, 0x763f39dc40a5350au}> {
     struct details {
-        constexpr static auto ArgArray_10077978449667725865 = pf::make_array<std::string_view>();
-constexpr static auto ArgArray_3731169918163496404 = pf::make_array<std::string_view>();
-constexpr static auto ArgArray_12788202552857538376 = pf::make_array<std::string_view>();
+        constexpr static auto ArgArray_13039163206166571093 = pf::make_array<std::string_view>();
+constexpr static auto ArgArray_12915281502111787105 = pf::make_array<std::string_view>();
+constexpr static auto ArgArray_13044518521110409818 = pf::make_array<std::string_view>();
 
     };
-    constexpr static ID ValueID = pf::meta::ID{0xfe8402588de925e7u, 0x4826ff24708315d4u};
-    constexpr static ID TypeID = pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xa3e270a698504255u, 0x763f39dc40a5350au};
+    constexpr static ID TypeID = pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu};
     using Type = pf::SomeEnum;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 5;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"test", std::span<const std::string_view>{details::ArgArray_10077978449667725865}}, pf::meta::Attribute{"test2", std::span<const std::string_view>{details::ArgArray_3731169918163496404}}, pf::meta::Attribute{"test3", std::span<const std::string_view>{details::ArgArray_12788202552857538376}});
+    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"test", std::span<const std::string_view>{details::ArgArray_13039163206166571093}}, pf::meta::Attribute{"test2", std::span<const std::string_view>{details::ArgArray_12915281502111787105}}, pf::meta::Attribute{"test3", std::span<const std::string_view>{details::ArgArray_13044518521110409818}});
 
     constexpr static bool IsEnum = false;
     constexpr static bool IsEnumValue = true;
@@ -42,12 +46,12 @@ constexpr static auto ArgArray_12788202552857538376 = pf::make_array<std::string
 
 /****************************** pf::SomeEnum::Value2 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x8515c6824cb80b96u, 0xcd9ee8ec8bd01c64u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xebc82d361d8515adu, 0xf61602c23e92d465u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x8515c6824cb80b96u, 0xcd9ee8ec8bd01c64u};
-    constexpr static ID TypeID = pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xebc82d361d8515adu, 0xf61602c23e92d465u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu};
     using Type = pf::SomeEnum;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -72,22 +76,22 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x8515c6824cb80b96u, 0xcd9ee8e
 
 /****************************** pf::SomeEnum START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {
     struct details {
-        constexpr static auto ArgArray_2157388251370780934 = pf::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
-constexpr static auto ArgArray_11228414200172369882 = pf::make_array<std::string_view>();
-constexpr static auto ArgArray_17620884152746328671 = pf::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
-constexpr static auto ArgArray_1948293540628358545 = pf::make_array<std::string_view>();
+        constexpr static auto ArgArray_14133276753643664164 = pf::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
+constexpr static auto ArgArray_2593754460660534590 = pf::make_array<std::string_view>();
+constexpr static auto ArgArray_829658461818120075 = pf::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
+constexpr static auto ArgArray_9350624761234779140 = pf::make_array<std::string_view>();
 
     };
     using Type = pf::SomeEnum;
-    constexpr static ID TypeID = pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 5;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_2157388251370780934}}, pf::meta::Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_11228414200172369882}}, pf::meta::Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_17620884152746328671}}, pf::meta::Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_1948293540628358545}});
+    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>(pf::meta::Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_14133276753643664164}}, pf::meta::Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_2593754460660534590}}, pf::meta::Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_829658461818120075}}, pf::meta::Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_9350624761234779140}});
 
     constexpr static bool IsEnum = true;
     constexpr static bool IsEnumValue = false;
@@ -105,89 +109,89 @@ constexpr static auto ArgArray_1948293540628358545 = pf::make_array<std::string_
 
     using UnderlyingType = bool;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0xfe8402588de925e7u, 0x4826ff24708315d4u}, pf::meta::ID{0x8515c6824cb80b96u, 0xcd9ee8ec8bd01c64u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0xa3e270a698504255u, 0x763f39dc40a5350au}, pf::meta::details::ID{0xebc82d361d8515adu, 0xf61602c23e92d465u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xcd9c3b8481b76c00u, 0x629173af4622b829u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0xcd9c3b8481b76c00u, 0x629173af4622b829u}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa2e32ff1308d0d09u, 0x9fb1930632ff6cb7u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0xa2e32ff1308d0d09u, 0x9fb1930632ff6cb7u}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xd3b78b1f72ac3e7au, 0x103362367d20d741u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xd3b78b1f72ac3e7au, 0x103362367d20d741u}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf358ae377838d815u, 0xd7f2597700c1d56au}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0xf358ae377838d815u, 0xd7f2597700c1d56au}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe0e30a5faa69055cu, 0xad568af37ef000au}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0xe0e30a5faa69055cu, 0xad568af37ef000au}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa3e31dfe734008f5u, 0xf4e507b11885b1a6u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xa3e31dfe734008f5u, 0xf4e507b11885b1a6u}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x28a88fc3d07a2a47u, 0x71ea5c91a516f7a9u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x28a88fc3d07a2a47u, 0x71ea5c91a516f7a9u}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x2b102f9ea1a133d6u, 0x794eaa601bb327b6u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x2b102f9ea1a133d6u, 0x794eaa601bb327b6u}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x8119cce83b8a2088u, 0xffb4b2c185271e28u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x8119cce83b8a2088u, 0xffb4b2c185271e28u}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xd445fd6411d51e65u, 0x3e88e7ebfc9ffe97u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0xd445fd6411d51e65u, 0x3e88e7ebfc9ffe97u}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3daea3630470c3eu, 0x946a24e3b013c400u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x3daea3630470c3eu, 0x946a24e3b013c400u}, pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x1b2bd50c2c02589u, 0x30102b6165831b4du}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x1b2bd50c2c02589u, 0x30102b6165831b4du}, pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu}> {};
 
 /****************************** pf::SomeEnum END ******************************/
 namespace pf::meta::details {
 /****************************** pf::SomeEnum START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::SomeEnum>() {
-    return pf::meta::ID{0xe02e66953b250098u, 0x7240c98366dad1f8u};
+    return pf::meta::details::ID{0x4437fb4875201431u, 0xbc35479b4938e49cu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum>() {
-    return pf::meta::ID{0xcd9c3b8481b76c00u, 0x629173af4622b829u};
+    return pf::meta::details::ID{0xa2e32ff1308d0d09u, 0x9fb1930632ff6cb7u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::SomeEnum &>() {
-    return pf::meta::ID{0xd3b78b1f72ac3e7au, 0x103362367d20d741u};
+    return pf::meta::details::ID{0xf358ae377838d815u, 0xd7f2597700c1d56au};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::SomeEnum &&>() {
-    return pf::meta::ID{0xe0e30a5faa69055cu, 0xad568af37ef000au};
+    return pf::meta::details::ID{0xa3e31dfe734008f5u, 0xf4e507b11885b1a6u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum &>() {
-    return pf::meta::ID{0x28a88fc3d07a2a47u, 0x71ea5c91a516f7a9u};
+    return pf::meta::details::ID{0x2b102f9ea1a133d6u, 0x794eaa601bb327b6u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::SomeEnum *>() {
-    return pf::meta::ID{0x8119cce83b8a2088u, 0xffb4b2c185271e28u};
+    return pf::meta::details::ID{0xd445fd6411d51e65u, 0x3e88e7ebfc9ffe97u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::SomeEnum *>() {
-    return pf::meta::ID{0x3daea3630470c3eu, 0x946a24e3b013c400u};
+    return pf::meta::details::ID{0x1b2bd50c2c02589u, 0x30102b6165831b4du};
 }
 /****************************** pf::SomeEnum END ******************************/
 
 /****************************** pf::SomeEnum::pf::SomeEnum::Value1 START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::SomeEnum::Value1>() {
-return pf::meta::ID{0xfe8402588de925e7u, 0x4826ff24708315d4u};
+return pf::meta::details::ID{0xa3e270a698504255u, 0x763f39dc40a5350au};
 }
 /****************************** pf::SomeEnum::pf::SomeEnum::Value1 END ******************************/
 
 /****************************** pf::SomeEnum::pf::SomeEnum::Value2 START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::SomeEnum::Value2>() {
-return pf::meta::ID{0x8515c6824cb80b96u, 0xcd9ee8ec8bd01c64u};
+return pf::meta::details::ID{0xebc82d361d8515adu, 0xf61602c23e92d465u};
 }
 /****************************** pf::SomeEnum::pf::SomeEnum::Value2 END ******************************/
 }
 /****************************** pf::Test::E::Value1 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb0d9a104d76b6890u, 0x47f91d34b153f3a4u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x322d43ad6b37b0fcu, 0xa820a7e44cca2337u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xb0d9a104d76b6890u, 0x47f91d34b153f3a4u};
-    constexpr static ID TypeID = pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x322d43ad6b37b0fcu, 0xa820a7e44cca2337u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du};
     using Type = pf::Test::E;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -212,12 +216,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xb0d9a104d76b6890u, 0x47f91d3
 
 /****************************** pf::Test::E::Value2 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xfce661865e690d54u, 0x50d7cb1b0ec68b1eu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa39cf4cbebee62d5u, 0xc716e841d51e2390u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xfce661865e690d54u, 0x50d7cb1b0ec68b1eu};
-    constexpr static ID TypeID = pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xa39cf4cbebee62d5u, 0xc716e841d51e2390u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du};
     using Type = pf::Test::E;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -242,12 +246,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xfce661865e690d54u, 0x50d7cb1
 
 /****************************** pf::Test::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {
     struct details {
         
     };
     using Type = pf::Test::E;
-    constexpr static ID TypeID = pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 8;
@@ -271,89 +275,89 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x277afc1c61de5941u, 0x37cc161
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0xb0d9a104d76b6890u, 0x47f91d34b153f3a4u}, pf::meta::ID{0xfce661865e690d54u, 0x50d7cb1b0ec68b1eu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x322d43ad6b37b0fcu, 0xa820a7e44cca2337u}, pf::meta::details::ID{0xa39cf4cbebee62d5u, 0xc716e841d51e2390u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xd8a18195e5d6c9ddu, 0xe572b4d0af883c41u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0xd8a18195e5d6c9ddu, 0xe572b4d0af883c41u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4b65eb0875541b29u, 0xecff99ec381b3ffdu}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x4b65eb0875541b29u, 0xecff99ec381b3ffdu}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xc0ad9af477cdb7b6u, 0x99b19945d9a745a8u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xc0ad9af477cdb7b6u, 0x99b19945d9a745a8u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xe6f432956a81d243u, 0x76730593e0aa1f7au}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0xe6f432956a81d243u, 0x76730593e0aa1f7au}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb54ef2a9aa0584b6u, 0x2a375c1e7ed7d5b4u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0xb54ef2a9aa0584b6u, 0x2a375c1e7ed7d5b4u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4c0503dbd74e237eu, 0xbbf0c0da3394c009u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x4c0503dbd74e237eu, 0xbbf0c0da3394c009u}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1cdda050d68e8108u, 0x329e14141d6b2aa8u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x1cdda050d68e8108u, 0x329e14141d6b2aa8u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf7b6414b8f70e9fcu, 0xf93b860dc32b50e2u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0xf7b6414b8f70e9fcu, 0xf93b860dc32b50e2u}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xfc28fc8c342fffccu, 0xe0e16c19a732ecf9u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0xfc28fc8c342fffccu, 0xe0e16c19a732ecf9u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xfac6e0d44893059u, 0xbe98de96d4273428u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0xfac6e0d44893059u, 0xbe98de96d4273428u}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1e45ccc675f845c1u, 0x531158bda7e543a1u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x1e45ccc675f845c1u, 0x531158bda7e543a1u}, pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x616e3377a101f071u, 0x6b6abc67cf7c725bu}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x616e3377a101f071u, 0x6b6abc67cf7c725bu}, pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du}> {};
 
 /****************************** pf::Test::E END ******************************/
 namespace pf::meta::details {
 /****************************** pf::Test::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::Test::E>() {
-    return pf::meta::ID{0x277afc1c61de5941u, 0x37cc16193ffb1d35u};
+    return pf::meta::details::ID{0x3feb44debfd4aa4eu, 0x5293fddc699c818du};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::Test::E>() {
-    return pf::meta::ID{0xd8a18195e5d6c9ddu, 0xe572b4d0af883c41u};
+    return pf::meta::details::ID{0x4b65eb0875541b29u, 0xecff99ec381b3ffdu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::Test::E &>() {
-    return pf::meta::ID{0xc0ad9af477cdb7b6u, 0x99b19945d9a745a8u};
+    return pf::meta::details::ID{0xe6f432956a81d243u, 0x76730593e0aa1f7au};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::Test::E &&>() {
-    return pf::meta::ID{0xb54ef2a9aa0584b6u, 0x2a375c1e7ed7d5b4u};
+    return pf::meta::details::ID{0x4c0503dbd74e237eu, 0xbbf0c0da3394c009u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::Test::E &>() {
-    return pf::meta::ID{0x1cdda050d68e8108u, 0x329e14141d6b2aa8u};
+    return pf::meta::details::ID{0xf7b6414b8f70e9fcu, 0xf93b860dc32b50e2u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::Test::E *>() {
-    return pf::meta::ID{0xfc28fc8c342fffccu, 0xe0e16c19a732ecf9u};
+    return pf::meta::details::ID{0xfac6e0d44893059u, 0xbe98de96d4273428u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::Test::E *>() {
-    return pf::meta::ID{0x1e45ccc675f845c1u, 0x531158bda7e543a1u};
+    return pf::meta::details::ID{0x616e3377a101f071u, 0x6b6abc67cf7c725bu};
 }
 /****************************** pf::Test::E END ******************************/
 
 /****************************** pf::Test::E::pf::Test::E::Value1 START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::Test::E::Value1>() {
-return pf::meta::ID{0xb0d9a104d76b6890u, 0x47f91d34b153f3a4u};
+return pf::meta::details::ID{0x322d43ad6b37b0fcu, 0xa820a7e44cca2337u};
 }
 /****************************** pf::Test::E::pf::Test::E::Value1 END ******************************/
 
 /****************************** pf::Test::E::pf::Test::E::Value2 START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::Test::E::Value2>() {
-return pf::meta::ID{0xfce661865e690d54u, 0x50d7cb1b0ec68b1eu};
+return pf::meta::details::ID{0xa39cf4cbebee62d5u, 0xc716e841d51e2390u};
 }
 /****************************** pf::Test::E::pf::Test::E::Value2 END ******************************/
 }
 /****************************** pf::EmptyEnum START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {
     struct details {
         
     };
     using Type = pf::EmptyEnum;
-    constexpr static ID TypeID = pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 19;
@@ -382,70 +386,70 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xd2c6d21e5f76b316u, 0xc6d664c8e6a36de3u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0xd2c6d21e5f76b316u, 0xc6d664c8e6a36de3u}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x86ffbdfa4c92fdbfu, 0xcaff85dd61da6ef3u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x86ffbdfa4c92fdbfu, 0xcaff85dd61da6ef3u}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x737ae2d5474581e5u, 0xca8fa0f919d31904u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0x737ae2d5474581e5u, 0xca8fa0f919d31904u}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xde34aa99690b5d2au, 0xd60cef965c6704d5u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0xde34aa99690b5d2au, 0xd60cef965c6704d5u}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x9dd4a1fae0e57f8cu, 0xfd3d972dc87a950du}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x9dd4a1fae0e57f8cu, 0xfd3d972dc87a950du}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x70747d8d6c446cf3u, 0xc0dc0a80464ac458u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x70747d8d6c446cf3u, 0xc0dc0a80464ac458u}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x75150f41d4ff5ac8u, 0x53d09c44c3a2c8acu}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x75150f41d4ff5ac8u, 0x53d09c44c3a2c8acu}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x39933297863ff336u, 0x7b3d12f9e4ecf549u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x39933297863ff336u, 0x7b3d12f9e4ecf549u}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xec5e507c2831a50fu, 0xd63d606959f28b4u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0xec5e507c2831a50fu, 0xd63d606959f28b4u}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xeb97e7f9be193a3eu, 0x635b2ca27ac7a53du}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0xeb97e7f9be193a3eu, 0x635b2ca27ac7a53du}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x219f6c388b7878c8u, 0xd4e9265625b86e72u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x219f6c388b7878c8u, 0xd4e9265625b86e72u}, pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xbd9851eced68813bu, 0xd8b88a2a854e3388u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0xbd9851eced68813bu, 0xd8b88a2a854e3388u}, pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u}> {};
 
 /****************************** pf::EmptyEnum END ******************************/
 namespace pf::meta::details {
 /****************************** pf::EmptyEnum START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::EmptyEnum>() {
-    return pf::meta::ID{0x59b3ba7ee7eb568du, 0x863f80c9df5f2168u};
+    return pf::meta::details::ID{0xed5e9bec024f3f95u, 0x75b084570a8f1fd1u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::EmptyEnum>() {
-    return pf::meta::ID{0xd2c6d21e5f76b316u, 0xc6d664c8e6a36de3u};
+    return pf::meta::details::ID{0x86ffbdfa4c92fdbfu, 0xcaff85dd61da6ef3u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::EmptyEnum &>() {
-    return pf::meta::ID{0x737ae2d5474581e5u, 0xca8fa0f919d31904u};
+    return pf::meta::details::ID{0xde34aa99690b5d2au, 0xd60cef965c6704d5u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::EmptyEnum &&>() {
-    return pf::meta::ID{0x9dd4a1fae0e57f8cu, 0xfd3d972dc87a950du};
+    return pf::meta::details::ID{0x70747d8d6c446cf3u, 0xc0dc0a80464ac458u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::EmptyEnum &>() {
-    return pf::meta::ID{0x75150f41d4ff5ac8u, 0x53d09c44c3a2c8acu};
+    return pf::meta::details::ID{0x39933297863ff336u, 0x7b3d12f9e4ecf549u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::EmptyEnum *>() {
-    return pf::meta::ID{0xec5e507c2831a50fu, 0xd63d606959f28b4u};
+    return pf::meta::details::ID{0xeb97e7f9be193a3eu, 0x635b2ca27ac7a53du};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::EmptyEnum *>() {
-    return pf::meta::ID{0x219f6c388b7878c8u, 0xd4e9265625b86e72u};
+    return pf::meta::details::ID{0xbd9851eced68813bu, 0xd8b88a2a854e3388u};
 }
 /****************************** pf::EmptyEnum END ******************************/
 }
 /****************************** pf::E1::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe7ea4baaa1715262u, 0xb95eb4ee38c08a21u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xd3a3016e6d3dd405u, 0x2b82bae1d714b380u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xe7ea4baaa1715262u, 0xb95eb4ee38c08a21u};
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID ValueID = pf::meta::details::ID{0xd3a3016e6d3dd405u, 0x2b82bae1d714b380u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -470,12 +474,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xe7ea4baaa1715262u, 0xb95eb4e
 
 /****************************** pf::E1::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x449125f8c496d042u, 0xe10b4c02125300bcu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf14734b784a3057bu, 0x534cdff4dd1dbe76u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x449125f8c496d042u, 0xe10b4c02125300bcu};
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID ValueID = pf::meta::details::ID{0xf14734b784a3057bu, 0x534cdff4dd1dbe76u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -500,12 +504,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x449125f8c496d042u, 0xe10b4c0
 
 /****************************** pf::E1::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x25370cdc80337cd3u, 0x71992c8bd0c25bcu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xd5cbecf93eedf2b3u, 0xf1f3b1a7eae76f60u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x25370cdc80337cd3u, 0x71992c8bd0c25bcu};
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID ValueID = pf::meta::details::ID{0xd5cbecf93eedf2b3u, 0xf1f3b1a7eae76f60u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -530,12 +534,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x25370cdc80337cd3u, 0x71992c8
 
 /****************************** pf::E1::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4a9b407ebfe45f85u, 0x57d7596964f4a7bbu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x85ba14043c16cf1fu, 0xd37c9023da249524u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x4a9b407ebfe45f85u, 0x57d7596964f4a7bbu};
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x85ba14043c16cf1fu, 0xd37c9023da249524u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -560,12 +564,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x4a9b407ebfe45f85u, 0x57d7596
 
 /****************************** pf::E1::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x7cd91313655b24a0u, 0xce4e283aca458b4bu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4120ee8df8c12a60u, 0xb0ad7289beb59a93u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x7cd91313655b24a0u, 0xce4e283aca458b4bu};
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x4120ee8df8c12a60u, 0xb0ad7289beb59a93u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -590,12 +594,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x7cd91313655b24a0u, 0xce4e283
 
 /****************************** pf::E1 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {
     struct details {
         
     };
     using Type = pf::E1;
-    constexpr static ID TypeID = pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    constexpr static ID TypeID = pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
@@ -619,110 +623,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7d
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0xe7ea4baaa1715262u, 0xb95eb4ee38c08a21u}, pf::meta::ID{0x449125f8c496d042u, 0xe10b4c02125300bcu}, pf::meta::ID{0x25370cdc80337cd3u, 0x71992c8bd0c25bcu}, pf::meta::ID{0x4a9b407ebfe45f85u, 0x57d7596964f4a7bbu}, pf::meta::ID{0x7cd91313655b24a0u, 0xce4e283aca458b4bu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0xd3a3016e6d3dd405u, 0x2b82bae1d714b380u}, pf::meta::details::ID{0xf14734b784a3057bu, 0x534cdff4dd1dbe76u}, pf::meta::details::ID{0xd5cbecf93eedf2b3u, 0xf1f3b1a7eae76f60u}, pf::meta::details::ID{0x85ba14043c16cf1fu, 0xd37c9023da249524u}, pf::meta::details::ID{0x4120ee8df8c12a60u, 0xb0ad7289beb59a93u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x854a9677c166c74au, 0x55d14f38f49e241bu}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x854a9677c166c74au, 0x55d14f38f49e241bu}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xe287b042f74266f4u, 0x812b88edddc9130u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0xe287b042f74266f4u, 0x812b88edddc9130u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xfec4ee233631277bu, 0x48cda06aef84a902u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xfec4ee233631277bu, 0x48cda06aef84a902u}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4a205afe7f05701du, 0xb87da5fb46b99062u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x4a205afe7f05701du, 0xb87da5fb46b99062u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x361e91ef49e063c8u, 0xe41219f233101847u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x361e91ef49e063c8u, 0xe41219f233101847u}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x7c48b971aec94c22u, 0xa0a0f4e0f2ed36c8u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x7c48b971aec94c22u, 0xa0a0f4e0f2ed36c8u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x51f30a0c38043b5au, 0xf47f3e6175541336u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x51f30a0c38043b5au, 0xf47f3e6175541336u}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x179571c7271e1cf5u, 0x5038acd95a02ceb8u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x179571c7271e1cf5u, 0x5038acd95a02ceb8u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x45e45ff1a276bdbau, 0xc302ac1a832e59ebu}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x45e45ff1a276bdbau, 0xc302ac1a832e59ebu}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x21bfd857b85f7de7u, 0x5f2a2ce04d4bc5d2u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x21bfd857b85f7de7u, 0x5f2a2ce04d4bc5d2u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x7dc9ba9a32f3ed07u, 0xd4a6558c43d777f3u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x7dc9ba9a32f3ed07u, 0xd4a6558c43d777f3u}, pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xccd08caa832a9901u, 0xbb8e9019acf47d84u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0xccd08caa832a9901u, 0xbb8e9019acf47d84u}, pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu}> {};
 
 /****************************** pf::E1 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E1 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E1>() {
-    return pf::meta::ID{0x35bd42e5b76b5448u, 0x93add7dd4a812b3bu};
+    return pf::meta::details::ID{0x30f6ff7b0b11173au, 0x23eaf8ba524fc7dcu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E1>() {
-    return pf::meta::ID{0x854a9677c166c74au, 0x55d14f38f49e241bu};
+    return pf::meta::details::ID{0xe287b042f74266f4u, 0x812b88edddc9130u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E1 &>() {
-    return pf::meta::ID{0xfec4ee233631277bu, 0x48cda06aef84a902u};
+    return pf::meta::details::ID{0x4a205afe7f05701du, 0xb87da5fb46b99062u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E1 &&>() {
-    return pf::meta::ID{0x361e91ef49e063c8u, 0xe41219f233101847u};
+    return pf::meta::details::ID{0x7c48b971aec94c22u, 0xa0a0f4e0f2ed36c8u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E1 &>() {
-    return pf::meta::ID{0x51f30a0c38043b5au, 0xf47f3e6175541336u};
+    return pf::meta::details::ID{0x179571c7271e1cf5u, 0x5038acd95a02ceb8u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E1 *>() {
-    return pf::meta::ID{0x45e45ff1a276bdbau, 0xc302ac1a832e59ebu};
+    return pf::meta::details::ID{0x21bfd857b85f7de7u, 0x5f2a2ce04d4bc5d2u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E1 *>() {
-    return pf::meta::ID{0x7dc9ba9a32f3ed07u, 0xd4a6558c43d777f3u};
+    return pf::meta::details::ID{0xccd08caa832a9901u, 0xbb8e9019acf47d84u};
 }
 /****************************** pf::E1 END ******************************/
 
 /****************************** pf::E1::pf::E1::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E1::A>() {
-return pf::meta::ID{0xe7ea4baaa1715262u, 0xb95eb4ee38c08a21u};
+return pf::meta::details::ID{0xd3a3016e6d3dd405u, 0x2b82bae1d714b380u};
 }
 /****************************** pf::E1::pf::E1::A END ******************************/
 
 /****************************** pf::E1::pf::E1::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E1::B>() {
-return pf::meta::ID{0x449125f8c496d042u, 0xe10b4c02125300bcu};
+return pf::meta::details::ID{0xf14734b784a3057bu, 0x534cdff4dd1dbe76u};
 }
 /****************************** pf::E1::pf::E1::B END ******************************/
 
 /****************************** pf::E1::pf::E1::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E1::C>() {
-return pf::meta::ID{0x25370cdc80337cd3u, 0x71992c8bd0c25bcu};
+return pf::meta::details::ID{0xd5cbecf93eedf2b3u, 0xf1f3b1a7eae76f60u};
 }
 /****************************** pf::E1::pf::E1::C END ******************************/
 
 /****************************** pf::E1::pf::E1::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E1::D>() {
-return pf::meta::ID{0x4a9b407ebfe45f85u, 0x57d7596964f4a7bbu};
+return pf::meta::details::ID{0x85ba14043c16cf1fu, 0xd37c9023da249524u};
 }
 /****************************** pf::E1::pf::E1::D END ******************************/
 
 /****************************** pf::E1::pf::E1::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E1::E>() {
-return pf::meta::ID{0x7cd91313655b24a0u, 0xce4e283aca458b4bu};
+return pf::meta::details::ID{0x4120ee8df8c12a60u, 0xb0ad7289beb59a93u};
 }
 /****************************** pf::E1::pf::E1::E END ******************************/
 }
 /****************************** pf::E2::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3327f1cff3e583b9u, 0x864ce142d82ae359u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xdd1f0dd806b2f806u, 0x9f14f1048efbf3ccu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x3327f1cff3e583b9u, 0x864ce142d82ae359u};
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xdd1f0dd806b2f806u, 0x9f14f1048efbf3ccu};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -747,12 +751,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x3327f1cff3e583b9u, 0x864ce14
 
 /****************************** pf::E2::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x94b0f30c61594f93u, 0x8e5f1ca92190faa0u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x70726ed70ffa7df0u, 0x7d4ab941518abcd9u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x94b0f30c61594f93u, 0x8e5f1ca92190faa0u};
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x70726ed70ffa7df0u, 0x7d4ab941518abcd9u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -777,12 +781,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x94b0f30c61594f93u, 0x8e5f1ca
 
 /****************************** pf::E2::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x355a21f5105a2715u, 0xcee3676319abad91u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x26eb252f6f242df6u, 0x1756440d8c728c75u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x355a21f5105a2715u, 0xcee3676319abad91u};
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x26eb252f6f242df6u, 0x1756440d8c728c75u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -807,12 +811,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x355a21f5105a2715u, 0xcee3676
 
 /****************************** pf::E2::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x102f642a9fa0574au, 0xcb985f40f9770857u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9ea48db9741aff0bu, 0x47adbf23c68559e6u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x102f642a9fa0574au, 0xcb985f40f9770857u};
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x9ea48db9741aff0bu, 0x47adbf23c68559e6u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -837,12 +841,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x102f642a9fa0574au, 0xcb985f4
 
 /****************************** pf::E2::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1e02a19d5c0db998u, 0x6b9276407a1f75c2u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xec325553eee31d1cu, 0x29acf6417cdd97c4u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x1e02a19d5c0db998u, 0x6b9276407a1f75c2u};
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xec325553eee31d1cu, 0x29acf6417cdd97c4u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -867,12 +871,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x1e02a19d5c0db998u, 0x6b92764
 
 /****************************** pf::E2 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {
     struct details {
         
     };
     using Type = pf::E2;
-    constexpr static ID TypeID = pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
@@ -896,110 +900,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d5
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x3327f1cff3e583b9u, 0x864ce142d82ae359u}, pf::meta::ID{0x94b0f30c61594f93u, 0x8e5f1ca92190faa0u}, pf::meta::ID{0x355a21f5105a2715u, 0xcee3676319abad91u}, pf::meta::ID{0x102f642a9fa0574au, 0xcb985f40f9770857u}, pf::meta::ID{0x1e02a19d5c0db998u, 0x6b9276407a1f75c2u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0xdd1f0dd806b2f806u, 0x9f14f1048efbf3ccu}, pf::meta::details::ID{0x70726ed70ffa7df0u, 0x7d4ab941518abcd9u}, pf::meta::details::ID{0x26eb252f6f242df6u, 0x1756440d8c728c75u}, pf::meta::details::ID{0x9ea48db9741aff0bu, 0x47adbf23c68559e6u}, pf::meta::details::ID{0xec325553eee31d1cu, 0x29acf6417cdd97c4u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x7f8d0a2bf2bb6823u, 0xdb547bc976136b80u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x7f8d0a2bf2bb6823u, 0xdb547bc976136b80u}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x5e3bc18dec67146eu, 0xd550644d70111ab6u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x5e3bc18dec67146eu, 0xd550644d70111ab6u}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4d4756ca6f0c296du, 0xe402384bc44c0bf1u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0x4d4756ca6f0c296du, 0xe402384bc44c0bf1u}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x41ed6570462a77a8u, 0x677c14de0f540c9au}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x41ed6570462a77a8u, 0x677c14de0f540c9au}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3cc078afe318341cu, 0xb814ba430e503a65u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x3cc078afe318341cu, 0xb814ba430e503a65u}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf8fefb9645e2235du, 0xd261c3a2fb1ba36du}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xf8fefb9645e2235du, 0xd261c3a2fb1ba36du}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x9c5dbc43e2cbd316u, 0xc170258bf600c021u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x9c5dbc43e2cbd316u, 0xc170258bf600c021u}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xd673198fd6504aceu, 0x8e53f2a264395decu}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0xd673198fd6504aceu, 0x8e53f2a264395decu}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5da0b054b03025deu, 0x36bf75aa716720dcu}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x5da0b054b03025deu, 0x36bf75aa716720dcu}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x10dfeaed369a7b94u, 0x1c444d47aea2f0edu}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x10dfeaed369a7b94u, 0x1c444d47aea2f0edu}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3e346b4554d76a67u, 0xb609f8eeff0819e8u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x3e346b4554d76a67u, 0xb609f8eeff0819e8u}, pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xfccacb3ab5ac408bu, 0x948de9ef679e1656u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0xfccacb3ab5ac408bu, 0x948de9ef679e1656u}, pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu}> {};
 
 /****************************** pf::E2 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E2 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E2>() {
-    return pf::meta::ID{0x128ae9bcfd69bd76u, 0xb28a1d50aa3bf000u};
+    return pf::meta::details::ID{0xf2cd40cd11ec4eaeu, 0x53a5d4639d22d25bu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E2>() {
-    return pf::meta::ID{0x7f8d0a2bf2bb6823u, 0xdb547bc976136b80u};
+    return pf::meta::details::ID{0x5e3bc18dec67146eu, 0xd550644d70111ab6u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E2 &>() {
-    return pf::meta::ID{0x4d4756ca6f0c296du, 0xe402384bc44c0bf1u};
+    return pf::meta::details::ID{0x41ed6570462a77a8u, 0x677c14de0f540c9au};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E2 &&>() {
-    return pf::meta::ID{0x3cc078afe318341cu, 0xb814ba430e503a65u};
+    return pf::meta::details::ID{0xf8fefb9645e2235du, 0xd261c3a2fb1ba36du};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E2 &>() {
-    return pf::meta::ID{0x9c5dbc43e2cbd316u, 0xc170258bf600c021u};
+    return pf::meta::details::ID{0xd673198fd6504aceu, 0x8e53f2a264395decu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E2 *>() {
-    return pf::meta::ID{0x5da0b054b03025deu, 0x36bf75aa716720dcu};
+    return pf::meta::details::ID{0x10dfeaed369a7b94u, 0x1c444d47aea2f0edu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E2 *>() {
-    return pf::meta::ID{0x3e346b4554d76a67u, 0xb609f8eeff0819e8u};
+    return pf::meta::details::ID{0xfccacb3ab5ac408bu, 0x948de9ef679e1656u};
 }
 /****************************** pf::E2 END ******************************/
 
 /****************************** pf::E2::pf::E2::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E2::A>() {
-return pf::meta::ID{0x3327f1cff3e583b9u, 0x864ce142d82ae359u};
+return pf::meta::details::ID{0xdd1f0dd806b2f806u, 0x9f14f1048efbf3ccu};
 }
 /****************************** pf::E2::pf::E2::A END ******************************/
 
 /****************************** pf::E2::pf::E2::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E2::B>() {
-return pf::meta::ID{0x94b0f30c61594f93u, 0x8e5f1ca92190faa0u};
+return pf::meta::details::ID{0x70726ed70ffa7df0u, 0x7d4ab941518abcd9u};
 }
 /****************************** pf::E2::pf::E2::B END ******************************/
 
 /****************************** pf::E2::pf::E2::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E2::C>() {
-return pf::meta::ID{0x355a21f5105a2715u, 0xcee3676319abad91u};
+return pf::meta::details::ID{0x26eb252f6f242df6u, 0x1756440d8c728c75u};
 }
 /****************************** pf::E2::pf::E2::C END ******************************/
 
 /****************************** pf::E2::pf::E2::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E2::D>() {
-return pf::meta::ID{0x102f642a9fa0574au, 0xcb985f40f9770857u};
+return pf::meta::details::ID{0x9ea48db9741aff0bu, 0x47adbf23c68559e6u};
 }
 /****************************** pf::E2::pf::E2::D END ******************************/
 
 /****************************** pf::E2::pf::E2::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E2::E>() {
-return pf::meta::ID{0x1e02a19d5c0db998u, 0x6b9276407a1f75c2u};
+return pf::meta::details::ID{0xec325553eee31d1cu, 0x29acf6417cdd97c4u};
 }
 /****************************** pf::E2::pf::E2::E END ******************************/
 }
 /****************************** pf::E3::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xcd125d31c04066fu, 0x9b43efa65330d2a6u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x10e7ee3bf051a3a6u, 0xb5e18dc9bac0a326u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xcd125d31c04066fu, 0x9b43efa65330d2a6u};
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x10e7ee3bf051a3a6u, 0xb5e18dc9bac0a326u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1024,12 +1028,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xcd125d31c04066fu, 0x9b43efa6
 
 /****************************** pf::E3::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1272d86aaf64532cu, 0xe9f2a3d2cadb0b8fu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9686331f8267e44bu, 0x67819767d71bce02u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x1272d86aaf64532cu, 0xe9f2a3d2cadb0b8fu};
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x9686331f8267e44bu, 0x67819767d71bce02u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1054,12 +1058,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x1272d86aaf64532cu, 0xe9f2a3d
 
 /****************************** pf::E3::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x27fc328664b48100u, 0xbb8975850ffdf35bu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x3f01cda31b0ab7eu, 0x9c711454fb47d523u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x27fc328664b48100u, 0xbb8975850ffdf35bu};
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x3f01cda31b0ab7eu, 0x9c711454fb47d523u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1084,12 +1088,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x27fc328664b48100u, 0xbb89758
 
 /****************************** pf::E3::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xbdcd877f370e533u, 0x142f2e30069a33a2u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xc326f932289479c3u, 0xd1a22c07960cbe44u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xbdcd877f370e533u, 0x142f2e30069a33a2u};
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xc326f932289479c3u, 0xd1a22c07960cbe44u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1114,12 +1118,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xbdcd877f370e533u, 0x142f2e30
 
 /****************************** pf::E3::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x767aa8f6a1443cbfu, 0xdcf65b15a8c94660u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x33d83839cde160f4u, 0x24fc793449fa4126u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x767aa8f6a1443cbfu, 0xdcf65b15a8c94660u};
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x33d83839cde160f4u, 0x24fc793449fa4126u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1144,12 +1148,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x767aa8f6a1443cbfu, 0xdcf65b1
 
 /****************************** pf::E3 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {
     struct details {
         
     };
     using Type = pf::E3;
-    constexpr static ID TypeID = pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
@@ -1173,110 +1177,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0xcd125d31c04066fu, 0x9b43efa65330d2a6u}, pf::meta::ID{0x1272d86aaf64532cu, 0xe9f2a3d2cadb0b8fu}, pf::meta::ID{0x27fc328664b48100u, 0xbb8975850ffdf35bu}, pf::meta::ID{0xbdcd877f370e533u, 0x142f2e30069a33a2u}, pf::meta::ID{0x767aa8f6a1443cbfu, 0xdcf65b15a8c94660u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x10e7ee3bf051a3a6u, 0xb5e18dc9bac0a326u}, pf::meta::details::ID{0x9686331f8267e44bu, 0x67819767d71bce02u}, pf::meta::details::ID{0x3f01cda31b0ab7eu, 0x9c711454fb47d523u}, pf::meta::details::ID{0xc326f932289479c3u, 0xd1a22c07960cbe44u}, pf::meta::details::ID{0x33d83839cde160f4u, 0x24fc793449fa4126u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x58d2bcf4abcc1fe0u, 0xd0f0f90010488a12u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x58d2bcf4abcc1fe0u, 0xd0f0f90010488a12u}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x850db9b941d4bc9cu, 0x3522ed58d014a42cu}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x850db9b941d4bc9cu, 0x3522ed58d014a42cu}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xd84064f05f785329u, 0x867261c52dfd748fu}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xd84064f05f785329u, 0x867261c52dfd748fu}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x3b27f8f97ff3fbe1u, 0xeb23176eb2655fd1u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x3b27f8f97ff3fbe1u, 0xeb23176eb2655fd1u}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb729206b6df4f0e9u, 0x5a14b5c5ad082ca0u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0xb729206b6df4f0e9u, 0x5a14b5c5ad082ca0u}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xae00795ab644b7d2u, 0xd77e8f1aaf60cb32u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xae00795ab644b7d2u, 0xd77e8f1aaf60cb32u}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x55c46bea824237eeu, 0xa96f2c3297741a3fu}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x55c46bea824237eeu, 0xa96f2c3297741a3fu}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x170a62d9607cb291u, 0x72215c83e795f69fu}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x170a62d9607cb291u, 0x72215c83e795f69fu}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4334a64d41da7201u, 0x1a57be128d2f4451u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x4334a64d41da7201u, 0x1a57be128d2f4451u}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9d3ba07992ce55b2u, 0xb952420336d3889au}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x9d3ba07992ce55b2u, 0xb952420336d3889au}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xa8a4e7a5619eb592u, 0xeb3a93bde3e8ea2cu}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0xa8a4e7a5619eb592u, 0xeb3a93bde3e8ea2cu}, pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4686ebe46bac8097u, 0x63071c6d6037571cu}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x4686ebe46bac8097u, 0x63071c6d6037571cu}, pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu}> {};
 
 /****************************** pf::E3 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E3 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E3>() {
-    return pf::meta::ID{0x690842604e5f93e0u, 0xf5e6f07327ebb8a5u};
+    return pf::meta::details::ID{0xa312f3e9437dbd05u, 0x5a311280f3022fddu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E3>() {
-    return pf::meta::ID{0x58d2bcf4abcc1fe0u, 0xd0f0f90010488a12u};
+    return pf::meta::details::ID{0x850db9b941d4bc9cu, 0x3522ed58d014a42cu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E3 &>() {
-    return pf::meta::ID{0xd84064f05f785329u, 0x867261c52dfd748fu};
+    return pf::meta::details::ID{0x3b27f8f97ff3fbe1u, 0xeb23176eb2655fd1u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E3 &&>() {
-    return pf::meta::ID{0xb729206b6df4f0e9u, 0x5a14b5c5ad082ca0u};
+    return pf::meta::details::ID{0xae00795ab644b7d2u, 0xd77e8f1aaf60cb32u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E3 &>() {
-    return pf::meta::ID{0x55c46bea824237eeu, 0xa96f2c3297741a3fu};
+    return pf::meta::details::ID{0x170a62d9607cb291u, 0x72215c83e795f69fu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E3 *>() {
-    return pf::meta::ID{0x4334a64d41da7201u, 0x1a57be128d2f4451u};
+    return pf::meta::details::ID{0x9d3ba07992ce55b2u, 0xb952420336d3889au};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E3 *>() {
-    return pf::meta::ID{0xa8a4e7a5619eb592u, 0xeb3a93bde3e8ea2cu};
+    return pf::meta::details::ID{0x4686ebe46bac8097u, 0x63071c6d6037571cu};
 }
 /****************************** pf::E3 END ******************************/
 
 /****************************** pf::E3::pf::E3::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E3::A>() {
-return pf::meta::ID{0xcd125d31c04066fu, 0x9b43efa65330d2a6u};
+return pf::meta::details::ID{0x10e7ee3bf051a3a6u, 0xb5e18dc9bac0a326u};
 }
 /****************************** pf::E3::pf::E3::A END ******************************/
 
 /****************************** pf::E3::pf::E3::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E3::B>() {
-return pf::meta::ID{0x1272d86aaf64532cu, 0xe9f2a3d2cadb0b8fu};
+return pf::meta::details::ID{0x9686331f8267e44bu, 0x67819767d71bce02u};
 }
 /****************************** pf::E3::pf::E3::B END ******************************/
 
 /****************************** pf::E3::pf::E3::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E3::C>() {
-return pf::meta::ID{0x27fc328664b48100u, 0xbb8975850ffdf35bu};
+return pf::meta::details::ID{0x3f01cda31b0ab7eu, 0x9c711454fb47d523u};
 }
 /****************************** pf::E3::pf::E3::C END ******************************/
 
 /****************************** pf::E3::pf::E3::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E3::D>() {
-return pf::meta::ID{0xbdcd877f370e533u, 0x142f2e30069a33a2u};
+return pf::meta::details::ID{0xc326f932289479c3u, 0xd1a22c07960cbe44u};
 }
 /****************************** pf::E3::pf::E3::D END ******************************/
 
 /****************************** pf::E3::pf::E3::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E3::E>() {
-return pf::meta::ID{0x767aa8f6a1443cbfu, 0xdcf65b15a8c94660u};
+return pf::meta::details::ID{0x33d83839cde160f4u, 0x24fc793449fa4126u};
 }
 /****************************** pf::E3::pf::E3::E END ******************************/
 }
 /****************************** pf::E4::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3dea5a4a2f1eab6fu, 0x2595cc957869c9d4u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xab3cd4a798557326u, 0xa17f756375497af9u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x3dea5a4a2f1eab6fu, 0x2595cc957869c9d4u};
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xab3cd4a798557326u, 0xa17f756375497af9u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1301,12 +1305,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x3dea5a4a2f1eab6fu, 0x2595cc9
 
 /****************************** pf::E4::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5d330b31f16af274u, 0x47d6342c2120874fu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x8628c8f05acbdaacu, 0xa14d4f5e604d27afu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x5d330b31f16af274u, 0x47d6342c2120874fu};
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x8628c8f05acbdaacu, 0xa14d4f5e604d27afu};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1331,12 +1335,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x5d330b31f16af274u, 0x47d6342
 
 /****************************** pf::E4::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x882e7b967af4eec4u, 0x808230facef57616u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xb7843d09a528c55au, 0x532582c7407a0b05u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x882e7b967af4eec4u, 0x808230facef57616u};
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xb7843d09a528c55au, 0x532582c7407a0b05u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1361,12 +1365,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x882e7b967af4eec4u, 0x808230f
 
 /****************************** pf::E4::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x329167c6cdfe1389u, 0xd883e6b226ad9371u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x838d64a44570377eu, 0x6544602168b60321u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x329167c6cdfe1389u, 0xd883e6b226ad9371u};
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x838d64a44570377eu, 0x6544602168b60321u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1391,12 +1395,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x329167c6cdfe1389u, 0xd883e6b
 
 /****************************** pf::E4::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xbe301daa6ab2b45eu, 0xd8ae2adf993c5deu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x205dcbe796bb7c2bu, 0x297063d202018985u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xbe301daa6ab2b45eu, 0xd8ae2adf993c5deu};
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x205dcbe796bb7c2bu, 0x297063d202018985u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1421,12 +1425,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xbe301daa6ab2b45eu, 0xd8ae2ad
 
 /****************************** pf::E4 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {
     struct details {
         
     };
     using Type = pf::E4;
-    constexpr static ID TypeID = pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
@@ -1450,110 +1454,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x3dea5a4a2f1eab6fu, 0x2595cc957869c9d4u}, pf::meta::ID{0x5d330b31f16af274u, 0x47d6342c2120874fu}, pf::meta::ID{0x882e7b967af4eec4u, 0x808230facef57616u}, pf::meta::ID{0x329167c6cdfe1389u, 0xd883e6b226ad9371u}, pf::meta::ID{0xbe301daa6ab2b45eu, 0xd8ae2adf993c5deu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0xab3cd4a798557326u, 0xa17f756375497af9u}, pf::meta::details::ID{0x8628c8f05acbdaacu, 0xa14d4f5e604d27afu}, pf::meta::details::ID{0xb7843d09a528c55au, 0x532582c7407a0b05u}, pf::meta::details::ID{0x838d64a44570377eu, 0x6544602168b60321u}, pf::meta::details::ID{0x205dcbe796bb7c2bu, 0x297063d202018985u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x61b4cd332aec456cu, 0xc6eb3e689737ca63u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x61b4cd332aec456cu, 0xc6eb3e689737ca63u}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4ddef32bfe3fa8b9u, 0xa3d8362744f44c83u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x4ddef32bfe3fa8b9u, 0xa3d8362744f44c83u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x321cfe72880ffec4u, 0x68dafa6b523e6b1cu}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0x321cfe72880ffec4u, 0x68dafa6b523e6b1cu}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4139794f37ac73b5u, 0x239c3d7faf294fa0u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x4139794f37ac73b5u, 0x239c3d7faf294fa0u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3238701cdeacd58eu, 0x55a9a4105939a4bbu}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x3238701cdeacd58eu, 0x55a9a4105939a4bbu}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xded4461e69c9b490u, 0xb7c0f022c3d5c751u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xded4461e69c9b490u, 0xb7c0f022c3d5c751u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xcb53d600bb9ecd1eu, 0xea67faf394d773e2u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0xcb53d600bb9ecd1eu, 0xea67faf394d773e2u}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x80f03e12d89ec21fu, 0x62a89a8f365cd6d5u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x80f03e12d89ec21fu, 0x62a89a8f365cd6d5u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4e5a7582147715b9u, 0x826fa48aa5da888cu}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x4e5a7582147715b9u, 0x826fa48aa5da888cu}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xb8153837f89dfcfeu, 0x92c5a9d8d9ac56c3u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0xb8153837f89dfcfeu, 0x92c5a9d8d9ac56c3u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x9be8d43d42c34352u, 0x9dc09fcd9b2f5e1u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x9be8d43d42c34352u, 0x9dc09fcd9b2f5e1u}, pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xcaef5152c42da5d0u, 0xb4143f231d10a485u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0xcaef5152c42da5d0u, 0xb4143f231d10a485u}, pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u}> {};
 
 /****************************** pf::E4 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E4 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E4>() {
-    return pf::meta::ID{0x6ab1b840684ce0fdu, 0x20a347d128c86992u};
+    return pf::meta::details::ID{0xb217ab9e81be3dfcu, 0x9bd1d0b941be10a5u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E4>() {
-    return pf::meta::ID{0x61b4cd332aec456cu, 0xc6eb3e689737ca63u};
+    return pf::meta::details::ID{0x4ddef32bfe3fa8b9u, 0xa3d8362744f44c83u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E4 &>() {
-    return pf::meta::ID{0x321cfe72880ffec4u, 0x68dafa6b523e6b1cu};
+    return pf::meta::details::ID{0x4139794f37ac73b5u, 0x239c3d7faf294fa0u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E4 &&>() {
-    return pf::meta::ID{0x3238701cdeacd58eu, 0x55a9a4105939a4bbu};
+    return pf::meta::details::ID{0xded4461e69c9b490u, 0xb7c0f022c3d5c751u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E4 &>() {
-    return pf::meta::ID{0xcb53d600bb9ecd1eu, 0xea67faf394d773e2u};
+    return pf::meta::details::ID{0x80f03e12d89ec21fu, 0x62a89a8f365cd6d5u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E4 *>() {
-    return pf::meta::ID{0x4e5a7582147715b9u, 0x826fa48aa5da888cu};
+    return pf::meta::details::ID{0xb8153837f89dfcfeu, 0x92c5a9d8d9ac56c3u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E4 *>() {
-    return pf::meta::ID{0x9be8d43d42c34352u, 0x9dc09fcd9b2f5e1u};
+    return pf::meta::details::ID{0xcaef5152c42da5d0u, 0xb4143f231d10a485u};
 }
 /****************************** pf::E4 END ******************************/
 
 /****************************** pf::E4::pf::E4::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E4::A>() {
-return pf::meta::ID{0x3dea5a4a2f1eab6fu, 0x2595cc957869c9d4u};
+return pf::meta::details::ID{0xab3cd4a798557326u, 0xa17f756375497af9u};
 }
 /****************************** pf::E4::pf::E4::A END ******************************/
 
 /****************************** pf::E4::pf::E4::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E4::B>() {
-return pf::meta::ID{0x5d330b31f16af274u, 0x47d6342c2120874fu};
+return pf::meta::details::ID{0x8628c8f05acbdaacu, 0xa14d4f5e604d27afu};
 }
 /****************************** pf::E4::pf::E4::B END ******************************/
 
 /****************************** pf::E4::pf::E4::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E4::C>() {
-return pf::meta::ID{0x882e7b967af4eec4u, 0x808230facef57616u};
+return pf::meta::details::ID{0xb7843d09a528c55au, 0x532582c7407a0b05u};
 }
 /****************************** pf::E4::pf::E4::C END ******************************/
 
 /****************************** pf::E4::pf::E4::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E4::D>() {
-return pf::meta::ID{0x329167c6cdfe1389u, 0xd883e6b226ad9371u};
+return pf::meta::details::ID{0x838d64a44570377eu, 0x6544602168b60321u};
 }
 /****************************** pf::E4::pf::E4::D END ******************************/
 
 /****************************** pf::E4::pf::E4::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E4::E>() {
-return pf::meta::ID{0xbe301daa6ab2b45eu, 0xd8ae2adf993c5deu};
+return pf::meta::details::ID{0x205dcbe796bb7c2bu, 0x297063d202018985u};
 }
 /****************************** pf::E4::pf::E4::E END ******************************/
 }
 /****************************** pf::E5::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5b050a06a1681042u, 0xf81b777997222c8eu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x6e0437d020ee0abfu, 0x45f6fb9ba84fda3bu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x5b050a06a1681042u, 0xf81b777997222c8eu};
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x6e0437d020ee0abfu, 0x45f6fb9ba84fda3bu};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1578,12 +1582,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x5b050a06a1681042u, 0xf81b777
 
 /****************************** pf::E5::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x97bb98696a4bb944u, 0x895fa468cb1989f0u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xda9f3c29a6d1266bu, 0x9109b49941d55694u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x97bb98696a4bb944u, 0x895fa468cb1989f0u};
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xda9f3c29a6d1266bu, 0x9109b49941d55694u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1608,12 +1612,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x97bb98696a4bb944u, 0x895fa46
 
 /****************************** pf::E5::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x25e88baed59efa22u, 0x883185920f9eb4f3u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xbb6aa1dc3ee43996u, 0x41b22392261e165eu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x25e88baed59efa22u, 0x883185920f9eb4f3u};
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xbb6aa1dc3ee43996u, 0x41b22392261e165eu};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1638,12 +1642,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x25e88baed59efa22u, 0x8831859
 
 /****************************** pf::E5::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x3cadd132867370f1u, 0x5cf782cd023500acu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x8bbf0f4d9d5327e5u, 0x7b54ae39514a87bdu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x3cadd132867370f1u, 0x5cf782cd023500acu};
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x8bbf0f4d9d5327e5u, 0x7b54ae39514a87bdu};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1668,12 +1672,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x3cadd132867370f1u, 0x5cf782c
 
 /****************************** pf::E5::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6d69096d104d4e82u, 0xb3daa6b29dccd63cu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xcefc7f92dc526b66u, 0x88e64400158874b4u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x6d69096d104d4e82u, 0xb3daa6b29dccd63cu};
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xcefc7f92dc526b66u, 0x88e64400158874b4u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1698,12 +1702,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x6d69096d104d4e82u, 0xb3daa6b
 
 /****************************** pf::E5 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {
     struct details {
         
     };
     using Type = pf::E5;
-    constexpr static ID TypeID = pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
@@ -1727,110 +1731,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xa380db69cf8725d0u, 0xe122244
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x5b050a06a1681042u, 0xf81b777997222c8eu}, pf::meta::ID{0x97bb98696a4bb944u, 0x895fa468cb1989f0u}, pf::meta::ID{0x25e88baed59efa22u, 0x883185920f9eb4f3u}, pf::meta::ID{0x3cadd132867370f1u, 0x5cf782cd023500acu}, pf::meta::ID{0x6d69096d104d4e82u, 0xb3daa6b29dccd63cu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x6e0437d020ee0abfu, 0x45f6fb9ba84fda3bu}, pf::meta::details::ID{0xda9f3c29a6d1266bu, 0x9109b49941d55694u}, pf::meta::details::ID{0xbb6aa1dc3ee43996u, 0x41b22392261e165eu}, pf::meta::details::ID{0x8bbf0f4d9d5327e5u, 0x7b54ae39514a87bdu}, pf::meta::details::ID{0xcefc7f92dc526b66u, 0x88e64400158874b4u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x117ac81f4740d3f2u, 0xd5a807d66f2e1e78u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x117ac81f4740d3f2u, 0xd5a807d66f2e1e78u}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x3f8367fcce138d0u, 0x751242577e7637e8u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x3f8367fcce138d0u, 0x751242577e7637e8u}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6369928dd9bd49f0u, 0x768eea13756ff219u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0x6369928dd9bd49f0u, 0x768eea13756ff219u}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xbc13b2a9b4a55064u, 0xe46fb421dfe007eau}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0xbc13b2a9b4a55064u, 0xe46fb421dfe007eau}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xcb3476a666d25aa4u, 0x968ba818d646c5e0u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0xcb3476a666d25aa4u, 0x968ba818d646c5e0u}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9041f1e7d412179bu, 0xc07641fee20ba8e5u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x9041f1e7d412179bu, 0xc07641fee20ba8e5u}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xbec0226544216bc3u, 0xcb2b7de22d6f3cecu}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0xbec0226544216bc3u, 0xcb2b7de22d6f3cecu}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf4e6838b4b8f6142u, 0x243691791378cb6fu}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0xf4e6838b4b8f6142u, 0x243691791378cb6fu}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x8a9805efe20b94e4u, 0x54f04650bf0af891u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x8a9805efe20b94e4u, 0x54f04650bf0af891u}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xff29eb31b03c2666u, 0x5e5bee6c79db2f39u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0xff29eb31b03c2666u, 0x5e5bee6c79db2f39u}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x99fa6526d6377375u, 0x7786f76462138e65u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x99fa6526d6377375u, 0x7786f76462138e65u}, pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x849c9a6ce60e0f7bu, 0x1a4a78192d074370u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x849c9a6ce60e0f7bu, 0x1a4a78192d074370u}, pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u}> {};
 
 /****************************** pf::E5 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E5 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E5>() {
-    return pf::meta::ID{0xa380db69cf8725d0u, 0xe1222444e994bbe9u};
+    return pf::meta::details::ID{0x87734c199b0335cdu, 0x963661f00b6d023u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E5>() {
-    return pf::meta::ID{0x117ac81f4740d3f2u, 0xd5a807d66f2e1e78u};
+    return pf::meta::details::ID{0x3f8367fcce138d0u, 0x751242577e7637e8u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E5 &>() {
-    return pf::meta::ID{0x6369928dd9bd49f0u, 0x768eea13756ff219u};
+    return pf::meta::details::ID{0xbc13b2a9b4a55064u, 0xe46fb421dfe007eau};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E5 &&>() {
-    return pf::meta::ID{0xcb3476a666d25aa4u, 0x968ba818d646c5e0u};
+    return pf::meta::details::ID{0x9041f1e7d412179bu, 0xc07641fee20ba8e5u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E5 &>() {
-    return pf::meta::ID{0xbec0226544216bc3u, 0xcb2b7de22d6f3cecu};
+    return pf::meta::details::ID{0xf4e6838b4b8f6142u, 0x243691791378cb6fu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E5 *>() {
-    return pf::meta::ID{0x8a9805efe20b94e4u, 0x54f04650bf0af891u};
+    return pf::meta::details::ID{0xff29eb31b03c2666u, 0x5e5bee6c79db2f39u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E5 *>() {
-    return pf::meta::ID{0x99fa6526d6377375u, 0x7786f76462138e65u};
+    return pf::meta::details::ID{0x849c9a6ce60e0f7bu, 0x1a4a78192d074370u};
 }
 /****************************** pf::E5 END ******************************/
 
 /****************************** pf::E5::pf::E5::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E5::A>() {
-return pf::meta::ID{0x5b050a06a1681042u, 0xf81b777997222c8eu};
+return pf::meta::details::ID{0x6e0437d020ee0abfu, 0x45f6fb9ba84fda3bu};
 }
 /****************************** pf::E5::pf::E5::A END ******************************/
 
 /****************************** pf::E5::pf::E5::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E5::B>() {
-return pf::meta::ID{0x97bb98696a4bb944u, 0x895fa468cb1989f0u};
+return pf::meta::details::ID{0xda9f3c29a6d1266bu, 0x9109b49941d55694u};
 }
 /****************************** pf::E5::pf::E5::B END ******************************/
 
 /****************************** pf::E5::pf::E5::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E5::C>() {
-return pf::meta::ID{0x25e88baed59efa22u, 0x883185920f9eb4f3u};
+return pf::meta::details::ID{0xbb6aa1dc3ee43996u, 0x41b22392261e165eu};
 }
 /****************************** pf::E5::pf::E5::C END ******************************/
 
 /****************************** pf::E5::pf::E5::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E5::D>() {
-return pf::meta::ID{0x3cadd132867370f1u, 0x5cf782cd023500acu};
+return pf::meta::details::ID{0x8bbf0f4d9d5327e5u, 0x7b54ae39514a87bdu};
 }
 /****************************** pf::E5::pf::E5::D END ******************************/
 
 /****************************** pf::E5::pf::E5::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E5::E>() {
-return pf::meta::ID{0x6d69096d104d4e82u, 0xb3daa6b29dccd63cu};
+return pf::meta::details::ID{0xcefc7f92dc526b66u, 0x88e64400158874b4u};
 }
 /****************************** pf::E5::pf::E5::E END ******************************/
 }
 /****************************** pf::E6::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x35d4db8340e280bau, 0xe6d2149eb673101fu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x5433e7ddc95482e2u, 0x94e19592c30809d5u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x35d4db8340e280bau, 0xe6d2149eb673101fu};
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x5433e7ddc95482e2u, 0x94e19592c30809d5u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1855,12 +1859,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x35d4db8340e280bau, 0xe6d2149
 
 /****************************** pf::E6::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6337e719731d6687u, 0x9de7f9804016f810u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xc27cba81c7891badu, 0x55b75fb9148e09d6u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x6337e719731d6687u, 0x9de7f9804016f810u};
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xc27cba81c7891badu, 0x55b75fb9148e09d6u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1885,12 +1889,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x6337e719731d6687u, 0x9de7f98
 
 /****************************** pf::E6::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x26d143de9fa561a1u, 0x596ca5823f7cc67fu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xe7f5ef95fa5c5abcu, 0xf81c497e17af5cb3u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x26d143de9fa561a1u, 0x596ca5823f7cc67fu};
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xe7f5ef95fa5c5abcu, 0xf81c497e17af5cb3u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1915,12 +1919,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x26d143de9fa561a1u, 0x596ca58
 
 /****************************** pf::E6::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x2c101a8b1d8e9f4du, 0x8ee7b9d391de4c6fu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xe47dc80b00efa974u, 0xf3d911f11edbde54u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x2c101a8b1d8e9f4du, 0x8ee7b9d391de4c6fu};
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xe47dc80b00efa974u, 0xf3d911f11edbde54u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1945,12 +1949,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x2c101a8b1d8e9f4du, 0x8ee7b9d
 
 /****************************** pf::E6::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xc4e851a0f54ec7c9u, 0x852305975654b1bdu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xff2e60fda7a89b87u, 0xe6c8183bedccd7d5u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xc4e851a0f54ec7c9u, 0x852305975654b1bdu};
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xff2e60fda7a89b87u, 0xe6c8183bedccd7d5u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -1975,12 +1979,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xc4e851a0f54ec7c9u, 0x8523059
 
 /****************************** pf::E6 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {
     struct details {
         
     };
     using Type = pf::E6;
-    constexpr static ID TypeID = pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
@@ -2004,110 +2008,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad2
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x35d4db8340e280bau, 0xe6d2149eb673101fu}, pf::meta::ID{0x6337e719731d6687u, 0x9de7f9804016f810u}, pf::meta::ID{0x26d143de9fa561a1u, 0x596ca5823f7cc67fu}, pf::meta::ID{0x2c101a8b1d8e9f4du, 0x8ee7b9d391de4c6fu}, pf::meta::ID{0xc4e851a0f54ec7c9u, 0x852305975654b1bdu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x5433e7ddc95482e2u, 0x94e19592c30809d5u}, pf::meta::details::ID{0xc27cba81c7891badu, 0x55b75fb9148e09d6u}, pf::meta::details::ID{0xe7f5ef95fa5c5abcu, 0xf81c497e17af5cb3u}, pf::meta::details::ID{0xe47dc80b00efa974u, 0xf3d911f11edbde54u}, pf::meta::details::ID{0xff2e60fda7a89b87u, 0xe6c8183bedccd7d5u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe19dc613621efa6au, 0x12006605ca2949ccu}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0xe19dc613621efa6au, 0x12006605ca2949ccu}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x6725585f029399b9u, 0x8534b00d4b260038u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x6725585f029399b9u, 0x8534b00d4b260038u}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x2d1eefb7028d4b82u, 0xe2525714fe036344u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0x2d1eefb7028d4b82u, 0xe2525714fe036344u}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x1bfdf607eb91b97bu, 0x619deb9f0115a9a8u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x1bfdf607eb91b97bu, 0x619deb9f0115a9a8u}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5b3986ad243d0fbu, 0x7d335537a74d01f5u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x5b3986ad243d0fbu, 0x7d335537a74d01f5u}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xd4d6d49bc61e4d42u, 0xca4149e79def0733u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xd4d6d49bc61e4d42u, 0xca4149e79def0733u}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x20924f8ae6cb97a6u, 0x549fd2d637e89319u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x20924f8ae6cb97a6u, 0x549fd2d637e89319u}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x720fcc5dfa675d56u, 0x5c5858f0cadb6dc7u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x720fcc5dfa675d56u, 0x5c5858f0cadb6dc7u}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x194d7e7a3434bf08u, 0x4a83a536683f508du}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x194d7e7a3434bf08u, 0x4a83a536683f508du}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x82e25a460a31201fu, 0x11dd5732c3b0f3dbu}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x82e25a460a31201fu, 0x11dd5732c3b0f3dbu}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5741dadf747c730u, 0x5dc880f0da37915u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x5741dadf747c730u, 0x5dc880f0da37915u}, pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xdae1ecdca189d567u, 0x23d4efde3ba41c5bu}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0xdae1ecdca189d567u, 0x23d4efde3ba41c5bu}, pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u}> {};
 
 /****************************** pf::E6 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E6 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E6>() {
-    return pf::meta::ID{0x4ee2bae06e9b5c2eu, 0xc89fad22e6b93831u};
+    return pf::meta::details::ID{0xff3442476d8efc6u, 0xcd4d776b9bb74db3u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E6>() {
-    return pf::meta::ID{0xe19dc613621efa6au, 0x12006605ca2949ccu};
+    return pf::meta::details::ID{0x6725585f029399b9u, 0x8534b00d4b260038u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E6 &>() {
-    return pf::meta::ID{0x2d1eefb7028d4b82u, 0xe2525714fe036344u};
+    return pf::meta::details::ID{0x1bfdf607eb91b97bu, 0x619deb9f0115a9a8u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E6 &&>() {
-    return pf::meta::ID{0x5b3986ad243d0fbu, 0x7d335537a74d01f5u};
+    return pf::meta::details::ID{0xd4d6d49bc61e4d42u, 0xca4149e79def0733u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E6 &>() {
-    return pf::meta::ID{0x20924f8ae6cb97a6u, 0x549fd2d637e89319u};
+    return pf::meta::details::ID{0x720fcc5dfa675d56u, 0x5c5858f0cadb6dc7u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E6 *>() {
-    return pf::meta::ID{0x194d7e7a3434bf08u, 0x4a83a536683f508du};
+    return pf::meta::details::ID{0x82e25a460a31201fu, 0x11dd5732c3b0f3dbu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E6 *>() {
-    return pf::meta::ID{0x5741dadf747c730u, 0x5dc880f0da37915u};
+    return pf::meta::details::ID{0xdae1ecdca189d567u, 0x23d4efde3ba41c5bu};
 }
 /****************************** pf::E6 END ******************************/
 
 /****************************** pf::E6::pf::E6::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E6::A>() {
-return pf::meta::ID{0x35d4db8340e280bau, 0xe6d2149eb673101fu};
+return pf::meta::details::ID{0x5433e7ddc95482e2u, 0x94e19592c30809d5u};
 }
 /****************************** pf::E6::pf::E6::A END ******************************/
 
 /****************************** pf::E6::pf::E6::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E6::B>() {
-return pf::meta::ID{0x6337e719731d6687u, 0x9de7f9804016f810u};
+return pf::meta::details::ID{0xc27cba81c7891badu, 0x55b75fb9148e09d6u};
 }
 /****************************** pf::E6::pf::E6::B END ******************************/
 
 /****************************** pf::E6::pf::E6::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E6::C>() {
-return pf::meta::ID{0x26d143de9fa561a1u, 0x596ca5823f7cc67fu};
+return pf::meta::details::ID{0xe7f5ef95fa5c5abcu, 0xf81c497e17af5cb3u};
 }
 /****************************** pf::E6::pf::E6::C END ******************************/
 
 /****************************** pf::E6::pf::E6::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E6::D>() {
-return pf::meta::ID{0x2c101a8b1d8e9f4du, 0x8ee7b9d391de4c6fu};
+return pf::meta::details::ID{0xe47dc80b00efa974u, 0xf3d911f11edbde54u};
 }
 /****************************** pf::E6::pf::E6::D END ******************************/
 
 /****************************** pf::E6::pf::E6::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E6::E>() {
-return pf::meta::ID{0xc4e851a0f54ec7c9u, 0x852305975654b1bdu};
+return pf::meta::details::ID{0xff2e60fda7a89b87u, 0xe6c8183bedccd7d5u};
 }
 /****************************** pf::E6::pf::E6::E END ******************************/
 }
 /****************************** pf::E7::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5988a38a9e0e3c8u, 0x4a6f24d6a8f0207au}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xcad8e3bceefddd46u, 0x88aaca05826de1b2u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x5988a38a9e0e3c8u, 0x4a6f24d6a8f0207au};
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID ValueID = pf::meta::details::ID{0xcad8e3bceefddd46u, 0x88aaca05826de1b2u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2132,12 +2136,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x5988a38a9e0e3c8u, 0x4a6f24d6
 
 /****************************** pf::E7::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x73f9a3032b92f3ddu, 0x6d8e9f8eddcff253u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x3c55b4de1d9c4239u, 0x28cf4156318ec399u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x73f9a3032b92f3ddu, 0x6d8e9f8eddcff253u};
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x3c55b4de1d9c4239u, 0x28cf4156318ec399u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2162,12 +2166,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x73f9a3032b92f3ddu, 0x6d8e9f8
 
 /****************************** pf::E7::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x589985450ca41eddu, 0x7291781d431d7efbu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4944eed98f970096u, 0xe9501eede6f5ea33u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x589985450ca41eddu, 0x7291781d431d7efbu};
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x4944eed98f970096u, 0xe9501eede6f5ea33u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2192,12 +2196,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x589985450ca41eddu, 0x7291781
 
 /****************************** pf::E7::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb81cdf455b6cc66eu, 0xf8e6746c7eeda332u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x857fd666718b8674u, 0xeff48b911e1a2cc1u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xb81cdf455b6cc66eu, 0xf8e6746c7eeda332u};
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x857fd666718b8674u, 0xeff48b911e1a2cc1u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2222,12 +2226,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xb81cdf455b6cc66eu, 0xf8e6746
 
 /****************************** pf::E7::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x7412f980d47b9ab1u, 0x3685557ea1b8a2d5u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9f67f8665d613de9u, 0x5d3ab3c00f84746eu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x7412f980d47b9ab1u, 0x3685557ea1b8a2d5u};
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID ValueID = pf::meta::details::ID{0x9f67f8665d613de9u, 0x5d3ab3c00f84746eu};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2252,12 +2256,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x7412f980d47b9ab1u, 0x3685557
 
 /****************************** pf::E7 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {
     struct details {
         
     };
     using Type = pf::E7;
-    constexpr static ID TypeID = pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    constexpr static ID TypeID = pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
@@ -2281,110 +2285,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x5988a38a9e0e3c8u, 0x4a6f24d6a8f0207au}, pf::meta::ID{0x73f9a3032b92f3ddu, 0x6d8e9f8eddcff253u}, pf::meta::ID{0x589985450ca41eddu, 0x7291781d431d7efbu}, pf::meta::ID{0xb81cdf455b6cc66eu, 0xf8e6746c7eeda332u}, pf::meta::ID{0x7412f980d47b9ab1u, 0x3685557ea1b8a2d5u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0xcad8e3bceefddd46u, 0x88aaca05826de1b2u}, pf::meta::details::ID{0x3c55b4de1d9c4239u, 0x28cf4156318ec399u}, pf::meta::details::ID{0x4944eed98f970096u, 0xe9501eede6f5ea33u}, pf::meta::details::ID{0x857fd666718b8674u, 0xeff48b911e1a2cc1u}, pf::meta::details::ID{0x9f67f8665d613de9u, 0x5d3ab3c00f84746eu});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb24f3638ea60c2au, 0xbed0469b943d6cb0u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0xb24f3638ea60c2au, 0xbed0469b943d6cb0u}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x2642f5ca81ee1db5u, 0x91d06995a11fb068u}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x2642f5ca81ee1db5u, 0x91d06995a11fb068u}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe572c370a04b950u, 0x977704a9828d5070u}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xe572c370a04b950u, 0x977704a9828d5070u}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x5bf114cb5e9096f1u, 0x905b579ca0e53149u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x5bf114cb5e9096f1u, 0x905b579ca0e53149u}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x46961039e54b847au, 0xc34c43d6022067bfu}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x46961039e54b847au, 0xc34c43d6022067bfu}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xb391b4440cba6e5du, 0x5e7fe7aaa438a609u}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0xb391b4440cba6e5du, 0x5e7fe7aaa438a609u}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xcd0234a7c38a667du, 0x508a31d9cfa6b821u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0xcd0234a7c38a667du, 0x508a31d9cfa6b821u}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xaa96c9c96308b895u, 0xfb2638a8019e9e46u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0xaa96c9c96308b895u, 0xfb2638a8019e9e46u}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x490a34eaa49d2e8bu, 0x39d185be4e6358au}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x490a34eaa49d2e8bu, 0x39d185be4e6358au}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9405d3a579979e21u, 0x998c7bd1a0e8b36fu}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x9405d3a579979e21u, 0x998c7bd1a0e8b36fu}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x9b2d7d9d1a9fae26u, 0x4094c09e91dc0547u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x9b2d7d9d1a9fae26u, 0x4094c09e91dc0547u}, pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x50208ba3a5c127a6u, 0x174eafe96dd03eb3u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x50208ba3a5c127a6u, 0x174eafe96dd03eb3u}, pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u}> {};
 
 /****************************** pf::E7 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E7 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E7>() {
-    return pf::meta::ID{0xa23b6c2d83f09f0fu, 0x12902bd79bf413eeu};
+    return pf::meta::details::ID{0xf32178682614e8d4u, 0x87d88d24243c83f2u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E7>() {
-    return pf::meta::ID{0xb24f3638ea60c2au, 0xbed0469b943d6cb0u};
+    return pf::meta::details::ID{0x2642f5ca81ee1db5u, 0x91d06995a11fb068u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E7 &>() {
-    return pf::meta::ID{0xe572c370a04b950u, 0x977704a9828d5070u};
+    return pf::meta::details::ID{0x5bf114cb5e9096f1u, 0x905b579ca0e53149u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E7 &&>() {
-    return pf::meta::ID{0x46961039e54b847au, 0xc34c43d6022067bfu};
+    return pf::meta::details::ID{0xb391b4440cba6e5du, 0x5e7fe7aaa438a609u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E7 &>() {
-    return pf::meta::ID{0xcd0234a7c38a667du, 0x508a31d9cfa6b821u};
+    return pf::meta::details::ID{0xaa96c9c96308b895u, 0xfb2638a8019e9e46u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E7 *>() {
-    return pf::meta::ID{0x490a34eaa49d2e8bu, 0x39d185be4e6358au};
+    return pf::meta::details::ID{0x9405d3a579979e21u, 0x998c7bd1a0e8b36fu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E7 *>() {
-    return pf::meta::ID{0x9b2d7d9d1a9fae26u, 0x4094c09e91dc0547u};
+    return pf::meta::details::ID{0x50208ba3a5c127a6u, 0x174eafe96dd03eb3u};
 }
 /****************************** pf::E7 END ******************************/
 
 /****************************** pf::E7::pf::E7::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E7::A>() {
-return pf::meta::ID{0x5988a38a9e0e3c8u, 0x4a6f24d6a8f0207au};
+return pf::meta::details::ID{0xcad8e3bceefddd46u, 0x88aaca05826de1b2u};
 }
 /****************************** pf::E7::pf::E7::A END ******************************/
 
 /****************************** pf::E7::pf::E7::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E7::B>() {
-return pf::meta::ID{0x73f9a3032b92f3ddu, 0x6d8e9f8eddcff253u};
+return pf::meta::details::ID{0x3c55b4de1d9c4239u, 0x28cf4156318ec399u};
 }
 /****************************** pf::E7::pf::E7::B END ******************************/
 
 /****************************** pf::E7::pf::E7::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E7::C>() {
-return pf::meta::ID{0x589985450ca41eddu, 0x7291781d431d7efbu};
+return pf::meta::details::ID{0x4944eed98f970096u, 0xe9501eede6f5ea33u};
 }
 /****************************** pf::E7::pf::E7::C END ******************************/
 
 /****************************** pf::E7::pf::E7::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E7::D>() {
-return pf::meta::ID{0xb81cdf455b6cc66eu, 0xf8e6746c7eeda332u};
+return pf::meta::details::ID{0x857fd666718b8674u, 0xeff48b911e1a2cc1u};
 }
 /****************************** pf::E7::pf::E7::D END ******************************/
 
 /****************************** pf::E7::pf::E7::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E7::E>() {
-return pf::meta::ID{0x7412f980d47b9ab1u, 0x3685557ea1b8a2d5u};
+return pf::meta::details::ID{0x9f67f8665d613de9u, 0x5d3ab3c00f84746eu};
 }
 /****************************** pf::E7::pf::E7::E END ******************************/
 }
 /****************************** pf::E8::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xba3aedb582bb65acu, 0x9911628e1ee03ca7u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x219c7ae56485fa3fu, 0xd27801969272b1ccu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xba3aedb582bb65acu, 0x9911628e1ee03ca7u};
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x219c7ae56485fa3fu, 0xd27801969272b1ccu};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2409,12 +2413,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xba3aedb582bb65acu, 0x9911628
 
 /****************************** pf::E8::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x9ebbfeed29ae1919u, 0x27c611f2624314bbu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa544c33f1439638au, 0x84dbc87d17772a64u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x9ebbfeed29ae1919u, 0x27c611f2624314bbu};
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xa544c33f1439638au, 0x84dbc87d17772a64u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2439,12 +2443,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x9ebbfeed29ae1919u, 0x27c611f
 
 /****************************** pf::E8::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x876f2012865b04d3u, 0x6114a92879b5fa8cu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x8bc4f21381daaca9u, 0xcf30e2f3fd2ffc17u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x876f2012865b04d3u, 0x6114a92879b5fa8cu};
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x8bc4f21381daaca9u, 0xcf30e2f3fd2ffc17u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2469,12 +2473,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x876f2012865b04d3u, 0x6114a92
 
 /****************************** pf::E8::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xef669b685a5dc628u, 0xc009761612746c41u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x9a774a8f957adedfu, 0x3e9d425165ca79b7u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xef669b685a5dc628u, 0xc009761612746c41u};
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x9a774a8f957adedfu, 0x3e9d425165ca79b7u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2499,12 +2503,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xef669b685a5dc628u, 0xc009761
 
 /****************************** pf::E8::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x244a246736f6934eu, 0xbe818d0464443817u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x57ff07bbcbc451c0u, 0x67e79b44b9ed6d44u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x244a246736f6934eu, 0xbe818d0464443817u};
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x57ff07bbcbc451c0u, 0x67e79b44b9ed6d44u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2529,12 +2533,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x244a246736f6934eu, 0xbe818d0
 
 /****************************** pf::E8 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {
     struct details {
         
     };
     using Type = pf::E8;
-    constexpr static ID TypeID = pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    constexpr static ID TypeID = pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
@@ -2558,110 +2562,110 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0xba3aedb582bb65acu, 0x9911628e1ee03ca7u}, pf::meta::ID{0x9ebbfeed29ae1919u, 0x27c611f2624314bbu}, pf::meta::ID{0x876f2012865b04d3u, 0x6114a92879b5fa8cu}, pf::meta::ID{0xef669b685a5dc628u, 0xc009761612746c41u}, pf::meta::ID{0x244a246736f6934eu, 0xbe818d0464443817u});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x219c7ae56485fa3fu, 0xd27801969272b1ccu}, pf::meta::details::ID{0xa544c33f1439638au, 0x84dbc87d17772a64u}, pf::meta::details::ID{0x8bc4f21381daaca9u, 0xcf30e2f3fd2ffc17u}, pf::meta::details::ID{0x9a774a8f957adedfu, 0x3e9d425165ca79b7u}, pf::meta::details::ID{0x57ff07bbcbc451c0u, 0x67e79b44b9ed6d44u});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1d0c5306fef24145u, 0x834344e951270f78u}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x1d0c5306fef24145u, 0x834344e951270f78u}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa7a7ffc70f0aae73u, 0xa9f51b362495d65eu}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0xa7a7ffc70f0aae73u, 0xa9f51b362495d65eu}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xb758b420fe6a485du, 0xa5569bcf4dcaa2beu}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xb758b420fe6a485du, 0xa5569bcf4dcaa2beu}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x96d787735840c690u, 0x3d64ca5b067ba01cu}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x96d787735840c690u, 0x3d64ca5b067ba01cu}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6915dd75d1cbe975u, 0x44583a315be566f4u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0x6915dd75d1cbe975u, 0x44583a315be566f4u}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x82cb6a000974cb34u, 0x7ec09267478768efu}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x82cb6a000974cb34u, 0x7ec09267478768efu}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xe14c0d96d88eae5au, 0xaf6d691137b30ac6u}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0xe14c0d96d88eae5au, 0xaf6d691137b30ac6u}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xb86b23f24483f0dau, 0x4ffa8fe19ee56ac9u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0xb86b23f24483f0dau, 0x4ffa8fe19ee56ac9u}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x30b3d391adccfffcu, 0xd0ac967baeedbd6cu}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x30b3d391adccfffcu, 0xd0ac967baeedbd6cu}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x1f7135aec786649au, 0xee8fd92f0ab416d6u}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x1f7135aec786649au, 0xee8fd92f0ab416d6u}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xfa8ff636c3bb111du, 0x4fbed1402dd04cb7u}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0xfa8ff636c3bb111du, 0x4fbed1402dd04cb7u}, pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x54b8e9b923074389u, 0x621b6f8d11f9c19du}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x54b8e9b923074389u, 0x621b6f8d11f9c19du}, pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u}> {};
 
 /****************************** pf::E8 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E8 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E8>() {
-    return pf::meta::ID{0x8878d2b99e1bda02u, 0x92495ea412152df6u};
+    return pf::meta::details::ID{0xdbdee0ba22c443dfu, 0x82af4007d2ed9e70u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E8>() {
-    return pf::meta::ID{0x1d0c5306fef24145u, 0x834344e951270f78u};
+    return pf::meta::details::ID{0xa7a7ffc70f0aae73u, 0xa9f51b362495d65eu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E8 &>() {
-    return pf::meta::ID{0xb758b420fe6a485du, 0xa5569bcf4dcaa2beu};
+    return pf::meta::details::ID{0x96d787735840c690u, 0x3d64ca5b067ba01cu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E8 &&>() {
-    return pf::meta::ID{0x6915dd75d1cbe975u, 0x44583a315be566f4u};
+    return pf::meta::details::ID{0x82cb6a000974cb34u, 0x7ec09267478768efu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E8 &>() {
-    return pf::meta::ID{0xe14c0d96d88eae5au, 0xaf6d691137b30ac6u};
+    return pf::meta::details::ID{0xb86b23f24483f0dau, 0x4ffa8fe19ee56ac9u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E8 *>() {
-    return pf::meta::ID{0x30b3d391adccfffcu, 0xd0ac967baeedbd6cu};
+    return pf::meta::details::ID{0x1f7135aec786649au, 0xee8fd92f0ab416d6u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E8 *>() {
-    return pf::meta::ID{0xfa8ff636c3bb111du, 0x4fbed1402dd04cb7u};
+    return pf::meta::details::ID{0x54b8e9b923074389u, 0x621b6f8d11f9c19du};
 }
 /****************************** pf::E8 END ******************************/
 
 /****************************** pf::E8::pf::E8::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E8::A>() {
-return pf::meta::ID{0xba3aedb582bb65acu, 0x9911628e1ee03ca7u};
+return pf::meta::details::ID{0x219c7ae56485fa3fu, 0xd27801969272b1ccu};
 }
 /****************************** pf::E8::pf::E8::A END ******************************/
 
 /****************************** pf::E8::pf::E8::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E8::B>() {
-return pf::meta::ID{0x9ebbfeed29ae1919u, 0x27c611f2624314bbu};
+return pf::meta::details::ID{0xa544c33f1439638au, 0x84dbc87d17772a64u};
 }
 /****************************** pf::E8::pf::E8::B END ******************************/
 
 /****************************** pf::E8::pf::E8::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E8::C>() {
-return pf::meta::ID{0x876f2012865b04d3u, 0x6114a92879b5fa8cu};
+return pf::meta::details::ID{0x8bc4f21381daaca9u, 0xcf30e2f3fd2ffc17u};
 }
 /****************************** pf::E8::pf::E8::C END ******************************/
 
 /****************************** pf::E8::pf::E8::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E8::D>() {
-return pf::meta::ID{0xef669b685a5dc628u, 0xc009761612746c41u};
+return pf::meta::details::ID{0x9a774a8f957adedfu, 0x3e9d425165ca79b7u};
 }
 /****************************** pf::E8::pf::E8::D END ******************************/
 
 /****************************** pf::E8::pf::E8::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E8::E>() {
-return pf::meta::ID{0x244a246736f6934eu, 0xbe818d0464443817u};
+return pf::meta::details::ID{0x57ff07bbcbc451c0u, 0x67e79b44b9ed6d44u};
 }
 /****************************** pf::E8::pf::E8::E END ******************************/
 }
 /****************************** pf::E9::A START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1abacbdbb94158d7u, 0xadb075242567d7ceu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x463a4f5803311c17u, 0x8f0f16451bbd569au}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x1abacbdbb94158d7u, 0xadb075242567d7ceu};
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x463a4f5803311c17u, 0x8f0f16451bbd569au};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2686,12 +2690,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x1abacbdbb94158d7u, 0xadb0752
 
 /****************************** pf::E9::B START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4dd13ced5fcba7c0u, 0x6ac18171531dca58u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xa4c926c6a088c010u, 0xcff2f3b27c1c6171u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x4dd13ced5fcba7c0u, 0x6ac18171531dca58u};
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xa4c926c6a088c010u, 0xcff2f3b27c1c6171u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2716,12 +2720,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x4dd13ced5fcba7c0u, 0x6ac1817
 
 /****************************** pf::E9::C START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xf0cb2ad9b2ba3eafu, 0x8c0438c6a3b2224au}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x6bf1d64e5c8304f6u, 0x7ca46cd581446f60u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0xf0cb2ad9b2ba3eafu, 0x8c0438c6a3b2224au};
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x6bf1d64e5c8304f6u, 0x7ca46cd581446f60u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2746,12 +2750,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0xf0cb2ad9b2ba3eafu, 0x8c0438c
 
 /****************************** pf::E9::D START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x6edb5a7278114469u, 0x96244b1cb6d8ab32u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x430f10923887cf7u, 0xfebfdd839f431170u}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x6edb5a7278114469u, 0x96244b1cb6d8ab32u};
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID ValueID = pf::meta::details::ID{0x430f10923887cf7u, 0xfebfdd839f431170u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2776,12 +2780,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x6edb5a7278114469u, 0x96244b1
 
 /****************************** pf::E9::E START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x5ea97eb215a38676u, 0x2a8c0e2a41df1faeu}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0xec0202cfbbb089dau, 0xb64f605c0dbf974bu}> {
     struct details {
         
     };
-    constexpr static ID ValueID = pf::meta::ID{0x5ea97eb215a38676u, 0x2a8c0e2a41df1faeu};
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID ValueID = pf::meta::details::ID{0xec0202cfbbb089dau, 0xb64f605c0dbf974bu};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
@@ -2806,12 +2810,12 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x5ea97eb215a38676u, 0x2a8c0e2
 
 /****************************** pf::E9 START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {
     struct details {
         
     };
     using Type = pf::E9;
-    constexpr static ID TypeID = pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    constexpr static ID TypeID = pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
@@ -2835,99 +2839,99 @@ struct pf::meta::details::StaticInfo<pf::meta::ID{0x60015226426621fdu, 0x3bd7759
 
     using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::ID{0x1abacbdbb94158d7u, 0xadb075242567d7ceu}, pf::meta::ID{0x4dd13ced5fcba7c0u, 0x6ac18171531dca58u}, pf::meta::ID{0xf0cb2ad9b2ba3eafu, 0x8c0438c6a3b2224au}, pf::meta::ID{0x6edb5a7278114469u, 0x96244b1cb6d8ab32u}, pf::meta::ID{0x5ea97eb215a38676u, 0x2a8c0e2a41df1faeu});
+    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>(pf::meta::details::ID{0x463a4f5803311c17u, 0x8f0f16451bbd569au}, pf::meta::details::ID{0xa4c926c6a088c010u, 0xcff2f3b27c1c6171u}, pf::meta::details::ID{0x6bf1d64e5c8304f6u, 0x7ca46cd581446f60u}, pf::meta::details::ID{0x430f10923887cf7u, 0xfebfdd839f431170u}, pf::meta::details::ID{0xec0202cfbbb089dau, 0xb64f605c0dbf974bu});
 };
 
 // const
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x7d8034c85bdf718du, 0x107f202d6b18dd5eu}>
-    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::ID{0x7d8034c85bdf718du, 0x107f202d6b18dd5eu}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x2942eaa80590eb9bu, 0x44444991b256c0bu}>
+    : pf::meta::details::StaticInfo_ConstWrap<pf::meta::details::ID{0x2942eaa80590eb9bu, 0x44444991b256c0bu}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 // &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xad66f364cb6dba84u, 0x33590ee5a535165du}>
-    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::ID{0xad66f364cb6dba84u, 0x33590ee5a535165du}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x4e47558ff2c15b27u, 0x27bcf9732a820a19u}>
+    : pf::meta::details::StaticInfo_LRefWrap<pf::meta::details::ID{0x4e47558ff2c15b27u, 0x27bcf9732a820a19u}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 // &&
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0xdbbbf9b1e0af7085u, 0x21a719bccc93ce63u}>
-    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::ID{0xdbbbf9b1e0af7085u, 0x21a719bccc93ce63u}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x91adc83977b1b165u, 0x8ac0cfeaeb4dd44fu}>
+    : pf::meta::details::StaticInfo_RRefWrap<pf::meta::details::ID{0x91adc83977b1b165u, 0x8ac0cfeaeb4dd44fu}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 // const &
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x4dadf84cda0f55eu, 0x334b25198c74073bu}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::ID{0x4dadf84cda0f55eu, 0x334b25198c74073bu}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x30c5e5ea4df9e573u, 0x65b6fd9919c89358u}>
+    : pf::meta::details::StaticInfo_ConstLRefWrap<pf::meta::details::ID{0x30c5e5ea4df9e573u, 0x65b6fd9919c89358u}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 // *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x92e6afed7008ca6au, 0xbf9cd68478edf355u}>
-    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::ID{0x92e6afed7008ca6au, 0xbf9cd68478edf355u}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x1b69c06caece391u, 0xa6badc3137c3efau}>
+    : pf::meta::details::StaticInfo_PtrWrap<pf::meta::details::ID{0x1b69c06caece391u, 0xa6badc3137c3efau}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 // const *
 template<>
-struct pf::meta::details::StaticInfo<pf::meta::ID{0x1faa7a2c02ce6f5fu, 0xd7245c8bbeda8cefu}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::ID{0x1faa7a2c02ce6f5fu, 0xd7245c8bbeda8cefu}, pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u}> {};
+struct pf::meta::details::StaticInfo<pf::meta::details::ID{0x5c29f9cce64924a5u, 0xed0c4eef8a82a379u}>
+    : pf::meta::details::StaticInfo_ConstPtrWrap<pf::meta::details::ID{0x5c29f9cce64924a5u, 0xed0c4eef8a82a379u}, pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du}> {};
 
 /****************************** pf::E9 END ******************************/
 namespace pf::meta::details {
 /****************************** pf::E9 START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E9>() {
-    return pf::meta::ID{0x60015226426621fdu, 0x3bd7759dc0871238u};
+    return pf::meta::details::ID{0x1031967066fed842u, 0x237c338d62ea552du};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E9>() {
-    return pf::meta::ID{0x7d8034c85bdf718du, 0x107f202d6b18dd5eu};
+    return pf::meta::details::ID{0x2942eaa80590eb9bu, 0x44444991b256c0bu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E9 &>() {
-    return pf::meta::ID{0xad66f364cb6dba84u, 0x33590ee5a535165du};
+    return pf::meta::details::ID{0x4e47558ff2c15b27u, 0x27bcf9732a820a19u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E9 &&>() {
-    return pf::meta::ID{0xdbbbf9b1e0af7085u, 0x21a719bccc93ce63u};
+    return pf::meta::details::ID{0x91adc83977b1b165u, 0x8ac0cfeaeb4dd44fu};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E9 &>() {
-    return pf::meta::ID{0x4dadf84cda0f55eu, 0x334b25198c74073bu};
+    return pf::meta::details::ID{0x30c5e5ea4df9e573u, 0x65b6fd9919c89358u};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<pf::E9 *>() {
-    return pf::meta::ID{0x92e6afed7008ca6au, 0xbf9cd68478edf355u};
+    return pf::meta::details::ID{0x1b69c06caece391u, 0xa6badc3137c3efau};
 }
 template<>
 [[nodiscard]] consteval ID getTypeId<const pf::E9 *>() {
-    return pf::meta::ID{0x1faa7a2c02ce6f5fu, 0xd7245c8bbeda8cefu};
+    return pf::meta::details::ID{0x5c29f9cce64924a5u, 0xed0c4eef8a82a379u};
 }
 /****************************** pf::E9 END ******************************/
 
 /****************************** pf::E9::pf::E9::A START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E9::A>() {
-return pf::meta::ID{0x1abacbdbb94158d7u, 0xadb075242567d7ceu};
+return pf::meta::details::ID{0x463a4f5803311c17u, 0x8f0f16451bbd569au};
 }
 /****************************** pf::E9::pf::E9::A END ******************************/
 
 /****************************** pf::E9::pf::E9::B START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E9::B>() {
-return pf::meta::ID{0x4dd13ced5fcba7c0u, 0x6ac18171531dca58u};
+return pf::meta::details::ID{0xa4c926c6a088c010u, 0xcff2f3b27c1c6171u};
 }
 /****************************** pf::E9::pf::E9::B END ******************************/
 
 /****************************** pf::E9::pf::E9::C START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E9::C>() {
-return pf::meta::ID{0xf0cb2ad9b2ba3eafu, 0x8c0438c6a3b2224au};
+return pf::meta::details::ID{0x6bf1d64e5c8304f6u, 0x7ca46cd581446f60u};
 }
 /****************************** pf::E9::pf::E9::C END ******************************/
 
 /****************************** pf::E9::pf::E9::D START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E9::D>() {
-return pf::meta::ID{0x6edb5a7278114469u, 0x96244b1cb6d8ab32u};
+return pf::meta::details::ID{0x430f10923887cf7u, 0xfebfdd839f431170u};
 }
 /****************************** pf::E9::pf::E9::D END ******************************/
 
 /****************************** pf::E9::pf::E9::E START ******************************/
 template<>
 [[nodiscard]] consteval ID getConstantId<pf::E9::E>() {
-return pf::meta::ID{0x5ea97eb215a38676u, 0x2a8c0e2a41df1faeu};
+return pf::meta::details::ID{0xec0202cfbbb089dau, 0xb64f605c0dbf974bu};
 }
 /****************************** pf::E9::pf::E9::E END ******************************/
 }
