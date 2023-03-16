@@ -51,11 +51,11 @@ namespace pf::meta {
 
 
 template<typename E>
-[[nodiscard]] constexpr std::string to_string(E value) {
+[[nodiscard]] constexpr std::string_view to_string(E value) {
     constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
-    std::string result{};
+    std::string_view result{};
     pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
-        if (PF_SPLICE_VALUE(valueInfo) == value) { result = std::string{pf::meta::name_of<valueInfo>()}; }
+        if (PF_SPLICE_VALUE(valueInfo) == value) { result = pf::meta::name_of<valueInfo>(); }
     });
     if (result.empty()) { result = "<INVALID_ENUM_VALUE>"; }
     return result;
