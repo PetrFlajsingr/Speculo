@@ -170,6 +170,6 @@ int main() {
     constexpr auto boolInfo = PF_REFLECT_TYPE(bool);
     static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
     static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool*)>());
-    PF_SPLICE_TYPE(boolInfo) hihi = false;
+    [[maybe_unused]] PF_SPLICE_TYPE(boolInfo) hihi = false;
     return 0;
 }
