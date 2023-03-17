@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include <clang/Tooling/Tooling.h>
+#include <pf_common/macros.h>
+
+#include "clang_tooling_wrap.h"
 
 #include "info_structs.h"
 

@@ -5,7 +5,8 @@
 #ifndef PF_META_CLANG_UTILS_H
 #define PF_META_CLANG_UTILS_H
 
-#include <clang/Tooling/Tooling.h>
+#include "clang_tooling_wrap.h"
+
 #include <pf_common/concepts/ranges.h>
 
 namespace pf::meta_gen {

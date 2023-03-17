@@ -5,6 +5,12 @@
 #ifndef PF_META_FORMAT_H
 #define PF_META_FORMAT_H
 
+#include <pf_common/macros.h>
+
+#if PF_GCC == 1
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <clang/Basic/Diagnostic.h>
 #include <clang/Basic/DiagnosticOptions.h>
 #include <clang/Basic/FileManager.h>
@@ -17,6 +23,10 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/InitLLVM.h>
 #include <llvm/Support/Process.h>
+
+#if PF_GCC == 1
+#pragma GCC diagnostic pop
+#endif
 
 inline const char *getInValidBOM(llvm::StringRef BufStr) {
     // Check to see if the buffer has a UTF Byte Order Mark (BOM).
@@ -55,7 +65,7 @@ inline bool fillRanges(llvm::MemoryBuffer *Code, std::vector<clang::tooling::Ran
 
     auto End = Sources.getLocForEndOfFile(ID);
     unsigned Length = Sources.getFileOffset(End);
-    Ranges.push_back(clang::tooling::Range(0, Length));
+    Ranges.emplace_back(0, Length);
 
     return false;
 }
@@ -110,7 +120,6 @@ inline bool format(llvm::StringRef FileName) {
     clang::FileManager Files(clang::FileSystemOptions(), InMemoryFileSystem);
     clang::DiagnosticsEngine Diagnostics(clang::IntrusiveRefCntPtr<clang::DiagnosticIDs>(new clang::DiagnosticIDs), new clang::DiagnosticOptions);
     clang::SourceManager Sources(Diagnostics, Files);
-    clang::FileID ID = createInMemoryFile(AssumedFileName, Code.get(), Sources, Files, InMemoryFileSystem.get());
     clang::Rewriter Rewrite(Sources, clang::LangOptions());
     clang::tooling::applyAllReplacements(Replaces, Rewrite);
 

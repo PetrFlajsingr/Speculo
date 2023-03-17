@@ -1,20 +1,18 @@
 #include <iostream>
 
-#include <clang/Frontend/FrontendActions.h>
-#include <clang/Tooling/CommonOptionsParser.h>
-#include <clang/Tooling/Tooling.h>
-#include <llvm/Support/CommandLine.h>
 #include <pf_common/ScopeExit.h>
 #include <pf_common/array.h>
 #include <pf_common/concepts/ranges.h>
 
 #include <fmt/core.h>
 
+
 #include "meta/Info.h"
 
 #include "meta_gen/AttributeParser.h"
 #include "meta_gen/info_structs.h"
 #include "meta_gen/TypeIdGenerator.h"
+#include "meta_gen/clang_tooling_compilationdatabase_wrap.h"
 
 #include "format.h"
 
@@ -283,28 +281,28 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
             const auto stringifyAttributes = [](const std::vector<Attribute> &attrs,
                                                 const std::vector<std::string> &argArrayNames) {
                 // TODO assert size == size
-                std::string result{};
+                std::string attributesString{};
                 for (auto i = 0ull; i < attrs.size(); ++i) {
                     const auto &attr = attrs[i];
                     const auto &argArrayName = argArrayNames[i];
-                    result.append(fmt::format(
+                    attributesString.append(fmt::format(
                             R"(pf::meta::Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )",
                             attr.name,
                             argArrayName));
                 }
-                if (!attrs.empty()) { result = result.substr(0, result.length() - 2); }
-                return result;
+                if (!attrs.empty()) { return attributesString.substr(0, attributesString.length() - 2); }
+                return attributesString;
             };
 
             const auto createAttributeArgArray = [](std::string_view name, const Attribute &attr) {
-                std::string result{};
-                result.append(fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
+                std::string attributeArgsStr{};
+                attributeArgsStr.append(fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
                 for (const auto &arg: attr.arguments) {
-                    result.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", ");
+                    attributeArgsStr.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", ");
                 }
-                if (!attr.arguments.empty()) { result = result.substr(0, result.length() - 2); }
-                result.append(");");
-                return result;
+                if (!attr.arguments.empty()) { attributeArgsStr = attributeArgsStr.substr(0, attributeArgsStr.length() - 2); }
+                attributeArgsStr.append(");");
+                return attributeArgsStr;
             };
 
             const auto typeId = gen.generateTypeId();
