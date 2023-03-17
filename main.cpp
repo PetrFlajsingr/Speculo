@@ -2,10 +2,8 @@
 
 #include <pf_common/ScopeExit.h>
 #include <pf_common/array.h>
-#include <pf_common/concepts/ranges.h>
 
 #include <fmt/core.h>
-
 
 #include "meta/Info.h"
 
@@ -13,6 +11,12 @@
 #include "meta_gen/info_structs.h"
 #include "meta_gen/TypeIdGenerator.h"
 #include "meta_gen/clang_tooling_compilationdatabase_wrap.h"
+
+#include "meta_gen/src_templates/GetConstantID_template.h"
+#include "meta_gen/src_templates/GetTypeID_template.h"
+#include "meta_gen/src_templates/MetaFilePrologueEpilogue.h"
+#include "meta_gen/src_templates/StaticTypeInfo_template.h"
+#include "meta_gen/src_templates/StaticValueInfo_template.h"
 
 #include "format.h"
 
@@ -38,156 +42,6 @@ namespace pf::meta_gen {
         return fmt::format("pf::meta::details::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
     }
 
-    constexpr auto StaticEnumTypeInfoTemplate = R"fmt(
-/****************************** {full_name} START ******************************/
-template<>
-struct pf::meta::details::StaticInfo<{type_id}> {{
-    struct details {{
-        {details}
-    }};
-    using Type = {type};
-    constexpr static ID TypeID = {type_id};
-
-    constexpr static auto SourceFile = R"path({source_file})path";
-    constexpr static std::uint64_t SourceLine = {source_line};
-    constexpr static std::uint64_t SourceColumn = {source_column};
-
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>({attributes});
-
-    constexpr static bool IsEnum = true;
-    constexpr static bool IsEnumValue = false;
-    constexpr static bool IsRecord = false;
-    constexpr static bool IsUnion = false;
-    constexpr static bool IsPrimitiveType = false;
-
-    constexpr static bool IsLvalueReference = false;
-    constexpr static bool IsRvalueReference = false;
-    constexpr static bool IsConst = false;
-    constexpr static bool IsPtr = false;
-
-    constexpr static auto Name = pf::StringLiteral{{"{name}"}};
-    constexpr static auto FullName = pf::StringLiteral{{"{full_name}"}};
-
-    using UnderlyingType = {underlying_type};
-    constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<pf::meta::Info> auto EnumValues = pf::make_array<pf::meta::Info>({enum_value_ids});
-}};
-
-// const
-template<>
-struct pf::meta::details::StaticInfo<{const_type_id}>
-    : pf::meta::details::StaticInfo_ConstWrap<{const_type_id}, {type_id}> {{}};
-// &
-template<>
-struct pf::meta::details::StaticInfo<{lref_type_id}>
-    : pf::meta::details::StaticInfo_LRefWrap<{lref_type_id}, {type_id}> {{}};
-// &&
-template<>
-struct pf::meta::details::StaticInfo<{rref_type_id}>
-    : pf::meta::details::StaticInfo_RRefWrap<{rref_type_id}, {type_id}> {{}};
-// const &
-template<>
-struct pf::meta::details::StaticInfo<{const_lref_type_id}>
-    : pf::meta::details::StaticInfo_ConstLRefWrap<{const_lref_type_id}, {type_id}> {{}};
-// *
-template<>
-struct pf::meta::details::StaticInfo<{ptr_type_id}>
-    : pf::meta::details::StaticInfo_PtrWrap<{ptr_type_id}, {type_id}> {{}};
-// const *
-template<>
-struct pf::meta::details::StaticInfo<{const_ptr_type_id}>
-    : pf::meta::details::StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
-
-/****************************** {full_name} END ******************************/
-)fmt";
-    constexpr auto GetTypeIDTemplate = R"fmt(
-/****************************** {full_name} START ******************************/
-template<>
-[[nodiscard]] consteval ID getTypeId<{type}>() {{
-    return {type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<const {type}>() {{
-    return {const_type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<{type} &>() {{
-    return {lref_type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<{type} &&>() {{
-    return {rref_type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<const {type} &>() {{
-    return {const_lref_type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<{type} *>() {{
-    return {ptr_type_id};
-}}
-template<>
-[[nodiscard]] consteval ID getTypeId<const {type} *>() {{
-    return {const_ptr_type_id};
-}}
-/****************************** {full_name} END ******************************/
-)fmt";
-    constexpr auto GetConstantIDTemplate = R"fmt(
-/****************************** {full_name} START ******************************/
-template<>
-[[nodiscard]] consteval ID getConstantId<{constant}>() {{
-return {value_id};
-}}
-/****************************** {full_name} END ******************************/
-)fmt";
-    constexpr auto StaticEnumValueInfoTemplate = R"fmt(
-/****************************** {full_name} START ******************************/
-template<>
-struct pf::meta::details::StaticInfo<{value_id}> {{
-    struct details {{
-        {details}
-    }};
-    constexpr static ID ValueID = {value_id};
-    constexpr static ID TypeID = {type_id};
-    using Type = {type};
-
-    constexpr static auto SourceFile = R"path({source_file})path";
-    constexpr static std::uint64_t SourceLine = {source_line};
-    constexpr static std::uint64_t SourceColumn = {source_column};
-
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>({attributes});
-
-    constexpr static bool IsEnum = false;
-    constexpr static bool IsEnumValue = true;
-    constexpr static bool IsRecord = false;
-    constexpr static bool IsUnion = false;
-    constexpr static bool IsPrimitiveType = false;
-
-    constexpr static auto Name = StringLiteral{{"{name}"}};
-    constexpr static auto FullName = StringLiteral{{"{full_name}"}};
-
-    constexpr static {underlying_type} UnderlyingValue = {underlying_value};
-    constexpr static {type} Value = {value};
-}};
-/****************************** {full_name} END ******************************/
-)fmt";
-
-    constexpr auto MetaFilePrologue = R"fmt(
-#pragma once
-
-#include "test.h" // FIXME: include file from tool input
-#include <pf_common/array.h>
-#include <pf_common/concepts/ranges.h>
-#include <type_traits>
-#include "meta/details/StaticInfo.h"
-#include "meta/details/StaticInfo_Wrappers.h"
-#include "meta/details/ID.h"
-#include "meta/Attribute.h"
-#include "meta/Info.h"
-)fmt";
-    constexpr auto MetaFileEpilogue = R"fmt(
-
-)fmt";
 
     class ASTConsumer : public clang::ASTConsumer {
     public:
@@ -296,11 +150,14 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
 
             const auto createAttributeArgArray = [](std::string_view name, const Attribute &attr) {
                 std::string attributeArgsStr{};
-                attributeArgsStr.append(fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
+                attributeArgsStr.append(
+                        fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
                 for (const auto &arg: attr.arguments) {
                     attributeArgsStr.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", ");
                 }
-                if (!attr.arguments.empty()) { attributeArgsStr = attributeArgsStr.substr(0, attributeArgsStr.length() - 2); }
+                if (!attr.arguments.empty()) { attributeArgsStr = attributeArgsStr.substr(0, attributeArgsStr.length() -
+                                                                                             2);
+                }
                 attributeArgsStr.append(");");
                 return attributeArgsStr;
             };
@@ -329,7 +186,7 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
                 }
                 const auto attributesStr = stringifyAttributes(info.attributes, argsArrayNames);
 
-                *outStream << fmt::format(StaticEnumValueInfoTemplate, "details"_a = detailsContents,
+                *outStream << fmt::format(StaticValueInfoTemplate_Enum, "details"_a = detailsContents,
                                           "type"_a = result.fullName,
                                           "value_id"_a = idToString(valueId),
                                           "source_file"_a = result.sourceLocation.filename,
@@ -359,7 +216,7 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
             const auto attributesStr = stringifyAttributes(result.attributes, argsArrayNames);
 
             *outStream << fmt::format(
-                    StaticEnumTypeInfoTemplate, "details"_a = detailsContents, "type_id"_a = idToString(typeId),
+                    StaticTypeInfoTemplate_Enum, "details"_a = detailsContents, "type_id"_a = idToString(typeId),
                     "type"_a = result.fullName,
                     "source_file"_a = result.sourceLocation.filename, "source_line"_a = result.sourceLocation.line,
                     "source_column"_a = result.sourceLocation.column, "attributes"_a = attributesStr,
