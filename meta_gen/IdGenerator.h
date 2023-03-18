@@ -12,14 +12,9 @@
 
 namespace pf::meta_gen {
 
-    class TypeIdGenerator {
+    class IdGenerator {
     public:
-        TypeIdGenerator() {
-
-            std::random_device rd{};
-            std::seed_seq ss{rd(), rd(), rd()};
-            gen = std::mt19937_64{ss};
-        }
+        IdGenerator() = default;
 
         [[nodiscard]] pf::meta::details::ID generateTypeId(const std::string &fullTypeName) {
             const auto uuid = uuidNameGenerator(fullTypeName);
@@ -34,7 +29,9 @@ namespace pf::meta_gen {
         uuids::uuid_name_generator uuidNameGenerator{
                 uuids::uuid::from_string("47183823-2574-4bfd-b411-99ed177d3e43").value()};
 
-        std::mt19937_64 gen;
+        std::random_device rd{};
+        std::seed_seq ss{rd(), rd(), rd()};
+        std::mt19937_64 gen{ss};
         std::uniform_int_distribution<std::uint64_t> dis;
     };
 

@@ -5,6 +5,7 @@
 #include "test.meta.h"
 #include "meta/fundamental_types.meta.h"
 #include <optional>
+#include <vector>
 #include <pf_common/concepts/ranges.h>
 
 #include "meta/reflect.h"
@@ -72,6 +73,17 @@ template<typename E>
     std::optional<E> result = std::nullopt;
     pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
         if (pf::meta::name_of<valueInfo>() == name) { result = PF_SPLICE_VALUE(valueInfo); }
+    });
+    return result;
+}
+
+template<typename E>
+[[nodiscard]] constexpr std::vector<E> getEnumValues() {
+    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
+    std::vector<E> result;
+    result.reserve(std::ranges::size(pf::meta::members_of<enumInfo>()));
+    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() {
+        result.emplace_back(PF_SPLICE_VALUE(VI));
     });
     return result;
 }
@@ -176,5 +188,12 @@ int main() {
     static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
     static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool*)>());
     [[maybe_unused]] PF_SPLICE_TYPE(boolInfo) hihi = false;
+
+    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([]<auto VI>() {
+        std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE_VALUE(VI)) << std::endl;
+    });
+    for (const auto v : getEnumValues<pf::SomeEnum>()) {
+        std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl;
+    }
     return 0;
 }

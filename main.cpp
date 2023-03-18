@@ -8,7 +8,7 @@
 #include "meta/Info.h"
 
 #include "meta_gen/AttributeParser.h"
-#include "meta_gen/TypeIdGenerator.h"
+#include "meta_gen/IdGenerator.h"
 #include "meta_gen/clang_tooling_compilationdatabase_wrap.h"
 #include "meta_gen/info_structs.h"
 
@@ -122,7 +122,7 @@ namespace pf::meta_gen {
                 for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }
             }
             using namespace fmt::literals;
-            TypeIdGenerator gen{};
+            IdGenerator gen{};
 
             const auto stringifyAttributes = [](const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames) {
                 // TODO assert size == size
@@ -284,7 +284,7 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
     throw "can't happen";
 }
 
-std::string generateFundamentalStaticTypeInfo(pf::meta_gen::TypeIdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
+std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
                                               std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
                                                                                               InfoType::ConstLvalue, InfoType::Rvalue,
                                                                                               InfoType::Ptr, InfoType::ConstPtr}) {
