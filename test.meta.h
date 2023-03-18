@@ -17,9 +17,9 @@ namespace pf::meta::details {
 template<>
 struct StaticInfo<ID{0xc0597f7732016649u, 0xed19a615bd3023bau}> {
     struct details {
-        constexpr static auto ArgArray_14017047465274703276 = make_array<std::string_view>();
-constexpr static auto ArgArray_13673891239263125564 = make_array<std::string_view>();
-constexpr static auto ArgArray_8534249255453349183 = make_array<std::string_view>();
+        constexpr static auto ArgArray_15844973172496818499 = make_array<std::string_view>();
+constexpr static auto ArgArray_6200244997642944683 = make_array<std::string_view>();
+constexpr static auto ArgArray_18066355727065290048 = make_array<std::string_view>();
 
     };
     constexpr static ID ValueID = ID{0xc0597f7732016649u, 0xed19a615bd3023bau};
@@ -30,14 +30,14 @@ constexpr static auto ArgArray_8534249255453349183 = make_array<std::string_view
     constexpr static std::uint64_t SourceLine = 5;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::test", std::span<const std::string_view>{details::ArgArray_14017047465274703276}}, Attribute{"pf::test2", std::span<const std::string_view>{details::ArgArray_13673891239263125564}}, Attribute{"pf::test3", std::span<const std::string_view>{details::ArgArray_8534249255453349183}});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::test", std::span<const std::string_view>{details::ArgArray_15844973172496818499}}, Attribute{"pf::test2", std::span<const std::string_view>{details::ArgArray_6200244997642944683}}, Attribute{"pf::test3", std::span<const std::string_view>{details::ArgArray_18066355727065290048}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumValue;
 
     constexpr static auto Name = StringLiteral{"Value1"};
     constexpr static auto FullName = StringLiteral{"pf::SomeEnum::Value1"};
 
-    constexpr static bool UnderlyingValue = false;
+    constexpr static int UnderlyingValue = 0;
     constexpr static pf::SomeEnum Value = pf::SomeEnum::Value1;
 };
 /****************************** pf::SomeEnum::Value1 END ******************************/
@@ -63,7 +63,7 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
     constexpr static auto Name = StringLiteral{"Value2"};
     constexpr static auto FullName = StringLiteral{"pf::SomeEnum::Value2"};
 
-    constexpr static bool UnderlyingValue = true;
+    constexpr static int UnderlyingValue = 1;
     constexpr static pf::SomeEnum Value = pf::SomeEnum::Value2;
 };
 /****************************** pf::SomeEnum::Value2 END ******************************/
@@ -72,10 +72,10 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
 template<>
 struct StaticInfo<ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u}> {
     struct details {
-        constexpr static auto ArgArray_17080905502112522546 = make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
-constexpr static auto ArgArray_2982376065364180307 = make_array<std::string_view>();
-constexpr static auto ArgArray_16141665152496846545 = make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
-constexpr static auto ArgArray_3148801850062441214 = make_array<std::string_view>();
+        constexpr static auto ArgArray_5056352057168059699 = make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
+constexpr static auto ArgArray_12251486983126441920 = make_array<std::string_view>();
+constexpr static auto ArgArray_12840053256622293776 = make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
+constexpr static auto ArgArray_729763680906161566 = make_array<std::string_view>();
 
     };
     using Type = pf::SomeEnum;
@@ -85,7 +85,7 @@ constexpr static auto ArgArray_3148801850062441214 = make_array<std::string_view
     constexpr static std::uint64_t SourceLine = 5;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_17080905502112522546}}, Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_2982376065364180307}}, Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_16141665152496846545}}, Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_3148801850062441214}});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_5056352057168059699}}, Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_12251486983126441920}}, Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_12840053256622293776}}, Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_729763680906161566}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -97,7 +97,7 @@ constexpr static auto ArgArray_3148801850062441214 = make_array<std::string_view
     constexpr static auto Name = StringLiteral{"SomeEnum"};
     constexpr static auto FullName = StringLiteral{"pf::SomeEnum"};
 
-    using UnderlyingType = bool;
+    using UnderlyingType = int;
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
     constexpr static RangeOf<Info> auto EnumValues = make_array<Info>(ID{0xc0597f7732016649u, 0xed19a615bd3023bau}, ID{0x445d2037590be14au, 0xd949752de2aa1786u});
 };
