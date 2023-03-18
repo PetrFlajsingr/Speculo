@@ -39,7 +39,7 @@ static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compile
 namespace pf::meta_gen {
 
     [[nodiscard]] std::string idToString(pf::meta::details::ID id) {
-        return fmt::format("pf::meta::details::ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
+        return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
     }
 
 
@@ -140,7 +140,7 @@ namespace pf::meta_gen {
                     const auto &attr = attrs[i];
                     const auto &argArrayName = argArrayNames[i];
                     attributesString.append(fmt::format(
-                            R"(pf::meta::Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )",
+                            R"(Attribute{{"{}", std::span<const std::string_view>{{details::{}}}}}, )",
                             attr.name,
                             argArrayName));
                 }
@@ -151,7 +151,7 @@ namespace pf::meta_gen {
             const auto createAttributeArgArray = [](std::string_view name, const Attribute &attr) {
                 std::string attributeArgsStr{};
                 attributeArgsStr.append(
-                        fmt::format("constexpr static auto {} = pf::make_array<std::string_view>(", name));
+                        fmt::format("constexpr static auto {} = make_array<std::string_view>(", name));
                 for (const auto &arg: attr.arguments) {
                     attributeArgsStr.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", ");
                 }
@@ -228,7 +228,6 @@ namespace pf::meta_gen {
                     "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
                     "const_ptr_type_id"_a = const_ptr_type_id);
 
-            *outStream << "namespace pf::meta::details {";
             *outStream << fmt::format(GetTypeIDTemplate, "full_name"_a = result.fullName, "type"_a = result.fullName,
                                       "type_id"_a = idToString(typeId), "const_type_id"_a = const_type_id,
                                       "lref_type_id"_a = lref_type_id,
@@ -240,7 +239,6 @@ namespace pf::meta_gen {
                                        "full_name"_a = fmt::format("{}::{}", result.fullName, name),
                                        "constant"_a = name, "value_id"_a = id);
             }
-            *outStream << "}";
 
             return result;
         }

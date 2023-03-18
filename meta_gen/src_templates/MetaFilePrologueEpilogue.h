@@ -19,9 +19,11 @@ namespace pf::meta_gen {
 #include "meta/details/ID.h"
 #include "meta/Attribute.h"
 #include "meta/Info.h"
+
+namespace pf::meta::details {
 )fmt";
     constexpr auto MetaFileEpilogue = R"fmt(
-
+}
 )fmt";
 
 }
