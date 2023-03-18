@@ -14,13 +14,14 @@ namespace pf::meta::details {
     enum class StaticInfoType {
         EnumType,
         EnumValue,
-        RcordType,
+        RecordType,
         Constructor,
         Destructor,
         MemberFunction,
         MemberField,
         StaticFunction,
-        StaticField
+        StaticField,
+        FundamentalType
     };
 
     template<ID ID>

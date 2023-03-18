@@ -24,11 +24,7 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
 
     constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>({attributes});
 
-    constexpr static bool IsEnum = false;
-    constexpr static bool IsEnumValue = true;
-    constexpr static bool IsRecord = false;
-    constexpr static bool IsUnion = false;
-    constexpr static bool IsPrimitiveType = false;
+    constexpr static auto StaticInfoObjectType = StaticInfoType::EnumValue;
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
