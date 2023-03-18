@@ -10,6 +10,8 @@
 #include <variant>
 #include <unordered_map>
 
+#include "../meta/details/ID.h"
+
 namespace pf::meta_gen {
 
     struct Attribute {
@@ -18,6 +20,7 @@ namespace pf::meta_gen {
     };
 
     struct TypeInfo {
+        pf::meta::details::ID id;
         std::string fullName;
         std::string name;
         struct {
@@ -29,6 +32,8 @@ namespace pf::meta_gen {
 
     struct EnumTypeInfo : public TypeInfo {
         struct ValueInfo {
+            pf::meta::details::ID id;
+            std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
             struct {
@@ -40,47 +45,6 @@ namespace pf::meta_gen {
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, ValueInfo> values;
         std::string underlyingType;
-    };
-
-    struct Variable {
-        std::string fullName;
-        std::string name;
-        std::string type;
-    };
-
-    struct MemberVariable : Variable {
-    };
-
-    struct Function {
-        std::string fullName;
-        std::string name;
-        std::string type;
-        std::vector<std::pair<std::string, std::string>> args;
-        std::vector<std::string> returnType;
-    };
-
-    struct MemberFunction : Function {
-        bool isConst;
-    };
-
-    struct Constructor {
-        bool isExplicit;
-        std::vector<std::pair<std::string, std::string>> args;
-    };
-
-    struct RecordTypeInfo : public TypeInfo {
-        enum class Type {
-            Struct, Class, Union
-        };
-        Type type;
-
-        std::vector<Constructor> constructors;
-        // destructor
-        std::vector<MemberFunction> memberFunctions;
-        std::vector<Function> staticFunctions;
-        std::vector<Variable> staticVariables;
-        std::vector<MemberVariable> memberVariables;
-        std::vector<std::string> nestedTypes;
     };
 
 

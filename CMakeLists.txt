@@ -28,9 +28,9 @@ find_package(fmt CONFIG REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
-add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp)
 find_package(stduuid CONFIG REQUIRED)
 
+add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp meta_gen/TODO_enum_output.h)
 add_executable(meta_test main_test.cpp)
 
 

@@ -5,8 +5,8 @@
 #ifndef PF_META_DETAILS_ID_H
 #define PF_META_DETAILS_ID_H
 
-#include <array>
 #include "meta_helpers.h"
+#include <array>
 
 namespace pf::meta::details {
 
@@ -20,6 +20,8 @@ namespace pf::meta::details {
         [[nodiscard]] constexpr bool isValid() const { return id[0] != 0x0u && id[1] != 0x0u; }
 
         [[nodiscard]] constexpr bool operator==(const ID &other) const noexcept = default;
+
+        constexpr static ID Invalid() { return ID{0x0u, 0x0u}; };
 
         std::array<std::uint64_t, 2> id;
     };
@@ -36,6 +38,6 @@ namespace pf::meta::details {
         return {};
     }
 
-}
+}// namespace pf::meta::details
 
-#endif //PF_META_DETAILS_ID_H
+#endif//PF_META_DETAILS_ID_H

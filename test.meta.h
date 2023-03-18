@@ -17,20 +17,20 @@ namespace pf::meta::details {
 template<>
 struct StaticInfo<ID{0xc0597f7732016649u, 0xed19a615bd3023bau}> {
     struct details {
-        constexpr static auto ArgArray_15844973172496818499 = make_array<std::string_view>();
-constexpr static auto ArgArray_6200244997642944683 = make_array<std::string_view>();
-constexpr static auto ArgArray_18066355727065290048 = make_array<std::string_view>();
+        constexpr static auto ArgArray_4371875128473051321 = make_array<std::string_view>();
+constexpr static auto ArgArray_4491124210048082010 = make_array<std::string_view>();
+constexpr static auto ArgArray_15097458155946262550 = make_array<std::string_view>();
 
     };
     constexpr static ID ValueID = ID{0xc0597f7732016649u, 0xed19a615bd3023bau};
-    constexpr static ID TypeID = ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u};
+    constexpr static ID TypeID = ID{0xc0597f7732016649u, 0xed19a615bd3023bau};
     using Type = pf::SomeEnum;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 5;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceLine = 6;
+    constexpr static std::uint64_t SourceColumn = 92;
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::test", std::span<const std::string_view>{details::ArgArray_15844973172496818499}}, Attribute{"pf::test2", std::span<const std::string_view>{details::ArgArray_6200244997642944683}}, Attribute{"pf::test3", std::span<const std::string_view>{details::ArgArray_18066355727065290048}});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::test", std::span<const std::string_view>{details::ArgArray_4371875128473051321}}, Attribute{"pf::test2", std::span<const std::string_view>{details::ArgArray_4491124210048082010}}, Attribute{"pf::test3", std::span<const std::string_view>{details::ArgArray_15097458155946262550}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumValue;
 
@@ -49,12 +49,12 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
         
     };
     constexpr static ID ValueID = ID{0x445d2037590be14au, 0xd949752de2aa1786u};
-    constexpr static ID TypeID = ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u};
+    constexpr static ID TypeID = ID{0x445d2037590be14au, 0xd949752de2aa1786u};
     using Type = pf::SomeEnum;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 5;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceLine = 6;
+    constexpr static std::uint64_t SourceColumn = 138;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -72,10 +72,10 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
 template<>
 struct StaticInfo<ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u}> {
     struct details {
-        constexpr static auto ArgArray_5056352057168059699 = make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
-constexpr static auto ArgArray_12251486983126441920 = make_array<std::string_view>();
-constexpr static auto ArgArray_12840053256622293776 = make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
-constexpr static auto ArgArray_729763680906161566 = make_array<std::string_view>();
+        constexpr static auto ArgArray_9675262143886934025 = make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
+constexpr static auto ArgArray_7373583208148062503 = make_array<std::string_view>();
+constexpr static auto ArgArray_14879294174180100374 = make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
+constexpr static auto ArgArray_15702518898743246785 = make_array<std::string_view>();
 
     };
     using Type = pf::SomeEnum;
@@ -85,7 +85,7 @@ constexpr static auto ArgArray_729763680906161566 = make_array<std::string_view>
     constexpr static std::uint64_t SourceLine = 5;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_5056352057168059699}}, Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_12251486983126441920}}, Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_12840053256622293776}}, Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_729763680906161566}});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>(Attribute{"pf::operators", std::span<const std::string_view>{details::ArgArray_9675262143886934025}}, Attribute{"pf::hihi", std::span<const std::string_view>{details::ArgArray_7373583208148062503}}, Attribute{"pf::operators2", std::span<const std::string_view>{details::ArgArray_14879294174180100374}}, Attribute{"pf::hihi2", std::span<const std::string_view>{details::ArgArray_15702518898743246785}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -181,12 +181,12 @@ struct StaticInfo<ID{0xf95af1e2a6c2c3d2u, 0xe4dc739d8155b99au}> {
         
     };
     constexpr static ID ValueID = ID{0xf95af1e2a6c2c3d2u, 0xe4dc739d8155b99au};
-    constexpr static ID TypeID = ID{0xb35c649feb784432u, 0xa4d5a0126de63c87u};
+    constexpr static ID TypeID = ID{0xf95af1e2a6c2c3d2u, 0xe4dc739d8155b99au};
     using Type = pf::Test::E;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 8;
-    constexpr static std::uint64_t SourceColumn = 9;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -207,12 +207,12 @@ struct StaticInfo<ID{0x4c5823d476eb71d7u, 0x934d6de97e7b44b3u}> {
         
     };
     constexpr static ID ValueID = ID{0x4c5823d476eb71d7u, 0x934d6de97e7b44b3u};
-    constexpr static ID TypeID = ID{0xb35c649feb784432u, 0xa4d5a0126de63c87u};
+    constexpr static ID TypeID = ID{0x4c5823d476eb71d7u, 0x934d6de97e7b44b3u};
     using Type = pf::Test::E;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 8;
-    constexpr static std::uint64_t SourceColumn = 9;
+    constexpr static std::uint64_t SourceColumn = 38;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -423,12 +423,12 @@ struct StaticInfo<ID{0x9d50aa4fa46bdfa4u, 0xc862ecf7d777b2afu}> {
         
     };
     constexpr static ID ValueID = ID{0x9d50aa4fa46bdfa4u, 0xc862ecf7d777b2afu};
-    constexpr static ID TypeID = ID{0xcb504f03088f9c56u, 0x8c9993d9c0f5e49eu};
+    constexpr static ID TypeID = ID{0x9d50aa4fa46bdfa4u, 0xc862ecf7d777b2afu};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -449,12 +449,12 @@ struct StaticInfo<ID{0x595dcd37a6727fe4u, 0x74ef46b2ac478587u}> {
         
     };
     constexpr static ID ValueID = ID{0x595dcd37a6727fe4u, 0x74ef46b2ac478587u};
-    constexpr static ID TypeID = ID{0xcb504f03088f9c56u, 0x8c9993d9c0f5e49eu};
+    constexpr static ID TypeID = ID{0x595dcd37a6727fe4u, 0x74ef46b2ac478587u};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -475,12 +475,12 @@ struct StaticInfo<ID{0x205bf6051910e295u, 0x5ae8dcf71bfbdcb6u}> {
         
     };
     constexpr static ID ValueID = ID{0x205bf6051910e295u, 0x5ae8dcf71bfbdcb6u};
-    constexpr static ID TypeID = ID{0xcb504f03088f9c56u, 0x8c9993d9c0f5e49eu};
+    constexpr static ID TypeID = ID{0x205bf6051910e295u, 0x5ae8dcf71bfbdcb6u};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -501,12 +501,12 @@ struct StaticInfo<ID{0x64539613f69a90ccu, 0xf19e907dde2d15b4u}> {
         
     };
     constexpr static ID ValueID = ID{0x64539613f69a90ccu, 0xf19e907dde2d15b4u};
-    constexpr static ID TypeID = ID{0xcb504f03088f9c56u, 0x8c9993d9c0f5e49eu};
+    constexpr static ID TypeID = ID{0x64539613f69a90ccu, 0xf19e907dde2d15b4u};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -527,12 +527,12 @@ struct StaticInfo<ID{0x3250235a3573c873u, 0x42b3217684717a94u}> {
         
     };
     constexpr static ID ValueID = ID{0x3250235a3573c873u, 0x42b3217684717a94u};
-    constexpr static ID TypeID = ID{0xcb504f03088f9c56u, 0x8c9993d9c0f5e49eu};
+    constexpr static ID TypeID = ID{0x3250235a3573c873u, 0x42b3217684717a94u};
     using Type = pf::E1;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 21;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -676,12 +676,12 @@ struct StaticInfo<ID{0x635d3ca13ef42527u, 0x926874a0b56e4d98u}> {
         
     };
     constexpr static ID ValueID = ID{0x635d3ca13ef42527u, 0x926874a0b56e4d98u};
-    constexpr static ID TypeID = ID{0x2c56b110e5dd6324u, 0xf3c6ad1f22f4d28au};
+    constexpr static ID TypeID = ID{0x635d3ca13ef42527u, 0x926874a0b56e4d98u};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -702,12 +702,12 @@ struct StaticInfo<ID{0x7c535d5df511eefcu, 0xdd4fa2d6af643589u}> {
         
     };
     constexpr static ID ValueID = ID{0x7c535d5df511eefcu, 0xdd4fa2d6af643589u};
-    constexpr static ID TypeID = ID{0x2c56b110e5dd6324u, 0xf3c6ad1f22f4d28au};
+    constexpr static ID TypeID = ID{0x7c535d5df511eefcu, 0xdd4fa2d6af643589u};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -728,12 +728,12 @@ struct StaticInfo<ID{0x48520c952de8ce9eu, 0x270ba43d59fa6e80u}> {
         
     };
     constexpr static ID ValueID = ID{0x48520c952de8ce9eu, 0x270ba43d59fa6e80u};
-    constexpr static ID TypeID = ID{0x2c56b110e5dd6324u, 0xf3c6ad1f22f4d28au};
+    constexpr static ID TypeID = ID{0x48520c952de8ce9eu, 0x270ba43d59fa6e80u};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -754,12 +754,12 @@ struct StaticInfo<ID{0xcf5fd20c8dafe0ecu, 0xec6dbae7b8749aa7u}> {
         
     };
     constexpr static ID ValueID = ID{0xcf5fd20c8dafe0ecu, 0xec6dbae7b8749aa7u};
-    constexpr static ID TypeID = ID{0x2c56b110e5dd6324u, 0xf3c6ad1f22f4d28au};
+    constexpr static ID TypeID = ID{0xcf5fd20c8dafe0ecu, 0xec6dbae7b8749aa7u};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -780,12 +780,12 @@ struct StaticInfo<ID{0x255e76386f8dd690u, 0xce149b18d56a2182u}> {
         
     };
     constexpr static ID ValueID = ID{0x255e76386f8dd690u, 0xce149b18d56a2182u};
-    constexpr static ID TypeID = ID{0x2c56b110e5dd6324u, 0xf3c6ad1f22f4d28au};
+    constexpr static ID TypeID = ID{0x255e76386f8dd690u, 0xce149b18d56a2182u};
     using Type = pf::E2;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 22;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -929,12 +929,12 @@ struct StaticInfo<ID{0x30558b4d8da1d4e3u, 0xf5b4713dcede7e81u}> {
         
     };
     constexpr static ID ValueID = ID{0x30558b4d8da1d4e3u, 0xf5b4713dcede7e81u};
-    constexpr static ID TypeID = ID{0x525020d591a873a1u, 0x583e908c00632d8bu};
+    constexpr static ID TypeID = ID{0x30558b4d8da1d4e3u, 0xf5b4713dcede7e81u};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -955,12 +955,12 @@ struct StaticInfo<ID{0xad592735fd7e7f43u, 0x4502901b3922dabcu}> {
         
     };
     constexpr static ID ValueID = ID{0xad592735fd7e7f43u, 0x4502901b3922dabcu};
-    constexpr static ID TypeID = ID{0x525020d591a873a1u, 0x583e908c00632d8bu};
+    constexpr static ID TypeID = ID{0xad592735fd7e7f43u, 0x4502901b3922dabcu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -981,12 +981,12 @@ struct StaticInfo<ID{0x8459593ba358ccbcu, 0x86ea2641f579afbeu}> {
         
     };
     constexpr static ID ValueID = ID{0x8459593ba358ccbcu, 0x86ea2641f579afbeu};
-    constexpr static ID TypeID = ID{0x525020d591a873a1u, 0x583e908c00632d8bu};
+    constexpr static ID TypeID = ID{0x8459593ba358ccbcu, 0x86ea2641f579afbeu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1007,12 +1007,12 @@ struct StaticInfo<ID{0x3f5d064679ddc1b8u, 0x737ccc35c3497ba5u}> {
         
     };
     constexpr static ID ValueID = ID{0x3f5d064679ddc1b8u, 0x737ccc35c3497ba5u};
-    constexpr static ID TypeID = ID{0x525020d591a873a1u, 0x583e908c00632d8bu};
+    constexpr static ID TypeID = ID{0x3f5d064679ddc1b8u, 0x737ccc35c3497ba5u};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1033,12 +1033,12 @@ struct StaticInfo<ID{0xe1523b0807bc3f28u, 0x837ba27cb53629bu}> {
         
     };
     constexpr static ID ValueID = ID{0xe1523b0807bc3f28u, 0x837ba27cb53629bu};
-    constexpr static ID TypeID = ID{0x525020d591a873a1u, 0x583e908c00632d8bu};
+    constexpr static ID TypeID = ID{0xe1523b0807bc3f28u, 0x837ba27cb53629bu};
     using Type = pf::E3;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 23;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1182,12 +1182,12 @@ struct StaticInfo<ID{0x9253c311ecece739u, 0xe7621ff79d829eabu}> {
         
     };
     constexpr static ID ValueID = ID{0x9253c311ecece739u, 0xe7621ff79d829eabu};
-    constexpr static ID TypeID = ID{0x3754a7ca70bd9772u, 0xff2988dc42d54f86u};
+    constexpr static ID TypeID = ID{0x9253c311ecece739u, 0xe7621ff79d829eabu};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1208,12 +1208,12 @@ struct StaticInfo<ID{0x6a5ecc8fbe343a3bu, 0x337a1ef7dd35cbb7u}> {
         
     };
     constexpr static ID ValueID = ID{0x6a5ecc8fbe343a3bu, 0x337a1ef7dd35cbb7u};
-    constexpr static ID TypeID = ID{0x3754a7ca70bd9772u, 0xff2988dc42d54f86u};
+    constexpr static ID TypeID = ID{0x6a5ecc8fbe343a3bu, 0x337a1ef7dd35cbb7u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1234,12 +1234,12 @@ struct StaticInfo<ID{0xe35f3808a849b890u, 0x9cdc0e68a25b48au}> {
         
     };
     constexpr static ID ValueID = ID{0xe35f3808a849b890u, 0x9cdc0e68a25b48au};
-    constexpr static ID TypeID = ID{0x3754a7ca70bd9772u, 0xff2988dc42d54f86u};
+    constexpr static ID TypeID = ID{0xe35f3808a849b890u, 0x9cdc0e68a25b48au};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1260,12 +1260,12 @@ struct StaticInfo<ID{0x3057eac37dc96baau, 0x2ddea432523c71a6u}> {
         
     };
     constexpr static ID ValueID = ID{0x3057eac37dc96baau, 0x2ddea432523c71a6u};
-    constexpr static ID TypeID = ID{0x3754a7ca70bd9772u, 0xff2988dc42d54f86u};
+    constexpr static ID TypeID = ID{0x3057eac37dc96baau, 0x2ddea432523c71a6u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1286,12 +1286,12 @@ struct StaticInfo<ID{0x4e56d3c60af2903du, 0x9db9fc94bea8d8a7u}> {
         
     };
     constexpr static ID ValueID = ID{0x4e56d3c60af2903du, 0x9db9fc94bea8d8a7u};
-    constexpr static ID TypeID = ID{0x3754a7ca70bd9772u, 0xff2988dc42d54f86u};
+    constexpr static ID TypeID = ID{0x4e56d3c60af2903du, 0x9db9fc94bea8d8a7u};
     using Type = pf::E4;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 24;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1435,12 +1435,12 @@ struct StaticInfo<ID{0xf258fa8ec1e8c0ecu, 0xbd7643b85da095aau}> {
         
     };
     constexpr static ID ValueID = ID{0xf258fa8ec1e8c0ecu, 0xbd7643b85da095aau};
-    constexpr static ID TypeID = ID{0x6d55aed9c281d2dcu, 0x9e8f002a31c3258eu};
+    constexpr static ID TypeID = ID{0xf258fa8ec1e8c0ecu, 0xbd7643b85da095aau};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1461,12 +1461,12 @@ struct StaticInfo<ID{0x775ab7f4c9149231u, 0x544a925355408da6u}> {
         
     };
     constexpr static ID ValueID = ID{0x775ab7f4c9149231u, 0x544a925355408da6u};
-    constexpr static ID TypeID = ID{0x6d55aed9c281d2dcu, 0x9e8f002a31c3258eu};
+    constexpr static ID TypeID = ID{0x775ab7f4c9149231u, 0x544a925355408da6u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1487,12 +1487,12 @@ struct StaticInfo<ID{0xe958c5f0d721ff19u, 0xc9c68c235e2542a4u}> {
         
     };
     constexpr static ID ValueID = ID{0xe958c5f0d721ff19u, 0xc9c68c235e2542a4u};
-    constexpr static ID TypeID = ID{0x6d55aed9c281d2dcu, 0x9e8f002a31c3258eu};
+    constexpr static ID TypeID = ID{0xe958c5f0d721ff19u, 0xc9c68c235e2542a4u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1513,12 +1513,12 @@ struct StaticInfo<ID{0x2755ec3455c47b4eu, 0x8611d8b64c3eb695u}> {
         
     };
     constexpr static ID ValueID = ID{0x2755ec3455c47b4eu, 0x8611d8b64c3eb695u};
-    constexpr static ID TypeID = ID{0x6d55aed9c281d2dcu, 0x9e8f002a31c3258eu};
+    constexpr static ID TypeID = ID{0x2755ec3455c47b4eu, 0x8611d8b64c3eb695u};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1539,12 +1539,12 @@ struct StaticInfo<ID{0x2f5033660c664b4au, 0x5765cd1d5d78f98eu}> {
         
     };
     constexpr static ID ValueID = ID{0x2f5033660c664b4au, 0x5765cd1d5d78f98eu};
-    constexpr static ID TypeID = ID{0x6d55aed9c281d2dcu, 0x9e8f002a31c3258eu};
+    constexpr static ID TypeID = ID{0x2f5033660c664b4au, 0x5765cd1d5d78f98eu};
     using Type = pf::E5;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 25;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1688,12 +1688,12 @@ struct StaticInfo<ID{0x4854a8d88681b84bu, 0x26e2a23de2f27f87u}> {
         
     };
     constexpr static ID ValueID = ID{0x4854a8d88681b84bu, 0x26e2a23de2f27f87u};
-    constexpr static ID TypeID = ID{0x545c6f4edc5d5b2du, 0xa3e64f9af1ad75bcu};
+    constexpr static ID TypeID = ID{0x4854a8d88681b84bu, 0x26e2a23de2f27f87u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1714,12 +1714,12 @@ struct StaticInfo<ID{0xed5a98fdb027bdd5u, 0xe70fd8b8c3021e85u}> {
         
     };
     constexpr static ID ValueID = ID{0xed5a98fdb027bdd5u, 0xe70fd8b8c3021e85u};
-    constexpr static ID TypeID = ID{0x545c6f4edc5d5b2du, 0xa3e64f9af1ad75bcu};
+    constexpr static ID TypeID = ID{0xed5a98fdb027bdd5u, 0xe70fd8b8c3021e85u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1740,12 +1740,12 @@ struct StaticInfo<ID{0x145ab2a4e82ec74cu, 0xe83a8af4541312abu}> {
         
     };
     constexpr static ID ValueID = ID{0x145ab2a4e82ec74cu, 0xe83a8af4541312abu};
-    constexpr static ID TypeID = ID{0x545c6f4edc5d5b2du, 0xa3e64f9af1ad75bcu};
+    constexpr static ID TypeID = ID{0x145ab2a4e82ec74cu, 0xe83a8af4541312abu};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1766,12 +1766,12 @@ struct StaticInfo<ID{0xcd5509d4b50cafaau, 0xa5de537e1f5e5285u}> {
         
     };
     constexpr static ID ValueID = ID{0xcd5509d4b50cafaau, 0xa5de537e1f5e5285u};
-    constexpr static ID TypeID = ID{0x545c6f4edc5d5b2du, 0xa3e64f9af1ad75bcu};
+    constexpr static ID TypeID = ID{0xcd5509d4b50cafaau, 0xa5de537e1f5e5285u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1792,12 +1792,12 @@ struct StaticInfo<ID{0xc353858ae9d10a9au, 0xfe2cbf5cf6e5b2a7u}> {
         
     };
     constexpr static ID ValueID = ID{0xc353858ae9d10a9au, 0xfe2cbf5cf6e5b2a7u};
-    constexpr static ID TypeID = ID{0x545c6f4edc5d5b2du, 0xa3e64f9af1ad75bcu};
+    constexpr static ID TypeID = ID{0xc353858ae9d10a9au, 0xfe2cbf5cf6e5b2a7u};
     using Type = pf::E6;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 26;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1941,12 +1941,12 @@ struct StaticInfo<ID{0x2b5b1ae3f274690eu, 0x18d0d2397975848du}> {
         
     };
     constexpr static ID ValueID = ID{0x2b5b1ae3f274690eu, 0x18d0d2397975848du};
-    constexpr static ID TypeID = ID{0xd15b25619c40a2efu, 0x28201a793f4beebau};
+    constexpr static ID TypeID = ID{0x2b5b1ae3f274690eu, 0x18d0d2397975848du};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1967,12 +1967,12 @@ struct StaticInfo<ID{0xaa5f78c580a48aacu, 0x3ebd7d80946b0f9au}> {
         
     };
     constexpr static ID ValueID = ID{0xaa5f78c580a48aacu, 0x3ebd7d80946b0f9au};
-    constexpr static ID TypeID = ID{0xd15b25619c40a2efu, 0x28201a793f4beebau};
+    constexpr static ID TypeID = ID{0xaa5f78c580a48aacu, 0x3ebd7d80946b0f9au};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -1993,12 +1993,12 @@ struct StaticInfo<ID{0xb357fe6bc61228cau, 0x10640ea39d25118eu}> {
         
     };
     constexpr static ID ValueID = ID{0xb357fe6bc61228cau, 0x10640ea39d25118eu};
-    constexpr static ID TypeID = ID{0xd15b25619c40a2efu, 0x28201a793f4beebau};
+    constexpr static ID TypeID = ID{0xb357fe6bc61228cau, 0x10640ea39d25118eu};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2019,12 +2019,12 @@ struct StaticInfo<ID{0x245d186999e6c332u, 0x4e620d1a30ac5faau}> {
         
     };
     constexpr static ID ValueID = ID{0x245d186999e6c332u, 0x4e620d1a30ac5faau};
-    constexpr static ID TypeID = ID{0xd15b25619c40a2efu, 0x28201a793f4beebau};
+    constexpr static ID TypeID = ID{0x245d186999e6c332u, 0x4e620d1a30ac5faau};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2045,12 +2045,12 @@ struct StaticInfo<ID{0x295844551cab62c5u, 0x7903a16c636341bcu}> {
         
     };
     constexpr static ID ValueID = ID{0x295844551cab62c5u, 0x7903a16c636341bcu};
-    constexpr static ID TypeID = ID{0xd15b25619c40a2efu, 0x28201a793f4beebau};
+    constexpr static ID TypeID = ID{0x295844551cab62c5u, 0x7903a16c636341bcu};
     using Type = pf::E7;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 27;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2194,12 +2194,12 @@ struct StaticInfo<ID{0xe52a125c373eb03u, 0x408eb8c6dba87485u}> {
         
     };
     constexpr static ID ValueID = ID{0xe52a125c373eb03u, 0x408eb8c6dba87485u};
-    constexpr static ID TypeID = ID{0xb0501ed449af7c09u, 0x622e030a4ca11ebeu};
+    constexpr static ID TypeID = ID{0xe52a125c373eb03u, 0x408eb8c6dba87485u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2220,12 +2220,12 @@ struct StaticInfo<ID{0x8e5e119c3a02a3cfu, 0xd71c26a8d426b7bbu}> {
         
     };
     constexpr static ID ValueID = ID{0x8e5e119c3a02a3cfu, 0xd71c26a8d426b7bbu};
-    constexpr static ID TypeID = ID{0xb0501ed449af7c09u, 0x622e030a4ca11ebeu};
+    constexpr static ID TypeID = ID{0x8e5e119c3a02a3cfu, 0xd71c26a8d426b7bbu};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2246,12 +2246,12 @@ struct StaticInfo<ID{0xcf556f61c39e8b66u, 0x47b9d97489392a81u}> {
         
     };
     constexpr static ID ValueID = ID{0xcf556f61c39e8b66u, 0x47b9d97489392a81u};
-    constexpr static ID TypeID = ID{0xb0501ed449af7c09u, 0x622e030a4ca11ebeu};
+    constexpr static ID TypeID = ID{0xcf556f61c39e8b66u, 0x47b9d97489392a81u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2272,12 +2272,12 @@ struct StaticInfo<ID{0x215cc301caf59167u, 0xbe3063c46683e7b1u}> {
         
     };
     constexpr static ID ValueID = ID{0x215cc301caf59167u, 0xbe3063c46683e7b1u};
-    constexpr static ID TypeID = ID{0xb0501ed449af7c09u, 0x622e030a4ca11ebeu};
+    constexpr static ID TypeID = ID{0x215cc301caf59167u, 0xbe3063c46683e7b1u};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2298,12 +2298,12 @@ struct StaticInfo<ID{0xbf594c204ff3dce3u, 0xd7b4b0626e0a09bu}> {
         
     };
     constexpr static ID ValueID = ID{0xbf594c204ff3dce3u, 0xd7b4b0626e0a09bu};
-    constexpr static ID TypeID = ID{0xb0501ed449af7c09u, 0x622e030a4ca11ebeu};
+    constexpr static ID TypeID = ID{0xbf594c204ff3dce3u, 0xd7b4b0626e0a09bu};
     using Type = pf::E8;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 28;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2447,12 +2447,12 @@ struct StaticInfo<ID{0xf558f81596978c12u, 0x6b15ad539b7777acu}> {
         
     };
     constexpr static ID ValueID = ID{0xf558f81596978c12u, 0x6b15ad539b7777acu};
-    constexpr static ID TypeID = ID{0xdb5f6197d3daadfdu, 0xc943b069a78ed385u};
+    constexpr static ID TypeID = ID{0xf558f81596978c12u, 0x6b15ad539b7777acu};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 21;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2473,12 +2473,12 @@ struct StaticInfo<ID{0x9f55c71d60218126u, 0x75ba8c695c2485acu}> {
         
     };
     constexpr static ID ValueID = ID{0x9f55c71d60218126u, 0x75ba8c695c2485acu};
-    constexpr static ID TypeID = ID{0xdb5f6197d3daadfdu, 0xc943b069a78ed385u};
+    constexpr static ID TypeID = ID{0x9f55c71d60218126u, 0x75ba8c695c2485acu};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 24;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2499,12 +2499,12 @@ struct StaticInfo<ID{0xf5c64589ad9f505u, 0x8931e11fbee44c9cu}> {
         
     };
     constexpr static ID ValueID = ID{0xf5c64589ad9f505u, 0x8931e11fbee44c9cu};
-    constexpr static ID TypeID = ID{0xdb5f6197d3daadfdu, 0xc943b069a78ed385u};
+    constexpr static ID TypeID = ID{0xf5c64589ad9f505u, 0x8931e11fbee44c9cu};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 27;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2525,12 +2525,12 @@ struct StaticInfo<ID{0x252d6830480f43bu, 0xa74a0b2f241ceeb8u}> {
         
     };
     constexpr static ID ValueID = ID{0x252d6830480f43bu, 0xa74a0b2f241ceeb8u};
-    constexpr static ID TypeID = ID{0xdb5f6197d3daadfdu, 0xc943b069a78ed385u};
+    constexpr static ID TypeID = ID{0x252d6830480f43bu, 0xa74a0b2f241ceeb8u};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 30;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
@@ -2551,12 +2551,12 @@ struct StaticInfo<ID{0x60565d153370aeb3u, 0x29a2ad77877eb780u}> {
         
     };
     constexpr static ID ValueID = ID{0x60565d153370aeb3u, 0x29a2ad77877eb780u};
-    constexpr static ID TypeID = ID{0xdb5f6197d3daadfdu, 0xc943b069a78ed385u};
+    constexpr static ID TypeID = ID{0x60565d153370aeb3u, 0x29a2ad77877eb780u};
     using Type = pf::E9;
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
     constexpr static std::uint64_t SourceLine = 29;
-    constexpr static std::uint64_t SourceColumn = 5;
+    constexpr static std::uint64_t SourceColumn = 33;
 
     constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
 
