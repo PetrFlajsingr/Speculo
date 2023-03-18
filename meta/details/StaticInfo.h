@@ -11,6 +11,18 @@
 
 namespace pf::meta::details {
 
+    enum class StaticInfoType {
+        EnumType,
+        EnumValue,
+        RcordType,
+        Constructor,
+        Destructor,
+        MemberFunction,
+        MemberField,
+        StaticFunction,
+        StaticField
+    };
+
     template<ID ID>
     struct StaticInfo {
         static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type");
