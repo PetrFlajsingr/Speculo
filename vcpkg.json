@@ -17,6 +17,10 @@
     {
       "name": "fmt",
       "version>=": "9.1.0#1"
+    },
+    {
+      "name": "stduuid",
+      "version>=": "1.2.2"
     }
   ],
   "builtin-baseline": "36fb23307e10cc6ffcec566c46c4bb3f567c82c6"

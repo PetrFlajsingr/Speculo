@@ -28,8 +28,8 @@ find_package(fmt CONFIG REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
-
 add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp)
+find_package(stduuid CONFIG REQUIRED)
 
 add_executable(meta_test main_test.cpp)
 
@@ -46,7 +46,9 @@ include(AddLLVM)
 
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
+target_include_directories(pf_meta_gen PRIVATE meta_gen/include)
 target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling pf_common::pf_common magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_gen PRIVATE stduuid)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
 
 target_link_libraries(meta_test PRIVATE pf_common::pf_common magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)

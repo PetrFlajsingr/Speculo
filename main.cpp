@@ -162,15 +162,15 @@ namespace pf::meta_gen {
                 return attributeArgsStr;
             };
 
-            const auto typeId = gen.generateTypeId();
+            const auto typeId = gen.generateTypeId(result.fullName);
 
 
             std::unordered_map<std::string, std::string> valueIds{};
             std::string valueIdsStr{};
             for (const auto &[name, info]: result.values) {
-                const auto valueId = gen.generateTypeId();
-                const auto valueIdStr = idToString(valueId);
                 const auto fullName = fmt::format("{}::{}", result.fullName, name);
+                const auto valueId = gen.generateTypeId(fullName);
+                const auto valueIdStr = idToString(valueId);
                 valueIds.emplace(fullName, valueIdStr);
                 valueIdsStr.append(valueIdStr);
                 valueIdsStr.append(", ");
@@ -199,12 +199,12 @@ namespace pf::meta_gen {
             }
             if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
-            const auto const_type_id = idToString(gen.generateTypeId());
-            const auto lref_type_id = idToString(gen.generateTypeId());
-            const auto const_lref_type_id = idToString(gen.generateTypeId());
-            const auto rref_type_id = idToString(gen.generateTypeId());
-            const auto ptr_type_id = idToString(gen.generateTypeId());
-            const auto const_ptr_type_id = idToString(gen.generateTypeId());
+            const auto const_type_id = idToString(gen.generateTypeId("const " + result.fullName));
+            const auto lref_type_id = idToString(gen.generateTypeId(result.fullName + "&"));
+            const auto const_lref_type_id = idToString(gen.generateTypeId("const " + result.fullName + "&"));
+            const auto rref_type_id = idToString(gen.generateTypeId(result.fullName + "&&"));
+            const auto ptr_type_id = idToString(gen.generateTypeId(result.fullName + "*"));
+            const auto const_ptr_type_id = idToString(gen.generateTypeId("const" + result.fullName + "*"));
 
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
