@@ -3,7 +3,7 @@
 namespace pf {
     enum class Hihi;
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : bool{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
     struct Test {
         enum class E : int { Value1, Value2 };
 

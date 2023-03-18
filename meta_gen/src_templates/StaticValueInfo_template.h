@@ -10,7 +10,7 @@ namespace pf::meta_gen {
     constexpr auto StaticValueInfoTemplate_Enum = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
-struct pf::meta::details::StaticInfo<{value_id}> {{
+struct StaticInfo<{value_id}> {{
     struct details {{
         {details}
     }};
@@ -22,7 +22,7 @@ struct pf::meta::details::StaticInfo<{value_id}> {{
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
-    constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>({attributes});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumValue;
 
