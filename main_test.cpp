@@ -13,22 +13,21 @@
 namespace pf::meta {
     template<Info I>
     concept Named = requires {
-        { std::string_view{details::StaticInfo<I.implId>::Name} };
-        { std::string_view{details::StaticInfo<I.implId>::FullName} };
+        { std::string_view{details::StaticInfo<I.implId>::Name}};
+        { std::string_view{details::StaticInfo<I.implId>::FullName}};
     };
     template<Info I>
-    concept Enum = details::StaticInfo<I.implId>::IsEnum;
+    concept Enum = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::EnumType;
 
     template<Info I>
-        requires(Enum<I>)
+    requires(Enum<I>)
     [[nodiscard]] consteval RangeOf<Info> auto members_of() {
         using impl = details::StaticInfo<I.implId>;
-        static_assert(impl::IsEnum);
         return impl::EnumValues;
     }
 
     template<Info I>
-        requires(Named<I>)
+    requires(Named<I>)
     [[nodiscard]] consteval std::string_view name_of() {
         using impl = details::StaticInfo<I.implId>;
         return static_cast<std::string_view>(impl::Name);
@@ -37,7 +36,13 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
         using impl = details::StaticInfo<I.implId>;
-        return std::span<const Attribute>(impl::Attributes);
+        if constexpr (requires {
+            { impl::Attributes } -> RangeOf<Attribute>;
+        }) {
+            return std::span<const Attribute>(impl::Attributes);
+        } else {
+            return std::span<const Attribute>{};
+        }
     }
 
     template<Info I1, Info I2>

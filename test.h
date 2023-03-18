@@ -28,7 +28,3 @@ namespace pf {
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
 }// namespace pf
-#include <clang/Frontend/FrontendActions.h>
-#include <clang/Tooling/CommonOptionsParser.h>
-#include <clang/Tooling/Tooling.h>
-#include <llvm/Support/CommandLine.h>

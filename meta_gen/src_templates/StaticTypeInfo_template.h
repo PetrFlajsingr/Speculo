@@ -23,11 +23,7 @@ struct pf::meta::details::StaticInfo<{type_id}> {{
 
     constexpr static RangeOf<pf::meta::Attribute> auto Attributes = pf::make_array<pf::meta::Attribute>({attributes});
 
-    constexpr static bool IsEnum = true;
-    constexpr static bool IsEnumValue = false;
-    constexpr static bool IsRecord = false;
-    constexpr static bool IsUnion = false;
-    constexpr static bool IsPrimitiveType = false;
+    constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
     constexpr static bool IsLvalueReference = false;
     constexpr static bool IsRvalueReference = false;

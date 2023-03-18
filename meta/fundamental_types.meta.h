@@ -17,11 +17,8 @@ namespace pf::meta::details {
         // FIXME: RangeOf msvc failure here
         constexpr static /*RangeOf<pf::meta::Attribute>*/ auto Attributes = pf::make_array<pf::meta::Attribute>();
 
-        constexpr static bool IsEnum = false;
-        constexpr static bool IsEnumValue = false;
-        constexpr static bool IsRecord = false;
-        constexpr static bool IsUnion = false;
-        constexpr static bool IsPrimitiveType = true;
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::FundamentalType;
 
         constexpr static bool IsLvalueReference = false;
         constexpr static bool IsRvalueReference = false;
