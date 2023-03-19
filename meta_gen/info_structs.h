@@ -30,7 +30,7 @@ namespace pf::meta_gen {
         } sourceLocation;
     };
 
-    struct EnumTypeInfo : public TypeInfo {
+    struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
             pf::meta::details::ID id;
             std::string fullName;
@@ -45,6 +45,19 @@ namespace pf::meta_gen {
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, ValueInfo> values;
         std::string underlyingType;
+    };
+
+    struct RecordTypeInfo : TypeInfo {
+        bool isUnion;
+        std::vector<Attribute> attribues;
+
+        // TODO base classes
+        // TODO constructors
+        // TODO destructor
+        // TODO member functions
+        // TODO member variables
+        // TODO static functions
+        // TODO static variables
     };
 
     using TypeInfoVariant = std::variant<EnumTypeInfo>;
