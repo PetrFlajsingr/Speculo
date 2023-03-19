@@ -5,10 +5,10 @@
 #ifndef PF_META_INFO_STRUCTS_H
 #define PF_META_INFO_STRUCTS_H
 
-#include <vector>
 #include <string>
-#include <variant>
 #include <unordered_map>
+#include <variant>
+#include <vector>
 
 #include "../meta/details/ID.h"
 
@@ -47,7 +47,8 @@ namespace pf::meta_gen {
         std::string underlyingType;
     };
 
+    using TypeInfoVariant = std::variant<EnumTypeInfo>;
 
-}
+}// namespace pf::meta_gen
 
-#endif //PF_META_INFO_STRUCTS_H
+#endif//PF_META_INFO_STRUCTS_H

@@ -10,9 +10,13 @@
 
 namespace pf::meta_gen {
 
+    ASTDeclParser::ASTDeclParser(std::shared_ptr<IdGenerator> idGen) : idGenerator{std::move(idGen)} {}
+
     ASTDeclParser::~ASTDeclParser() = default;
 
-    ASTEnumDeclParser::ASTEnumDeclParser() { spdlog::info("Creating ASTEnumDeclParser"); }
+    ASTEnumDeclParser::ASTEnumDeclParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser{std::move(idGen)} {
+        spdlog::info("Creating ASTEnumDeclParser");
+    }
 
     std::optional<TypeInfoVariant> ASTEnumDeclParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::EnumDecl>(decl) != nullptr);
@@ -68,36 +72,34 @@ namespace pf::meta_gen {
 
             for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }
         }
-        // TODO: pass this around
-        IdGenerator gen{};
 
-        const auto typeId = gen.generateTypeId(result.fullName);
+        const auto typeId = getIdGenerator().generateTypeId(result.fullName);
         result.id = typeId;
 
         for (auto &[name, info]: result.values) {
             info.fullName = fmt::format("{}::{}", result.fullName, name);
-            const auto valueId = gen.generateTypeId(info.fullName);
+            const auto valueId = getIdGenerator().generateTypeId(info.fullName);
             info.id = valueId;
         }
 
         return result;
     }
 
-    std::unique_ptr<ASTDeclParser> createDeclParser(clang::Decl *decl) {
+    std::unique_ptr<ASTDeclParser> createDeclParser(clang::Decl *decl, std::shared_ptr<IdGenerator> idGen) {
         if (const auto enumDecl = clang::dyn_cast<clang::EnumDecl>(decl); enumDecl != nullptr && !enumDecl->isInvalidDecl()) {
-            return std::make_unique<ASTEnumDeclParser>();
+            return std::make_unique<ASTEnumDeclParser>(idGen);
         } else {
             spdlog::warn("createDeclParser: unsupported decl type");
             return nullptr;
         }
     }
+    ASTParser::ASTParser(ParsingSettings parsingSettings, std::shared_ptr<IdGenerator> idGen)
+        : settings{parsingSettings}, idGenerator{std::move(idGen)} {}
 
-    ASTParser::ASTParser(ParsingSettings parsingSettings) : settings{parsingSettings} {}
     std::vector<std::variant<EnumTypeInfo>> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();
         return walk(astContext, *tuCtx);
     }
-
     std::vector<std::variant<EnumTypeInfo>> ASTParser::walk(clang::ASTContext &astContext, const clang::DeclContext &context) {
         std::vector<std::variant<EnumTypeInfo>> result{};
         for (auto it = context.decls_begin(); it != context.decls_end(); ++it) {
@@ -106,7 +108,7 @@ namespace pf::meta_gen {
             auto &sourceManager = astContext.getSourceManager();
             if (settings.ignoreIncludes && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
-            if (auto parser = createDeclParser(decl); parser != nullptr) {
+            if (auto parser = createDeclParser(decl, idGenerator); parser != nullptr) {
                 if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
                     result.emplace_back(std::move(*parseResult));
                 }

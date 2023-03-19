@@ -4,7 +4,7 @@
 #include <pf_common/array.h>
 
 #include <fmt/core.h>
-
+#include <spdlog/spdlog.h>
 #include "meta/Info.h"
 
 #include "meta_gen/AttributeParser.h"
@@ -153,13 +153,14 @@ int main(int argc, const char **argv) {
     auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader}, errorCode,
                                                             llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
-        llvm::errs() << "Failed to open output file: " << errorCode.message();
+        spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
     }
-    *outStream << pf::meta_gen::MetaFilePrologue;
-    pf::meta_gen::ActionFactory factory{outStream};
-    tool.run(&factory);
-    *outStream << pf::meta_gen::MetaFileEpilogue;
+    auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
+    pf::meta_gen::ActionFactory factory{outStream, idGenerator};
+    if (const auto ret = tool.run(&factory); ret != 0) {
+        spdlog::error("ClangTool run failed with code {}", ret);
+    }
 
     outStream->close();
 
