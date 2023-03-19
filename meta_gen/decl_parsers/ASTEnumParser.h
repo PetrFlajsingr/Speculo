@@ -8,10 +8,10 @@
 
 namespace pf::meta_gen {
 
-    class ASTEnumDeclParser final : public ASTDeclParser {
+    class ASTEnumParser final : public ASTDeclParser {
     public:
-        explicit ASTEnumDeclParser(std::shared_ptr<IdGenerator> idGen);
-        ~ASTEnumDeclParser() override = default;
+        explicit ASTEnumParser(std::shared_ptr<IdGenerator> idGen);
+        ~ASTEnumParser() override = default;
 
         std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
     };

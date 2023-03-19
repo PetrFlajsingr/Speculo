@@ -6,20 +6,20 @@
 #include "AttributeParser.h"
 #include "IdGenerator.h"
 
-#include "decl_parsers/decl_parser_factory.h"
+#include "decl_parsers/factory.h"
 
 namespace pf::meta_gen {
 
     ASTParser::ASTParser(ParsingSettings parsingSettings, std::shared_ptr<IdGenerator> idGen)
         : settings{parsingSettings}, idGenerator{std::move(idGen)} {}
 
-    std::vector<std::variant<EnumTypeInfo>> ASTParser::parse(clang::ASTContext &astContext) {
+    std::vector<TypeInfoVariant> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();
         return walk(astContext, *tuCtx);
     }
 
-    std::vector<std::variant<EnumTypeInfo>> ASTParser::walk(clang::ASTContext &astContext, const clang::DeclContext &context) {
-        std::vector<std::variant<EnumTypeInfo>> result{};
+    std::vector<TypeInfoVariant> ASTParser::walk(clang::ASTContext &astContext, const clang::DeclContext &context) {
+        std::vector<TypeInfoVariant> result{};
         for (auto it = context.decls_begin(); it != context.decls_end(); ++it) {
             clang::Decl *decl = *it;
             if (decl->isInvalidDecl()) { continue; }

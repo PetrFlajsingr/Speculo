@@ -20,7 +20,7 @@ namespace pf::meta_gen {
     };
 
     struct TypeInfo {
-        pf::meta::details::ID id;
+        meta::details::ID id;
         std::string fullName;
         std::string name;
         struct {
@@ -32,7 +32,7 @@ namespace pf::meta_gen {
 
     struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
-            pf::meta::details::ID id;
+            meta::details::ID id;
             std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
@@ -47,20 +47,82 @@ namespace pf::meta_gen {
         std::string underlyingType;
     };
 
-    struct RecordTypeInfo : TypeInfo {
-        bool isUnion;
-        std::vector<Attribute> attribues;
-
-        // TODO base classes
-        // TODO constructors
-        // TODO destructor
-        // TODO member functions
-        // TODO member variables
-        // TODO static functions
-        // TODO static variables
+    struct FunctionArgument {
+        meta::details::ID typeId;
+        std::string name;
+        std::vector<Attribute> attributes;
     };
 
-    using TypeInfoVariant = std::variant<EnumTypeInfo>;
+    enum class Access {
+        Private, Protected, Public
+    };
+
+    struct ConstructorInfo {
+        meta::details::ID id;
+        std::vector<FunctionArgument> arguments;
+        std::vector<Attribute> attributes;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isExplicit;
+        Access access;
+        // TODO: add more
+    };
+
+    struct DestructorInfo {
+        meta::details::ID id;
+        Access access;
+        std::vector<Attribute> attributes;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isVirtual;
+        bool isPureVirtual;
+    };
+
+    // TODO: operators separately?
+    struct FunctionInfo {
+        meta::details::ID id;
+        std::string name;
+        std::vector<FunctionArgument> arguments;
+        std::vector<Attribute> attributes;
+        meta::details::ID returnTypeId;
+        Access access;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isConst;
+        bool isVirtual;
+        bool isPureVirtual;
+    };
+
+    struct VariableInfo {
+        meta::details::ID id;
+        std::string name;
+        meta::details::ID typeId;
+        std::vector<Attribute> attributes;
+        Access access;
+        bool isMutable;
+    };
+
+    struct BaseClassInfo {
+        meta::details::ID id;
+        // TODO: attributes?
+        bool isVirtual;
+        Access access;
+    };
+
+    struct RecordTypeInfo : TypeInfo {
+        bool isUnion;
+        std::vector<Attribute> attributes;
+
+        std::vector<BaseClassInfo> baseClasses;
+        std::vector<ConstructorInfo> constructors;
+        DestructorInfo destructor;
+        std::vector<FunctionInfo> memberFunctions;
+        std::vector<VariableInfo> memberVariables;
+        std::vector<FunctionInfo> staticFunctions;
+        std::vector<VariableInfo> staticVariables;
+    };
+
+    using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;
 
 }// namespace pf::meta_gen
 

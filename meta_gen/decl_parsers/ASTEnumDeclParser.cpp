@@ -2,17 +2,17 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "ASTEnumDeclParser.h"
 #include "../AttributeParser.h"
+#include "ASTEnumParser.h"
 
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
-    ASTEnumDeclParser::ASTEnumDeclParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser{std::move(idGen)} {
+    ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser{std::move(idGen)} {
         spdlog::info("Creating ASTEnumDeclParser");
     }
 
-    std::optional<TypeInfoVariant> ASTEnumDeclParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
+    std::optional<TypeInfoVariant> ASTEnumParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::EnumDecl>(decl) != nullptr);
 
         const auto enumDecl = clang::cast<clang::EnumDecl>(decl);
@@ -27,29 +27,29 @@ namespace pf::meta_gen {
         }
 
         EnumTypeInfo result{};
-        result.fullName = definition->getQualifiedNameAsString();
-        result.name = definition->getNameAsString();
+        result.fullName = enumDecl->getQualifiedNameAsString();
+        result.name = enumDecl->getNameAsString();
 
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
 
 
-        result.sourceLocation.line = sourceManager.getPresumedLineNumber(definition->getSourceRange().getBegin());
-        result.sourceLocation.column = sourceManager.getPresumedColumnNumber(definition->getSourceRange().getBegin());
-        result.sourceLocation.filename = sourceManager.getFilename(definition->getSourceRange().getBegin());
+        result.sourceLocation.line = sourceManager.getPresumedLineNumber(enumDecl->getSourceRange().getBegin());
+        result.sourceLocation.column = sourceManager.getPresumedColumnNumber(enumDecl->getSourceRange().getBegin());
+        result.sourceLocation.filename = sourceManager.getFilename(enumDecl->getSourceRange().getBegin());
 
-        result.underlyingType = definition->getIntegerType().getAsString(printingPolicy);
+        result.underlyingType = enumDecl->getIntegerType().getAsString(printingPolicy);
 
-        for (const auto &enumerator: definition->enumerators()) {
+        for (const auto &enumerator: enumDecl->enumerators()) {
             std::variant<bool, std::uint64_t, std::int64_t> value;
-            if (definition->getIntegerType()->isBooleanType()) {
+            if (enumDecl->getIntegerType()->isBooleanType()) {
                 value = enumerator->getInitVal().getBoolValue();
                 spdlog::info("ASTEnumDeclParser: detected bool as underlying type");
-            } else if (definition->getIntegerType()->isSignedIntegerType()) {
+            } else if (enumDecl->getIntegerType()->isSignedIntegerType()) {
                 value = enumerator->getInitVal().getSExtValue();
                 spdlog::info("ASTEnumDeclParser: detected signed int as underlying type");
-            } else if (definition->getIntegerType()->isUnsignedIntegerType()) {
+            } else if (enumDecl->getIntegerType()->isUnsignedIntegerType()) {
                 value = enumerator->getInitVal().getExtValue();
                 spdlog::info("ASTEnumDeclParser: detected unsigned int as underlying type");
             }
