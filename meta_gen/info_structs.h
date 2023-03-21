@@ -48,8 +48,10 @@ namespace pf::meta_gen {
     };
 
     struct FunctionArgument {
+        meta::details::ID id;
         meta::details::ID typeId;
         std::string name;
+        std::string fullName;
         std::vector<Attribute> attributes;
     };
 
@@ -82,6 +84,7 @@ namespace pf::meta_gen {
     struct FunctionInfo {
         meta::details::ID id;
         std::string name;
+        std::string fullName;
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
         meta::details::ID returnTypeId;
@@ -96,6 +99,7 @@ namespace pf::meta_gen {
     struct VariableInfo {
         meta::details::ID id;
         std::string name;
+        std::string fullName;
         meta::details::ID typeId;
         std::vector<Attribute> attributes;
         Access access;
@@ -120,6 +124,10 @@ namespace pf::meta_gen {
         std::vector<VariableInfo> memberVariables;
         std::vector<FunctionInfo> staticFunctions;
         std::vector<VariableInfo> staticVariables;
+
+        bool isPolymorphic;
+        bool isAbstract;
+        bool isFinal;
     };
 
     using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;

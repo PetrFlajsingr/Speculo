@@ -20,14 +20,17 @@ namespace pf::meta_gen {
         void write(std::string_view str);
 
         void write(RangeOf<TypeInfoVariant> auto &&typeInfos) {
-            std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos), [this](auto &&typeInfo) { write(typeInfo); });
+            std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos),
+                                  [this](auto &&typeInfo) { write(typeInfo); });
         }
+
         void write(const TypeInfoVariant &typeInfo);
 
     private:
         void writeEnumInfo(const EnumTypeInfo &enumInfo);
 
-        [[nodiscard]] static std::string StringifyAttributes(const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames);
+        [[nodiscard]] static std::string
+        StringifyAttributes(const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames);
 
         [[nodiscard]] static std::string CreateAttributeArgArray(std::string_view name, const Attribute &attr);
 

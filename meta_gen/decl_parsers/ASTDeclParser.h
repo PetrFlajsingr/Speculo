@@ -16,9 +16,11 @@ namespace pf::meta_gen {
     class ASTDeclParser {
     public:
         explicit ASTDeclParser(std::shared_ptr<IdGenerator> idGen);
+
         virtual ~ASTDeclParser() = 0;
 
-        [[nodiscard]] virtual std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) = 0;
+        [[nodiscard]] virtual std::optional<TypeInfoVariant>
+        parse(clang::ASTContext &astContext, clang::Decl *decl) = 0;
 
     protected:
         [[nodiscard]] IdGenerator &getIdGenerator() { return *idGenerator; }

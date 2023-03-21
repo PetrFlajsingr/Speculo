@@ -11,7 +11,7 @@
 namespace pf::meta_gen {
 
     ASTParser::ASTParser(ParsingSettings parsingSettings, std::shared_ptr<IdGenerator> idGen)
-        : settings{parsingSettings}, idGenerator{std::move(idGen)} {}
+            : settings{parsingSettings}, idGenerator{std::move(idGen)} {}
 
     std::vector<TypeInfoVariant> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();

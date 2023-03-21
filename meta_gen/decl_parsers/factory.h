@@ -9,7 +9,8 @@
 
 namespace pf::meta_gen {
 
-    [[nodiscard]] std::unique_ptr<ASTDeclParser> createDeclParser(clang::Decl *decl, const std::shared_ptr<IdGenerator>& idGen);
+    [[nodiscard]] std::unique_ptr<ASTDeclParser>
+    createDeclParser(clang::Decl *decl, const std::shared_ptr<IdGenerator> &idGen);
 
 }
 

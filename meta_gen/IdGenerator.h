@@ -16,8 +16,8 @@ namespace pf::meta_gen {
     public:
         IdGenerator() = default;
 
-        [[nodiscard]] pf::meta::details::ID generateTypeId(const std::string &fullTypeName) {
-            const auto uuid = uuidNameGenerator(fullTypeName);
+        [[nodiscard]] pf::meta::details::ID generateId(const std::string &name) {
+            const auto uuid = uuidNameGenerator(name);
             pf::meta::details::ID result{};
             std::memcpy(result.id.data(), uuid.as_bytes().data(), uuid.as_bytes().size_bytes());
             return result;

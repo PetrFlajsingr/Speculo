@@ -1,22 +1,55 @@
 //#include <iostream>
 
 namespace pf {
-    enum class Hihi;
+   /* enum class Hihi;
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
-    struct Test {
-        enum class E : int { Value1, Value2 };
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};*/
+
+   struct A{
+       int a1;
+       A() = default;
+   };
+
+   struct B {
+       virtual ~B() = default;
+       virtual void pure_foo(int a) = 0;
+       virtual void virt_foo(int a) {}
+   };
+
+    struct Test : public A, protected virtual B {
+    public:
+        Test() = default;
+        explicit Test(int v) {}
+        constexpr Test(int v1, int v2) {}
+        Test(const Test&) = delete;
+        Test &operator=(const Test&) noexcept = default;
+
+    protected:
+        void pure_foo(int a) override {
+
+        }
+
+        void virt_foo(int a) override {
+            B::virt_foo(a);
+        }
+
+    public:
 
         int a;
         int b;
         float c, d;
 
+        inline static int static_int = 10;
+
         void foo(int a, int b){};
+    protected:
         void foo(int a, int b) const {};
         static void bar(float a) {}
+    private:
+        static void bar(float a, int c) {}
     };
 
-    enum class EmptyEnum {};
+    /*enum class EmptyEnum {};
 
     enum class E1 { A, B, C, D, E };
     enum class E2 { A, B, C, D, E };
@@ -26,5 +59,5 @@ namespace pf {
     enum class E6 { A, B, C, D, E };
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
-    enum class E9 { A, B, C, D, E };
+    enum class E9 { A, B, C, D, E };*/
 }// namespace pf
