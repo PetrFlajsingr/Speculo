@@ -24,7 +24,9 @@ namespace pf::meta_gen {
     void MetaInfoWriter::write(std::string_view str) { *ostream << str; }
 
     void MetaInfoWriter::write(const TypeInfoVariant &typeInfo) {
-        std::visit(Visitor{[&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
+        std::visit(Visitor{
+                           [&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
+                           [&](const RecordTypeInfo recordInfo) { writeRecordInfo(recordInfo); },
                            [](auto) { spdlog::error("MetaInfoWriter: unimplemented type"); }},
                    typeInfo);
     }
@@ -100,6 +102,41 @@ namespace pf::meta_gen {
                               "constant"_a = name,
                               "value_id"_a = id));
         }
+    }
+
+    void MetaInfoWriter::writeRecordInfo(const RecordTypeInfo &recordInfo) {
+        write(recordInfo.fullName);
+        write("\n base classes:\n");
+        for (const auto &b : recordInfo.baseClasses) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("constructors:\n");
+        for (const auto &b : recordInfo.constructors) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("memberFunctions:\n");
+        for (const auto &b : recordInfo.memberFunctions) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("memberVariables:\n");
+        for (const auto &b : recordInfo.memberVariables) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("staticFunctions:\n");
+        for (const auto &b : recordInfo.staticFunctions) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("staticVariables:\n");
+        for (const auto &b : recordInfo.staticVariables) {
+            write(b.fullName);
+            write("\n");
+        }
+        write("// _________________________");
     }
 
     std::string MetaInfoWriter::StringifyAttributes(const std::vector<Attribute> &attrs,

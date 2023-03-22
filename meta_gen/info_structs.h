@@ -52,6 +52,7 @@ namespace pf::meta_gen {
         meta::details::ID typeId;
         std::string name;
         std::string fullName;
+        std::string typeName;
         std::vector<Attribute> attributes;
     };
 
@@ -61,6 +62,7 @@ namespace pf::meta_gen {
 
     struct ConstructorInfo {
         meta::details::ID id;
+        std::string fullName;
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
         bool isConstexpr;
@@ -88,6 +90,7 @@ namespace pf::meta_gen {
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
         meta::details::ID returnTypeId;
+        std::string returnTypeName;
         Access access;
         bool isConstexpr;
         bool isConsteval;
@@ -101,6 +104,7 @@ namespace pf::meta_gen {
         std::string name;
         std::string fullName;
         meta::details::ID typeId;
+        std::string typeName;
         std::vector<Attribute> attributes;
         Access access;
         bool isMutable;
@@ -108,7 +112,8 @@ namespace pf::meta_gen {
 
     struct BaseClassInfo {
         meta::details::ID id;
-        // TODO: attributes?
+        std::vector<Attribute> attributes;
+        std::string fullName;
         bool isVirtual;
         Access access;
     };

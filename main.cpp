@@ -67,15 +67,15 @@ enum class InfoType {
         case InfoType::Const:
             return "const " + fullTypeName;
         case InfoType::Lvalue:
-            return fullTypeName + "&";
+            return fullTypeName + " &";
         case InfoType::ConstLvalue:
-            return "const " + fullTypeName + "&";
+            return "const " + fullTypeName + " &";
         case InfoType::Rvalue:
-            return fullTypeName + "&&";
+            return fullTypeName + " &&";
         case InfoType::Ptr:
-            return fullTypeName + "*";
+            return fullTypeName + " *";
         case InfoType::ConstPtr:
-            return "const " + fullTypeName + "*";
+            return "const " + fullTypeName + " *";
     }
     throw "can't happen";
 }

@@ -28,6 +28,7 @@ namespace pf::meta_gen {
 
     private:
         void writeEnumInfo(const EnumTypeInfo &enumInfo);
+        void writeRecordInfo(const RecordTypeInfo &recordInfo);
 
         [[nodiscard]] static std::string
         StringifyAttributes(const std::vector<Attribute> &attrs, const std::vector<std::string> &argArrayNames);

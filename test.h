@@ -19,8 +19,8 @@ namespace pf {
     struct Test : public A, protected virtual B {
     public:
         Test() = default;
-        explicit Test(int v) {}
-        constexpr Test(int v1, int v2) {}
+        explicit Test(A v) {}
+        constexpr Test(const int& v1, int v2) {}
         Test(const Test&) = delete;
         Test &operator=(const Test&) noexcept = default;
 
@@ -39,7 +39,8 @@ namespace pf {
         int b;
         float c, d;
 
-        inline static int static_int = 10;
+        inline static int inline_static_int = 10;
+        static int static_int;
 
         void foo(int a, int b){};
     protected:
@@ -48,6 +49,9 @@ namespace pf {
     private:
         static void bar(float a, int c) {}
     };
+
+    template <typename T>
+    struct Templated {};
 
     /*enum class EmptyEnum {};
 

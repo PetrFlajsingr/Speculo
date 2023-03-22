@@ -20,7 +20,7 @@ namespace pf::meta_gen {
                                                                                         !recordDecl->isInvalidDecl()) {
             return std::make_unique<ASTRecordParser>(idGen);
         } else {
-            spdlog::warn("createDeclParser: unsupported decl type");
+            spdlog::trace("createDeclParser: unsupported decl type");
             return nullptr;
         }
     }

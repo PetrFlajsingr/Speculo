@@ -4,7 +4,7 @@
 
 #include "ASTRecordParser.h"
 #include "../AttributeParser.h"
-
+#include <pf_common/concepts/ranges.h>
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -23,6 +23,7 @@ namespace pf::meta_gen {
                 // FIXME: what to do here?
                 return Public;
         }
+        assert(false && "Can't happen");
         return Access::Public;
     }
 
@@ -31,6 +32,13 @@ namespace pf::meta_gen {
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
         const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
+
+        // TODO: verify how this works
+        // not supporting templates for now
+        if (recordDecl->isTemplateDecl()) {
+            spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
+            return std::nullopt;
+        }
 
         spdlog::info("ASTRecordParser: parsing {}", recordDecl->getQualifiedNameAsString());
 
@@ -65,18 +73,27 @@ namespace pf::meta_gen {
         result.isAbstract = recordDecl->isAbstract();
         result.isFinal = recordDecl->isEffectivelyFinal();
 
+        // TODO: inherited
         for (const clang::FieldDecl *field: recordDecl->fields()) {
             VariableInfo variableInfo;
             variableInfo.name = field->getNameAsString();
             variableInfo.fullName = field->getQualifiedNameAsString();
             variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-            variableInfo.typeId = getIdGenerator().generateId(field->getType().getAsString());
+            if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl();
+                    typeRecordDecl !=
+                    nullptr) {
+                variableInfo.typeName = typeRecordDecl->getQualifiedNameAsString();
+            } else {
+                variableInfo.typeName = field->getType().getAsString(printingPolicy);
+            }
+            variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
             // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
             variableInfo.access = clangAccesConv(field->getAccess());
             variableInfo.isMutable = field->isMutable();
 
             result.memberVariables.push_back(variableInfo);
         }
+        // TODO: inherited
         // static variables
         for (const auto innerDecls: recordDecl->decls()) {
             if (auto var = clang::dyn_cast<clang::VarDecl>(innerDecls)) {
@@ -85,7 +102,14 @@ namespace pf::meta_gen {
                     variableInfo.name = var->getNameAsString();
                     variableInfo.fullName = var->getQualifiedNameAsString();
                     variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-                    variableInfo.typeId = getIdGenerator().generateId(var->getType().getAsString());
+                    if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl();
+                            typeRecordDecl !=
+                            nullptr) {
+                        variableInfo.typeName = typeRecordDecl->getQualifiedNameAsString();
+                    } else {
+                        variableInfo.typeName = var->getType().getAsString(printingPolicy);
+                    }
+                    variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
                     // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
                     variableInfo.access = clangAccesConv(var->getAccess());
 
@@ -94,32 +118,65 @@ namespace pf::meta_gen {
             }
         }
 
-        // TODO: generate ID from argument names as well - mangle
+        const auto mangleFunction = [](std::string_view fullName,
+                                       RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames) {
+            std::string result{fullName};
+            for (const auto &[type, name]: argumentTypesAndNames) {
+                result.append(fmt::format("_{}_{}", type, name));
+            }
+            return result;
+        };
+
+        // TODO: inherited (but not overriden) functions
         for (const clang::CXXMethodDecl *method: recordDecl->methods()) {
+            // skipping ctors and dtors here
             if (clang::dyn_cast<clang::CXXConstructorDecl>(method) != nullptr) { continue; }
             if (clang::dyn_cast<clang::CXXDestructorDecl>(method) != nullptr) { continue; }
+
             FunctionInfo functionInfo;
             functionInfo.name = method->getNameAsString();
             functionInfo.fullName = method->getQualifiedNameAsString();
-            functionInfo.id = getIdGenerator().generateId(functionInfo.fullName);
             for (const clang::ParmVarDecl *param: method->parameters()) {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
                 argument.fullName = param->getQualifiedNameAsString();
                 // TODO: mangle the arg name with the mangled function name
                 argument.id = getIdGenerator().generateId(argument.fullName);
-                argument.typeId = getIdGenerator().generateId(param->getType().getAsString());
+                if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl();
+                        paramTypeRecordDecl !=
+                        nullptr) {
+                    argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
+                } else {
+                    argument.typeName = param->getType().getAsString(printingPolicy);
+                }
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
                 // TODO: argument.attributes
                 functionInfo.arguments.push_back(argument);
             }
             // TODO: functionInfo.attributes = attributeParser.parseMethodAttributes(astContext, *method);
-            functionInfo.returnTypeId = getIdGenerator().generateId(method->getReturnType().getAsString());
+            if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl();
+                    returnTypeRecordDecl !=
+                    nullptr) {
+                functionInfo.returnTypeName = returnTypeRecordDecl->getQualifiedNameAsString();
+            } else {
+                functionInfo.returnTypeName = method->getReturnType().getAsString(printingPolicy);
+            }
+            functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
             functionInfo.access = clangAccesConv(method->getAccess());
             functionInfo.isConstexpr = method->isConstexpr();
             functionInfo.isConsteval = method->isConsteval();
             functionInfo.isConst = method->isConst();
             functionInfo.isVirtual = method->isVirtual();
             functionInfo.isPureVirtual = method->isPure();
+
+            const auto mangledName = mangleFunction(functionInfo.fullName,
+                                                    functionInfo.arguments |
+                                                    std::views::transform([](const FunctionArgument &arg) {
+                                                        return std::pair(std::string_view{arg.fullName},
+                                                                         std::string_view{arg.typeName});
+                                                    }));
+            functionInfo.id = getIdGenerator().generateId(mangledName);
+
             if (method->isStatic()) {
                 result.staticFunctions.push_back(functionInfo);
             } else {
@@ -127,16 +184,23 @@ namespace pf::meta_gen {
             }
         }
 
-        // TODO: generate ID from argument names as well - mangle
         for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
             ConstructorInfo constructorInfo;
-            constructorInfo.id = getIdGenerator().generateId(ctor->getQualifiedNameAsString());
+            constructorInfo.fullName = ctor->getQualifiedNameAsString();
+            constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
             for (const clang::ParmVarDecl *param: ctor->parameters()) {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
                 argument.fullName = param->getQualifiedNameAsString();
                 argument.id = getIdGenerator().generateId(argument.fullName);
-                argument.typeId = getIdGenerator().generateId(param->getType().getAsString());
+
+                if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl();  paramTypeRecordDecl !=
+                                                                                              nullptr) {
+                    argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
+                } else {
+                    argument.typeName = param->getType().getAsString(printingPolicy);
+                }
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
                 // TODO: argument.attributes
                 constructorInfo.arguments.push_back(argument);
             }
@@ -144,6 +208,15 @@ namespace pf::meta_gen {
             constructorInfo.isConsteval = ctor->isConsteval();
             constructorInfo.isExplicit = ctor->isExplicit();
             constructorInfo.access = clangAccesConv(ctor->getAccess());
+
+            const auto mangledName = mangleFunction(constructorInfo.fullName,
+                                                    constructorInfo.arguments |
+                                                    std::views::transform([](const FunctionArgument &arg) {
+                                                        return std::pair(std::string_view{arg.fullName},
+                                                                         std::string_view{arg.typeName});
+                                                    }));
+            constructorInfo.id = getIdGenerator().generateId(mangledName);
+
             result.constructors.push_back(constructorInfo);
         }
         const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor();
@@ -155,11 +228,20 @@ namespace pf::meta_gen {
         result.destructor.isVirtual = destructor->isVirtual();
         result.destructor.isPureVirtual = destructor->isPure();
 
+        const auto mangleBaseClass = [](std::string_view derivedFullName,
+                                        std::string baseFullName) {
+            return fmt::format("{}__{}", derivedFullName, baseFullName);
+        };
 
         for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
             BaseClassInfo baseClassInfo;
-            // TODO: mangle the name for ID with the derived class's name
-            baseClassInfo.id = getIdGenerator().generateId(base.getType().getAsString());
+            if (const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();  baseRecordDecl != nullptr) {
+                baseClassInfo.fullName = baseRecordDecl->getQualifiedNameAsString();
+            } else {
+                baseClassInfo.fullName = base.getType().getAsString(printingPolicy);
+            }
+            const auto mangledName = mangleBaseClass(result.fullName, baseClassInfo.fullName);
+            baseClassInfo.id = getIdGenerator().generateId(baseClassInfo.fullName);
             // TODO: baseClassInfo.attributes
             baseClassInfo.isVirtual = base.isVirtual();
             baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
