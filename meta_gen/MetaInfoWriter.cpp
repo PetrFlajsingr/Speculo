@@ -26,7 +26,7 @@ namespace pf::meta_gen {
     void MetaInfoWriter::write(const TypeInfoVariant &typeInfo) {
         std::visit(Visitor{
                            [&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
-                           [&](const RecordTypeInfo recordInfo) { writeRecordInfo(recordInfo); },
+                           [&](const RecordTypeInfo &recordInfo) { writeRecordInfo(recordInfo); },
                            [](auto) { spdlog::error("MetaInfoWriter: unimplemented type"); }},
                    typeInfo);
     }
@@ -105,38 +105,85 @@ namespace pf::meta_gen {
     }
 
     void MetaInfoWriter::writeRecordInfo(const RecordTypeInfo &recordInfo) {
-        write(recordInfo.fullName);
-        write("\n base classes:\n");
-        for (const auto &b : recordInfo.baseClasses) {
-            write(b.fullName);
-            write("\n");
+        using namespace fmt::literals;
+
+        const auto idsToStringMakeArray = [](std::ranges::range auto &&range) {
+            static_assert(requires(std::ranges::range_value_t<decltype(range)> v) {
+                { v.id } -> std::convertible_to<meta::details::ID>;
+            });
+            std::string result;
+            for (const auto &val: range) {
+                result.append(idToString(val.id));
+                result.append(", ");
+            }
+            if (!result.empty()) {
+                result = result.substr(0, result.length() - 2);
+            }
+            return result;
+        };
+
+
+        const auto const_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName));
+        const auto lref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&"));
+        const auto const_lref_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName + "&"));
+        const auto rref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&&"));
+        const auto ptr_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "*"));
+        const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + recordInfo.fullName + "*"));
+        write(fmt::format(StaticTypeInfoTemplate_Record,
+                          "type_id"_a = idToString(idGenerator->generateId(recordInfo.fullName)),
+                          "full_name"_a = recordInfo.fullName,
+                          "details"_a = "",
+                          "type"_a = recordInfo.fullName,
+                          "source_file"_a = recordInfo.sourceLocation.filename,
+                          "source_line"_a = recordInfo.sourceLocation.line,
+                          "source_column"_a = recordInfo.sourceLocation.column,
+                          "attributes"_a = "", // TODO: attributes
+                          "name"_a = recordInfo.name,
+                          "full_name"_a = recordInfo.fullName,
+                          "is_union"_a = recordInfo.isUnion,
+                          "is_poly"_a = recordInfo.isPolymorphic,
+                          "is_abstract"_a = recordInfo.isAbstract,
+                          "is_final"_a = recordInfo.isFinal,
+                          "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
+                          "ctors"_a = idsToStringMakeArray(recordInfo.constructors),
+                          "dtor"_a = idToString(recordInfo.destructor.id),
+                          "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
+                          "static_fncs"_a =
+                                  idsToStringMakeArray(recordInfo.staticFunctions),
+                          "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
+                          "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables),
+                          "const_type_id"_a = const_type_id,
+                          "lref_type_id"_a = lref_type_id,
+                          "const_lref_type_id"_a = const_lref_type_id,
+                          "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
+                          "const_ptr_type_id"_a = const_ptr_type_id
+        ));
+        spdlog::debug(recordInfo.fullName);
+        spdlog::debug(" base classes:");
+        for (const auto &b: recordInfo.baseClasses) {
+            spdlog::debug(b.fullName);
         }
-        write("constructors:\n");
-        for (const auto &b : recordInfo.constructors) {
-            write(b.fullName);
-            write("\n");
+        spdlog::debug("constructors:");
+        for (const auto &b: recordInfo.constructors) {
+            spdlog::debug(b.fullName);
         }
-        write("memberFunctions:\n");
-        for (const auto &b : recordInfo.memberFunctions) {
-            write(b.fullName);
-            write("\n");
+        spdlog::debug("memberFunctions:");
+        for (const auto &b: recordInfo.memberFunctions) {
+            spdlog::debug(b.fullName);
         }
-        write("memberVariables:\n");
-        for (const auto &b : recordInfo.memberVariables) {
-            write(b.fullName);
-            write("\n");
+        spdlog::debug("memberVariables:");
+        for (const auto &b: recordInfo.memberVariables) {
+            spdlog::debug(b.fullName);
         }
-        write("staticFunctions:\n");
-        for (const auto &b : recordInfo.staticFunctions) {
-            write(b.fullName);
-            write("\n");
+        spdlog::debug("staticFunctions:");
+        for (const auto &b: recordInfo.staticFunctions) {
+            spdlog::debug(b.fullName);
         }
-        write("staticVariables:\n");
-        for (const auto &b : recordInfo.staticVariables) {
-            write(b.fullName);
-            write("\n");
+        spdlog::debug("staticVariables:");
+        for (const auto &b: recordInfo.staticVariables) {
+            spdlog::debug(b.fullName);
         }
-        write("// _________________________");
+        spdlog::debug("// _________________________");
     }
 
     std::string MetaInfoWriter::StringifyAttributes(const std::vector<Attribute> &attrs,

@@ -24,6 +24,9 @@ namespace pf {
         Test(const Test&) = delete;
         Test &operator=(const Test&) noexcept = default;
 
+        template<typename T>
+        Test(T) {}
+
     protected:
         void pure_foo(int a) override {
 

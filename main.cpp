@@ -133,6 +133,7 @@ template<>
 }
 
 int main(int argc, const char **argv) {
+    spdlog::set_level(spdlog::level::debug);
     llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
     /*

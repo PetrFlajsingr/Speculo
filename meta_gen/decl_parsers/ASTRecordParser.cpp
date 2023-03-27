@@ -29,6 +29,7 @@ namespace pf::meta_gen {
 
     ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser(idGen) {}
 
+    // TODO: divide this up into separate functions
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
         const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
@@ -73,7 +74,7 @@ namespace pf::meta_gen {
         result.isAbstract = recordDecl->isAbstract();
         result.isFinal = recordDecl->isEffectivelyFinal();
 
-        // TODO: inherited
+        // TODO: inherited?
         for (const clang::FieldDecl *field: recordDecl->fields()) {
             VariableInfo variableInfo;
             variableInfo.name = field->getNameAsString();
@@ -93,7 +94,7 @@ namespace pf::meta_gen {
 
             result.memberVariables.push_back(variableInfo);
         }
-        // TODO: inherited
+        // TODO: inherited?
         // static variables
         for (const auto innerDecls: recordDecl->decls()) {
             if (auto var = clang::dyn_cast<clang::VarDecl>(innerDecls)) {
@@ -127,7 +128,8 @@ namespace pf::meta_gen {
             return result;
         };
 
-        // TODO: inherited (but not overriden) functions
+        // TODO: this does not enumerate templated, investigate
+        // TODO: inherited (but not overriden) functions?
         for (const clang::CXXMethodDecl *method: recordDecl->methods()) {
             // skipping ctors and dtors here
             if (clang::dyn_cast<clang::CXXConstructorDecl>(method) != nullptr) { continue; }
@@ -248,7 +250,6 @@ namespace pf::meta_gen {
             result.baseClasses.push_back(baseClassInfo);
         }
 
-        // recordDecl->friends()?
 
         return result;
     }
