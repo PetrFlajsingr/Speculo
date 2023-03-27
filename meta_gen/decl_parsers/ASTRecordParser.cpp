@@ -58,6 +58,7 @@ namespace pf::meta_gen {
 
         result.fullName = recordDecl->getQualifiedNameAsString();
         result.name = recordDecl->getNameAsString();
+        result.id = getIdGenerator().generateId(result.fullName);
 
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();

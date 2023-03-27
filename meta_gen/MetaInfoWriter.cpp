@@ -130,7 +130,7 @@ namespace pf::meta_gen {
         const auto ptr_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "*"));
         const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + recordInfo.fullName + "*"));
         write(fmt::format(StaticTypeInfoTemplate_Record,
-                          "type_id"_a = idToString(idGenerator->generateId(recordInfo.fullName)),
+                          "type_id"_a = idToString(recordInfo.id),
                           "full_name"_a = recordInfo.fullName,
                           "details"_a = "",
                           "type"_a = recordInfo.fullName,
@@ -158,6 +158,14 @@ namespace pf::meta_gen {
                           "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
                           "const_ptr_type_id"_a = const_ptr_type_id
         ));
+
+        write(fmt::format(GetTypeIDTemplate, "full_name"_a = recordInfo.fullName, "type"_a = recordInfo.fullName,
+                          "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = const_type_id,
+                          "lref_type_id"_a = lref_type_id,
+                          "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
+                          "ptr_type_id"_a = ptr_type_id,
+                          "const_ptr_type_id"_a = const_ptr_type_id));
+
         spdlog::debug(recordInfo.fullName);
         spdlog::debug(" base classes:");
         for (const auto &b: recordInfo.baseClasses) {
