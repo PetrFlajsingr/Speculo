@@ -42,6 +42,8 @@ namespace pf::meta_gen {
 
         spdlog::info("ASTRecordParser: parsing {}", recordDecl->getQualifiedNameAsString());
 
+        AttributeParser attributeParser{};
+
         // Skip if found decl is not definition
         const auto definition = recordDecl->getDefinition();
         if (definition != decl) {
@@ -67,7 +69,7 @@ namespace pf::meta_gen {
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
         result.sourceLocation.filename = sourceManager.getFilename(recordDecl->getSourceRange().getBegin());
 
-        //TODO: result.attributes = AttributeParser{}.parseRecordAttributes(astContext, *recordDecl);
+        result.attributes = attributeParser.parseRecordAttributes(astContext, *recordDecl);
 
         result.isUnion = recordDecl->isUnion();
         result.isPolymorphic = recordDecl->isPolymorphic();
@@ -86,7 +88,7 @@ namespace pf::meta_gen {
                 variableInfo.typeName = field->getType().getAsString(printingPolicy);
             }
             variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-            // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
+            variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
             variableInfo.access = clangAccesConv(field->getAccess());
             variableInfo.isMutable = field->isMutable();
             variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(field->getSourceRange().getBegin());
@@ -110,7 +112,7 @@ namespace pf::meta_gen {
                         variableInfo.typeName = var->getType().getAsString(printingPolicy);
                     }
                     variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-                    // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
+                    variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *var);
                     variableInfo.access = clangAccesConv(var->getAccess());
 
                     variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(var->getSourceRange().getBegin());
@@ -143,18 +145,19 @@ namespace pf::meta_gen {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
                 argument.fullName = param->getQualifiedNameAsString();
-                // TODO: mangle the arg name with the mangled function name
-                argument.id = getIdGenerator().generateId(argument.fullName);
                 if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
                 } else {
                     argument.typeName = param->getType().getAsString(printingPolicy);
                 }
                 argument.typeId = getIdGenerator().generateId(argument.typeName);
-                // TODO: argument.attributes
+                argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
+                argument.sourceLocation.column = sourceManager.getPresumedColumnNumber(param->getSourceRange().getBegin());
+                argument.sourceLocation.filename = sourceManager.getFilename(param->getSourceRange().getBegin());
+                argument.attributes = attributeParser.parseArgumentAttributes(astContext, *param);
                 functionInfo.arguments.push_back(argument);
             }
-            // TODO: functionInfo.attributes = attributeParser.parseMethodAttributes(astContext, *method);
+            functionInfo.attributes = attributeParser.parseFunctionAttributes(astContext, *method);
             if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); returnTypeRecordDecl != nullptr) {
                 functionInfo.returnTypeName = returnTypeRecordDecl->getQualifiedNameAsString();
             } else {
@@ -175,11 +178,103 @@ namespace pf::meta_gen {
                                                     functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
                                                         return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
                                                     }));
+            // mangling names for argument IDs
+            for (auto &argument: functionInfo.arguments) {
+                argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
+            }
+
             functionInfo.id = getIdGenerator().generateId(mangledName);
 
             if (method->isStatic()) {
                 result.staticFunctions.push_back(functionInfo);
             } else {
+                result.memberFunctions.push_back(functionInfo);
+            }
+        }
+        // default copy/move operators
+        {
+            if (recordDecl->hasSimpleCopyAssignment() && !recordDecl->hasUserDeclaredCopyAssignment()) {
+                FunctionInfo functionInfo;
+                functionInfo.name = "operator=";
+                functionInfo.fullName = fmt::format("{}::{}", result.fullName, functionInfo.name);
+
+                FunctionArgument argument;
+                argument.name = "";
+                argument.fullName = "";
+                argument.typeName = fmt::format("const {}&", result.fullName);
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
+                argument.sourceLocation.line = 0;
+                argument.sourceLocation.column = 0;
+                argument.sourceLocation.filename = "<generated>";
+                argument.attributes = {};
+                functionInfo.arguments.push_back(argument);
+
+                functionInfo.attributes = {};
+                functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
+                functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
+                functionInfo.access = Access::Public;
+                functionInfo.isConstexpr = true; // FIXME: this is wrong
+                functionInfo.isConsteval = false;
+                functionInfo.isConst = false;
+                functionInfo.isVirtual = false;
+                functionInfo.isPureVirtual = false;
+                functionInfo.sourceLocation.line = 0;
+                functionInfo.sourceLocation.column = 0;
+                functionInfo.sourceLocation.filename = "<generated>";
+
+                const auto mangledName = mangleFunction(functionInfo.fullName,
+                                                        functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                            return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                                        }));
+                // mangling names for argument IDs
+                for (auto &arg: functionInfo.arguments) {
+                    arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));
+                }
+
+                functionInfo.id = getIdGenerator().generateId(mangledName);
+
+                result.memberFunctions.push_back(functionInfo);
+            }
+            if (recordDecl->hasSimpleMoveAssignment() && !recordDecl->hasUserDeclaredMoveAssignment()) {
+                FunctionInfo functionInfo;
+                functionInfo.name = "operator=";
+                functionInfo.fullName = fmt::format("{}::{}", result.fullName, functionInfo.name);
+
+                FunctionArgument argument;
+                argument.name = "";
+                argument.fullName = "";
+                argument.typeName = fmt::format("{}&&", result.fullName);
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
+                argument.sourceLocation.line = 0;
+                argument.sourceLocation.column = 0;
+                argument.sourceLocation.filename = "<generated>";
+                argument.attributes = {};
+                functionInfo.arguments.push_back(argument);
+
+                functionInfo.attributes = {};
+                functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
+                functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
+                functionInfo.access = Access::Public;
+                functionInfo.isConstexpr = true; // FIXME: this is wrong
+                functionInfo.isConsteval = false;
+                functionInfo.isConst = false;
+                functionInfo.isVirtual = false;
+                functionInfo.isPureVirtual = false;
+                functionInfo.sourceLocation.line = 0;
+                functionInfo.sourceLocation.column = 0;
+                functionInfo.sourceLocation.filename = "<generated>";
+
+                const auto mangledName = mangleFunction(functionInfo.fullName,
+                                                        functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                            return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                                        }));
+                // mangling names for argument IDs
+                for (auto &arg: functionInfo.arguments) {
+                    arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));
+                }
+
+                functionInfo.id = getIdGenerator().generateId(mangledName);
+
                 result.memberFunctions.push_back(functionInfo);
             }
         }
@@ -192,7 +287,6 @@ namespace pf::meta_gen {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
                 argument.fullName = param->getQualifiedNameAsString();
-                argument.id = getIdGenerator().generateId(argument.fullName);
 
                 if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
@@ -200,7 +294,10 @@ namespace pf::meta_gen {
                     argument.typeName = param->getType().getAsString(printingPolicy);
                 }
                 argument.typeId = getIdGenerator().generateId(argument.typeName);
-                // TODO: argument.attributes
+                argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
+                argument.sourceLocation.column = sourceManager.getPresumedColumnNumber(param->getSourceRange().getBegin());
+                argument.sourceLocation.filename = sourceManager.getFilename(param->getSourceRange().getBegin());
+                argument.attributes = attributeParser.parseArgumentAttributes(astContext, *param);
                 constructorInfo.arguments.push_back(argument);
             }
             constructorInfo.isConstexpr = ctor->isConstexpr();
@@ -212,14 +309,121 @@ namespace pf::meta_gen {
             constructorInfo.sourceLocation.filename = sourceManager.getFilename(ctor->getSourceRange().getBegin());
             constructorInfo.isCopy = ctor->isCopyConstructor();
             constructorInfo.isMove = ctor->isMoveConstructor();
+            constructorInfo.attributes = attributeParser.parseConstructorAttributes(astContext, *ctor);
 
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
                                                         return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
                                                     }));
+            // mangling names for argument IDs
+            for (auto &argument: constructorInfo.arguments) {
+                argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
+            }
             constructorInfo.id = getIdGenerator().generateId(mangledName);
 
             result.constructors.push_back(constructorInfo);
+        }
+        // default ctors
+        {
+            if (recordDecl->hasDefaultConstructor() && !recordDecl->hasUserProvidedDefaultConstructor()) {
+                ConstructorInfo constructorInfo;
+                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
+                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
+                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
+                constructorInfo.isConsteval = false;
+                constructorInfo.isExplicit = false;
+                constructorInfo.access = Access::Public;
+                constructorInfo.sourceLocation.line = 0;
+                constructorInfo.sourceLocation.column = 0;
+                constructorInfo.sourceLocation.filename = "<generated>";
+                constructorInfo.isCopy = false;
+                constructorInfo.isMove = false;
+                result.destructor.attributes = {};
+
+                const auto mangledName = mangleFunction(
+                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                                  }));
+                constructorInfo.id = getIdGenerator().generateId(mangledName);
+
+                result.constructors.push_back(constructorInfo);
+            }
+            if (recordDecl->hasSimpleCopyConstructor() && !recordDecl->hasUserDeclaredCopyConstructor()) {
+                ConstructorInfo constructorInfo;
+                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
+                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
+                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
+                constructorInfo.isConsteval = false;
+                constructorInfo.isExplicit = false;
+                constructorInfo.access = Access::Public;
+                constructorInfo.sourceLocation.line = 0;
+                constructorInfo.sourceLocation.column = 0;
+                constructorInfo.sourceLocation.filename = "<generated>";
+                constructorInfo.isCopy = true;
+                constructorInfo.isMove = false;
+                result.destructor.attributes = {};
+
+                FunctionArgument argument;
+                argument.name = "";
+                argument.fullName = "";
+                argument.typeName = fmt::format("const {}&", result.fullName);
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
+                argument.sourceLocation.line = 0;
+                argument.sourceLocation.column = 0;
+                argument.sourceLocation.filename = "<generated>";
+                argument.attributes = {};
+                constructorInfo.arguments.push_back(argument);
+
+                const auto mangledName = mangleFunction(
+                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                                  }));
+                // mangling names for argument IDs
+                for (auto &argument: constructorInfo.arguments) {
+                    argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
+                }
+                constructorInfo.id = getIdGenerator().generateId(mangledName);
+
+                result.constructors.push_back(constructorInfo);
+            }
+            if (recordDecl->hasSimpleMoveConstructor() && !recordDecl->hasUserDeclaredMoveConstructor()) {
+                ConstructorInfo constructorInfo;
+                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
+                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
+                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
+                constructorInfo.isConsteval = false;
+                constructorInfo.isExplicit = false;
+                constructorInfo.access = Access::Public;
+                constructorInfo.sourceLocation.line = 0;
+                constructorInfo.sourceLocation.column = 0;
+                constructorInfo.sourceLocation.filename = "<generated>";
+                constructorInfo.isCopy = false;
+                constructorInfo.isMove = true;
+                result.destructor.attributes = {};
+
+                FunctionArgument argument;
+                argument.name = "";
+                argument.fullName = "";
+                argument.typeName = fmt::format("{}&&", result.fullName);
+                argument.typeId = getIdGenerator().generateId(argument.typeName);
+                argument.sourceLocation.line = 0;
+                argument.sourceLocation.column = 0;
+                argument.sourceLocation.filename = "<generated>";
+                argument.attributes = {};
+                constructorInfo.arguments.push_back(argument);
+
+                const auto mangledName = mangleFunction(
+                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                                  }));
+                // mangling names for argument IDs
+                for (auto &argument: constructorInfo.arguments) {
+                    argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
+                }
+                constructorInfo.id = getIdGenerator().generateId(mangledName);
+
+                result.constructors.push_back(constructorInfo);
+            }
         }
         if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
             result.destructor.fullName = destructor->getQualifiedNameAsString();
@@ -228,11 +432,23 @@ namespace pf::meta_gen {
             result.destructor.sourceLocation.line = sourceManager.getPresumedLineNumber(destructor->getSourceRange().getBegin());
             result.destructor.sourceLocation.column = sourceManager.getPresumedColumnNumber(destructor->getSourceRange().getBegin());
             result.destructor.sourceLocation.filename = sourceManager.getFilename(destructor->getSourceRange().getBegin());
-            // TODO: result.destructor.attributes
+            result.destructor.attributes = attributeParser.parseDestructorAttributes(astContext, *destructor);
             result.destructor.isConstexpr = destructor->isConstexpr();
             result.destructor.isConsteval = destructor->isConsteval();
             result.destructor.isVirtual = destructor->isVirtual();
             result.destructor.isPureVirtual = destructor->isPure();
+        } else if (recordDecl->hasSimpleDestructor()) {
+            result.destructor.fullName = fmt::format("{}::~{}", result.fullName, result.name);
+            result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
+            result.destructor.access = Access::Public;
+            result.destructor.sourceLocation.line = 0;
+            result.destructor.sourceLocation.column = 0;
+            result.destructor.sourceLocation.filename = "<generated>";
+            result.destructor.attributes = {};
+            result.destructor.isConstexpr = recordDecl->hasConstexprDestructor();
+            result.destructor.isConsteval = false;
+            result.destructor.isVirtual = false;
+            result.destructor.isPureVirtual = false;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {
@@ -250,7 +466,6 @@ namespace pf::meta_gen {
             }
             const auto mangledName = mangleBaseClass(result.fullName, baseClassInfo.fullName);
             baseClassInfo.id = getIdGenerator().generateId(mangledName);
-            // TODO: baseClassInfo.attributes
             baseClassInfo.isVirtual = base.isVirtual();
             baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
             baseClassInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(base.getSourceRange().getBegin());

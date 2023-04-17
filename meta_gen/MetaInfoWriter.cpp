@@ -9,6 +9,7 @@
 
 #include "src_templates/GetConstantID_template.h"
 #include "src_templates/GetTypeID_template.h"
+#include "src_templates/StaticArgumentInfo_template.h"
 #include "src_templates/StaticBaseInfo_template.h"
 #include "src_templates/StaticConstructorInfo_template.h"
 #include "src_templates/StaticDestructorInfo_template.h"
@@ -115,114 +116,228 @@ namespace pf::meta_gen {
             return result;
         };
 
+        {
+            const auto const_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName));
+            const auto lref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&"));
+            const auto const_lref_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName + "&"));
+            const auto rref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&&"));
+            const auto ptr_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "*"));
+            const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + recordInfo.fullName + "*"));
 
-        const auto const_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName));
-        const auto lref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&"));
-        const auto const_lref_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName + "&"));
-        const auto rref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&&"));
-        const auto ptr_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "*"));
-        const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + recordInfo.fullName + "*"));
-        write(fmt::format(StaticTypeInfoTemplate_Record, "type_id"_a = idToString(recordInfo.id), "full_name"_a = recordInfo.fullName,
-                          "details"_a = "", "type"_a = recordInfo.fullName, "source_file"_a = recordInfo.sourceLocation.filename,
-                          "source_line"_a = recordInfo.sourceLocation.line, "source_column"_a = recordInfo.sourceLocation.column,
-                          "attributes"_a = "",// TODO: attributes
-                          "name"_a = recordInfo.name, "full_name"_a = recordInfo.fullName, "is_union"_a = recordInfo.isUnion,
-                          "is_poly"_a = recordInfo.isPolymorphic, "is_abstract"_a = recordInfo.isAbstract,
-                          "is_final"_a = recordInfo.isFinal, "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
-                          "ctors"_a = idsToStringMakeArray(recordInfo.constructors), "dtor"_a = idToString(recordInfo.destructor.id),
-                          "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
-                          "static_fncs"_a = idsToStringMakeArray(recordInfo.staticFunctions),
-                          "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
-                          "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables), "const_type_id"_a = const_type_id,
-                          "lref_type_id"_a = lref_type_id, "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
-                          "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id));
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: recordInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(recordInfo.attributes, argsArrayNames);
 
-        write(fmt::format(GetTypeIDTemplate, "full_name"_a = recordInfo.fullName, "type"_a = recordInfo.fullName,
-                          "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
-                          "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
-                          "const_ptr_type_id"_a = const_ptr_type_id));
+            write(fmt::format(StaticTypeInfoTemplate_Record, "type_id"_a = idToString(recordInfo.id), "full_name"_a = recordInfo.fullName,
+                              "details"_a = detailsContents, "type"_a = recordInfo.fullName,
+                              "source_file"_a = recordInfo.sourceLocation.filename, "source_line"_a = recordInfo.sourceLocation.line,
+                              "source_column"_a = recordInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                              "name"_a = recordInfo.name, "full_name"_a = recordInfo.fullName, "is_union"_a = recordInfo.isUnion,
+                              "is_poly"_a = recordInfo.isPolymorphic, "is_abstract"_a = recordInfo.isAbstract,
+                              "is_final"_a = recordInfo.isFinal, "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
+                              "ctors"_a = idsToStringMakeArray(recordInfo.constructors), "dtor"_a = idToString(recordInfo.destructor.id),
+                              "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
+                              "static_fncs"_a = idsToStringMakeArray(recordInfo.staticFunctions),
+                              "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
+                              "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables), "const_type_id"_a = const_type_id,
+                              "lref_type_id"_a = lref_type_id, "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
+                              "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id));
+
+            write(fmt::format(GetTypeIDTemplate, "full_name"_a = recordInfo.fullName, "type"_a = recordInfo.fullName,
+                              "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
+                              "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
+                              "const_ptr_type_id"_a = const_ptr_type_id));
+        }
 
         for (const auto &baseInfo: recordInfo.baseClasses) {
+
             write(fmt::format(StaticTypeInfoTemplate_Base, "full_name"_a = baseInfo.fullName, "id"_a = idToString(baseInfo.id),
                               "details"_a = "", "type_id"_a = idToString(idGenerator->generateId(baseInfo.fullName)),
                               "source_file"_a = baseInfo.sourceLocation.filename, "source_line"_a = baseInfo.sourceLocation.line,
                               "source_column"_a = baseInfo.sourceLocation.column,
-                              "attributes"_a = "",// TODO
                               "is_public"_a = baseInfo.access == Access::Public, "is_protected"_a = baseInfo.access == Access::Protected,
                               "is_private"_a = baseInfo.access == Access::Private, "is_virtual"_a = baseInfo.isVirtual,
                               "name"_a = baseInfo.name));
         }
         for (const auto &ctorInfo: recordInfo.constructors) {
+            for (const auto &argInfo: ctorInfo.arguments) {
+                std::vector<std::string> argsArrayNames;
+                std::string detailsContents;
+                for (const auto &attr: argInfo.attributes) {
+                    const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                    argsArrayNames.push_back(argsArrayName);
+                    detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+                }
+                const auto attributesStr = StringifyAttributes(argInfo.attributes, argsArrayNames);
+
+                write(fmt::format(StaticTypeInfoTemplate_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
+                                  "details"_a = detailsContents, "type_id"_a = idToString(argInfo.typeId),
+                                  "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
+                                  "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                                  "name"_a = argInfo.name));
+            }
+
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: ctorInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(ctorInfo.attributes, argsArrayNames);
+
             write(fmt::format(StaticTypeInfoTemplate_Constructor, "full_name"_a = ctorInfo.fullName, "id"_a = idToString(ctorInfo.id),
-                              "details"_a = "", "type_id"_a = idToString(recordInfo.id), "source_file"_a = ctorInfo.sourceLocation.filename,
-                              "source_line"_a = ctorInfo.sourceLocation.line, "source_column"_a = ctorInfo.sourceLocation.column,
-                              "attributes"_a = "",// TODO
+                              "details"_a = detailsContents, "type_id"_a = idToString(recordInfo.id),
+                              "source_file"_a = ctorInfo.sourceLocation.filename, "source_line"_a = ctorInfo.sourceLocation.line,
+                              "source_column"_a = ctorInfo.sourceLocation.column, "attributes"_a = attributesStr,
                               "is_public"_a = ctorInfo.access == Access::Public, "is_protected"_a = ctorInfo.access == Access::Protected,
                               "is_private"_a = ctorInfo.access == Access::Private, "is_explicit"_a = ctorInfo.isExplicit,
                               "is_copy"_a = ctorInfo.isCopy, "is_move"_a = ctorInfo.isMove, "name"_a = recordInfo.name,
                               "is_constexpr"_a = ctorInfo.isConstexpr, "is_consteval"_a = ctorInfo.isConsteval,
-                              "arguments"_a = ""// TODO
-                              ));
+                              "arguments"_a = idsToStringMakeArray(ctorInfo.arguments)));
         }
-        write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = recordInfo.destructor.fullName,
-                          "id"_a = idToString(recordInfo.destructor.id), "details"_a = "", "type_id"_a = idToString(recordInfo.id),
-                          "source_file"_a = recordInfo.destructor.sourceLocation.filename,
-                          "source_line"_a = recordInfo.destructor.sourceLocation.line,
-                          "source_column"_a = recordInfo.destructor.sourceLocation.column,
-                          "attributes"_a = "",// TODO
-                          "is_public"_a = recordInfo.destructor.access == Access::Public,
-                          "is_protected"_a = recordInfo.destructor.access == Access::Protected,
-                          "is_private"_a = recordInfo.destructor.access == Access::Private,
-                          "is_constexpr"_a = recordInfo.destructor.isConstexpr, "is_consteval"_a = recordInfo.destructor.isConsteval,
-                          "is_virtual"_a = recordInfo.destructor.isVirtual, "is_pure_virtual"_a = recordInfo.destructor.isPureVirtual,
-                          "name"_a = fmt::format("~{}", recordInfo.name)));
+
+        {
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: recordInfo.destructor.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(recordInfo.destructor.attributes, argsArrayNames);
+
+            write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = recordInfo.destructor.fullName,
+                              "id"_a = idToString(recordInfo.destructor.id), "details"_a = detailsContents,
+                              "type_id"_a = idToString(recordInfo.id), "source_file"_a = recordInfo.destructor.sourceLocation.filename,
+                              "source_line"_a = recordInfo.destructor.sourceLocation.line,
+                              "source_column"_a = recordInfo.destructor.sourceLocation.column, "attributes"_a = attributesStr,
+                              "is_public"_a = recordInfo.destructor.access == Access::Public,
+                              "is_protected"_a = recordInfo.destructor.access == Access::Protected,
+                              "is_private"_a = recordInfo.destructor.access == Access::Private,
+                              "is_constexpr"_a = recordInfo.destructor.isConstexpr, "is_consteval"_a = recordInfo.destructor.isConsteval,
+                              "is_virtual"_a = recordInfo.destructor.isVirtual, "is_pure_virtual"_a = recordInfo.destructor.isPureVirtual,
+                              "name"_a = fmt::format("~{}", recordInfo.name)));
+        }
 
         for (const auto &mbrFncInfo: recordInfo.memberFunctions) {
+            for (const auto &argInfo: mbrFncInfo.arguments) {
+                std::vector<std::string> argsArrayNames;
+                std::string detailsContents;
+                for (const auto &attr: argInfo.attributes) {
+                    const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                    argsArrayNames.push_back(argsArrayName);
+                    detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+                }
+                const auto attributesStr = StringifyAttributes(argInfo.attributes, argsArrayNames);
+
+                write(fmt::format(StaticTypeInfoTemplate_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
+                                  "details"_a = detailsContents, "type_id"_a = idToString(argInfo.typeId),
+                                  "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
+                                  "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                                  "name"_a = argInfo.name));
+            }
+
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: mbrFncInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(mbrFncInfo.attributes, argsArrayNames);
+
             write(fmt::format(
                     StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName, "id"_a = idToString(mbrFncInfo.id),
-                    "details"_a = "", "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrFncInfo.sourceLocation.filename,
-                    "source_line"_a = mbrFncInfo.sourceLocation.line, "source_column"_a = mbrFncInfo.sourceLocation.column,
-                    "attributes"_a = "",// TODO
+                    "details"_a = detailsContents, "type_id"_a = idToString(recordInfo.id),
+                    "source_file"_a = mbrFncInfo.sourceLocation.filename, "source_line"_a = mbrFncInfo.sourceLocation.line,
+                    "source_column"_a = mbrFncInfo.sourceLocation.column, "attributes"_a = attributesStr,
                     "is_public"_a = mbrFncInfo.access == Access::Public, "is_protected"_a = mbrFncInfo.access == Access::Protected,
                     "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
                     "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval, "is_const"_a = mbrFncInfo.isConst,
                     "is_virtual"_a = mbrFncInfo.isVirtual, "is_pure_virtual"_a = mbrFncInfo.isPureVirtual,
-                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
-                    "arguments"_a = ""// TODO
-                    ));
+                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments)));
         }
 
         for (const auto &mbrVarInfo: recordInfo.memberVariables) {
-            write(fmt::format(
-                    StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName, "id"_a = idToString(mbrVarInfo.id),
-                    "details"_a = "", "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrVarInfo.sourceLocation.filename,
-                    "source_line"_a = mbrVarInfo.sourceLocation.line, "source_column"_a = mbrVarInfo.sourceLocation.column,
-                    "attributes"_a = "",// TODO
-                    "is_public"_a = mbrVarInfo.access == Access::Public, "is_protected"_a = mbrVarInfo.access == Access::Protected,
-                    "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
-                    "is_mutable"_a = mbrVarInfo.isMutable));
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: mbrVarInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(mbrVarInfo.attributes, argsArrayNames);
+
+            write(fmt::format(StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName,
+                              "id"_a = idToString(mbrVarInfo.id), "details"_a = detailsContents, "type_id"_a = idToString(recordInfo.id),
+                              "source_file"_a = mbrVarInfo.sourceLocation.filename, "source_line"_a = mbrVarInfo.sourceLocation.line,
+                              "source_column"_a = mbrVarInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                              "is_public"_a = mbrVarInfo.access == Access::Public,
+                              "is_protected"_a = mbrVarInfo.access == Access::Protected,
+                              "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
+                              "is_mutable"_a = mbrVarInfo.isMutable));
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {
+            for (const auto &argInfo: statFncInfo.arguments) {
+                std::vector<std::string> argsArrayNames;
+                std::string detailsContents;
+                for (const auto &attr: argInfo.attributes) {
+                    const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                    argsArrayNames.push_back(argsArrayName);
+                    detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+                }
+                const auto attributesStr = StringifyAttributes(argInfo.attributes, argsArrayNames);
+
+                write(fmt::format(StaticTypeInfoTemplate_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
+                                  "details"_a = detailsContents, "type_id"_a = idToString(argInfo.typeId),
+                                  "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
+                                  "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                                  "name"_a = argInfo.name));
+            }
+
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: statFncInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(statFncInfo.attributes, argsArrayNames);
+
             write(fmt::format(
                     StaticTypeInfoTemplate_StaticFunction, "full_name"_a = statFncInfo.fullName, "id"_a = idToString(statFncInfo.id),
-                    "details"_a = "", "type_id"_a = idToString(recordInfo.id), "source_file"_a = statFncInfo.sourceLocation.filename,
+                    "details"_a = detailsContents, "type_id"_a = idToString(recordInfo.id), "source_file"_a = statFncInfo.sourceLocation.filename,
                     "source_line"_a = statFncInfo.sourceLocation.line, "source_column"_a = statFncInfo.sourceLocation.column,
-                    "attributes"_a = "",// TODO
+                    "attributes"_a = attributesStr,
                     "is_public"_a = statFncInfo.access == Access::Public, "is_protected"_a = statFncInfo.access == Access::Protected,
                     "is_private"_a = statFncInfo.access == Access::Private, "name"_a = statFncInfo.name,
                     "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
                     "return_type_id"_a = idToString(statFncInfo.returnTypeId),
-                    "arguments"_a = ""// TODO
-                    ));
+                    "arguments"_a = idsToStringMakeArray(statFncInfo.arguments)));
         }
 
         for (const auto &statVarInfo: recordInfo.staticVariables) {
+            std::vector<std::string> argsArrayNames;
+            std::string detailsContents;
+            for (const auto &attr: statVarInfo.attributes) {
+                const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                argsArrayNames.push_back(argsArrayName);
+                detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            }
+            const auto attributesStr = StringifyAttributes(statVarInfo.attributes, argsArrayNames);
+
             write(fmt::format(
                     StaticTypeInfoTemplate_StaticVariable, "full_name"_a = statVarInfo.fullName, "id"_a = idToString(statVarInfo.id),
-                    "details"_a = "", "type_id"_a = idToString(recordInfo.id), "source_file"_a = statVarInfo.sourceLocation.filename,
+                    "details"_a = detailsContents, "type_id"_a = idToString(recordInfo.id), "source_file"_a = statVarInfo.sourceLocation.filename,
                     "source_line"_a = statVarInfo.sourceLocation.line, "source_column"_a = statVarInfo.sourceLocation.column,
-                    "attributes"_a = "",// TODO
+                    "attributes"_a = attributesStr,
                     "is_public"_a = statVarInfo.access == Access::Public, "is_protected"_a = statVarInfo.access == Access::Protected,
                     "is_private"_a = statVarInfo.access == Access::Private, "name"_a = statVarInfo.name));
         }

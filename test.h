@@ -1,16 +1,21 @@
-//#include <iostream>
-
 namespace pf {
-   /* enum class Hihi;
+    /* enum class Hihi;
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};*/
 
-   struct A{
-       int a1;
-       A() = default;
-   };
+    struct [[first]] [[second, third]] A   {
 
-   struct B {
+        [[maybe_unused]] A() [[gdfsgdf]];
+        [[papuce]] [[a, b, c]] ~A() = default;
+
+        [[yeet]] [[maybe_unused]] int c [[cxvxc]];
+        [[maybe_unused]] int foo([[letadlo()]] int dzea, [[yuh]][[yuh2]] float A) [[kjhnn]];
+        [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] {
+            [[yeetus]];
+        }
+    };
+
+    /*struct B {
        virtual ~B() = default;
        virtual void pure_foo(int a) = 0;
        virtual void virt_foo(int a) {}
@@ -51,7 +56,7 @@ namespace pf {
         static void bar(float a) {}
     private:
         static void bar(float a, int c) {}
-    };
+    };*/
 
 
     /*enum class EmptyEnum {};

@@ -19,9 +19,10 @@ namespace pf::meta::details {
         Constructor,
         Destructor,
         MemberFunction,
-        MemberField,
+        MemberVariable,
         StaticFunction,
-        StaticField,
+        StaticVariable,
+        Argument,
         FundamentalType
     };
 

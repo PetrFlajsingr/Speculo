@@ -53,6 +53,7 @@ namespace pf::meta_gen {
         std::string fullName;
         std::string typeName;
         std::vector<Attribute> attributes;
+        SourceLocationInfo sourceLocation;
     };
 
     enum class Access {
@@ -133,7 +134,6 @@ namespace pf::meta_gen {
 
     struct BaseClassInfo {
         meta::details::ID id;
-        std::vector<Attribute> attributes;
         std::string name;
         std::string fullName;
         bool isVirtual;
