@@ -26,6 +26,6 @@ namespace pf::meta::details {
 }
 )fmt";
 
-}
+}// namespace pf::meta_gen
 
-#endif //PF_META_GEN_METAFILEPROLOGUEEPILOGUE_H
+#endif//PF_META_GEN_METAFILEPROLOGUEEPILOGUE_H

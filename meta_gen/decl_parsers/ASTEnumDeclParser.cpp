@@ -56,8 +56,7 @@ namespace pf::meta_gen {
             const auto line = sourceManager.getPresumedLineNumber(enumerator->getSourceRange().getBegin());
             const auto column = sourceManager.getPresumedColumnNumber(enumerator->getSourceRange().getBegin());
             result.values.emplace(enumerator->getNameAsString(),
-                                  EnumTypeInfo::ValueInfo{pf::meta::details::ID::Invalid(), "", value, {},
-                                                          {line, column}});
+                                  EnumTypeInfo::ValueInfo{pf::meta::details::ID::Invalid(), "", value, {}, {line, column}});
         }
 
         {
@@ -65,9 +64,7 @@ namespace pf::meta_gen {
             auto enumAttributes = attributeParser.parseEnumAttributes(astContext, *enumDecl);
             result.attributes = std::move(enumAttributes.attributes);
 
-            for (auto [name, attributes]: enumAttributes.valueAttributes) {
-                result.values[name].attributes = std::move(attributes);
-            }
+            for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }
         }
 
         const auto typeId = getIdGenerator().generateId(result.fullName);

@@ -16,4 +16,4 @@ namespace pf::meta_gen {
         std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
     };
 
-}// namespace pf
+}// namespace pf::meta_gen

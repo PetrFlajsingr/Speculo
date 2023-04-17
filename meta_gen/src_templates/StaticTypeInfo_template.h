@@ -70,9 +70,7 @@ struct StaticInfo<{const_ptr_type_id}>
 /****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{type_id}> {{
-    struct details {{
-        {details}
-    }};
+    {details}
     using Type = {type};
     constexpr static ID TypeID = {type_id};
 
@@ -133,6 +131,6 @@ struct StaticInfo<{const_ptr_type_id}>
 /****************************** {full_name} END ******************************/
 )fmt";
 
-}
+}// namespace pf::meta_gen
 
-#endif //PF_META_GEN_STATICTYPEINFO_TEMPLATE_H
+#endif//PF_META_GEN_STATICTYPEINFO_TEMPLATE_H

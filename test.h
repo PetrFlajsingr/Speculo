@@ -9,7 +9,7 @@ namespace pf {
         [[papuce]] [[a, b, c]] ~A() = default;
 
         [[yeet]] [[maybe_unused]] int c [[cxvxc]];
-        [[maybe_unused]] int foo([[letadlo()]] int dzea, [[yuh]][[yuh2]] float A) [[kjhnn]];
+        [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]][[yuh2]] float A) [[kjhnn]];
         [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] {
             [[yeetus]];
         }

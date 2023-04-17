@@ -19,8 +19,7 @@ namespace pf::meta_gen {
 
         virtual ~ASTDeclParser() = 0;
 
-        [[nodiscard]] virtual std::optional<TypeInfoVariant>
-        parse(clang::ASTContext &astContext, clang::Decl *decl) = 0;
+        [[nodiscard]] virtual std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) = 0;
 
     protected:
         [[nodiscard]] IdGenerator &getIdGenerator() { return *idGenerator; }

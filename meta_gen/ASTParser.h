@@ -16,14 +16,12 @@ namespace pf::meta_gen {
 
     class ASTParser {
     public:
-        ASTParser(ParsingSettings parsingSettings,
-                  std::shared_ptr<IdGenerator> idGen);
+        ASTParser(ParsingSettings parsingSettings, std::shared_ptr<IdGenerator> idGen);
 
         [[nodiscard]] std::vector<TypeInfoVariant> parse(clang::ASTContext &astContext);
 
     private:
-        [[nodiscard]] std::vector<TypeInfoVariant>
-        walk(clang::ASTContext &astContext, const clang::DeclContext &context);
+        [[nodiscard]] std::vector<TypeInfoVariant> walk(clang::ASTContext &astContext, const clang::DeclContext &context);
 
         std::shared_ptr<IdGenerator> idGenerator;
         ParsingSettings settings;

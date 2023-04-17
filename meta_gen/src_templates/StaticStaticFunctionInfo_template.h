@@ -9,30 +9,28 @@ constexpr auto StaticTypeInfoTemplate_StaticFunction = R"fmt(
 /****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{id}> {{
-        struct details {{
-                {details}
-        }};
-        constexpr static ID FunctionID = {id};
-        constexpr static ID TypeID = {type_id};
+    {details}
+    constexpr static ID FunctionID = {id};
+    constexpr static ID TypeID = {type_id};
 
-        constexpr static auto SourceFile = R"path({source_file})path";
-        constexpr static std::uint64_t SourceLine = {source_line};
-        constexpr static std::uint64_t SourceColumn = {source_column};
+    constexpr static auto SourceFile = R"path({source_file})path";
+    constexpr static std::uint64_t SourceLine = {source_line};
+    constexpr static std::uint64_t SourceColumn = {source_column};
 
-        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
+    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
 
-        constexpr static auto StaticInfoObjectType = StaticInfoType::StaticFunction;
+    constexpr static auto StaticInfoObjectType = StaticInfoType::StaticFunction;
 
-        constexpr static bool IsPublic = {is_public};
-        constexpr static bool IsProtected = {is_protected};
-        constexpr static bool IsPrivate = {is_private};
+    constexpr static bool IsPublic = {is_public};
+    constexpr static bool IsProtected = {is_protected};
+    constexpr static bool IsPrivate = {is_private};
 
-        constexpr static auto Name = StringLiteral{{"{name}"}};
-        constexpr static auto FullName = StringLiteral{{"{full_name}"}};
+    constexpr static auto Name = StringLiteral{{"{name}"}};
+    constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
-        constexpr static Info ReturnType = {return_type_id};
-        constexpr static RangeOf<Info> auto Arguments = make_array<Info>({arguments});
+    constexpr static Info ReturnType = {return_type_id};
+    constexpr static RangeOf<Info> auto Arguments = make_array<Info>({arguments});
     }};
 )fmt";
 
-#endif //PF_META_GEN_STATICSTATICFUNCTIONINFO_TEMPLATE_H
+#endif//PF_META_GEN_STATICSTATICFUNCTIONINFO_TEMPLATE_H

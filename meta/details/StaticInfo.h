@@ -5,8 +5,8 @@
 #ifndef PF_META_DETAILS_STATICTYPEINFO_H
 #define PF_META_DETAILS_STATICTYPEINFO_H
 
-#include "meta_helpers.h"
 #include "ID.h"
+#include "meta_helpers.h"
 #include <pf_common/containers/StringLiteral.h>
 
 namespace pf::meta::details {
@@ -31,6 +31,8 @@ namespace pf::meta::details {
         static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type");
     };
 
-}
+    constexpr static std::array<std::string_view, 0> EmptyAttributeArgArray{};
 
-#endif //PF_META_DETAILS_STATICTYPEINFO_H
+}// namespace pf::meta::details
+
+#endif//PF_META_DETAILS_STATICTYPEINFO_H

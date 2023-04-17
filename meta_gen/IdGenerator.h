@@ -5,8 +5,8 @@
 #ifndef PF_META_TYPEIDGENERATOR_H
 #define PF_META_TYPEIDGENERATOR_H
 
-#include <random>
 #include "../meta/Info.h"
+#include <random>
 
 #include <stduuid/uuid.h>
 
@@ -26,8 +26,7 @@ namespace pf::meta_gen {
         [[nodiscard]] std::uint64_t generateRandomInt() { return dis(gen); }
 
     private:
-        uuids::uuid_name_generator uuidNameGenerator{
-                uuids::uuid::from_string("47183823-2574-4bfd-b411-99ed177d3e43").value()};
+        uuids::uuid_name_generator uuidNameGenerator{uuids::uuid::from_string("47183823-2574-4bfd-b411-99ed177d3e43").value()};
 
         std::random_device rd{};
         std::seed_seq ss{rd(), rd(), rd()};
@@ -35,6 +34,6 @@ namespace pf::meta_gen {
         std::uniform_int_distribution<std::uint64_t> dis;
     };
 
-}
+}// namespace pf::meta_gen
 
-#endif //PF_META_TYPEIDGENERATOR_H
+#endif//PF_META_TYPEIDGENERATOR_H

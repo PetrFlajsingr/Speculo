@@ -56,9 +56,7 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
     };
 
-    enum class Access {
-        Private, Protected, Public
-    };
+    enum class Access { Private, Protected, Public };
 
     [[nodiscard]] constexpr std::string_view AccessToString(Access access) {
         switch (access) {

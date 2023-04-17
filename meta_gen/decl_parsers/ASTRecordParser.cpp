@@ -213,7 +213,7 @@ namespace pf::meta_gen {
                 functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
                 functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
                 functionInfo.access = Access::Public;
-                functionInfo.isConstexpr = true; // FIXME: this is wrong
+                functionInfo.isConstexpr = true;// FIXME: this is wrong
                 functionInfo.isConsteval = false;
                 functionInfo.isConst = false;
                 functionInfo.isVirtual = false;
@@ -222,10 +222,10 @@ namespace pf::meta_gen {
                 functionInfo.sourceLocation.column = 0;
                 functionInfo.sourceLocation.filename = "<generated>";
 
-                const auto mangledName = mangleFunction(functionInfo.fullName,
-                                                        functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                            return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                        }));
+                const auto mangledName = mangleFunction(
+                        functionInfo.fullName, functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                   return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                               }));
                 // mangling names for argument IDs
                 for (auto &arg: functionInfo.arguments) {
                     arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));
@@ -255,7 +255,7 @@ namespace pf::meta_gen {
                 functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
                 functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
                 functionInfo.access = Access::Public;
-                functionInfo.isConstexpr = true; // FIXME: this is wrong
+                functionInfo.isConstexpr = true;// FIXME: this is wrong
                 functionInfo.isConsteval = false;
                 functionInfo.isConst = false;
                 functionInfo.isVirtual = false;
@@ -264,10 +264,10 @@ namespace pf::meta_gen {
                 functionInfo.sourceLocation.column = 0;
                 functionInfo.sourceLocation.filename = "<generated>";
 
-                const auto mangledName = mangleFunction(functionInfo.fullName,
-                                                        functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                            return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                        }));
+                const auto mangledName = mangleFunction(
+                        functionInfo.fullName, functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                   return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
+                                               }));
                 // mangling names for argument IDs
                 for (auto &arg: functionInfo.arguments) {
                     arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));

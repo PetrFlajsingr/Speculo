@@ -25,8 +25,10 @@ namespace pf::meta_gen {
         [[nodiscard]] std::vector<Attribute> parseFieldAttributes(clang::ASTContext &astContext, const clang::VarDecl &decl) const;
         [[nodiscard]] std::vector<Attribute> parseFunctionAttributes(clang::ASTContext &astContext, const clang::CXXMethodDecl &decl) const;
         [[nodiscard]] std::vector<Attribute> parseArgumentAttributes(clang::ASTContext &astContext, const clang::ParmVarDecl &decl) const;
-        [[nodiscard]] std::vector<Attribute> parseConstructorAttributes(clang::ASTContext &astContext, const clang::CXXConstructorDecl &decl) const;
-        [[nodiscard]] std::vector<Attribute> parseDestructorAttributes(clang::ASTContext &astContext, const clang::CXXDestructorDecl &decl) const;
+        [[nodiscard]] std::vector<Attribute> parseConstructorAttributes(clang::ASTContext &astContext,
+                                                                        const clang::CXXConstructorDecl &decl) const;
+        [[nodiscard]] std::vector<Attribute> parseDestructorAttributes(clang::ASTContext &astContext,
+                                                                       const clang::CXXDestructorDecl &decl) const;
 
     private:
         struct EnumTypeAttributeParseResult {
