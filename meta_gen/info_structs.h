@@ -19,15 +19,17 @@ namespace pf::meta_gen {
         std::vector<std::string> arguments;
     };
 
+    struct SourceLocationInfo {
+        unsigned int line;
+        unsigned int column;
+        std::string filename;
+    };
+
     struct TypeInfo {
         meta::details::ID id;
         std::string fullName;
         std::string name;
-        struct {
-            unsigned int line;
-            unsigned int column;
-            std::string filename;
-        } sourceLocation;
+        SourceLocationInfo sourceLocation;
     };
 
     struct EnumTypeInfo : TypeInfo {
@@ -36,10 +38,7 @@ namespace pf::meta_gen {
             std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
-            struct {
-                unsigned int line;
-                unsigned int column;
-            } sourceLocation;
+            SourceLocationInfo sourceLocation;
         };
 
         std::vector<Attribute> attributes;
@@ -60,6 +59,22 @@ namespace pf::meta_gen {
         Private, Protected, Public
     };
 
+    [[nodiscard]] constexpr std::string_view AccessToString(Access access) {
+        switch (access) {
+            case Access::Private: {
+                return "Private";
+            }
+            case Access::Protected: {
+                return "Protected";
+            }
+            case Access::Public: {
+                return "Public";
+            }
+        }
+        return "";
+        // std::unreachable
+    }
+
     struct ConstructorInfo {
         meta::details::ID id;
         std::string fullName;
@@ -69,13 +84,17 @@ namespace pf::meta_gen {
         bool isConsteval;
         bool isExplicit;
         Access access;
-        // TODO: add more
+        SourceLocationInfo sourceLocation;
+        bool isCopy;
+        bool isMove;
     };
 
     struct DestructorInfo {
         meta::details::ID id;
+        std::string fullName;
         Access access;
         std::vector<Attribute> attributes;
+        SourceLocationInfo sourceLocation;
         bool isConstexpr;
         bool isConsteval;
         bool isVirtual;
@@ -97,6 +116,7 @@ namespace pf::meta_gen {
         bool isConst;
         bool isVirtual;
         bool isPureVirtual;
+        SourceLocationInfo sourceLocation;
     };
 
     struct VariableInfo {
@@ -108,14 +128,17 @@ namespace pf::meta_gen {
         std::vector<Attribute> attributes;
         Access access;
         bool isMutable;
+        SourceLocationInfo sourceLocation;
     };
 
     struct BaseClassInfo {
         meta::details::ID id;
         std::vector<Attribute> attributes;
+        std::string name;
         std::string fullName;
         bool isVirtual;
         Access access;
+        SourceLocationInfo sourceLocation;
     };
 
     struct RecordTypeInfo : TypeInfo {

@@ -53,8 +53,6 @@ namespace pf {
         static void bar(float a, int c) {}
     };
 
-    template <typename T>
-    struct Templated {};
 
     /*enum class EmptyEnum {};
 

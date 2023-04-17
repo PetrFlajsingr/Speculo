@@ -15,6 +15,7 @@ namespace pf::meta::details {
         EnumType,
         EnumValue,
         RecordType,
+        Base,
         Constructor,
         Destructor,
         MemberFunction,

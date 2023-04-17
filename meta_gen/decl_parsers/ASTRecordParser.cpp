@@ -11,8 +11,7 @@ namespace pf::meta_gen {
     // TODO: move
     [[nodiscard]] Access clangAccesConv(clang::AccessSpecifier src) {
         switch (src) {
-            using
-            enum Access;
+            using enum Access;
             case clang::AS_public:
                 return Public;
             case clang::AS_protected:
@@ -81,9 +80,7 @@ namespace pf::meta_gen {
             variableInfo.name = field->getNameAsString();
             variableInfo.fullName = field->getQualifiedNameAsString();
             variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-            if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl();
-                    typeRecordDecl !=
-                    nullptr) {
+            if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                 variableInfo.typeName = typeRecordDecl->getQualifiedNameAsString();
             } else {
                 variableInfo.typeName = field->getType().getAsString(printingPolicy);
@@ -92,6 +89,9 @@ namespace pf::meta_gen {
             // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
             variableInfo.access = clangAccesConv(field->getAccess());
             variableInfo.isMutable = field->isMutable();
+            variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(field->getSourceRange().getBegin());
+            variableInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(field->getSourceRange().getBegin());
+            variableInfo.sourceLocation.filename = sourceManager.getFilename(field->getSourceRange().getBegin());
 
             result.memberVariables.push_back(variableInfo);
         }
@@ -104,9 +104,7 @@ namespace pf::meta_gen {
                     variableInfo.name = var->getNameAsString();
                     variableInfo.fullName = var->getQualifiedNameAsString();
                     variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-                    if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl();
-                            typeRecordDecl !=
-                            nullptr) {
+                    if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                         variableInfo.typeName = typeRecordDecl->getQualifiedNameAsString();
                     } else {
                         variableInfo.typeName = var->getType().getAsString(printingPolicy);
@@ -114,6 +112,10 @@ namespace pf::meta_gen {
                     variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
                     // TODO: variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
                     variableInfo.access = clangAccesConv(var->getAccess());
+
+                    variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(var->getSourceRange().getBegin());
+                    variableInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(var->getSourceRange().getBegin());
+                    variableInfo.sourceLocation.filename = sourceManager.getFilename(var->getSourceRange().getBegin());
 
                     result.staticVariables.push_back(variableInfo);
                 }
@@ -123,9 +125,7 @@ namespace pf::meta_gen {
         const auto mangleFunction = [](std::string_view fullName,
                                        RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames) {
             std::string result{fullName};
-            for (const auto &[type, name]: argumentTypesAndNames) {
-                result.append(fmt::format("_{}_{}", type, name));
-            }
+            for (const auto &[type, name]: argumentTypesAndNames) { result.append(fmt::format("_{}_{}", type, name)); }
             return result;
         };
 
@@ -145,9 +145,7 @@ namespace pf::meta_gen {
                 argument.fullName = param->getQualifiedNameAsString();
                 // TODO: mangle the arg name with the mangled function name
                 argument.id = getIdGenerator().generateId(argument.fullName);
-                if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl();
-                        paramTypeRecordDecl !=
-                        nullptr) {
+                if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
                 } else {
                     argument.typeName = param->getType().getAsString(printingPolicy);
@@ -157,9 +155,7 @@ namespace pf::meta_gen {
                 functionInfo.arguments.push_back(argument);
             }
             // TODO: functionInfo.attributes = attributeParser.parseMethodAttributes(astContext, *method);
-            if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl();
-                    returnTypeRecordDecl !=
-                    nullptr) {
+            if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); returnTypeRecordDecl != nullptr) {
                 functionInfo.returnTypeName = returnTypeRecordDecl->getQualifiedNameAsString();
             } else {
                 functionInfo.returnTypeName = method->getReturnType().getAsString(printingPolicy);
@@ -171,12 +167,13 @@ namespace pf::meta_gen {
             functionInfo.isConst = method->isConst();
             functionInfo.isVirtual = method->isVirtual();
             functionInfo.isPureVirtual = method->isPure();
+            functionInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(method->getSourceRange().getBegin());
+            functionInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(method->getSourceRange().getBegin());
+            functionInfo.sourceLocation.filename = sourceManager.getFilename(method->getSourceRange().getBegin());
 
             const auto mangledName = mangleFunction(functionInfo.fullName,
-                                                    functionInfo.arguments |
-                                                    std::views::transform([](const FunctionArgument &arg) {
-                                                        return std::pair(std::string_view{arg.fullName},
-                                                                         std::string_view{arg.typeName});
+                                                    functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                        return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
                                                     }));
             functionInfo.id = getIdGenerator().generateId(mangledName);
 
@@ -197,8 +194,7 @@ namespace pf::meta_gen {
                 argument.fullName = param->getQualifiedNameAsString();
                 argument.id = getIdGenerator().generateId(argument.fullName);
 
-                if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl();  paramTypeRecordDecl !=
-                                                                                              nullptr) {
+                if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = paramTypeRecordDecl->getQualifiedNameAsString();
                 } else {
                     argument.typeName = param->getType().getAsString(printingPolicy);
@@ -211,43 +207,55 @@ namespace pf::meta_gen {
             constructorInfo.isConsteval = ctor->isConsteval();
             constructorInfo.isExplicit = ctor->isExplicit();
             constructorInfo.access = clangAccesConv(ctor->getAccess());
+            constructorInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(ctor->getSourceRange().getBegin());
+            constructorInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(ctor->getSourceRange().getBegin());
+            constructorInfo.sourceLocation.filename = sourceManager.getFilename(ctor->getSourceRange().getBegin());
+            constructorInfo.isCopy = ctor->isCopyConstructor();
+            constructorInfo.isMove = ctor->isMoveConstructor();
 
             const auto mangledName = mangleFunction(constructorInfo.fullName,
-                                                    constructorInfo.arguments |
-                                                    std::views::transform([](const FunctionArgument &arg) {
-                                                        return std::pair(std::string_view{arg.fullName},
-                                                                         std::string_view{arg.typeName});
+                                                    constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                        return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
                                                     }));
             constructorInfo.id = getIdGenerator().generateId(mangledName);
 
             result.constructors.push_back(constructorInfo);
         }
-        const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor();
-        result.destructor.id = getIdGenerator().generateId(destructor->getQualifiedNameAsString());
-        result.destructor.access = clangAccesConv(destructor->getAccess());
-        // TODO: result.destructor.attributes
-        result.destructor.isConstexpr = destructor->isConstexpr();
-        result.destructor.isConsteval = destructor->isConsteval();
-        result.destructor.isVirtual = destructor->isVirtual();
-        result.destructor.isPureVirtual = destructor->isPure();
+        if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
+            result.destructor.fullName = destructor->getQualifiedNameAsString();
+            result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
+            result.destructor.access = clangAccesConv(destructor->getAccess());
+            result.destructor.sourceLocation.line = sourceManager.getPresumedLineNumber(destructor->getSourceRange().getBegin());
+            result.destructor.sourceLocation.column = sourceManager.getPresumedColumnNumber(destructor->getSourceRange().getBegin());
+            result.destructor.sourceLocation.filename = sourceManager.getFilename(destructor->getSourceRange().getBegin());
+            // TODO: result.destructor.attributes
+            result.destructor.isConstexpr = destructor->isConstexpr();
+            result.destructor.isConsteval = destructor->isConsteval();
+            result.destructor.isVirtual = destructor->isVirtual();
+            result.destructor.isPureVirtual = destructor->isPure();
+        }
 
-        const auto mangleBaseClass = [](std::string_view derivedFullName,
-                                        std::string baseFullName) {
+        const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {
             return fmt::format("{}__{}", derivedFullName, baseFullName);
         };
 
         for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
             BaseClassInfo baseClassInfo;
-            if (const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();  baseRecordDecl != nullptr) {
+            if (const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl(); baseRecordDecl != nullptr) {
                 baseClassInfo.fullName = baseRecordDecl->getQualifiedNameAsString();
+                baseClassInfo.name = baseRecordDecl->getNameAsString();
             } else {
                 baseClassInfo.fullName = base.getType().getAsString(printingPolicy);
+                baseClassInfo.name = base.getType().getAsString();
             }
             const auto mangledName = mangleBaseClass(result.fullName, baseClassInfo.fullName);
-            baseClassInfo.id = getIdGenerator().generateId(baseClassInfo.fullName);
+            baseClassInfo.id = getIdGenerator().generateId(mangledName);
             // TODO: baseClassInfo.attributes
             baseClassInfo.isVirtual = base.isVirtual();
             baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
+            baseClassInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(base.getSourceRange().getBegin());
+            baseClassInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(base.getSourceRange().getBegin());
+            baseClassInfo.sourceLocation.filename = sourceManager.getFilename(base.getSourceRange().getBegin());
             result.baseClasses.push_back(baseClassInfo);
         }
 

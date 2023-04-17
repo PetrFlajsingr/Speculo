@@ -109,6 +109,96 @@ template<>
 }
 /****************************** pf::A END ******************************/
 
+/****************************** pf::A::A START ******************************/
+template<>
+struct StaticInfo<ID{0xf597eea5e1760bfu, 0x797c08db90791d84u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0xf597eea5e1760bfu, 0x797c08db90791d84u};
+        constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 10;
+        constexpr static std::uint64_t SourceColumn = 8;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"A"};
+        constexpr static auto FullName = StringLiteral{"pf::A::A"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::A::A START ******************************/
+template<>
+struct StaticInfo<ID{0x5254646ae7d1e4b9u, 0xb648cc79fc2b85b0u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x5254646ae7d1e4b9u, 0xb648cc79fc2b85b0u};
+        constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 8;
+        constexpr static std::uint64_t SourceColumn = 11;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = true;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"A"};
+        constexpr static auto FullName = StringLiteral{"pf::A::A"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::A::A START ******************************/
+template<>
+struct StaticInfo<ID{0x1954895cb4645f6eu, 0x534015734ab7b498u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x1954895cb4645f6eu, 0x534015734ab7b498u};
+        constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 8;
+        constexpr static std::uint64_t SourceColumn = 11;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = true;
+
+        constexpr static auto Name = StringLiteral{"A"};
+        constexpr static auto FullName = StringLiteral{"pf::A::A"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
 /****************************** pf::B START ******************************/
 template<>
 struct StaticInfo<ID{0x82516c5bbf7430aau, 0x1ffe30223377b487u}> {
@@ -205,6 +295,66 @@ template<>
 }
 /****************************** pf::B END ******************************/
 
+/****************************** pf::B::B START ******************************/
+template<>
+struct StaticInfo<ID{0x5054a98cf7c8fcadu, 0x81e0621d5301d4acu}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x5054a98cf7c8fcadu, 0x81e0621d5301d4acu};
+        constexpr static ID TypeID = ID{0x82516c5bbf7430aau, 0x1ffe30223377b487u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 13;
+        constexpr static std::uint64_t SourceColumn = 11;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"B"};
+        constexpr static auto FullName = StringLiteral{"pf::B::B"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::B::B START ******************************/
+template<>
+struct StaticInfo<ID{0x60534a54fb82e7eau, 0x240c895305848f89u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x60534a54fb82e7eau, 0x240c895305848f89u};
+        constexpr static ID TypeID = ID{0x82516c5bbf7430aau, 0x1ffe30223377b487u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 13;
+        constexpr static std::uint64_t SourceColumn = 11;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = true;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"B"};
+        constexpr static auto FullName = StringLiteral{"pf::B::B"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
 /****************************** pf::Test START ******************************/
 template<>
 struct StaticInfo<ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u}> {
@@ -234,7 +384,7 @@ struct StaticInfo<ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u}> {
     constexpr static bool IsPolymorphic = true;
     constexpr static bool IsAbstract = false;
     constexpr static bool IsFinal = false;
-    constexpr static RangeOf<Info> auto Bases = make_array<Info>(ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u}, ID{0x82516c5bbf7430aau, 0x1ffe30223377b487u});
+    constexpr static RangeOf<Info> auto Bases = make_array<Info>(ID{0x6e5085368a0d0f21u, 0x65514f312a361eacu}, ID{0x7e5fc433d1c23d10u, 0xdec5fda59ac46a0u});
     constexpr static RangeOf<Info> auto Constructors = make_array<Info>(ID{0xc755d889c9afcfc0u, 0xa0f9a22e2a89ada4u}, ID{0x895d90ae76b9dc30u, 0xf841242b37ac00b7u}, ID{0x5a5168cc7bb4f6a4u, 0x4bf005a81d020c9eu}, ID{0x815cba4b473ce1d2u, 0xf2d83feb29ab5499u});
     constexpr static Info Destructor = ID{0xb75617b85f96032bu, 0x2b94d6e0162578b9u};
     constexpr static RangeOf<Info> auto MemberFunctions = make_array<Info>(ID{0xab50ef4c6f7fd7e0u, 0x75a84acb3f053e80u}, ID{0x5d537fe41bed167eu, 0x646f23e04ea2ec9bu}, ID{0x645af4c043fdb70eu, 0x6e125afd7264cd8au}, ID{0x3f5dc3b0cb932998u, 0xfaac361ccb864282u}, ID{0x3f5dc3b0cb932998u, 0xfaac361ccb864282u});
@@ -300,5 +450,177 @@ template<>
     return ID{0x51561d84153a2edcu, 0x23ac6c802298bcbdu};
 }
 /****************************** pf::Test END ******************************/
+
+/****************************** pf::A START ******************************/
+template<>
+struct StaticInfo<ID{0x6e5085368a0d0f21u, 0x65514f312a361eacu}> {
+        struct details {
+                
+        };
+        constexpr static ID BaseID = ID{0x6e5085368a0d0f21u, 0x65514f312a361eacu};
+        constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 19;
+        constexpr static std::uint64_t SourceColumn = 19;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Base;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static auto IsVirtual = false;
+
+        constexpr static auto Name = StringLiteral{"A"};
+        constexpr static auto FullName = StringLiteral{"pf::A"};
+    };
+
+/****************************** pf::B START ******************************/
+template<>
+struct StaticInfo<ID{0x7e5fc433d1c23d10u, 0xdec5fda59ac46a0u}> {
+        struct details {
+                
+        };
+        constexpr static ID BaseID = ID{0x7e5fc433d1c23d10u, 0xdec5fda59ac46a0u};
+        constexpr static ID TypeID = ID{0x82516c5bbf7430aau, 0x1ffe30223377b487u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 19;
+        constexpr static std::uint64_t SourceColumn = 29;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Base;
+
+        constexpr static bool IsPublic = false;
+        constexpr static bool IsProtected = true;
+        constexpr static bool IsPrivate = false;
+        constexpr static auto IsVirtual = true;
+
+        constexpr static auto Name = StringLiteral{"B"};
+        constexpr static auto FullName = StringLiteral{"pf::B"};
+    };
+
+/****************************** pf::Test::Test START ******************************/
+template<>
+struct StaticInfo<ID{0xc755d889c9afcfc0u, 0xa0f9a22e2a89ada4u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0xc755d889c9afcfc0u, 0xa0f9a22e2a89ada4u};
+        constexpr static ID TypeID = ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 21;
+        constexpr static std::uint64_t SourceColumn = 9;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"Test"};
+        constexpr static auto FullName = StringLiteral{"pf::Test::Test"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::Test::Test START ******************************/
+template<>
+struct StaticInfo<ID{0x895d90ae76b9dc30u, 0xf841242b37ac00b7u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x895d90ae76b9dc30u, 0xf841242b37ac00b7u};
+        constexpr static ID TypeID = ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 22;
+        constexpr static std::uint64_t SourceColumn = 9;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = true;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"Test"};
+        constexpr static auto FullName = StringLiteral{"pf::Test::Test"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::Test::Test START ******************************/
+template<>
+struct StaticInfo<ID{0x5a5168cc7bb4f6a4u, 0x4bf005a81d020c9eu}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x5a5168cc7bb4f6a4u, 0x4bf005a81d020c9eu};
+        constexpr static ID TypeID = ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 23;
+        constexpr static std::uint64_t SourceColumn = 9;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = false;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"Test"};
+        constexpr static auto FullName = StringLiteral{"pf::Test::Test"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
+
+/****************************** pf::Test::Test START ******************************/
+template<>
+struct StaticInfo<ID{0x815cba4b473ce1d2u, 0xf2d83feb29ab5499u}> {
+        struct details {
+                
+        };
+        constexpr static ID ConstructorID = ID{0x815cba4b473ce1d2u, 0xf2d83feb29ab5499u};
+        constexpr static ID TypeID = ID{0xde53fafb7a1f24bfu, 0xc1d896834081ab84u};
+
+        constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+        constexpr static std::uint64_t SourceLine = 24;
+        constexpr static std::uint64_t SourceColumn = 9;
+
+        constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>();
+
+        constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+
+        constexpr static bool IsPublic = true;
+        constexpr static bool IsProtected = false;
+        constexpr static bool IsPrivate = false;
+        constexpr static bool IsExplicit = false;
+        constexpr static bool IsCopy = true;
+        constexpr static bool IsMove = false;
+
+        constexpr static auto Name = StringLiteral{"Test"};
+        constexpr static auto FullName = StringLiteral{"pf::Test::Test"};
+
+        constexpr static RangeOf<Info> auto Arguments = make_array<Info>();
+    };
 
 }
