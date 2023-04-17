@@ -42,4 +42,4 @@ template<>
 
 }
 
-#endif //PF_META_GEN_GETTYPEID_TEMPLATE_H
+#endif//PF_META_GEN_GETTYPEID_TEMPLATE_H

@@ -19,27 +19,26 @@ namespace pf::meta_gen {
         std::vector<std::string> arguments;
     };
 
-    struct TypeInfo {
-        pf::meta::details::ID id;
-        std::string fullName;
-        std::string name;
-        struct {
-            unsigned int line;
-            unsigned int column;
-            std::string filename;
-        } sourceLocation;
+    struct SourceLocationInfo {
+        unsigned int line;
+        unsigned int column;
+        std::string filename;
     };
 
-    struct EnumTypeInfo : public TypeInfo {
+    struct TypeInfo {
+        meta::details::ID id;
+        std::string fullName;
+        std::string name;
+        SourceLocationInfo sourceLocation;
+    };
+
+    struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
-            pf::meta::details::ID id;
+            meta::details::ID id;
             std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
-            struct {
-                unsigned int line;
-                unsigned int column;
-            } sourceLocation;
+            SourceLocationInfo sourceLocation;
         };
 
         std::vector<Attribute> attributes;
@@ -47,7 +46,117 @@ namespace pf::meta_gen {
         std::string underlyingType;
     };
 
-    using TypeInfoVariant = std::variant<EnumTypeInfo>;
+    struct FunctionArgument {
+        meta::details::ID id;
+        meta::details::ID typeId;
+        std::string name;
+        std::string fullName;
+        std::string typeName;
+        std::vector<Attribute> attributes;
+        SourceLocationInfo sourceLocation;
+    };
+
+    enum class Access { Private, Protected, Public };
+
+    [[nodiscard]] constexpr std::string_view AccessToString(Access access) {
+        switch (access) {
+            case Access::Private: {
+                return "Private";
+            }
+            case Access::Protected: {
+                return "Protected";
+            }
+            case Access::Public: {
+                return "Public";
+            }
+        }
+        return "";
+        // std::unreachable
+    }
+
+    struct ConstructorInfo {
+        meta::details::ID id;
+        std::string fullName;
+        std::vector<FunctionArgument> arguments;
+        std::vector<Attribute> attributes;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isExplicit;
+        Access access;
+        SourceLocationInfo sourceLocation;
+        bool isCopy;
+        bool isMove;
+    };
+
+    struct DestructorInfo {
+        meta::details::ID id;
+        std::string fullName;
+        Access access;
+        std::vector<Attribute> attributes;
+        SourceLocationInfo sourceLocation;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isVirtual;
+        bool isPureVirtual;
+    };
+
+    // TODO: operators separately?
+    struct FunctionInfo {
+        meta::details::ID id;
+        std::string name;
+        std::string fullName;
+        std::vector<FunctionArgument> arguments;
+        std::vector<Attribute> attributes;
+        meta::details::ID returnTypeId;
+        std::string returnTypeName;
+        Access access;
+        bool isConstexpr;
+        bool isConsteval;
+        bool isConst;
+        bool isVirtual;
+        bool isPureVirtual;
+        SourceLocationInfo sourceLocation;
+    };
+
+    struct VariableInfo {
+        meta::details::ID id;
+        std::string name;
+        std::string fullName;
+        meta::details::ID typeId;
+        std::string typeName;
+        std::vector<Attribute> attributes;
+        Access access;
+        bool isMutable;
+        SourceLocationInfo sourceLocation;
+    };
+
+    struct BaseClassInfo {
+        meta::details::ID id;
+        std::string name;
+        std::string fullName;
+        bool isVirtual;
+        Access access;
+        SourceLocationInfo sourceLocation;
+    };
+
+    struct RecordTypeInfo : TypeInfo {
+        bool isUnion;
+        std::vector<Attribute> attributes;
+
+        std::vector<BaseClassInfo> baseClasses;
+        std::vector<ConstructorInfo> constructors;
+        DestructorInfo destructor;
+        std::vector<FunctionInfo> memberFunctions;
+        std::vector<VariableInfo> memberVariables;
+        std::vector<FunctionInfo> staticFunctions;
+        std::vector<VariableInfo> staticVariables;
+
+        bool isPolymorphic;
+        bool isAbstract;
+        bool isFinal;
+    };
+
+    using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;
 
 }// namespace pf::meta_gen
 

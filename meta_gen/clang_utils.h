@@ -19,14 +19,13 @@ namespace pf::meta_gen {
         auto token = clang::Lexer::findNextToken(range.getBegin(), sourceManager, langOpts);
         for (auto i = token->getLocation(); i != range.getEnd();) {
             if (!token.has_value()) { return false; }
-            if (std::ranges::any_of(kinds,
-                                    [tokKind = token->getKind()](auto k) { return k == tokKind; })) { return true; }
+            if (std::ranges::any_of(kinds, [tokKind = token->getKind()](auto k) { return k == tokKind; })) { return true; }
             token = clang::Lexer::findNextToken(i, sourceManager, langOpts);
             i = token->getLocation();
         }
         return false;
     }
 
-}
+}// namespace pf::meta_gen
 
-#endif //PF_META_CLANG_UTILS_H
+#endif//PF_META_CLANG_UTILS_H

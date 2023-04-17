@@ -30,7 +30,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
 
-add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp meta_gen/MetaInfoWriter.cpp)
+add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp meta_gen/MetaInfoWriter.cpp meta_gen/decl_parsers/ASTDeclParser.cpp meta_gen/decl_parsers/ASTDeclParser.h meta_gen/decl_parsers/ASTEnumDeclParser.cpp meta_gen/decl_parsers/ASTEnumParser.h meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h)
 add_executable(meta_test main_test.cpp)
 
 

@@ -4,14 +4,17 @@
 
 #include "AttributeParser.h"
 
+#include <pf_common/algorithms.h>
 #include <pf_common/array.h>
+
+#include <spdlog/spdlog.h>
 
 #include "clang_utils.h"
 
+// FIXME: deduplicate code
 namespace pf::meta_gen {
 
-    AttributeParser::EnumAttributes
-    AttributeParser::parseEnumAttributes(clang::ASTContext &astContext, const clang::EnumDecl &decl) const {
+    AttributeParser::EnumAttributes AttributeParser::parseEnumAttributes(clang::ASTContext &astContext, const clang::EnumDecl &decl) const {
         EnumAttributes result{};
 
         auto srcRange = decl.getSourceRange();
@@ -25,8 +28,111 @@ namespace pf::meta_gen {
         return result;
     }
 
-    AttributeParser::EnumTypeAttributeParseResult
-    AttributeParser::parseEnumTypeAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
+    std::vector<Attribute> AttributeParser::parseRecordAttributes(clang::ASTContext &astContext, const clang::CXXRecordDecl &decl) const {
+        std::vector<Attribute> result{};
+
+        auto srcRange = decl.getSourceRange();
+
+        bool foundAttributes;
+        do {
+            foundAttributes = false;
+            if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
+                if (contains(astContext, clang::SourceRange{srcRange.getBegin(), *start},
+                             pf::make_array<clang::tok::TokenKind>(clang::tok::TokenKind::raw_identifier))) {
+                    // found class name, thus we're out of class type's attributes
+                    break;
+                }
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result));
+                    srcRange.setBegin(*end);
+                    foundAttributes = true;
+                }
+            }
+        } while (foundAttributes);
+
+        return result;
+    }
+
+    std::vector<Attribute> AttributeParser::parseFieldAttributes(clang::ASTContext &astContext, const clang::FieldDecl &decl) const {
+        return parseVariableAttributes(astContext, decl.getSourceRange());
+    }
+
+    std::vector<Attribute> AttributeParser::parseFieldAttributes(clang::ASTContext &astContext, const clang::VarDecl &decl) const {
+        return parseVariableAttributes(astContext, decl.getSourceRange());
+    }
+
+    std::vector<Attribute> AttributeParser::parseFunctionAttributes(clang::ASTContext &astContext, const clang::CXXMethodDecl &decl) const {
+        return parseFunctionLikeAttributes(astContext, decl.getSourceRange());
+    }
+    std::vector<Attribute> AttributeParser::parseArgumentAttributes(clang::ASTContext &astContext, const clang::ParmVarDecl &decl) const {
+        std::vector<Attribute> result{};
+
+        auto srcRange = decl.getSourceRange();
+        auto &sourceManager = astContext.getSourceManager();
+        auto &langOpts = astContext.getLangOpts();
+
+        // move as far to the left as possible to collect all attributes
+        {
+            constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_paren, clang::tok::TokenKind::comma);
+            auto begin = srcRange.getBegin().getLocWithOffset(-1);
+            clang::Token token{};
+            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
+                begin = begin.getLocWithOffset(-1);
+                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (token.getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = true;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token.getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = false;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+            }
+            srcRange.setBegin(begin);
+        }
+
+        bool foundAttributes;
+        do {
+            foundAttributes = false;
+            if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result));
+                    srcRange.setBegin(*end);
+                    foundAttributes = true;
+                }
+            }
+        } while (foundAttributes);
+
+        return result;
+    }
+    std::vector<Attribute> AttributeParser::parseConstructorAttributes(clang::ASTContext &astContext,
+                                                                       const clang::CXXConstructorDecl &decl) const {
+        return parseFunctionLikeAttributes(astContext, decl.getSourceRange());
+    }
+
+    std::vector<Attribute> AttributeParser::parseDestructorAttributes(clang::ASTContext &astContext,
+                                                                      const clang::CXXDestructorDecl &decl) const {
+        return parseFunctionLikeAttributes(astContext, decl.getSourceRange());
+    }
+
+    AttributeParser::EnumTypeAttributeParseResult AttributeParser::parseEnumTypeAttributes(clang::ASTContext &astContext,
+                                                                                           clang::SourceRange srcRange) const {
         EnumTypeAttributeParseResult result;
 
         // skipping first raw_identifier, which is just `enum`/`enum class`
@@ -41,10 +147,8 @@ namespace pf::meta_gen {
                     // found enum name, thus we're out of enum type's attributes
                     break;
                 }
-                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start,
-                                                                                      srcRange.getEnd()}); end.has_value()) {
-                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}),
-                                      std::back_inserter(result.attributes));
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result.attributes));
                     srcRange.setBegin(*end);
                     foundAttributes = true;
                 }
@@ -54,8 +158,8 @@ namespace pf::meta_gen {
         return result;
     }
 
-    std::unordered_map<std::string, std::vector<Attribute>>
-    AttributeParser::parseEnumValueAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
+    std::unordered_map<std::string, std::vector<Attribute>> AttributeParser::parseEnumValueAttributes(clang::ASTContext &astContext,
+                                                                                                      clang::SourceRange srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
@@ -77,8 +181,7 @@ namespace pf::meta_gen {
             auto token = clang::Lexer::findNextToken(srcRange.getBegin(), sourceManager, langOpts);
             while (token->getKind() != clang::tok::TokenKind::raw_identifier) {
                 token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts);
-                if (!token.has_value() || token->getKind() == clang::tok::TokenKind::eof ||
-                    token->getLocation() > srcRange.getEnd()) {
+                if (!token.has_value() || token->getKind() == clang::tok::TokenKind::eof || token->getLocation() > srcRange.getEnd()) {
                     foundValue = false;
                     break;
                 }
@@ -94,13 +197,11 @@ namespace pf::meta_gen {
                 foundAttributes = false;
                 if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
                     if (contains(astContext, clang::SourceRange{srcRange.getBegin(), *start},
-                                 pf::make_array<clang::tok::TokenKind>(clang::tok::TokenKind::comma,
-                                                                       clang::tok::TokenKind::r_brace))) {
+                                 pf::make_array<clang::tok::TokenKind>(clang::tok::TokenKind::comma, clang::tok::TokenKind::r_brace))) {
                         // found value divider, these attributes belong to a different value
                         break;
                     }
-                    if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start,
-                                                                                          srcRange.getEnd()}); end.has_value()) {
+                    if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
                         std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}),
                                           std::back_inserter(valueAttributes.second));
                         srcRange.setBegin(*end);
@@ -114,8 +215,8 @@ namespace pf::meta_gen {
         return result;
     }
 
-    std::optional<clang::SourceLocation>
-    AttributeParser::findAttributesStart(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
+    std::optional<clang::SourceLocation> AttributeParser::findAttributesStart(clang::ASTContext &astContext,
+                                                                              const clang::SourceRange &srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
@@ -139,8 +240,8 @@ namespace pf::meta_gen {
         return std::nullopt;
     }
 
-    std::optional<clang::SourceLocation>
-    AttributeParser::findAttributesEnd(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
+    std::optional<clang::SourceLocation> AttributeParser::findAttributesEnd(clang::ASTContext &astContext,
+                                                                            const clang::SourceRange &srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
@@ -171,14 +272,11 @@ namespace pf::meta_gen {
         return std::nullopt;
     }
 
-    std::vector<Attribute>
-    AttributeParser::parseAttributes(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
+    std::vector<Attribute> AttributeParser::parseAttributes(clang::ASTContext &astContext, const clang::SourceRange &srcRange) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
 
-        enum class State {
-            Start, None, Using, UsingEnd, Name, Arguments, NestedParens
-        };
+        enum class State { Start, None, Using, UsingEnd, Name, Arguments, NestedParens };
         State state = State::Start;
 
         std::vector<Attribute> result;
@@ -202,24 +300,20 @@ namespace pf::meta_gen {
                             attributeName = spelling;
                         }
                     }
-                }
-                    break;
+                } break;
                 case State::None: {
                     if (token->getKind() == clang::tok::TokenKind::raw_identifier) {
                         state = State::Name;
                         attributeName = clang::Lexer::getSpelling(*token, sourceManager, langOpts);
                     }
-                }
-                    break;
+                } break;
                 case State::Using: {
                     attributeNamespace = clang::Lexer::getSpelling(*token, sourceManager, langOpts);
                     state = State::UsingEnd;
-                }
-                    break;
+                } break;
                 case State::UsingEnd: {
                     state = State::None;
-                }
-                    break;
+                } break;
                 case State::Name: {
                     if (token->getKind() == clang::tok::TokenKind::coloncolon ||
                         token->getKind() == clang::tok::TokenKind::raw_identifier) {
@@ -237,8 +331,7 @@ namespace pf::meta_gen {
                         attributeName.clear();
                         state = State::None;
                     }
-                }
-                    break;
+                } break;
                 case State::Arguments: {
                     if (token->getKind() == clang::tok::TokenKind::l_paren) {
                         nestedParensCnt = 1;
@@ -263,8 +356,7 @@ namespace pf::meta_gen {
                         attributeParam.append(clang::Lexer::getSpelling(*token, sourceManager, langOpts));
                         state = State::Arguments;
                     }
-                }
-                    break;
+                } break;
                 case State::NestedParens: {
                     if (token->getKind() == clang::tok::TokenKind::l_paren) {
                         ++nestedParensCnt;
@@ -286,37 +378,261 @@ namespace pf::meta_gen {
                         attributeParam.append(clang::Lexer::getSpelling(*token, sourceManager, langOpts));
                         state = State::NestedParens;
                     }
-                }
-                    break;
+                } break;
             }
-
-
-            // std::cout << clang::tok::getTokenName(token->getKind()) << "\t";
-            // std::cout << clang::Lexer::getSpelling(*token, sourceManager, langOpts) << std::endl;
-
             i = token->getLocation();
         }
-        // std::cout << std::endl;
         return result;
     }
 
-    clang::SourceLocation
-    AttributeParser::advanceByTokens(clang::ASTContext &astContext, const clang::SourceLocation &loc,
-                                     std::size_t count) const {
+    clang::SourceLocation AttributeParser::advanceByTokens(clang::ASTContext &astContext, const clang::SourceLocation &loc,
+                                                           std::size_t count) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto token = clang::Lexer::findNextToken(loc, sourceManager, langOpts);
-        for (std::size_t i = 0; i < count - 1; ++i) {
-            token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts);
-        }
+        for (std::size_t i = 0; i < count - 1; ++i) { token = clang::Lexer::findNextToken(token->getLocation(), sourceManager, langOpts); }
         return token->getLocation();
     }
 
-    std::optional<clang::Token>
-    AttributeParser::getToken(clang::ASTContext &astContext, const clang::SourceLocation &loc) const {
+    std::optional<clang::Token> AttributeParser::getToken(clang::ASTContext &astContext, const clang::SourceLocation &loc) const {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         return clang::Lexer::findNextToken(loc, sourceManager, langOpts);
     }
 
-} // pf::meta_gen
+    std::vector<Attribute> AttributeParser::parseVariableAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
+        std::vector<Attribute> result{};
+
+        auto &sourceManager = astContext.getSourceManager();
+        auto &langOpts = astContext.getLangOpts();
+
+        // move as far to the left as possible to collect all attributes
+        {
+            constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_brace, clang::tok::TokenKind::r_brace,
+                                                                          clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
+            auto begin = srcRange.getBegin().getLocWithOffset(-1);
+            clang::Token token{};
+            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
+                begin = begin.getLocWithOffset(-1);
+                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (token.getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = true;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token.getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = false;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+            }
+            srcRange.setBegin(begin);
+        }
+        // move as far to the right as possible to collect trailing attributes
+        {
+            constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_brace, clang::tok::TokenKind::r_brace,
+                                                                          clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
+            auto end = srcRange.getEnd();
+            auto token = clang::Lexer::findNextToken(end, sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            while (inAttrs || !pf::contains(stopTokens, token->getKind())) {
+                token = clang::Lexer::findNextToken(end, sourceManager, langOpts);
+                if (!token.has_value()) { break; }
+                if (token->getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = false;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token->getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = true;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+                end = token->getLocation();
+            }
+            srcRange.setEnd(end);
+        }
+
+
+        bool foundAttributes;
+        do {
+            foundAttributes = false;
+            if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result));
+                    srcRange.setBegin(*end);
+                    foundAttributes = true;
+                }
+            }
+        } while (foundAttributes);
+
+
+        return result;
+    }
+    std::vector<Attribute> AttributeParser::parseFunctionLikeAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const {
+        std::vector<Attribute> result{};
+        auto &sourceManager = astContext.getSourceManager();
+        auto &langOpts = astContext.getLangOpts();
+
+        // move as far to the left as possible to collect all attributes
+        {
+            constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_brace, clang::tok::TokenKind::r_brace,
+                                                                          clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
+            auto begin = srcRange.getBegin().getLocWithOffset(-1);
+            clang::Token token{};
+            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
+                begin = begin.getLocWithOffset(-1);
+                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (token.getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = true;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token.getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = false;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+            }
+            srcRange.setBegin(begin);
+        }
+        // move as far to the right as possible to collect trailing attributes
+        {
+            constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_brace, clang::tok::TokenKind::r_brace,
+                                                                          clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
+            auto end = srcRange.getBegin();
+            auto token = clang::Lexer::findNextToken(end, sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            while (inAttrs || !pf::contains(stopTokens, token->getKind())) {
+                token = clang::Lexer::findNextToken(end, sourceManager, langOpts);
+                if (!token.has_value()) { break; }
+                if (token->getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = false;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token->getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = true;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+                end = token->getLocation();
+            }
+            srcRange.setEnd(end);
+        }
+        clang::SourceRange argumentsRange{};
+        // find arguments source range
+        {
+            auto token = clang::Lexer::findNextToken(srcRange.getBegin(), sourceManager, langOpts);
+            bool foundRSquare = false;
+            bool foundLSquare = false;
+            bool inAttrs = false;
+            std::size_t parenDepth{};
+            for (auto iter = srcRange.getBegin();;) {
+                token = clang::Lexer::findNextToken(iter, sourceManager, langOpts);
+                if (!token.has_value()) { break; }
+                if (token->getKind() == clang::tok::TokenKind::r_square) {
+                    if (foundRSquare) {
+                        inAttrs = false;
+                        foundRSquare = false;
+                    } else {
+                        foundRSquare = true;
+                    }
+                } else {
+                    foundRSquare = false;
+                }
+                if (token->getKind() == clang::tok::TokenKind::l_square) {
+                    if (foundLSquare) {
+                        inAttrs = true;
+                        foundLSquare = false;
+                    } else {
+                        foundLSquare = true;
+                    }
+                } else {
+                    foundLSquare = false;
+                }
+                if (!inAttrs) {
+                    if (token->getKind() == clang::tok::TokenKind::l_paren) {
+                        if (parenDepth == 0) { argumentsRange.setBegin(token->getLocation()); }
+                        ++parenDepth;
+                    } else if (token->getKind() == clang::tok::TokenKind::r_paren) {
+                        --parenDepth;
+                        if (parenDepth == 0) {
+                            argumentsRange.setEnd(token->getLocation());
+                            break;
+                        }
+                    }
+                }
+                iter = token->getLocation();
+            }
+        }
+
+        bool foundAttributes;
+        do {
+            foundAttributes = false;
+            if (const auto start = findAttributesStart(astContext, srcRange); start.has_value()) {
+                if (const auto end = findAttributesEnd(astContext, clang::SourceRange{*start, srcRange.getEnd()}); end.has_value()) {
+                    std::ranges::copy(parseAttributes(astContext, clang::SourceRange{*start, *end}), std::back_inserter(result));
+                    srcRange.setBegin(*end);
+                    foundAttributes = true;
+                }
+            }
+        } while (foundAttributes);
+
+        return result;
+    }
+
+
+}// namespace pf::meta_gen

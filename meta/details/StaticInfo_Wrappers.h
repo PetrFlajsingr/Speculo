@@ -23,8 +23,8 @@ namespace pf::meta::details {
         using Type = typename details::StaticInfo<ParentID>::Type &;
         constexpr static ID TypeID = I;
         constexpr static bool IsLvalueReference = true;
-        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{"&"};
-        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{"&"};
+        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{" &"};
+        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{" &"};
     };
     template<ID I, ID ParentID>
     struct StaticInfo_ConstLRefWrap : details::StaticInfo<ParentID> {
@@ -33,25 +33,25 @@ namespace pf::meta::details {
         constexpr static bool IsLvalueReference = true;
         constexpr static bool IsConst = true;
         constexpr static auto Name =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{"&"};
+                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" &"};
         constexpr static auto FullName =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{"&"};
+                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" &"};
     };
     template<ID I, ID ParentID>
     struct StaticInfo_RRefWrap : details::StaticInfo<ParentID> {
         using Type = typename details::StaticInfo<ParentID>::Type &&;
         constexpr static ID TypeID = I;
         constexpr static bool IsRvalueReference = true;
-        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{"&&"};
-        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{"&&"};
+        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{" &&"};
+        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{" &&"};
     };
     template<ID I, ID ParentID>
     struct StaticInfo_PtrWrap : details::StaticInfo<ParentID> {
         using Type = typename details::StaticInfo<ParentID>::Type *;
         constexpr static ID TypeID = I;
         constexpr static bool IsPtr = true;
-        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{"*"};
-        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{"*"};
+        constexpr static auto Name = details::StaticInfo<ParentID>::Name + StringLiteral{" *"};
+        constexpr static auto FullName = details::StaticInfo<ParentID>::FullName + StringLiteral{" *"};
     };
     template<ID I, ID ParentID>
     struct StaticInfo_ConstPtrWrap : details::StaticInfo<ParentID> {
@@ -60,9 +60,9 @@ namespace pf::meta::details {
         constexpr static bool IsPtr = true;
         constexpr static bool IsConst = true;
         constexpr static auto Name =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{"*"};
+                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" *"};
         constexpr static auto FullName =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{"*"};
+                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" *"};
     };
 }
 

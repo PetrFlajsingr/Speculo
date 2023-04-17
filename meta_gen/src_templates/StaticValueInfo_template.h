@@ -11,9 +11,7 @@ namespace pf::meta_gen {
 /****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{value_id}> {{
-    struct details {{
-        {details}
-    }};
+    {details}
     constexpr static ID ValueID = {value_id};
     constexpr static ID TypeID = {type_id};
     using Type = {type};
@@ -37,4 +35,4 @@ struct StaticInfo<{value_id}> {{
 
 }
 
-#endif //PF_META_GEN_STATICVALUEINFO_TEMPLATE_H
+#endif//PF_META_GEN_STATICVALUEINFO_TEMPLATE_H

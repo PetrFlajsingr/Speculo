@@ -29,16 +29,20 @@ static llvm::cl::opt<std::string> OutputSource("out-source", llvm::cl::desc("Spe
                                                llvm::cl::value_desc("filename"), llvm::cl::init("output.cpp"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
-static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
+                                        llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
 
-static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
+static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"),
+                                                 llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
 
 
 #include <unordered_set>
 
-enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
+enum class InfoType {
+    Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr
+};
 
 [[nodiscard]] constexpr std::string wrapStructForInfoType(InfoType infoType) {
     switch (infoType) {
@@ -63,24 +67,32 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
         case InfoType::Const:
             return "const " + fullTypeName;
         case InfoType::Lvalue:
-            return fullTypeName + "&";
+            return fullTypeName + " &";
         case InfoType::ConstLvalue:
-            return "const " + fullTypeName + "&";
+            return "const " + fullTypeName + " &";
         case InfoType::Rvalue:
-            return fullTypeName + "&&";
+            return fullTypeName + " &&";
         case InfoType::Ptr:
-            return fullTypeName + "*";
+            return fullTypeName + " *";
         case InfoType::ConstPtr:
-            return "const " + fullTypeName + "*";
+            return "const " + fullTypeName + " *";
     }
     throw "can't happen";
 }
+
 // TODO: deduplicate
-[[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
-std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
-                                                                                              InfoType::ConstLvalue, InfoType::Rvalue,
-                                                                                              InfoType::Ptr, InfoType::ConstPtr}) {
+[[nodiscard]] std::string idToString(pf::meta::details::ID id) {
+    return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
+}
+
+std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName,
+                                              std::string_view fullTypeName,
+                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const,
+                                                                                              InfoType::Lvalue,
+                                                                                              InfoType::ConstLvalue,
+                                                                                              InfoType::Rvalue,
+                                                                                              InfoType::Ptr,
+                                                                                              InfoType::ConstPtr}) {
     using namespace fmt::literals;
     constexpr auto prologue = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -104,13 +116,15 @@ template<>
     return {variant_id};
 }}
 )fmt";
-    const auto typeId = idToString(gen.generateTypeId(std::string{fullTypeName}));
+    const auto typeId = idToString(gen.generateId(std::string{fullTypeName}));
     std::string result{fmt::format(prologue, "full_name"_a = fullTypeName)};
-    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName, "full_type_name"_a = fullTypeName));
+    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName,
+                              "full_type_name"_a = fullTypeName));
     for (const auto &toGen: typesToGenerate) {
         const auto variantTypeName = wrapNameForInfoType(toGen, std::string{fullTypeName});
-        const auto variantId = idToString(gen.generateTypeId(variantTypeName));
-        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId, "wrap_struct"_a = wrapStructForInfoType(toGen),
+        const auto variantId = idToString(gen.generateId(variantTypeName));
+        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId,
+                                  "wrap_struct"_a = wrapStructForInfoType(toGen),
                                   "type_id"_a = typeId, "full_wrap_type_name"_a = variantTypeName));
     }
     result.append(fmt::format(epilogue, "full_name"_a = fullTypeName));
@@ -119,30 +133,31 @@ template<>
 }
 
 int main(int argc, const char **argv) {
+    spdlog::set_level(spdlog::level::debug);
     llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
-   /*
-    // TODO: create a separate exe for this
-    pf::meta_gen::TypeIdGenerator gen{};
-    constexpr auto fundamentalTypes = pf::make_array<std::string_view>(
-            "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "short", "unsigned short", "int",
-            "unsigned int", "long", "unsigned long", "long long", "unsigned long long", "float", "double", "long double");
-    std::string output;
-    for (const auto fundamentalType: fundamentalTypes) {
-        output.append(generateFundamentalStaticTypeInfo(gen, fundamentalType, fundamentalType)).append("\n");
-    }
-    output.append(generateFundamentalStaticTypeInfo(gen, "void", "void", {InfoType::Ptr, InfoType::ConstPtr})).append("\n");
+    /*
+     // TODO: create a separate exe for this
+     pf::meta_gen::TypeIdGenerator gen{};
+     constexpr auto fundamentalTypes = pf::make_array<std::string_view>(
+             "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "short", "unsigned short", "int",
+             "unsigned int", "long", "unsigned long", "long long", "unsigned long long", "float", "double", "long double");
+     std::string output;
+     for (const auto fundamentalType: fundamentalTypes) {
+         output.append(generateFundamentalStaticTypeInfo(gen, fundamentalType, fundamentalType)).append("\n");
+     }
+     output.append(generateFundamentalStaticTypeInfo(gen, "void", "void", {InfoType::Ptr, InfoType::ConstPtr})).append("\n");
 
-    output.append(generateFundamentalStaticTypeInfo(gen, "nullptr_t", "std::nullptr_t", {})).append("\n");
+     output.append(generateFundamentalStaticTypeInfo(gen, "nullptr_t", "std::nullptr_t", {})).append("\n");
 
 
-    std::error_code errorCode;
-    auto outStream =
-            std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader} + "_ungabunga", errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+     std::error_code errorCode;
+     auto outStream =
+             std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader} + "_ungabunga", errorCode, llvm::sys::fs::OpenFlags::OF_Text);
 
-    *outStream << output;
+     *outStream << output;
 
-    return 0;*/
+     return 0;*/
     auto sources = std::vector{std::string{InputSource}};
 
 
