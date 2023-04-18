@@ -27,6 +27,12 @@ namespace pf::meta_gen {
 
     struct TypeInfo {
         meta::details::ID id;
+        meta::details::ID constId;
+        meta::details::ID lrefId;
+        meta::details::ID rrefId;
+        meta::details::ID constLrefId;
+        meta::details::ID ptrId;
+        meta::details::ID constPtrId;
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;

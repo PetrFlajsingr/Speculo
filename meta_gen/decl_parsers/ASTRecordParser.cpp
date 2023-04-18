@@ -60,6 +60,12 @@ namespace pf::meta_gen {
         result.fullName = recordDecl->getQualifiedNameAsString();
         result.name = recordDecl->getNameAsString();
         result.id = getIdGenerator().generateId(result.fullName);
+        result.constId = getIdGenerator().generateId("const " + result.fullName);
+        result.lrefId = getIdGenerator().generateId(result.fullName + "&");
+        result.rrefId = getIdGenerator().generateId(result.fullName + "&&");
+        result.constLrefId = getIdGenerator().generateId("const " + result.fullName + "&");
+        result.ptrId = getIdGenerator().generateId(result.fullName + "*");
+        result.constPtrId = getIdGenerator().generateId("const" + result.fullName + "*");
 
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();

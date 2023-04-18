@@ -75,13 +75,6 @@ namespace pf::meta_gen {
         }
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
-        const auto const_type_id = idToString(idGenerator->generateId("const " + enumInfo.fullName));
-        const auto lref_type_id = idToString(idGenerator->generateId(enumInfo.fullName + "&"));
-        const auto const_lref_type_id = idToString(idGenerator->generateId("const " + enumInfo.fullName + "&"));
-        const auto rref_type_id = idToString(idGenerator->generateId(enumInfo.fullName + "&&"));
-        const auto ptr_type_id = idToString(idGenerator->generateId(enumInfo.fullName + "*"));
-        const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + enumInfo.fullName + "*"));
-
         std::vector<std::string> argsArrayNames;
         std::string detailsContents;
         for (const auto &attr: enumInfo.attributes) {
@@ -100,14 +93,16 @@ namespace pf::meta_gen {
                           "source_file"_a = enumInfo.sourceLocation.filename, "source_line"_a = enumInfo.sourceLocation.line,
                           "source_column"_a = enumInfo.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = enumInfo.name,
                           "full_name"_a = enumInfo.fullName, "underlying_type"_a = enumInfo.underlyingType,
-                          "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
-                          "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
-                          "const_ptr_type_id"_a = const_ptr_type_id));
+                          "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = idToString(enumInfo.constId),
+                          "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
+                          "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId)));
 
         write(fmt::format(GetTypeIDTemplate, "full_name"_a = enumInfo.fullName, "type"_a = enumInfo.fullName,
-                          "type_id"_a = idToString(enumInfo.id), "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
-                          "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
-                          "const_ptr_type_id"_a = const_ptr_type_id));
+                          "type_id"_a = idToString(enumInfo.id), "const_type_id"_a = idToString(enumInfo.constId),
+                          "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
+                          "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId)));
         for (const auto &[name, id]: valueIds) {
             write(fmt::format(GetConstantIDTemplate, "full_name"_a = fmt::format("{}::{}", enumInfo.fullName, name), "constant"_a = name,
                               "value_id"_a = id));
@@ -131,13 +126,6 @@ namespace pf::meta_gen {
         };
 
         {
-            const auto const_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName));
-            const auto lref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&"));
-            const auto const_lref_type_id = idToString(idGenerator->generateId("const " + recordInfo.fullName + "&"));
-            const auto rref_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "&&"));
-            const auto ptr_type_id = idToString(idGenerator->generateId(recordInfo.fullName + "*"));
-            const auto const_ptr_type_id = idToString(idGenerator->generateId("const" + recordInfo.fullName + "*"));
-
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
             for (const auto &attr: recordInfo.attributes) {
@@ -162,14 +150,16 @@ namespace pf::meta_gen {
                               "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
                               "static_fncs"_a = idsToStringMakeArray(recordInfo.staticFunctions),
                               "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
-                              "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables), "const_type_id"_a = const_type_id,
-                              "lref_type_id"_a = lref_type_id, "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id,
-                              "ptr_type_id"_a = ptr_type_id, "const_ptr_type_id"_a = const_ptr_type_id));
+                              "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables),
+                              "const_type_id"_a = idToString(recordInfo.constId), "lref_type_id"_a = idToString(recordInfo.lrefId),
+                              "const_lref_type_id"_a = idToString(recordInfo.constLrefId), "rref_type_id"_a = idToString(recordInfo.rrefId),
+                              "ptr_type_id"_a = idToString(recordInfo.ptrId), "const_ptr_type_id"_a = idToString(recordInfo.constPtrId)));
 
             write(fmt::format(GetTypeIDTemplate, "full_name"_a = recordInfo.fullName, "type"_a = recordInfo.fullName,
-                              "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = const_type_id, "lref_type_id"_a = lref_type_id,
-                              "const_lref_type_id"_a = const_lref_type_id, "rref_type_id"_a = rref_type_id, "ptr_type_id"_a = ptr_type_id,
-                              "const_ptr_type_id"_a = const_ptr_type_id));
+                              "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = idToString(recordInfo.constId),
+                              "lref_type_id"_a = idToString(recordInfo.lrefId), "const_lref_type_id"_a = idToString(recordInfo.constLrefId),
+                              "rref_type_id"_a = idToString(recordInfo.rrefId), "ptr_type_id"_a = idToString(recordInfo.ptrId),
+                              "const_ptr_type_id"_a = idToString(recordInfo.constPtrId)));
         }
 
         for (const auto &baseInfo: recordInfo.baseClasses) {
