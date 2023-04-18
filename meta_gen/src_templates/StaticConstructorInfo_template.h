@@ -17,7 +17,7 @@ struct StaticInfo<{id}> {{
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>({attributes});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
 
@@ -31,7 +31,7 @@ struct StaticInfo<{id}> {{
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
-    constexpr static RangeOf<Info> auto Arguments = make_array<Info>({arguments});
+    constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>({arguments});
     }};
 )fmt";
 

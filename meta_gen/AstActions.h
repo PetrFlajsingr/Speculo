@@ -15,6 +15,8 @@
 #include "clang_tooling_wrap.h"
 #include "info_structs.h"
 
+#include "clang/Frontend/CompilerInstance.h"
+
 namespace pf::meta_gen {
 
     class ASTConsumer : public clang::ASTConsumer {
@@ -43,6 +45,11 @@ namespace pf::meta_gen {
         std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
             return std::make_unique<ASTConsumer>(config, metaOutStream, codeGenOutStream, idGenerator);
         };
+
+        bool BeginSourceFileAction(clang::CompilerInstance &Compiler) override {
+            Compiler.getLangOpts().CommentOpts.ParseAllComments = true;
+            return true;
+        }
 
     private:
         const Config *config;

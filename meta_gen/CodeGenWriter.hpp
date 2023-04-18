@@ -19,6 +19,8 @@ namespace pf::meta_gen {
         explicit CodeGenWriter(std::shared_ptr<llvm::raw_ostream> os) : ostream{std::move(os)} {}
 
         void generate(RangeOf<TypeInfoVariant> auto &&typeInfos) {
+            write("#include <meta/macros.h>\n");
+            write("#include <meta/details/StaticInfo.h>\n");
             std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos), [this](auto &&typeInfo) { generate(typeInfo); });
         }
 

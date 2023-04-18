@@ -167,11 +167,11 @@ int main(int argc, const char **argv) {
      return 0;*/
     auto sources = std::vector{std::string{InputSource}};
 
+    const auto config = createConfig();
 
-    clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", CompilerFlags};
+    clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
     clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-    const auto config = createConfig();
 
     std::error_code errorCode;
     auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader, errorCode, llvm::sys::fs::OpenFlags::OF_Text);

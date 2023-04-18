@@ -111,6 +111,7 @@ int main() {
         std::cout << A::FullName << std::endl;
         std::cout << std::hex << A::TypeID.id[0] << std::endl;
         std::cout << std::hex << A::TypeID.id[1] << std::endl;
+        std::cout << std::dec;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
@@ -195,5 +196,16 @@ int main() {
     for (const auto v : getEnumValues<pf::SomeEnum>()) {
         std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl;
     }
+
+    constexpr auto AINFO = PF_REFLECT_TYPE(pf::A);
+    using aImpl = pf::meta::details::StaticInfo<AINFO.implId>;
+    using aLetadloImpl = pf::meta::details::StaticInfo<aImpl::MemberFunctions[2].implId>;
+
+    pf::A dfsds{};
+
+    auto yeetr = aLetadloImpl::MEMBER_PTR;
+    std::cout << "Member ptr call: " << (dfsds.*yeetr)() << std::endl;
+
+
     return 0;
 }

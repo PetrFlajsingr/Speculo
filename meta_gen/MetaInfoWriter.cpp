@@ -401,7 +401,7 @@ namespace pf::meta_gen {
 
     std::string MetaInfoWriter::CreateAttributeArgArray(std::string_view name, const Attribute &attr) {
         std::string attributeArgsStr{};
-        attributeArgsStr.append(fmt::format("constexpr static auto {} = make_array<std::string_view>(", name));
+        attributeArgsStr.append(fmt::format("constexpr static auto {} = pf::meta::details::make_array<std::string_view>(", name));
         for (const auto &arg: attr.arguments) { attributeArgsStr.append(fmt::format(R"fmt(R"arg({})arg")fmt", arg)).append(", "); }
         if (!attr.arguments.empty()) { attributeArgsStr = attributeArgsStr.substr(0, attributeArgsStr.length() - 2); }
         attributeArgsStr.append(");");
