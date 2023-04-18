@@ -8,9 +8,10 @@
 #include <memory>
 
 #include "ASTParser.h"
+#include "CodeGenWriter.hpp"
+#include "Config.h"
 #include "IdGenerator.h"
 #include "MetaInfoWriter.h"
-#include "ParsingSettings.h"
 #include "clang_tooling_wrap.h"
 #include "info_structs.h"
 
@@ -18,42 +19,54 @@ namespace pf::meta_gen {
 
     class ASTConsumer : public clang::ASTConsumer {
     public:
-        // TODO: get settings in here
-        explicit ASTConsumer(std::shared_ptr<llvm::raw_fd_ostream> oStream, std::shared_ptr<IdGenerator> idGen)
-            : astParser{ParsingSettings{true}, idGen}, writer{std::move(oStream), idGen} {}
+        explicit ASTConsumer(const Config *c, std::shared_ptr<llvm::raw_fd_ostream> metaOstream,
+                             std::shared_ptr<llvm::raw_fd_ostream> codeGenOstream, std::shared_ptr<IdGenerator> idGen)
+            : config{c}, astParser{c, idGen}, metaWriter{std::move(metaOstream), idGen}, codeGenWriter{std::move(codeGenOstream)} {}
 
         void HandleTranslationUnit(clang::ASTContext &context) override;
 
     private:
+        const Config *config;
         ASTParser astParser;
-        MetaInfoWriter writer;
+        MetaInfoWriter metaWriter;
+        CodeGenWriter codeGenWriter;
     };
 
 
     class ASTAction : public clang::ASTFrontendAction {
     public:
-        explicit ASTAction(std::shared_ptr<llvm::raw_fd_ostream> oStream, std::shared_ptr<IdGenerator> idGen)
-            : idGenerator(std::move(idGen)), outStream{std::move(oStream)} {}
+        explicit ASTAction(const Config *c, std::shared_ptr<llvm::raw_fd_ostream> metaOstream,
+                           std::shared_ptr<llvm::raw_fd_ostream> codeGenOstream, std::shared_ptr<IdGenerator> idGen)
+            : config{c}, idGenerator(std::move(idGen)), metaOutStream{std::move(metaOstream)}, codeGenOutStream{std::move(codeGenOstream)} {
+        }
 
         std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
-            return std::make_unique<ASTConsumer>(outStream, idGenerator);
+            return std::make_unique<ASTConsumer>(config, metaOutStream, codeGenOutStream, idGenerator);
         };
 
     private:
+        const Config *config;
         std::shared_ptr<IdGenerator> idGenerator;
-        std::shared_ptr<llvm::raw_fd_ostream> outStream;
+        std::shared_ptr<llvm::raw_fd_ostream> metaOutStream;
+        std::shared_ptr<llvm::raw_fd_ostream> codeGenOutStream;
     };
 
     class ActionFactory : public clang::tooling::FrontendActionFactory {
     public:
-        explicit ActionFactory(std::shared_ptr<llvm::raw_fd_ostream> oStream, std::shared_ptr<IdGenerator> idGen)
-            : idGenerator(std::move(idGen)), outStream{std::move(oStream)} {}
+        explicit ActionFactory(const Config &c, std::shared_ptr<llvm::raw_fd_ostream> metaOstream,
+                               std::shared_ptr<llvm::raw_fd_ostream> codeGenOstream, std::shared_ptr<IdGenerator> idGen)
+            : config{&c}, idGenerator(std::move(idGen)), metaOutStream{std::move(metaOstream)},
+              codeGenOutStream{std::move(codeGenOstream)} {}
 
-        std::unique_ptr<clang::FrontendAction> create() override { return std::make_unique<ASTAction>(outStream, idGenerator); }
+        std::unique_ptr<clang::FrontendAction> create() override {
+            return std::make_unique<ASTAction>(config, metaOutStream, codeGenOutStream, idGenerator);
+        }
 
     private:
+        const Config *config;
         std::shared_ptr<IdGenerator> idGenerator;
-        std::shared_ptr<llvm::raw_fd_ostream> outStream;
+        std::shared_ptr<llvm::raw_fd_ostream> metaOutStream;
+        std::shared_ptr<llvm::raw_fd_ostream> codeGenOutStream;
     };
 }// namespace pf::meta_gen
 

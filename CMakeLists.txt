@@ -23,14 +23,18 @@ endif()
 
 find_package(LLVM CONFIG REQUIRED)
 find_package(Clang CONFIG REQUIRED)
-find_package(pf_common CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
 
-add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp meta_gen/MetaInfoWriter.cpp meta_gen/decl_parsers/ASTDeclParser.cpp meta_gen/decl_parsers/ASTDeclParser.h meta_gen/decl_parsers/ASTEnumDeclParser.cpp meta_gen/decl_parsers/ASTEnumParser.h meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h)
+add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp
+        meta_gen/MetaInfoWriter.cpp meta_gen/decl_parsers/ASTDeclParser.cpp meta_gen/decl_parsers/ASTDeclParser.h
+        meta_gen/decl_parsers/ASTEnumDeclParser.cpp meta_gen/decl_parsers/ASTEnumParser.h
+        meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h
+        meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h
+        meta_gen/CodeGenWriter.cpp)
 add_executable(meta_test main_test.cpp)
 
 
@@ -47,9 +51,10 @@ include(AddLLVM)
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_gen PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling pf_common::pf_common magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_link_libraries(pf_meta_gen PRIVATE stduuid)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
 
-target_link_libraries(meta_test PRIVATE pf_common::pf_common magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(meta_test PRIVATE magic_enum::magic_enum fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_options(meta_test PRIVATE ${flags})

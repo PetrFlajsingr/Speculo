@@ -3,9 +3,9 @@
 #include <pf_common/ScopeExit.h>
 #include <pf_common/array.h>
 
+#include "meta/Info.h"
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
-#include "meta/Info.h"
 
 #include "meta_gen/AttributeParser.h"
 #include "meta_gen/IdGenerator.h"
@@ -23,26 +23,41 @@
 
 static llvm::cl::opt<std::string> InputSource(llvm::cl::Required, "in-source", llvm::cl::desc("Specify input filename"),
                                               llvm::cl::value_desc("filename"));
-static llvm::cl::opt<std::string> OutputHeader("out-header", llvm::cl::desc("Specify header output filename"),
-                                               llvm::cl::value_desc("filename"), llvm::cl::init("output.hpp"));
-static llvm::cl::opt<std::string> OutputSource("out-source", llvm::cl::desc("Specify source output filename"),
-                                               llvm::cl::value_desc("filename"), llvm::cl::init("output.cpp"));
+static llvm::cl::opt<std::string> OutputMetaHeader("out-meta-header", llvm::cl::desc("Specify meta header output filename"),
+                                                   llvm::cl::value_desc("filename"), llvm::cl::init("output_meta.hpp"));
+static llvm::cl::opt<std::string> OutputCodegenHeader("out-codegen-header", llvm::cl::desc("Specify codegen header output filename"),
+                                                      llvm::cl::value_desc("filename"), llvm::cl::init("output_codegen.hpp"));
+static llvm::cl::opt<std::string> OutputCodegenSource("out-codegen-source", llvm::cl::desc("Specify codegen source output filename"),
+                                                      llvm::cl::value_desc("filename"), llvm::cl::init("output_codegen.cpp"));
+static llvm::cl::opt<std::string> InSourceIncludePath("in-source-include-path", llvm::cl::desc("Specify include path for in-source"),
+                                                      llvm::cl::value_desc("file"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
-static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
-                                        llvm::cl::value_desc("bool"),
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
 
-static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"),
-                                                 llvm::cl::value_desc("flags"),
+static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
 
 
+#include "meta_gen/Config.h"
+
+[[nodiscard]] pf::meta_gen::Config createConfig() {
+    std::vector<std::string> compilerFlags;
+    std::ranges::copy(CompilerFlags, std::back_inserter(compilerFlags));
+    return {.inputSource = InputSource,
+            .outputMetaHeader = OutputMetaHeader,
+            .outputCodegenHeader = OutputCodegenHeader,
+            .outputCodegenSource = OutputCodegenSource,
+            .ignoreIncludes = IgnoreIncludes,
+            .formatOutput = FormatOutput,
+            .compilerFlags = std::move(compilerFlags),
+            .inputIncludePath = InSourceIncludePath};
+}
+
 #include <unordered_set>
 
-enum class InfoType {
-    Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr
-};
+enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
 
 [[nodiscard]] constexpr std::string wrapStructForInfoType(InfoType infoType) {
     switch (infoType) {
@@ -81,18 +96,12 @@ enum class InfoType {
 }
 
 // TODO: deduplicate
-[[nodiscard]] std::string idToString(pf::meta::details::ID id) {
-    return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
-}
+[[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
-std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName,
-                                              std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const,
-                                                                                              InfoType::Lvalue,
-                                                                                              InfoType::ConstLvalue,
-                                                                                              InfoType::Rvalue,
-                                                                                              InfoType::Ptr,
-                                                                                              InfoType::ConstPtr}) {
+std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
+                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
+                                                                                              InfoType::ConstLvalue, InfoType::Rvalue,
+                                                                                              InfoType::Ptr, InfoType::ConstPtr}) {
     using namespace fmt::literals;
     constexpr auto prologue = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -118,13 +127,11 @@ template<>
 )fmt";
     const auto typeId = idToString(gen.generateId(std::string{fullTypeName}));
     std::string result{fmt::format(prologue, "full_name"_a = fullTypeName)};
-    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName,
-                              "full_type_name"_a = fullTypeName));
+    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName, "full_type_name"_a = fullTypeName));
     for (const auto &toGen: typesToGenerate) {
         const auto variantTypeName = wrapNameForInfoType(toGen, std::string{fullTypeName});
         const auto variantId = idToString(gen.generateId(variantTypeName));
-        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId,
-                                  "wrap_struct"_a = wrapStructForInfoType(toGen),
+        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId, "wrap_struct"_a = wrapStructForInfoType(toGen),
                                   "type_id"_a = typeId, "full_wrap_type_name"_a = variantTypeName));
     }
     result.append(fmt::format(epilogue, "full_name"_a = fullTypeName));
@@ -164,22 +171,28 @@ int main(int argc, const char **argv) {
     clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", CompilerFlags};
     clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
+    const auto config = createConfig();
+
     std::error_code errorCode;
-    auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{OutputHeader}, errorCode,
-                                                            llvm::sys::fs::OpenFlags::OF_Text);
+    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+    if (errorCode) {
+        spdlog::error("Failed to open output file: {}", errorCode.message());
+        return 1;
+    }
+    auto codeGenOutStream =
+            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
     }
     auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-    pf::meta_gen::ActionFactory factory{outStream, idGenerator};
-    if (const auto ret = tool.run(&factory); ret != 0) {
-        spdlog::error("ClangTool run failed with code {}", ret);
-    }
+    pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, idGenerator};
+    if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
-    outStream->close();
+    metaOutStream->close();
+    codeGenOutStream->close();
 
-    if (FormatOutput) { format(std::string{OutputHeader}); }
+    if (FormatOutput) { format(std::string{config.outputMetaHeader}); }
 
     return 0;
 }
