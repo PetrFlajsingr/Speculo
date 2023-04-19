@@ -203,8 +203,8 @@ int main() {
 
     pf::A dfsds{};
 
-    auto yeetr = aLetadloImpl::MEMBER_PTR;
-    std::cout << "Member ptr call: " << (dfsds.*yeetr)() << std::endl;
+    //auto yeetr = aLetadloImpl::MEMBER_PTR;
+    //std::cout << "Member ptr call: " << (dfsds.*yeetr)() << std::endl;
 
 
     return 0;
