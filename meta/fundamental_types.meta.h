@@ -5,8 +5,8 @@
 #ifndef PF_META_FUNDAMENTAL_TYPES_META_H
 #define PF_META_FUNDAMENTAL_TYPES_META_H
 
-#include "Info.h"
-#include <pf_common/concepts/ranges.h>
+#include <meta/details/array.h>
+#include <meta/Info.h>
 
 namespace pf::meta::details {
     template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
@@ -15,7 +15,7 @@ namespace pf::meta::details {
         constexpr static ID TypeID = TID;
 
         // FIXME: RangeOf msvc failure here
-        constexpr static /*RangeOf<pf::meta::Attribute>*/ auto Attributes = pf::make_array<pf::meta::Attribute>();
+        constexpr static /*RangeOf<pf::meta::Attribute>*/ auto Attributes = pf::meta::details::make_array<pf::meta::Attribute>();
 
 
         constexpr static auto StaticInfoObjectType = StaticInfoType::FundamentalType;

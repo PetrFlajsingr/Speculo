@@ -11,9 +11,7 @@ namespace pf::meta_gen {
 /****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{type_id}> {{
-    struct details {{
-        {details}
-    }};
+    {details}
     using Type = {type};
     constexpr static ID TypeID = {type_id};
 
@@ -21,7 +19,7 @@ struct StaticInfo<{type_id}> {{
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>({attributes});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -35,7 +33,7 @@ struct StaticInfo<{type_id}> {{
 
     using UnderlyingType = {underlying_type};
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<Info> auto EnumValues = make_array<Info>({enum_value_ids});
+    constexpr static RangeOf<Info> auto EnumValues = pf::meta::details::make_array<Info>({enum_value_ids});
 }};
 
 // const
@@ -78,7 +76,7 @@ struct StaticInfo<{type_id}> {{
     constexpr static std::uint64_t SourceLine = {source_line};
     constexpr static std::uint64_t SourceColumn = {source_column};
 
-    constexpr static RangeOf<Attribute> auto Attributes = make_array<Attribute>({attributes});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>({attributes});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::RecordType;
 
@@ -94,13 +92,13 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsPolymorphic = {is_poly};
     constexpr static bool IsAbstract = {is_abstract};
     constexpr static bool IsFinal = {is_final};
-    constexpr static RangeOf<Info> auto Bases = make_array<Info>({bases});
-    constexpr static RangeOf<Info> auto Constructors = make_array<Info>({ctors});
+    constexpr static RangeOf<Info> auto Bases = pf::meta::details::make_array<Info>({bases});
+    constexpr static RangeOf<Info> auto Constructors = pf::meta::details::make_array<Info>({ctors});
     constexpr static Info Destructor = {dtor};
-    constexpr static RangeOf<Info> auto MemberFunctions = make_array<Info>({member_fncs});
-    constexpr static RangeOf<Info> auto StaticFunctions = make_array<Info>({static_fncs});
-    constexpr static RangeOf<Info> auto MemberVariables = make_array<Info>({member_vars});
-    constexpr static RangeOf<Info> auto StaticVariables = make_array<Info>({static_vars});
+    constexpr static RangeOf<Info> auto MemberFunctions = pf::meta::details::make_array<Info>({member_fncs});
+    constexpr static RangeOf<Info> auto StaticFunctions = pf::meta::details::make_array<Info>({static_fncs});
+    constexpr static RangeOf<Info> auto MemberVariables = pf::meta::details::make_array<Info>({member_vars});
+    constexpr static RangeOf<Info> auto StaticVariables = pf::meta::details::make_array<Info>({static_vars});
 }};
 
 // const

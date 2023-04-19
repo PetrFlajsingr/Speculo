@@ -1,11 +1,20 @@
+
+
+#include <test.generated.h>
+
 namespace pf {
-    /* enum class Hihi;
+    enum class Hihi;
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};*/
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 
-    struct [[first]] [[second, third]] A   {
+    struct B1{};
+    struct B2{};
+    struct B3{};
 
-        [[maybe_unused]] A() [[gdfsgdf]];
+    struct [[first]] [[second, third]] A  : B1, B2, private B3  {
+        PF_META_GENERATED(A)
+
+        [[maybe_unused]] A() [[gdfsgdf]] {}
         [[papuce]] [[a, b, c]] ~A() = default;
 
         [[yeet]] [[maybe_unused]] int c [[cxvxc]];
@@ -13,6 +22,13 @@ namespace pf {
         [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] {
             [[yeetus]];
         }
+
+    private:
+        int letadlo() {
+            return 11;
+        }
+        void letadlo2() {}
+        void letadlo3(int asdasdas) {}
     };
 
     /*struct B {

@@ -67,8 +67,13 @@ namespace pf::meta_gen {
             for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }
         }
 
-        const auto typeId = getIdGenerator().generateId(result.fullName);
-        result.id = typeId;
+        result.id = getIdGenerator().generateId(result.fullName);
+        result.constId = getIdGenerator().generateId("const " + result.fullName);
+        result.lrefId = getIdGenerator().generateId(result.fullName + "&");
+        result.rrefId = getIdGenerator().generateId(result.fullName + "&&");
+        result.constLrefId = getIdGenerator().generateId("const " + result.fullName + "&");
+        result.ptrId = getIdGenerator().generateId(result.fullName + "*");
+        result.constPtrId = getIdGenerator().generateId("const" + result.fullName + "*");
 
         for (auto &[name, info]: result.values) {
             info.fullName = fmt::format("{}::{}", result.fullName, name);
