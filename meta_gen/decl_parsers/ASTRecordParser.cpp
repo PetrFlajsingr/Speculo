@@ -4,6 +4,7 @@
 
 #include "ASTRecordParser.h"
 #include "../AttributeParser.h"
+#include <clang/Sema/Sema.h>
 #include <pf_common/concepts/ranges.h>
 #include <spdlog/spdlog.h>
 
@@ -147,6 +148,38 @@ namespace pf::meta_gen {
             FunctionInfo functionInfo;
             functionInfo.name = method->getNameAsString();
             functionInfo.fullName = method->getQualifiedNameAsString();
+
+            if (method->isDeleted()) { continue; }
+            if (method->isCopyAssignmentOperator() && method->isImplicit()) {
+                // Class has user declared move ctor or assign.
+                if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
+                // Class has non static const member.
+                // Class has non static reference member.
+                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                    })) {
+                    continue;
+                }
+                // TODO:
+                // Class has non-copyable data member or base class.
+            }
+            if (method->isMoveAssignmentOperator() && method->isImplicit()) {
+                // Class has a data member that is const.
+                // Class has a data member that is a reference.
+                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                    })) {
+                    continue;
+                }
+                // TODO:
+                // Class has a base class which can't be move assigned.
+            }
+
+            spdlog::info("{}\timplicit: {}\tdeleted: {}\tcopy: {}\tmove: {}\thas simple copy: {}\thas simple move: {}",
+                         functionInfo.fullName, method->isImplicit(), method->isDeleted(), method->isCopyAssignmentOperator(),
+                         method->isMoveAssignmentOperator(), recordDecl->hasSimpleCopyAssignment(), recordDecl->hasSimpleMoveAssignment());
+
+
             for (const clang::ParmVarDecl *param: method->parameters()) {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
@@ -197,95 +230,11 @@ namespace pf::meta_gen {
                 result.memberFunctions.push_back(functionInfo);
             }
         }
-        // default copy/move operators
-        {
-            if (recordDecl->hasSimpleCopyAssignment() && !recordDecl->hasUserDeclaredCopyAssignment()) {
-                FunctionInfo functionInfo;
-                functionInfo.name = "operator=";
-                functionInfo.fullName = fmt::format("{}::{}", result.fullName, functionInfo.name);
-
-                FunctionArgument argument;
-                argument.name = "";
-                argument.fullName = "";
-                argument.typeName = fmt::format("const {}&", result.fullName);
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation.line = 0;
-                argument.sourceLocation.column = 0;
-                argument.sourceLocation.filename = "<generated>";
-                argument.attributes = {};
-                functionInfo.arguments.push_back(argument);
-
-                functionInfo.attributes = {};
-                functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
-                functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
-                functionInfo.access = Access::Public;
-                functionInfo.isConstexpr = true;// FIXME: this is wrong
-                functionInfo.isConsteval = false;
-                functionInfo.isConst = false;
-                functionInfo.isVirtual = false;
-                functionInfo.isPureVirtual = false;
-                functionInfo.sourceLocation.line = 0;
-                functionInfo.sourceLocation.column = 0;
-                functionInfo.sourceLocation.filename = "<generated>";
-
-                const auto mangledName = mangleFunction(
-                        functionInfo.fullName, functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                   return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                               }));
-                // mangling names for argument IDs
-                for (auto &arg: functionInfo.arguments) {
-                    arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));
-                }
-
-                functionInfo.id = getIdGenerator().generateId(mangledName);
-
-                result.memberFunctions.push_back(functionInfo);
-            }
-            if (recordDecl->hasSimpleMoveAssignment() && !recordDecl->hasUserDeclaredMoveAssignment()) {
-                FunctionInfo functionInfo;
-                functionInfo.name = "operator=";
-                functionInfo.fullName = fmt::format("{}::{}", result.fullName, functionInfo.name);
-
-                FunctionArgument argument;
-                argument.name = "";
-                argument.fullName = "";
-                argument.typeName = fmt::format("{}&&", result.fullName);
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation.line = 0;
-                argument.sourceLocation.column = 0;
-                argument.sourceLocation.filename = "<generated>";
-                argument.attributes = {};
-                functionInfo.arguments.push_back(argument);
-
-                functionInfo.attributes = {};
-                functionInfo.returnTypeName = fmt::format("{}&", result.fullName);
-                functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
-                functionInfo.access = Access::Public;
-                functionInfo.isConstexpr = true;// FIXME: this is wrong
-                functionInfo.isConsteval = false;
-                functionInfo.isConst = false;
-                functionInfo.isVirtual = false;
-                functionInfo.isPureVirtual = false;
-                functionInfo.sourceLocation.line = 0;
-                functionInfo.sourceLocation.column = 0;
-                functionInfo.sourceLocation.filename = "<generated>";
-
-                const auto mangledName = mangleFunction(
-                        functionInfo.fullName, functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                   return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                               }));
-                // mangling names for argument IDs
-                for (auto &arg: functionInfo.arguments) {
-                    arg.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, arg.fullName, arg.typeName));
-                }
-
-                functionInfo.id = getIdGenerator().generateId(mangledName);
-
-                result.memberFunctions.push_back(functionInfo);
-            }
-        }
+        // FIXME: can't really get ptrs to generated operators
 
         for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
+            if (ctor->isDeleted()) { continue; }
+
             ConstructorInfo constructorInfo;
             constructorInfo.fullName = ctor->getQualifiedNameAsString();
             constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);

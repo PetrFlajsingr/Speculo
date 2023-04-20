@@ -33,6 +33,8 @@ struct StaticInfo<{id}> {{
 
     constexpr static Info ReturnType = {return_type_id};
     constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>({arguments});
+
+    constexpr static {member_type} = &{member};
     }};
 )fmt";
 

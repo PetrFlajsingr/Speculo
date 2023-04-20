@@ -279,6 +279,13 @@ namespace pf::meta_gen {
             }
             const auto attributesStr = StringifyAttributes(mbrFncInfo.attributes, argsArrayNames);
 
+            std::string arguments;
+            for (const auto &a: mbrFncInfo.arguments) { arguments.append(fmt::format("{}, ", a.typeName)); }
+            if (!arguments.empty()) { arguments = arguments.substr(0, arguments.size() - 2); }
+            const auto mbrFncType =
+                    fmt::format("{return_type}({type}::*MemberPtr)({arguments})", "return_type"_a = mbrFncInfo.returnTypeName,
+                                "type"_a = recordInfo.fullName, "arguments"_a = arguments);
+
             write(fmt::format(
                     StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName, "id"_a = idToString(mbrFncInfo.id),
                     "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
@@ -288,7 +295,8 @@ namespace pf::meta_gen {
                     "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
                     "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval, "is_const"_a = mbrFncInfo.isConst,
                     "is_virtual"_a = mbrFncInfo.isVirtual, "is_pure_virtual"_a = mbrFncInfo.isPureVirtual,
-                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments)));
+                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments),
+                    "member_type"_a = mbrFncType, "member"_a = mbrFncInfo.fullName));
         }
 
         for (const auto &mbrVarInfo: recordInfo.memberVariables) {

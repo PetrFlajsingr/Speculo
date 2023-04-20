@@ -17,15 +17,21 @@ namespace pf {
         [[maybe_unused]] A() [[gdfsgdf]] {}
         [[papuce]] [[a, b, c]] ~A() = default;
 
+        A&operator=(const A&) { return *this; }
+        A&operator=(A&&) = delete;
+
+
         [[yeet]] [[maybe_unused]] int c [[cxvxc]];
         [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]][[yuh2]] float A) [[kjhnn]];
         [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] {
             [[yeetus]];
         }
 
+        int test{10};
+
     private:
         int letadlo() {
-            return 11;
+            return test;
         }
         void letadlo2() {}
         void letadlo3(int asdasdas) {}
