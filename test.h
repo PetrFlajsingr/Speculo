@@ -35,6 +35,14 @@ namespace pf {
         }
         void letadlo2() {}
         void letadlo3(int asdasdas) {}
+
+        int privateVar;
+        int privateVar2;
+        int privateVar3;
+        int privateVar4;
+
+        static int statFoo() { return 4324; }
+        inline static int statValue = 19;
     };
 
     /*struct B {
