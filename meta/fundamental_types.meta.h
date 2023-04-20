@@ -5,8 +5,12 @@
 #ifndef PF_META_FUNDAMENTAL_TYPES_META_H
 #define PF_META_FUNDAMENTAL_TYPES_META_H
 
-#include <meta/details/array.h>
+#include <meta/Attribute.h>
 #include <meta/Info.h>
+#include <meta/details/StaticInfo.h>
+#include <meta/details/StringLiteral.hpp>
+#include <meta/details/StaticInfo_Wrappers.h>
+#include <meta/details/array.h>
 
 namespace pf::meta::details {
     template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)

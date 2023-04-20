@@ -2,11 +2,11 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-#include "test.meta.h"
 #include "meta/fundamental_types.meta.h"
+#include "test.meta.h"
 #include <optional>
-#include <vector>
 #include <pf_common/concepts/ranges.h>
+#include <vector>
 
 #include "meta/reflect.h"
 #include "meta/template_for.h"
@@ -14,21 +14,21 @@
 namespace pf::meta {
     template<Info I>
     concept Named = requires {
-        { std::string_view{details::StaticInfo<I.implId>::Name}};
-        { std::string_view{details::StaticInfo<I.implId>::FullName}};
+        { std::string_view{details::StaticInfo<I.implId>::Name} };
+        { std::string_view{details::StaticInfo<I.implId>::FullName} };
     };
     template<Info I>
     concept Enum = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::EnumType;
 
     template<Info I>
-    requires(Enum<I>)
+        requires(Enum<I>)
     [[nodiscard]] consteval RangeOf<Info> auto members_of() {
         using impl = details::StaticInfo<I.implId>;
         return impl::EnumValues;
     }
 
     template<Info I>
-    requires(Named<I>)
+        requires(Named<I>)
     [[nodiscard]] consteval std::string_view name_of() {
         using impl = details::StaticInfo<I.implId>;
         return static_cast<std::string_view>(impl::Name);
@@ -38,8 +38,8 @@ namespace pf::meta {
     [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
         using impl = details::StaticInfo<I.implId>;
         if constexpr (requires {
-            { impl::Attributes } -> RangeOf<Attribute>;
-        }) {
+                          { impl::Attributes } -> RangeOf<Attribute>;
+                      }) {
             return std::span<const Attribute>(impl::Attributes);
         } else {
             return std::span<const Attribute>{};
@@ -82,10 +82,38 @@ template<typename E>
     constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
     std::vector<E> result;
     result.reserve(std::ranges::size(pf::meta::members_of<enumInfo>()));
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() {
-        result.emplace_back(PF_SPLICE_VALUE(VI));
+    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() { result.emplace_back(PF_SPLICE_VALUE(VI)); });
+    return result;
+}
+
+template<pf::meta::Info Type>
+[[nodiscard]] constexpr pf::meta::Info functionByName(std::string_view name) {
+    using aImpl = pf::meta::details::StaticInfo<Type.implId>;
+    constexpr auto memberFncs = aImpl::MemberFunctions;
+    pf::meta::details::ID result{};
+    pf::meta::template_for<memberFncs>([&]<auto Fnc>() {
+        using fImpl = pf::meta::details::StaticInfo<Fnc.implId>;
+        if (fImpl::Name.compare(name) == 0) { result = Fnc.implId; }
     });
     return result;
+}
+
+template<pf::meta::Info Fnc, typename... Args>
+[[nodiscard]] constexpr auto invoke(Args &&...args) {
+    using aImpl = pf::meta::details::StaticInfo<Fnc.implId>;
+    // only member fnc now
+    constexpr auto f = aImpl::MemberPtr;
+    static_assert(std::invocable<decltype(f), Args...>);
+    if constexpr (!std::same_as<decltype(std::invoke(f, std::forward<Args>(args)...)), bool>) {
+        return std::invoke(f, std::forward<Args>(args)...);
+    } else {
+        std::invoke(f, std::forward<Args>(args)...);
+    }
+}
+template<pf::meta::Info I>
+[[nodiscard]] constexpr std::string_view getFullName() {
+    using aImpl = pf::meta::details::StaticInfo<I.implId>;
+    return static_cast<std::string_view>(aImpl::FullName);
 }
 
 #include <iostream>
@@ -187,24 +215,21 @@ int main() {
     }
     constexpr auto boolInfo = PF_REFLECT_TYPE(bool);
     static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
-    static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool*)>());
+    static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool *)>());
     [[maybe_unused]] PF_SPLICE_TYPE(boolInfo) hihi = false;
 
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([]<auto VI>() {
-        std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE_VALUE(VI)) << std::endl;
-    });
-    for (const auto v : getEnumValues<pf::SomeEnum>()) {
-        std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl;
-    }
+    pf::meta::template_for<pf::meta::members_of<enumInfo>()>(
+            []<auto VI>() { std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE_VALUE(VI)) << std::endl; });
+    for (const auto v: getEnumValues<pf::SomeEnum>()) { std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl; }
 
     constexpr auto AINFO = PF_REFLECT_TYPE(pf::A);
-    using aImpl = pf::meta::details::StaticInfo<AINFO.implId>;
-    using aLetadloImpl = pf::meta::details::StaticInfo<aImpl::MemberFunctions[2].implId>;
 
-    pf::A dfsds{};
 
-    //auto yeetr = aLetadloImpl::MEMBER_PTR;
-    //std::cout << "Member ptr call: " << (dfsds.*yeetr)() << std::endl;
+    pf::A dfsds;
+    constexpr auto mbrInfo = functionByName<AINFO>("letadlo");
+    std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
+    dfsds.test = 100;
+    std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
 
 
     return 0;

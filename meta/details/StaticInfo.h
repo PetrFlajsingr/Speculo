@@ -7,7 +7,7 @@
 
 #include "ID.h"
 #include "meta_helpers.h"
-#include <pf_common/containers/StringLiteral.h>
+#include "meta/details/StringLiteral.hpp"
 
 namespace pf::meta::details {
 

@@ -279,6 +279,13 @@ namespace pf::meta_gen {
             }
             const auto attributesStr = StringifyAttributes(mbrFncInfo.attributes, argsArrayNames);
 
+            std::string arguments;
+            for (const auto &a: mbrFncInfo.arguments) { arguments.append(fmt::format("{}, ", a.typeName)); }
+            if (!arguments.empty()) { arguments = arguments.substr(0, arguments.size() - 2); }
+            const auto mbrFncType =
+                    fmt::format("{return_type}({type}::*MemberPtr)({arguments})", "return_type"_a = mbrFncInfo.returnTypeName,
+                                "type"_a = recordInfo.fullName, "arguments"_a = arguments);
+
             write(fmt::format(
                     StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName, "id"_a = idToString(mbrFncInfo.id),
                     "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
@@ -288,7 +295,8 @@ namespace pf::meta_gen {
                     "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
                     "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval, "is_const"_a = mbrFncInfo.isConst,
                     "is_virtual"_a = mbrFncInfo.isVirtual, "is_pure_virtual"_a = mbrFncInfo.isPureVirtual,
-                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments)));
+                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments),
+                    "member_type"_a = mbrFncType, "member"_a = mbrFncInfo.fullName));
         }
 
         for (const auto &mbrVarInfo: recordInfo.memberVariables) {
@@ -305,6 +313,9 @@ namespace pf::meta_gen {
             }
             const auto attributesStr = StringifyAttributes(mbrVarInfo.attributes, argsArrayNames);
 
+            const auto mbrVarType =
+                    fmt::format("{return_type} {type}::* MemberPtr", "return_type"_a = mbrVarInfo.typeName, "type"_a = recordInfo.fullName);
+
             write(fmt::format(StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName,
                               "id"_a = idToString(mbrVarInfo.id), "details"_a = createDetailsStruct(detailsContents),
                               "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrVarInfo.sourceLocation.filename,
@@ -312,7 +323,7 @@ namespace pf::meta_gen {
                               "attributes"_a = attributesStr, "is_public"_a = mbrVarInfo.access == Access::Public,
                               "is_protected"_a = mbrVarInfo.access == Access::Protected,
                               "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
-                              "is_mutable"_a = mbrVarInfo.isMutable));
+                              "is_mutable"_a = mbrVarInfo.isMutable, "member_type"_a = mbrVarType, "member"_a = mbrVarInfo.fullName));
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {
@@ -349,6 +360,12 @@ namespace pf::meta_gen {
                 }
             }
             const auto attributesStr = StringifyAttributes(statFncInfo.attributes, argsArrayNames);
+            std::string arguments;
+            for (const auto &a: statFncInfo.arguments) { arguments.append(fmt::format("{}, ", a.typeName)); }
+            if (!arguments.empty()) { arguments = arguments.substr(0, arguments.size() - 2); }
+            const auto statFncType =
+                    fmt::format("{return_type}(*MemberPtr)({arguments})", "return_type"_a = statFncInfo.returnTypeName,
+                                "arguments"_a = arguments);
 
             write(fmt::format(StaticTypeInfoTemplate_StaticFunction, "full_name"_a = statFncInfo.fullName,
                               "id"_a = idToString(statFncInfo.id), "details"_a = createDetailsStruct(detailsContents),
@@ -359,7 +376,8 @@ namespace pf::meta_gen {
                               "is_private"_a = statFncInfo.access == Access::Private, "name"_a = statFncInfo.name,
                               "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
                               "return_type_id"_a = idToString(statFncInfo.returnTypeId),
-                              "arguments"_a = idsToStringMakeArray(statFncInfo.arguments)));
+                              "arguments"_a = idsToStringMakeArray(statFncInfo.arguments),
+                              "member_type"_a = statFncType, "member"_a = statFncInfo.fullName));
         }
 
         for (const auto &statVarInfo: recordInfo.staticVariables) {
@@ -375,6 +393,8 @@ namespace pf::meta_gen {
                 }
             }
             const auto attributesStr = StringifyAttributes(statVarInfo.attributes, argsArrayNames);
+            const auto statVarType =
+                    fmt::format("{type}* MemberPtr", "type"_a = statVarInfo.typeName);
 
             write(fmt::format(StaticTypeInfoTemplate_StaticVariable, "full_name"_a = statVarInfo.fullName,
                               "id"_a = idToString(statVarInfo.id), "details"_a = createDetailsStruct(detailsContents),
@@ -382,7 +402,8 @@ namespace pf::meta_gen {
                               "source_line"_a = statVarInfo.sourceLocation.line, "source_column"_a = statVarInfo.sourceLocation.column,
                               "attributes"_a = attributesStr, "is_public"_a = statVarInfo.access == Access::Public,
                               "is_protected"_a = statVarInfo.access == Access::Protected,
-                              "is_private"_a = statVarInfo.access == Access::Private, "name"_a = statVarInfo.name));
+                              "is_private"_a = statVarInfo.access == Access::Private, "name"_a = statVarInfo.name,
+                              "member_type"_a = statVarType, "member"_a = statVarInfo.fullName));
         }
     }
 
