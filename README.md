@@ -4,7 +4,7 @@ Static type info generation system.
 
 * Only supports record types (classes, structs and unions) and enums.
   * That includes their member functions, static var etc. but not nested types.
-  * For classes using the macro `PF_GENERATED(ClassName)` is required in order to allow static structure's access to internals.
+  * For classes using the macro `PF_META_GENERATED()` is required in order to allow static structure's access to internals.
 * Usage example of string<->enum conversion:
 ```cpp
 /**
