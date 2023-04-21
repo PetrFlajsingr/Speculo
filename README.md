@@ -38,3 +38,6 @@ template<typename E>
 * `PF_SPLICE(X)` macro tries to bring the meta structure as close as possible to the construct it represents. `PF_SPLICE(MyClassInfo)` is then equal to `MyClass`.
   * Since constructors can't be stored as pointers they are currently wrapped in a lambda.
   * Destructors behave the same way.
+
+Built-in attributes:
+* `pf::no_sti` - disables STI generation for type
