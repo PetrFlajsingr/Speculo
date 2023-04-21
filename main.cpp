@@ -24,11 +24,13 @@
 static llvm::cl::opt<std::string> InputSource(llvm::cl::Required, "in-source", llvm::cl::desc("Specify input filename"),
                                               llvm::cl::value_desc("filename"));
 static llvm::cl::opt<std::string> OutputMetaHeader("out-meta-header", llvm::cl::desc("Specify meta header output filename"),
-                                                   llvm::cl::value_desc("filename"), llvm::cl::init("output_meta.hpp"));
+                                                   llvm::cl::value_desc("filename"));
 static llvm::cl::opt<std::string> OutputCodegenHeader("out-codegen-header", llvm::cl::desc("Specify codegen header output filename"),
-                                                      llvm::cl::value_desc("filename"), llvm::cl::init("output_codegen.hpp"));
+                                                      llvm::cl::value_desc("filename"));
 static llvm::cl::opt<std::string> OutputCodegenSource("out-codegen-source", llvm::cl::desc("Specify codegen source output filename"),
-                                                      llvm::cl::value_desc("filename"), llvm::cl::init("output_codegen.cpp"));
+                                                      llvm::cl::value_desc("filename"));
+static llvm::cl::opt<std::string> ProjectRootPath("project-root", llvm::cl::desc("Root directory of the project"),
+                                                      llvm::cl::value_desc("path"));
 static llvm::cl::opt<std::string> InSourceIncludePath("in-source-include-path", llvm::cl::desc("Specify include path for in-source"),
                                                       llvm::cl::value_desc("file"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
@@ -45,10 +47,11 @@ static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compile
 [[nodiscard]] pf::meta_gen::Config createConfig() {
     std::vector<std::string> compilerFlags;
     std::ranges::copy(CompilerFlags, std::back_inserter(compilerFlags));
-    return {.inputSource = InputSource,
-            .outputMetaHeader = OutputMetaHeader,
-            .outputCodegenHeader = OutputCodegenHeader,
-            .outputCodegenSource = OutputCodegenSource,
+    return {.inputSource = std::string{InputSource},
+            .outputMetaHeader = std::string{OutputMetaHeader},
+            .outputCodegenHeader = std::string{OutputCodegenHeader},
+            .outputCodegenSource = std::string{OutputCodegenSource},
+            .projectRootDir = std::string{ProjectRootPath},
             .ignoreIncludes = IgnoreIncludes,
             .formatOutput = FormatOutput,
             .compilerFlags = std::move(compilerFlags),
@@ -174,13 +177,13 @@ int main(int argc, const char **argv) {
 
 
     std::error_code errorCode;
-    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
     }
     auto codeGenOutStream =
-            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
@@ -192,7 +195,7 @@ int main(int argc, const char **argv) {
     metaOutStream->close();
     codeGenOutStream->close();
 
-    if (FormatOutput) { format(std::string{config.outputMetaHeader}); }
+    if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
 
     return 0;
 }

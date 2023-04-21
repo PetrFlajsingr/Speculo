@@ -7,14 +7,16 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 namespace pf::meta_gen {
 
     struct Config {
-        std::string inputSource;
-        std::string outputMetaHeader;
-        std::string outputCodegenHeader;
-        std::string outputCodegenSource;
+        std::filesystem::path inputSource;
+        std::filesystem::path outputMetaHeader;
+        std::filesystem::path outputCodegenHeader;
+        std::filesystem::path outputCodegenSource;
+        std::filesystem::path projectRootDir;
         bool ignoreIncludes;
         bool formatOutput;
         std::vector<std::string> compilerFlags;

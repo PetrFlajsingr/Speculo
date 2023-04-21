@@ -13,7 +13,8 @@ namespace pf {
     struct B2{};
     struct B3{};
 
-    struct [[first]] [[second, third]] A  /*: B1, B2, private B3*/  {
+    struct [[first]] [[second, third]] A  : B1, B2, private B3  {
+        PF_META_GENERATED()
         A(int a) : test{a} {}
         A(int sadfsdf, float asdsa) {}
 
@@ -44,8 +45,6 @@ namespace pf {
         static int statFoo() { return 4324; }
         inline static int statValue = 19;
 
-        // has to be at the end
-        PF_META_GENERATED(A)
     };
 
     /*struct B {

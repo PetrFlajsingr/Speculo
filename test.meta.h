@@ -13,92 +13,6 @@
 
 namespace pf::meta::details {
 
-/****************************** pf::Hihi START ******************************/
-template<>
-struct StaticInfo<ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {
-    
-    using Type = pf::Hihi;
-    constexpr static ID TypeID = ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 6;
-    constexpr static std::uint64_t SourceColumn = 5;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"no_sti1", std::span<const std::string_view>{EmptyAttributeArgArray}});
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
-
-    constexpr static bool IsLvalueReference = false;
-    constexpr static bool IsRvalueReference = false;
-    constexpr static bool IsConst = false;
-    constexpr static bool IsPtr = false;
-
-    constexpr static auto Name = StringLiteral{"Hihi"};
-    constexpr static auto FullName = StringLiteral{"pf::Hihi"};
-
-    using UnderlyingType = int;
-    constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
-    constexpr static RangeOf<Info> auto EnumValues = pf::meta::details::make_array<Info>();
-};
-
-// const
-template<>
-struct StaticInfo<ID{0xd659a07be94d4dbdu, 0x67d144299a50dba6u}>
-    : StaticInfo_ConstWrap<ID{0xd659a07be94d4dbdu, 0x67d144299a50dba6u}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-// &
-template<>
-struct StaticInfo<ID{0x845edd8a6136e47au, 0x444f271e87f5eda2u}>
-    : StaticInfo_LRefWrap<ID{0x845edd8a6136e47au, 0x444f271e87f5eda2u}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-// &&
-template<>
-struct StaticInfo<ID{0x8052c54f8834b59cu, 0xa7fc070cba763db8u}>
-    : StaticInfo_RRefWrap<ID{0x8052c54f8834b59cu, 0xa7fc070cba763db8u}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-// const &
-template<>
-struct StaticInfo<ID{0x54530966610d4547u, 0x5dabeccbafd43b9au}>
-    : StaticInfo_ConstLRefWrap<ID{0x54530966610d4547u, 0x5dabeccbafd43b9au}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-// *
-template<>
-struct StaticInfo<ID{0x705db2d978340a3eu, 0xa7191ab37856caa4u}>
-    : StaticInfo_PtrWrap<ID{0x705db2d978340a3eu, 0xa7191ab37856caa4u}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-// const *
-template<>
-struct StaticInfo<ID{0xe15c34bc82696dcfu, 0x60884586edfc6f88u}>
-    : StaticInfo_ConstPtrWrap<ID{0xe15c34bc82696dcfu, 0x60884586edfc6f88u}, ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu}> {};
-
-/****************************** pf::Hihi END ******************************/
-
-/****************************** pf::Hihi START ******************************/
-template<>
-[[nodiscard]] consteval ID getTypeId<pf::Hihi>() {
-    return ID{0xd15da0f918bf71a4u, 0x29309f4567012cbbu};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<const pf::Hihi>() {
-    return ID{0xd659a07be94d4dbdu, 0x67d144299a50dba6u};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<pf::Hihi &>() {
-    return ID{0x845edd8a6136e47au, 0x444f271e87f5eda2u};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<pf::Hihi &&>() {
-    return ID{0x8052c54f8834b59cu, 0xa7fc070cba763db8u};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<const pf::Hihi &>() {
-    return ID{0x54530966610d4547u, 0x5dabeccbafd43b9au};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<pf::Hihi *>() {
-    return ID{0x705db2d978340a3eu, 0xa7191ab37856caa4u};
-}
-template<>
-[[nodiscard]] consteval ID getTypeId<const pf::Hihi *>() {
-    return ID{0xe15c34bc82696dcfu, 0x60884586edfc6f88u};
-}
-/****************************** pf::Hihi END ******************************/
-
 /****************************** pf::SomeEnum::Value1 START ******************************/
 template<>
 struct StaticInfo<ID{0xc0597f7732016649u, 0xed19a615bd3023bau}> {
@@ -151,8 +65,8 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
 template<>
 struct StaticInfo<ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u}> {
     struct details {
-constexpr static auto ArgArray_2391475619935461036 = pf::meta::details::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
-constexpr static auto ArgArray_860511882749327122 = pf::meta::details::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
+constexpr static auto ArgArray_15731454977287110338 = pf::meta::details::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
+constexpr static auto ArgArray_12948814636101823279 = pf::meta::details::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
 };
     using Type = pf::SomeEnum;
     constexpr static ID TypeID = ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u};
@@ -161,7 +75,7 @@ constexpr static auto ArgArray_860511882749327122 = pf::meta::details::make_arra
     constexpr static std::uint64_t SourceLine = 7;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"operators", std::span<const std::string_view>{details::ArgArray_2391475619935461036}}, Attribute{"hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"operators2", std::span<const std::string_view>{details::ArgArray_860511882749327122}}, Attribute{"pf::hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"operators", std::span<const std::string_view>{details::ArgArray_15731454977287110338}}, Attribute{"hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"operators2", std::span<const std::string_view>{details::ArgArray_12948814636101823279}}, Attribute{"pf::hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -519,10 +433,10 @@ struct StaticInfo<ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u}> {
     constexpr static bool IsPolymorphic = false;
     constexpr static bool IsAbstract = false;
     constexpr static bool IsFinal = false;
-    constexpr static RangeOf<Info> auto Bases = pf::meta::details::make_array<Info>();
-    constexpr static RangeOf<Info> auto Constructors = pf::meta::details::make_array<Info>(ID{0x815407ebc8e88a02u, 0x2149a35bbcc7e2b3u}, ID{0x57555b6607562e41u, 0xa37e35a1094ff4a2u});
+    constexpr static RangeOf<Info> auto Bases = pf::meta::details::make_array<Info>(ID{0x925a379bde23315eu, 0x48e00dcbb6b17ea7u}, ID{0x3a589977fc087aefu, 0x1dfe9dbc187d6bb2u}, ID{0x5358aab1d01f14d9u, 0xacf43a2903663a80u});
+    constexpr static RangeOf<Info> auto Constructors = pf::meta::details::make_array<Info>();
     constexpr static Info Destructor = ID{0x985d28b56ec36af8u, 0x3517760838a68a86u};
-    constexpr static RangeOf<Info> auto MemberFunctions = pf::meta::details::make_array<Info>(ID{0x225525f0788858deu, 0x9edf3c90fb14daacu}, ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}, ID{0xb651642ac8c5f237u, 0xfe0f1011e8f1b95u}, ID{0x9f5d7b21263d723fu, 0xc090822c6cd77cb1u}, ID{0xb151275a6f2b5b4bu, 0x932b3500b737d4a6u}, ID{0x3d55f23651de9cbcu, 0x3ec37599fa78fcb3u});
+    constexpr static RangeOf<Info> auto MemberFunctions = pf::meta::details::make_array<Info>(ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}, ID{0xb651642ac8c5f237u, 0xfe0f1011e8f1b95u}, ID{0x9f5d7b21263d723fu, 0xc090822c6cd77cb1u}, ID{0xb151275a6f2b5b4bu, 0x932b3500b737d4a6u}, ID{0x3d55f23651de9cbcu, 0x3ec37599fa78fcb3u});
     constexpr static RangeOf<Info> auto StaticFunctions = pf::meta::details::make_array<Info>(ID{0x645f1db97c2f0115u, 0xb3e5baae4a842bb6u});
     constexpr static RangeOf<Info> auto MemberVariables = pf::meta::details::make_array<Info>(ID{0xad56d126355324dbu, 0x30de7f4e0cfbdb95u}, ID{0x335f6f365cea35fdu, 0xab992c0c2c38a8a9u}, ID{0x885025556cce2f68u, 0x589def016d4c20beu}, ID{0xce5e676fefa30dafu, 0x4eb0970230b6a49eu}, ID{0x85a1fc2b7924f35u, 0xab0ea2512267d8adu}, ID{0x8f5f18cfb176f51cu, 0xd2107751b20304bcu});
     constexpr static RangeOf<Info> auto StaticVariables = pf::meta::details::make_array<Info>(ID{0x5353cb42e1a5c7a7u, 0x962a030897c298a4u});
@@ -586,125 +500,70 @@ template<>
 }
 /****************************** pf::A END ******************************/
 
-/****************************** a START ******************************/
+/****************************** pf::B1 START ******************************/
 template<>
-struct StaticInfo<ID{0x3053755d5467bcf7u, 0x6c1a1a4c33857796u}> {
+struct StaticInfo<ID{0x925a379bde23315eu, 0x48e00dcbb6b17ea7u}> {
     
-    constexpr static ID ArgumentID = ID{0x3053755d5467bcf7u, 0x6c1a1a4c33857796u};
-    constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
+    constexpr static ID BaseID = ID{0x925a379bde23315eu, 0x48e00dcbb6b17ea7u};
+    constexpr static ID TypeID = ID{0xd75b6042b1205435u, 0xeafc4a90a9b858b5u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 17;
-    constexpr static std::uint64_t SourceColumn = 11;
+    constexpr static std::uint64_t SourceLine = 16;
+    constexpr static std::uint64_t SourceColumn = 45;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
-
-    constexpr static auto Name = StringLiteral{"a"};
-    constexpr static auto FullName = StringLiteral{"a"};
-    };
-
-/****************************** pf::A::A START ******************************/
-template<>
-struct StaticInfo<ID{0x815407ebc8e88a02u, 0x2149a35bbcc7e2b3u}> {
-    
-    constexpr static ID ConstructorID = ID{0x815407ebc8e88a02u, 0x2149a35bbcc7e2b3u};
-    constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 17;
-    constexpr static std::uint64_t SourceColumn = 9;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+    constexpr static auto StaticInfoObjectType = StaticInfoType::Base;
 
     constexpr static bool IsPublic = true;
     constexpr static bool IsProtected = false;
     constexpr static bool IsPrivate = false;
-    constexpr static bool IsExplicit = false;
-    constexpr static bool IsCopy = false;
-    constexpr static bool IsMove = false;
+    constexpr static auto IsVirtual = false;
 
-    constexpr static auto Name = StringLiteral{"A"};
-    constexpr static auto FullName = StringLiteral{"pf::A::A"};
-
-    constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>(ID{0x3053755d5467bcf7u, 0x6c1a1a4c33857796u});
-
-    constexpr static auto CtorWrap = [](int arg_0) -> pf::A { return pf::A(arg_0); };
-    constexpr static auto PlacementNewCtorWrap = [](void *dest, int arg_0) -> pf::A* { return new (dest)pf::A(arg_0); };
-    constexpr static auto NewCtorWrap = [](int arg_0) -> pf::A* { return new pf::A(arg_0); };
+    constexpr static auto Name = StringLiteral{"B1"};
+    constexpr static auto FullName = StringLiteral{"pf::B1"};
     };
 
-/****************************** sadfsdf START ******************************/
+/****************************** pf::B2 START ******************************/
 template<>
-struct StaticInfo<ID{0x985c8105384db190u, 0x78c31fee58a0aca1u}> {
+struct StaticInfo<ID{0x3a589977fc087aefu, 0x1dfe9dbc187d6bb2u}> {
     
-    constexpr static ID ArgumentID = ID{0x985c8105384db190u, 0x78c31fee58a0aca1u};
-    constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
+    constexpr static ID BaseID = ID{0x3a589977fc087aefu, 0x1dfe9dbc187d6bb2u};
+    constexpr static ID TypeID = ID{0xfe5d496cf3820c10u, 0x526b4884cc76f8b3u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 18;
-    constexpr static std::uint64_t SourceColumn = 11;
+    constexpr static std::uint64_t SourceLine = 16;
+    constexpr static std::uint64_t SourceColumn = 49;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
-
-    constexpr static auto Name = StringLiteral{"sadfsdf"};
-    constexpr static auto FullName = StringLiteral{"sadfsdf"};
-    };
-
-/****************************** asdsa START ******************************/
-template<>
-struct StaticInfo<ID{0xdb580cc5d30c1cd8u, 0xeb635abea5e641a5u}> {
-    
-    constexpr static ID ArgumentID = ID{0xdb580cc5d30c1cd8u, 0xeb635abea5e641a5u};
-    constexpr static ID TypeID = ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 18;
-    constexpr static std::uint64_t SourceColumn = 24;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
-
-    constexpr static auto Name = StringLiteral{"asdsa"};
-    constexpr static auto FullName = StringLiteral{"asdsa"};
-    };
-
-/****************************** pf::A::A START ******************************/
-template<>
-struct StaticInfo<ID{0x57555b6607562e41u, 0xa37e35a1094ff4a2u}> {
-    
-    constexpr static ID ConstructorID = ID{0x57555b6607562e41u, 0xa37e35a1094ff4a2u};
-    constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 18;
-    constexpr static std::uint64_t SourceColumn = 9;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
+    constexpr static auto StaticInfoObjectType = StaticInfoType::Base;
 
     constexpr static bool IsPublic = true;
     constexpr static bool IsProtected = false;
     constexpr static bool IsPrivate = false;
-    constexpr static bool IsExplicit = false;
-    constexpr static bool IsCopy = false;
-    constexpr static bool IsMove = false;
+    constexpr static auto IsVirtual = false;
 
-    constexpr static auto Name = StringLiteral{"A"};
-    constexpr static auto FullName = StringLiteral{"pf::A::A"};
+    constexpr static auto Name = StringLiteral{"B2"};
+    constexpr static auto FullName = StringLiteral{"pf::B2"};
+    };
 
-    constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>(ID{0x985c8105384db190u, 0x78c31fee58a0aca1u}, ID{0xdb580cc5d30c1cd8u, 0xeb635abea5e641a5u});
+/****************************** pf::B3 START ******************************/
+template<>
+struct StaticInfo<ID{0x5358aab1d01f14d9u, 0xacf43a2903663a80u}> {
+    
+    constexpr static ID BaseID = ID{0x5358aab1d01f14d9u, 0xacf43a2903663a80u};
+    constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
 
-    constexpr static auto CtorWrap = [](int arg_0, float arg_1) -> pf::A { return pf::A(arg_0, arg_1); };
-    constexpr static auto PlacementNewCtorWrap = [](void *dest, int arg_0, float arg_1) -> pf::A* { return new (dest)pf::A(arg_0, arg_1); };
-    constexpr static auto NewCtorWrap = [](int arg_0, float arg_1) -> pf::A* { return new pf::A(arg_0, arg_1); };
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
+    constexpr static std::uint64_t SourceLine = 16;
+    constexpr static std::uint64_t SourceColumn = 53;
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::Base;
+
+    constexpr static bool IsPublic = false;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = true;
+    constexpr static auto IsVirtual = false;
+
+    constexpr static auto Name = StringLiteral{"B3"};
+    constexpr static auto FullName = StringLiteral{"pf::B3"};
     };
 
 /****************************** pf::A::~A START ******************************/
@@ -734,70 +593,20 @@ struct StaticInfo<ID{0x985d28b56ec36af8u, 0x3517760838a68a86u}> {
     constexpr static auto FullName = StringLiteral{"pf::A::~A"};
     };
 
-/******************************  START ******************************/
-template<>
-struct StaticInfo<ID{0x25291b5fda86614u, 0x9eb2c6f726dbdabau}> {
-    
-    constexpr static ID ArgumentID = ID{0x25291b5fda86614u, 0x9eb2c6f726dbdabau};
-    constexpr static ID TypeID = ID{0xbb5e42104794c546u, 0x86636ace5d6bbdb7u};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 20;
-    constexpr static std::uint64_t SourceColumn = 21;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
-
-    constexpr static auto Name = StringLiteral{""};
-    constexpr static auto FullName = StringLiteral{""};
-    };
-
-/****************************** pf::A::operator= START ******************************/
-template<>
-struct StaticInfo<ID{0x225525f0788858deu, 0x9edf3c90fb14daacu}> {
-    
-    constexpr static ID FunctionID = ID{0x225525f0788858deu, 0x9edf3c90fb14daacu};
-    constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
-
-    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 20;
-    constexpr static std::uint64_t SourceColumn = 9;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberFunction;
-
-    constexpr static bool IsPublic = true;
-    constexpr static bool IsProtected = false;
-    constexpr static bool IsPrivate = false;
-    constexpr static bool IsConst = false;
-    constexpr static bool IsVirtual = false;
-    constexpr static bool IsPureVirtual = false;
-
-    constexpr static auto Name = StringLiteral{"operator="};
-    constexpr static auto FullName = StringLiteral{"pf::A::operator="};
-
-    constexpr static Info ReturnType = ID{0x7d587451d13fe0e7u, 0xc033b6fb12bb2a8cu};
-    constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>(ID{0x25291b5fda86614u, 0x9eb2c6f726dbdabau});
-
-    constexpr static A &(pf::A::*MemberPtr)(const A &) = &pf::A::operator=;
-    };
-
 /****************************** dzea START ******************************/
 template<>
 struct StaticInfo<ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u}> {
     struct details {
-constexpr static auto ArgArray_11778698360262404135 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
+constexpr static auto ArgArray_14724569471036531951 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
 };
     constexpr static ID ArgumentID = ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u};
     constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 25;
+    constexpr static std::uint64_t SourceLine = 26;
     constexpr static std::uint64_t SourceColumn = 59;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_11778698360262404135}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_14724569471036531951}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
 
@@ -813,7 +622,7 @@ struct StaticInfo<ID{0x505f49fe2f26ad62u, 0x466eafc2e33858a3u}> {
     constexpr static ID TypeID = ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 25;
+    constexpr static std::uint64_t SourceLine = 26;
     constexpr static std::uint64_t SourceColumn = 85;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"yuh", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"yuh2", std::span<const std::string_view>{EmptyAttributeArgArray}});
@@ -828,16 +637,16 @@ struct StaticInfo<ID{0x505f49fe2f26ad62u, 0x466eafc2e33858a3u}> {
 template<>
 struct StaticInfo<ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}> {
     struct details {
-constexpr static auto ArgArray_582273700798984595 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
+constexpr static auto ArgArray_5049776069125550944 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
 };
     constexpr static ID FunctionID = ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u};
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 25;
+    constexpr static std::uint64_t SourceLine = 26;
     constexpr static std::uint64_t SourceColumn = 26;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_582273700798984595}}, Attribute{"yuh", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"yuh2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"kjhnn", std::span<const std::string_view>{EmptyAttributeArgArray}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_5049776069125550944}}, Attribute{"yuh", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"yuh2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"kjhnn", std::span<const std::string_view>{EmptyAttributeArgArray}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::MemberFunction;
 
@@ -865,7 +674,7 @@ struct StaticInfo<ID{0xa65963f0f043d5c8u, 0x8c4c551f4f92f2b6u}> {
     constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 26;
+    constexpr static std::uint64_t SourceLine = 27;
     constexpr static std::uint64_t SourceColumn = 49;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"letadlo", std::span<const std::string_view>{EmptyAttributeArgArray}});
@@ -884,7 +693,7 @@ struct StaticInfo<ID{0xb651642ac8c5f237u, 0xfe0f1011e8f1b95u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 26;
+    constexpr static std::uint64_t SourceLine = 27;
     constexpr static std::uint64_t SourceColumn = 26;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"letadlo", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"kjhnn", std::span<const std::string_view>{EmptyAttributeArgArray}});
@@ -915,7 +724,7 @@ struct StaticInfo<ID{0x9f5d7b21263d723fu, 0xc090822c6cd77cb1u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 33;
+    constexpr static std::uint64_t SourceLine = 34;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -946,7 +755,7 @@ struct StaticInfo<ID{0xb151275a6f2b5b4bu, 0x932b3500b737d4a6u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 36;
+    constexpr static std::uint64_t SourceLine = 37;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -977,7 +786,7 @@ struct StaticInfo<ID{0x50a224288b61b5u, 0x702d04c0a935d1a1u}> {
     constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 37;
+    constexpr static std::uint64_t SourceLine = 38;
     constexpr static std::uint64_t SourceColumn = 23;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -996,7 +805,7 @@ struct StaticInfo<ID{0x3d55f23651de9cbcu, 0x3ec37599fa78fcb3u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 37;
+    constexpr static std::uint64_t SourceLine = 38;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1027,7 +836,7 @@ struct StaticInfo<ID{0xad56d126355324dbu, 0x30de7f4e0cfbdb95u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 24;
+    constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 35;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"yeet", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"cxvxc", std::span<const std::string_view>{EmptyAttributeArgArray}});
@@ -1053,7 +862,7 @@ struct StaticInfo<ID{0x335f6f365cea35fdu, 0xab992c0c2c38a8a9u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 30;
+    constexpr static std::uint64_t SourceLine = 31;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1079,7 +888,7 @@ struct StaticInfo<ID{0x885025556cce2f68u, 0x589def016d4c20beu}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 39;
+    constexpr static std::uint64_t SourceLine = 40;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1105,7 +914,7 @@ struct StaticInfo<ID{0xce5e676fefa30dafu, 0x4eb0970230b6a49eu}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 40;
+    constexpr static std::uint64_t SourceLine = 41;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1131,7 +940,7 @@ struct StaticInfo<ID{0x85a1fc2b7924f35u, 0xab0ea2512267d8adu}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 41;
+    constexpr static std::uint64_t SourceLine = 42;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1157,7 +966,7 @@ struct StaticInfo<ID{0x8f5f18cfb176f51cu, 0xd2107751b20304bcu}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 42;
+    constexpr static std::uint64_t SourceLine = 43;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1183,7 +992,7 @@ struct StaticInfo<ID{0x645f1db97c2f0115u, 0xb3e5baae4a842bb6u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 44;
+    constexpr static std::uint64_t SourceLine = 45;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -1211,7 +1020,7 @@ struct StaticInfo<ID{0x5353cb42e1a5c7a7u, 0x962a030897c298a4u}> {
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\test.h)path";
-    constexpr static std::uint64_t SourceLine = 45;
+    constexpr static std::uint64_t SourceLine = 46;
     constexpr static std::uint64_t SourceColumn = 9;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();

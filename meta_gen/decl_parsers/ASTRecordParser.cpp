@@ -58,6 +58,7 @@ namespace pf::meta_gen {
 
         RecordTypeInfo result{};
 
+
         result.fullName = recordDecl->getQualifiedNameAsString();
         result.name = recordDecl->getNameAsString();
         result.id = getIdGenerator().generateId(result.fullName);
@@ -71,6 +72,8 @@ namespace pf::meta_gen {
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
+
+        result.originalCode = clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(recordDecl->getSourceRange()), sourceManager, langOpts).str();
 
         result.sourceLocation.line = sourceManager.getPresumedLineNumber(recordDecl->getSourceRange().getBegin());
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
@@ -149,7 +152,7 @@ namespace pf::meta_gen {
             functionInfo.name = method->getNameAsString();
             functionInfo.fullName = method->getQualifiedNameAsString();
 
-            if (method->isDeleted()) { continue; }
+            if (method->isDeleted() || method->isInvalidDecl()) { continue; }
             if (method->isCopyAssignmentOperator() && method->isImplicit()) {
                 // Class has user declared move ctor or assign.
                 if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
@@ -174,11 +177,6 @@ namespace pf::meta_gen {
                 // TODO:
                 // Class has a base class which can't be move assigned.
             }
-
-            spdlog::info("{}\timplicit: {}\tdeleted: {}\tcopy: {}\tmove: {}\thas simple copy: {}\thas simple move: {}",
-                         functionInfo.fullName, method->isImplicit(), method->isDeleted(), method->isCopyAssignmentOperator(),
-                         method->isMoveAssignmentOperator(), recordDecl->hasSimpleCopyAssignment(), recordDecl->hasSimpleMoveAssignment());
-
 
             for (const clang::ParmVarDecl *param: method->parameters()) {
                 FunctionArgument argument;
