@@ -3,13 +3,13 @@
 #include <test.generated.h>
 
 namespace pf {
-    enum class Hihi;
+    enum class [[pf::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{
             Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2
     };
 
-    struct B1{};
+    struct [[pf::no_sti]] B1{};
     struct B2{};
     struct B3{};
 

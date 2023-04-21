@@ -42,6 +42,12 @@ namespace pf::meta_gen {
     }
 
     void MetaInfoWriter::writeEnumInfo(const EnumTypeInfo &enumInfo) {
+        if (std::ranges::any_of(enumInfo.attributes, [](const auto &attribute) {
+                // skipping STI generation if requested by the user
+                return attribute.nnamespace == "pf" && attribute.name == "no_sti";
+            })) {
+            return;
+        }
         using namespace fmt::literals;
         std::unordered_map<std::string, std::string> valueIds{};
         std::string valueIdsStr{};
@@ -110,6 +116,12 @@ namespace pf::meta_gen {
     }
 
     void MetaInfoWriter::writeRecordInfo(const RecordTypeInfo &recordInfo) {
+        if (std::ranges::any_of(recordInfo.attributes, [](const auto &attribute) {
+                // skipping STI generation if requested by the user
+                return attribute.nnamespace == "pf" && attribute.name == "no_sti";
+            })) {
+            return;
+        }
         using namespace fmt::literals;
 
         const auto idsToStringMakeArray = [](std::ranges::range auto &&range) {

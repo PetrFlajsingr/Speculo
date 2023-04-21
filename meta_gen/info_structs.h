@@ -15,6 +15,7 @@
 namespace pf::meta_gen {
 
     struct Attribute {
+        std::string nnamespace;
         std::string name;
         std::vector<std::string> arguments;
     };
