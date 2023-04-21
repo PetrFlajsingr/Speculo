@@ -25,6 +25,12 @@
         return impl::MemberPtr;                                                                                                            \
     }.template operator()<I>()
 
+#define PF_SPLICE_CTOR(I)                                                                                                                  \
+    []<::pf::meta::Info i>() consteval {                                                                                                   \
+        using impl = ::pf::meta::details::StaticInfo<i.implId>;                                                                            \
+        return impl::CtorWrap;                                                                                                            \
+    }.template operator()<I>()
+
 namespace pf::meta::details {
 
 
@@ -35,7 +41,7 @@ namespace pf::meta::details {
 
     template<pf::meta::Info I>
     struct SpliceResultProvider {
-        static_assert(sizeof(I) == 0, "Not implemented");
+        static_assert(sizeof(I) == 0, "Not implemented or splice not supported for this meta type");
     };
 
     template<pf::meta::Info I>
@@ -58,6 +64,12 @@ namespace pf::meta::details {
                  getInfoType<I.implId>() == pf::meta::details::StaticInfoType::StaticVariable)
     struct SpliceResultProvider<I> {
         constexpr static auto Result = PF_SPLICE_MEMBER(I);
+    };
+
+    template<pf::meta::Info I>
+        requires(getInfoType<I.implId>() == pf::meta::details::StaticInfoType::Constructor)
+    struct SpliceResultProvider<I> {
+        constexpr static auto Result = PF_SPLICE_CTOR(I);
     };
 
 

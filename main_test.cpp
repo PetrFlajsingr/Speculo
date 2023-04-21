@@ -59,12 +59,18 @@ namespace pf::meta {
 template<typename E>
 [[nodiscard]] constexpr std::string_view to_string(E value) {
     constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
-    std::string_view result{};
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
-        if (PF_SPLICE(valueInfo) == value) { result = pf::meta::name_of<valueInfo>(); }
+    //std::string_view result{};
+
+    const auto result = pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<std::string_view> {
+        if (PF_SPLICE(valueInfo) == value) { return std::optional{pf::meta::name_of<valueInfo>()}; }
+        return std::nullopt;
     });
-    if (result.empty()) { result = "<INVALID_ENUM_VALUE>"; }
-    return result;
+
+    //pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
+    //    if (PF_SPLICE(valueInfo) == value) { result = pf::meta::name_of<valueInfo>(); }
+    //});
+    //if (result.empty()) { result = "<INVALID_ENUM_VALUE>"; }
+    return result.value_or("<INVALID_ENUM_VALUE>");
 }
 
 template<typename E>
@@ -116,10 +122,17 @@ template<pf::meta::Info I>
     return static_cast<std::string_view>(aImpl::FullName);
 }
 
+template <pf::meta::Info I>
+[[nodiscard]] consteval pf::meta::details::RangeOf<pf::meta::Info> auto getConstructors() {
+    using aImpl = pf::meta::details::StaticInfo<I.implId>;
+    return aImpl::Constructors;
+}
+
 #include <iostream>
 
 
 int main() {
+    std::cout << to_string(pf::SomeEnum{0}) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value1) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value2) << std::endl;
 
@@ -226,14 +239,14 @@ int main() {
 
     constexpr auto AINFO = PF_REFLECT(pf::A);
 
+    constexpr auto ctors = getConstructors<AINFO>();
 
-    pf::A dfsds;
+    auto dfsds = PF_SPLICE(ctors[0])(131);
     constexpr auto mbrInfo = functionByName<AINFO>("letadlo");
     std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
     std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << (dfsds.*PF_SPLICE(mbrInfo))() << std::endl;
     dfsds.test = 100;
     std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
-
 
     return 0;
 }

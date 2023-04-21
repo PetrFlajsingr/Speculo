@@ -234,6 +234,30 @@ namespace pf::meta_gen {
 
         for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
             if (ctor->isDeleted()) { continue; }
+            if (ctor->isCopyConstructor() && ctor->isImplicit()) {
+                // Class has user declared move ctor or assign.
+                if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
+                // Class has non static const member.
+                // Class has non static reference member.
+                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                    })) {
+                    continue;
+                }
+                // TODO:
+                // Class has non-copyable data member or base class. Base class with inaccessible destructor
+            }
+            if (ctor->isMoveConstructor() && ctor->isImplicit()) {
+                // Class has a data member that is const.
+                // Class has a data member that is a reference.
+                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                    })) {
+                    continue;
+                }
+                // TODO:
+                // Class has a base class which can't be move assigned.
+            }
 
             ConstructorInfo constructorInfo;
             constructorInfo.fullName = ctor->getQualifiedNameAsString();
@@ -279,7 +303,7 @@ namespace pf::meta_gen {
             result.constructors.push_back(constructorInfo);
         }
         // default ctors
-        {
+       /* {
             if (recordDecl->hasDefaultConstructor() && !recordDecl->hasUserProvidedDefaultConstructor()) {
                 ConstructorInfo constructorInfo;
                 constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
@@ -379,7 +403,7 @@ namespace pf::meta_gen {
 
                 result.constructors.push_back(constructorInfo);
             }
-        }
+        }*/
         if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
             result.destructor.fullName = destructor->getQualifiedNameAsString();
             result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
