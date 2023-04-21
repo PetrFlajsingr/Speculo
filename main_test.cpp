@@ -48,9 +48,7 @@ namespace pf::meta {
 
     template<Info I1, Info I2>
     [[nodiscard]] consteval bool reflects_same() {
-        using impl1 = details::StaticInfo<I1.implId>;
-        using impl2 = details::StaticInfo<I2.implId>;
-        return std::same_as<typename impl1::Type, typename impl2::Type>;
+        return I1.implId == I2.implId;
     }
 
 }// namespace pf::meta
@@ -58,44 +56,44 @@ namespace pf::meta {
 
 template<typename E>
 [[nodiscard]] constexpr std::string_view to_string(E value) {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
-    std::string_view result{};
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
-        if (PF_SPLICE_VALUE(valueInfo) == value) { result = pf::meta::name_of<valueInfo>(); }
-    });
-    if (result.empty()) { result = "<INVALID_ENUM_VALUE>"; }
-    return result;
+    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
+    const auto result =
+            pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<std::string_view> {
+                if (PF_SPLICE(valueInfo) == value) { return std::optional{pf::meta::name_of<valueInfo>()}; }
+                return std::nullopt;
+            });
+    return result.value_or("<INVALID_ENUM_VALUE>");
 }
 
 template<typename E>
 [[nodiscard]] constexpr std::optional<E> from_string(std::string_view name) {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
-    std::optional<E> result = std::nullopt;
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() {
-        if (pf::meta::name_of<valueInfo>() == name) { result = PF_SPLICE_VALUE(valueInfo); }
+    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
+    return pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<E> {
+        if (pf::meta::name_of<valueInfo>() == name) { return PF_SPLICE(valueInfo); }
+        return std::nullopt;
     });
-    return result;
 }
 
 template<typename E>
-[[nodiscard]] constexpr std::vector<E> getEnumValues() {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(E);
-    std::vector<E> result;
-    result.reserve(std::ranges::size(pf::meta::members_of<enumInfo>()));
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() { result.emplace_back(PF_SPLICE_VALUE(VI)); });
+[[nodiscard]] constexpr pf::meta::details::RangeOf<E> auto getEnumValues() {
+    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
+    static_assert(pf::meta::Enum<enumInfo>);
+    using impl = pf::meta::details::StaticInfo<enumInfo.implId>;
+
+    std::array<E, impl::EnumValues.size()> result{};
+    std::size_t i{};
+    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() { result[i++] = PF_SPLICE(VI); });
     return result;
 }
 
 template<pf::meta::Info Type>
-[[nodiscard]] constexpr pf::meta::Info functionByName(std::string_view name) {
+[[nodiscard]] constexpr std::optional<pf::meta::Info> functionByName(std::string_view name) {
     using aImpl = pf::meta::details::StaticInfo<Type.implId>;
-    constexpr auto memberFncs = aImpl::MemberFunctions;
-    pf::meta::details::ID result{};
-    pf::meta::template_for<memberFncs>([&]<auto Fnc>() {
+    return pf::meta::template_for_r<aImpl::MemberFunctions>([&]<auto Fnc>() -> std::optional<pf::meta::Info> {
         using fImpl = pf::meta::details::StaticInfo<Fnc.implId>;
-        if (fImpl::Name.compare(name) == 0) { result = Fnc.implId; }
+        if (fImpl::Name.compare(name) == 0) { return pf::meta::Info{Fnc.implId}; }
+        return std::nullopt;
     });
-    return result;
 }
 
 template<pf::meta::Info Fnc, typename... Args>
@@ -116,10 +114,17 @@ template<pf::meta::Info I>
     return static_cast<std::string_view>(aImpl::FullName);
 }
 
+template<pf::meta::Info I>
+[[nodiscard]] consteval pf::meta::details::RangeOf<pf::meta::Info> auto getConstructors() {
+    using aImpl = pf::meta::details::StaticInfo<I.implId>;
+    return aImpl::Constructors;
+}
+
 #include <iostream>
 
 
 int main() {
+    std::cout << to_string(pf::SomeEnum{0}) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value1) << std::endl;
     std::cout << to_string(pf::SomeEnum::Value2) << std::endl;
 
@@ -134,7 +139,7 @@ int main() {
     std::cout << to_string(*b) << std::endl;
 
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         std::cout << std::hex << A::TypeID.id[0] << std::endl;
@@ -147,7 +152,7 @@ int main() {
         static_assert(std::same_as<A::Type, pf::SomeEnum>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
@@ -157,7 +162,7 @@ int main() {
         static_assert(std::same_as<A::Type, const pf::SomeEnum>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum &);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum &);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
@@ -167,7 +172,7 @@ int main() {
         static_assert(std::same_as<A::Type, pf::SomeEnum &>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum &&);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum &&);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
@@ -177,7 +182,7 @@ int main() {
         static_assert(std::same_as<A::Type, pf::SomeEnum &&>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum &);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum &);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
@@ -187,7 +192,7 @@ int main() {
         static_assert(std::same_as<A::Type, const pf::SomeEnum &>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum *);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
@@ -197,7 +202,7 @@ int main() {
         static_assert(std::same_as<A::Type, pf::SomeEnum *>);
     }
     {
-        constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(const pf::SomeEnum *);
+        constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum *);
         using A = pf::meta::details::StaticInfo<enumInfo.implId>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
@@ -206,31 +211,36 @@ int main() {
         static_assert(A::IsPtr);
         static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
     }
-    constexpr pf::meta::Info enumInfo = PF_REFLECT_TYPE(pf::SomeEnum *);
+    constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum *);
     using A = pf::meta::details::StaticInfo<enumInfo.implId>;
 
     for (const auto &attr: pf::meta::attributes_of<enumInfo>()) {
         std::cout << attr.name << std::endl;
         for (const auto &arg: attr.arguments) { std::cout << arg << std::endl; }
     }
-    constexpr auto boolInfo = PF_REFLECT_TYPE(bool);
+    constexpr auto boolInfo = PF_REFLECT(bool);
     static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
-    static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT_TYPE(bool *)>());
-    [[maybe_unused]] PF_SPLICE_TYPE(boolInfo) hihi = false;
+    static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT(bool *)>());
+    [[maybe_unused]] PF_SPLICE(boolInfo) hihi = false;
 
     pf::meta::template_for<pf::meta::members_of<enumInfo>()>(
-            []<auto VI>() { std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE_VALUE(VI)) << std::endl; });
+            []<auto VI>() { std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE(VI)) << std::endl; });
     for (const auto v: getEnumValues<pf::SomeEnum>()) { std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl; }
 
-    constexpr auto AINFO = PF_REFLECT_TYPE(pf::A);
+    constexpr auto AINFO = PF_REFLECT(pf::A);
 
+    constexpr auto ctors = getConstructors<AINFO>();
 
-    pf::A dfsds;
+    auto dfsds = PF_SPLICE(ctors[0])(131);
     constexpr auto mbrInfo = functionByName<AINFO>("letadlo");
-    std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
+    if (!mbrInfo.has_value()) {
+        std::cout << "Function not found" << std::endl;
+        return 0;
+    }
+    std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << invoke<*mbrInfo>(&dfsds) << std::endl;
+    std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << (dfsds.*PF_SPLICE(*mbrInfo))() << std::endl;
     dfsds.test = 100;
-    std::cout << "Member ptr '" << getFullName<mbrInfo>() << "' call: " << invoke<mbrInfo>(&dfsds) << std::endl;
-
+    std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << invoke<*mbrInfo>(&dfsds) << std::endl;
 
     return 0;
 }

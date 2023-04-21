@@ -34,6 +34,8 @@ namespace pf::meta_gen {
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
 
+        result.originalCode = clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(enumDecl->getSourceRange()), sourceManager, langOpts).str();
+
 
         result.sourceLocation.line = sourceManager.getPresumedLineNumber(enumDecl->getSourceRange().getBegin());
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(enumDecl->getSourceRange().getBegin());

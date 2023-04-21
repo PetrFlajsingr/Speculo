@@ -323,9 +323,14 @@ namespace pf::meta_gen {
                         state = State::Arguments;
                     } else {
                         if (!attributeNamespace.empty()) {
-                            result.emplace_back(attributeNamespace + "::" + attributeName, attributeParams);
+                            result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         } else {
-                            result.emplace_back(attributeName, attributeParams);
+                            if (const auto iter = std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; }); iter != attributeName.end()) {
+                                const auto index = std::ranges::distance(attributeName.begin(), iter);
+                                attributeNamespace = attributeName.substr(0, index);
+                                attributeName = attributeName.substr(index + 2);
+                            }
+                            result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         }
                         attributeParams.clear();
                         attributeName.clear();
@@ -340,9 +345,14 @@ namespace pf::meta_gen {
                     } else if (token->getKind() == clang::tok::TokenKind::r_paren) {
                         if (!attributeParam.empty()) { attributeParams.emplace_back(attributeParam); }
                         if (!attributeNamespace.empty()) {
-                            result.emplace_back(attributeNamespace + "::" + attributeName, attributeParams);
+                            result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         } else {
-                            result.emplace_back(attributeName, attributeParams);
+                            if (const auto iter = std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; }); iter != attributeName.end()) {
+                                const auto index = std::ranges::distance(attributeName.begin(), iter);
+                                attributeNamespace = attributeName.substr(0, index);
+                                attributeName = attributeName.substr(index + 2);
+                            }
+                            result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         }
                         attributeParams.clear();
                         attributeParam.clear();

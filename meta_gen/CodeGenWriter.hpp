@@ -10,6 +10,7 @@
 
 #include "info_structs.h"
 #include <pf_common/concepts/ranges.h>
+#include <fmt/format.h>
 
 namespace pf::meta_gen {
 
@@ -18,9 +19,10 @@ namespace pf::meta_gen {
     public:
         explicit CodeGenWriter(std::shared_ptr<llvm::raw_ostream> os) : ostream{std::move(os)} {}
 
+        void start(std::string_view fileName);
+        void end();
+
         void generate(RangeOf<TypeInfoVariant> auto &&typeInfos) {
-            write("#include <meta/macros.h>\n");
-            write("#include <meta/details/StaticInfo.h>\n");
             std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos), [this](auto &&typeInfo) { generate(typeInfo); });
         }
 
@@ -30,6 +32,8 @@ namespace pf::meta_gen {
         void write(std::string_view str);
 
         std::shared_ptr<llvm::raw_ostream> ostream;
+
+        std::string fileUUIDstr;
     };
 
 }// namespace pf::meta_gen

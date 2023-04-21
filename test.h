@@ -3,19 +3,20 @@
 #include <test.generated.h>
 
 namespace pf {
-    enum class Hihi;
+    enum class [[pf::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{
+            Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2
+    };
 
-    struct B1{};
+    struct [[pf::no_sti]] B1{};
     struct B2{};
     struct B3{};
 
     struct [[first]] [[second, third]] A  : B1, B2, private B3  {
-        PF_META_GENERATED(A)
-
-        [[maybe_unused]] A() [[gdfsgdf]] {}
-        [[papuce]] [[a, b, c]] ~A() = default;
+        PF_META_GENERATED()
+        A(int a) : test{a} {}
+        A(int sadfsdf, float asdsa) {}
 
         A&operator=(const A&) { return *this; }
         A&operator=(A&&) = delete;
@@ -43,6 +44,7 @@ namespace pf {
 
         static int statFoo() { return 4324; }
         inline static int statValue = 19;
+
     };
 
     /*struct B {

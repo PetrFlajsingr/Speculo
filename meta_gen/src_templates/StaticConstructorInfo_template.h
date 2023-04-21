@@ -32,6 +32,10 @@ struct StaticInfo<{id}> {{
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
     constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>({arguments});
+
+    constexpr static auto CtorWrap = {ctor_wrap_lambda};
+    constexpr static auto PlacementNewCtorWrap = {placement_new_wrap_lambda};
+    constexpr static auto NewCtorWrap = {new_wrap_lambda};
     }};
 )fmt";
 

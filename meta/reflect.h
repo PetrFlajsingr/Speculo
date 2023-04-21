@@ -7,21 +7,13 @@
 
 #include "Info.h"
 #include "details/ID.h"
+#include "details/ReflectInfoProviders.hpp"
+#include "details/SpliceResultProviders.hpp"
 #include "details/StaticInfo.h"
 
-#define PF_REFLECT_TYPE(X)                                                                                                                 \
-    ::pf::meta::Info { ::pf::meta::details::getTypeId<X>() }
 
-#define PF_REFLECT_VALUE(V)                                                                                                                \
-    ::pf::meta::Info { ::pf::meta::details::getConstantId<V>() }
+#define PF_REFLECT(X) ::pf::meta::details::provideReflectInfo<X>().Result
 
-#define PF_SPLICE_TYPE(I) ::pf::meta::details::StaticInfo<I.implId>::Type
+#define PF_SPLICE(I) ::pf::meta::details::SpliceResultProvider<I>::Result
 
-#define PF_SPLICE_VALUE(I)                                                                                                                 \
-    []<::pf::meta::Info i>() consteval {                                                                                                   \
-        using impl = ::pf::meta::details::StaticInfo<i.implId>;                                                                        \
-        return impl::Value;                                                                                                                \
-    }.template operator()<I>()
-
-
-#endif //PF_META_REFLECT_H
+#endif//PF_META_REFLECT_H

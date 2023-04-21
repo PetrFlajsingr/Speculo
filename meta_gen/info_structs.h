@@ -15,6 +15,7 @@
 namespace pf::meta_gen {
 
     struct Attribute {
+        std::string nnamespace;
         std::string name;
         std::vector<std::string> arguments;
     };
@@ -36,6 +37,8 @@ namespace pf::meta_gen {
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;
+
+        std::string originalCode;
     };
 
     struct EnumTypeInfo : TypeInfo {
