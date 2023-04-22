@@ -1,6 +1,6 @@
 
 
-#include <test.generated.h>
+#include <test.generated.hpp>
 
 namespace pf {
     enum class [[pf::no_sti]] Hihi {};

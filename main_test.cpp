@@ -3,7 +3,7 @@
 //
 
 #include "meta/fundamental_types.meta.h"
-#include "test.meta.h"
+#include "test.meta.hpp"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 #include <vector>

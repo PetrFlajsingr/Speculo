@@ -30,6 +30,7 @@ find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp
         meta_gen/MetaInfoWriter.cpp meta_gen/decl_parsers/ASTDeclParser.cpp meta_gen/decl_parsers/ASTDeclParser.h
@@ -53,7 +54,7 @@ include(AddLLVM)
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_gen PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
 target_link_libraries(pf_meta_gen PRIVATE stduuid)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
 
@@ -70,9 +71,11 @@ foreach(include ${INCLUDES})
     list(APPEND INCLUDE_ARGS "${include}")
 endforeach()
 
-list(APPEND HEADERS_FOR_META test.h)
+list(APPEND HEADERS_FOR_META test.h test2.hpp)
 
-get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
+# we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
+list(APPEND CXXFLAGS "'-std=c++20'")
+message(STATUS ${CXXFLAGS})
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 execute_process(COMMAND ${Python3_EXECUTABLE}

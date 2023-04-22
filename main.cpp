@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include <pf_common/ScopeExit.h>
 #include <pf_common/array.h>
 
 #include "meta/Info.h"
@@ -12,59 +11,73 @@
 #include "meta_gen/clang_tooling_compilationdatabase_wrap.h"
 #include "meta_gen/info_structs.h"
 
-#include "meta_gen/src_templates/GetConstantID_template.h"
-#include "meta_gen/src_templates/GetTypeID_template.h"
-#include "meta_gen/src_templates/MetaFilePrologueEpilogue.h"
-#include "meta_gen/src_templates/StaticTypeInfo_template.h"
-#include "meta_gen/src_templates/StaticValueInfo_template.h"
-
 #include "format.h"
 #include "meta_gen/AstActions.h"
 #include <clang/Tooling/CommonOptionsParser.h>
 
+#include<nlohmann/json.hpp>
+#include <fstream>
+
 static llvm::cl::OptionCategory PfMetaGenCategory("pf_meta_gen options");
 
-static llvm::cl::opt<std::string> InputSource(llvm::cl::Required, "in-source", llvm::cl::desc("Specify input filename"),
-                                              llvm::cl::value_desc("filename"));
-static llvm::cl::opt<std::string> OutputMetaHeader("out-meta-header", llvm::cl::desc("Specify meta header output filename"),
-                                                   llvm::cl::value_desc("filename"));
-static llvm::cl::opt<std::string> OutputCodegenHeader("out-codegen-header", llvm::cl::desc("Specify codegen header output filename"),
-                                                      llvm::cl::value_desc("filename"));
-static llvm::cl::opt<std::string> OutputCodegenSource("out-codegen-source", llvm::cl::desc("Specify codegen source output filename"),
-                                                      llvm::cl::value_desc("filename"));
-static llvm::cl::opt<std::string> ProjectRootPath("project-root", llvm::cl::desc("Root directory of the project"),
-                                                      llvm::cl::value_desc("path"));
-static llvm::cl::opt<std::string> InSourceIncludePath("in-source-include-path", llvm::cl::desc("Specify include path for in-source"),
-                                                      llvm::cl::value_desc("file"));
+static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
+                                            llvm::cl::value_desc("filename"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
-static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
+static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"),
+                                        llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
 
-static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
-                                                 llvm::cl::ZeroOrMore);
 
 static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
 
 #include "meta_gen/Config.h"
 
-[[nodiscard]] pf::meta_gen::Config createConfig() {
-    std::vector<std::string> compilerFlags;
-    std::ranges::copy(CompilerFlags, std::back_inserter(compilerFlags));
-    return {.inputSource = std::string{InputSource},
-            .outputMetaHeader = std::string{OutputMetaHeader},
-            .outputCodegenHeader = std::string{OutputCodegenHeader},
-            .outputCodegenSource = std::string{OutputCodegenSource},
-            .projectRootDir = std::string{ProjectRootPath},
+[[nodiscard]] std::optional<pf::meta_gen::Config> createConfig(const std::filesystem::path &configPath) {
+    std::ifstream configFile{configPath};
+    if (!configFile.is_open()) {
+        spdlog::error("Can't open file '{}'", configPath.string());
+        return std::nullopt;
+    }
+    auto data = nlohmann::json::parse(configFile);
+    // TODO: multiple input files
+    auto inputFile = std::filesystem::path{std::string{data["header_paths"][0]}};
+    auto metaHeader = inputFile;
+    metaHeader.replace_extension("meta.hpp");
+    auto generatedHeader = inputFile;
+    generatedHeader.replace_extension("generated.hpp");
+    auto generatedSource = inputFile;
+    generatedSource.replace_extension("generated.cpp");
+
+    const auto projectRoot = std::filesystem::path{std::string{data["project_root"]}};
+    inputFile = projectRoot / inputFile;
+    metaHeader = projectRoot / metaHeader;
+    generatedHeader = projectRoot / generatedHeader;
+    generatedSource = projectRoot / generatedSource;
+
+    std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
+    for (const auto &flag: data["compiler_flags"]) {
+        flags.push_back(flag);
+    }
+    for (const auto &includePath: data["include_paths"]) {
+        flags.push_back(fmt::format("-I{}", std::string{includePath}));
+    }
+    return pf::meta_gen::Config{.inputSource = inputFile,
+            .outputMetaHeader = metaHeader,
+            .outputCodegenHeader = generatedHeader,
+            .outputCodegenSource = generatedSource,
+            .projectRootDir = projectRoot,
             .ignoreIncludes = IgnoreIncludes,
             .formatOutput = FormatOutput,
-            .compilerFlags = std::move(compilerFlags),
-            .inputIncludePath = InSourceIncludePath};
+            .compilerFlags = std::move(flags),
+            .inputIncludePath = inputFile.string()};
 }
 
 #include <unordered_set>
 
-enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
+enum class InfoType {
+    Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr
+};
 
 [[nodiscard]] constexpr std::string wrapStructForInfoType(InfoType infoType) {
     switch (infoType) {
@@ -103,12 +116,18 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
 }
 
 // TODO: deduplicate
-[[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+[[nodiscard]] std::string idToString(pf::meta::details::ID id) {
+    return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]);
+}
 
-std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
-                                                                                              InfoType::ConstLvalue, InfoType::Rvalue,
-                                                                                              InfoType::Ptr, InfoType::ConstPtr}) {
+std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName,
+                                              std::string_view fullTypeName,
+                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const,
+                                                                                              InfoType::Lvalue,
+                                                                                              InfoType::ConstLvalue,
+                                                                                              InfoType::Rvalue,
+                                                                                              InfoType::Ptr,
+                                                                                              InfoType::ConstPtr}) {
     using namespace fmt::literals;
     constexpr auto prologue = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -134,11 +153,13 @@ template<>
 )fmt";
     const auto typeId = idToString(gen.generateId(std::string{fullTypeName}));
     std::string result{fmt::format(prologue, "full_name"_a = fullTypeName)};
-    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName, "full_type_name"_a = fullTypeName));
+    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName,
+                              "full_type_name"_a = fullTypeName));
     for (const auto &toGen: typesToGenerate) {
         const auto variantTypeName = wrapNameForInfoType(toGen, std::string{fullTypeName});
         const auto variantId = idToString(gen.generateId(variantTypeName));
-        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId, "wrap_struct"_a = wrapStructForInfoType(toGen),
+        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId,
+                                  "wrap_struct"_a = wrapStructForInfoType(toGen),
                                   "type_id"_a = typeId, "full_wrap_type_name"_a = variantTypeName));
     }
     result.append(fmt::format(epilogue, "full_name"_a = fullTypeName));
@@ -172,9 +193,13 @@ int main(int argc, const char **argv) {
      *outStream << output;
 
      return 0;*/
-    auto sources = std::vector{std::string{InputSource}};
 
-    const auto config = createConfig();
+    const auto configOpt = createConfig(std::filesystem::path{std::string{ConfigArg}});
+    if (!configOpt.has_value()) {
+        return 0;
+    }
+    const auto config = *configOpt;
+    std::vector<std::string> sources{config.inputSource.string()};
 
     clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
     //std::string err;
@@ -184,13 +209,15 @@ int main(int argc, const char **argv) {
 
 
     std::error_code errorCode;
-    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode,
+                                                                llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
     }
     auto codeGenOutStream =
-            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode,
+                                                   llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file: {}", errorCode.message());
         return 1;
