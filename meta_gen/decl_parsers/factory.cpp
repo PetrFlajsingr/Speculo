@@ -22,7 +22,7 @@ namespace pf::meta_gen {
                    recordDecl != nullptr) {
             return std::make_unique<ASTRecordParser>(idGen);
         } else {
-            spdlog::warn("createDeclParser: unsupported decl of kind {}", decl->getDeclKindName());
+            spdlog::trace("createDeclParser: unsupported decl of kind {}", decl->getDeclKindName());
             return nullptr;
         }
     }

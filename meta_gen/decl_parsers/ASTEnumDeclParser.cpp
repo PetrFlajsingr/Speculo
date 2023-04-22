@@ -22,7 +22,7 @@ namespace pf::meta_gen {
         // Skip if found decl is not definition
         const auto definition = enumDecl->getDefinition();
         if (definition != decl) {
-            spdlog::info("ASTEnumDeclParser: skipping, not a definition");
+            spdlog::trace("ASTEnumDeclParser: skipping, not a definition");
             return std::nullopt;
         }
 

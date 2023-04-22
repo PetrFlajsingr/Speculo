@@ -20,6 +20,9 @@
 
 #include "format.h"
 #include "meta_gen/AstActions.h"
+#include <clang/Tooling/CommonOptionsParser.h>
+
+static llvm::cl::OptionCategory PfMetaGenCategory("pf_meta_gen options");
 
 static llvm::cl::opt<std::string> InputSource(llvm::cl::Required, "in-source", llvm::cl::desc("Specify input filename"),
                                               llvm::cl::value_desc("filename"));
@@ -41,6 +44,7 @@ static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reforma
 static llvm::cl::list<std::string> CompilerFlags("flag", llvm::cl::desc("Compiler flags"), llvm::cl::value_desc("flags"),
                                                  llvm::cl::ZeroOrMore);
 
+static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
 
 #include "meta_gen/Config.h"
 
@@ -173,6 +177,9 @@ int main(int argc, const char **argv) {
     const auto config = createConfig();
 
     clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
+    //std::string err;
+    //auto db = clang::tooling::FixedCompilationDatabase::loadFromFile("C:\\Users\\xflajs00\\CLionProjects\\libclang_test\\cmake-build-debug\\compile_commands.json", err);// fixedCompilationDatabase{".", config.compilerFlags};
+    //clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
     clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
 

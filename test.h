@@ -5,35 +5,31 @@
 namespace pf {
     enum class [[pf::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{
-            Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2
-    };
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]],
+                                                                                           Value2};
 
-    struct [[pf::no_sti]] B1{};
-    struct B2{};
-    struct B3{};
+    struct [[pf::no_sti]] B1 {};
+    struct B2 {};
+    struct B3 {};
 
-    struct [[first]] [[second, third]] A  : B1, B2, private B3  {
-        PF_META_GENERATED()
+    struct [[first]] [[second, third]] A : B1, B2, private B3 {
+        PF_META_GENERATED();
+
         A(int a) : test{a} {}
         A(int sadfsdf, float asdsa) {}
 
-        A&operator=(const A&) { return *this; }
-        A&operator=(A&&) = delete;
+        A &operator=(const A &) { return *this; }
+        A &operator=(A &&) = delete;
 
 
         [[yeet]] [[maybe_unused]] int c [[cxvxc]];
-        [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]][[yuh2]] float A) [[kjhnn]];
-        [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] {
-            [[yeetus]];
-        }
+        [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) [[kjhnn]];
+        [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] { [[yeetus]]; }
 
         int test{10};
 
     private:
-        int letadlo() {
-            return test;
-        }
+        int letadlo() { return test; }
         void letadlo2() {}
         void letadlo3(int asdasdas) {}
 
@@ -44,6 +40,7 @@ namespace pf {
 
         static int statFoo() { return 4324; }
         inline static int statValue = 19;
+
 
     };
 

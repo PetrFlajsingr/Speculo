@@ -37,7 +37,7 @@ add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstAct
         meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h
         meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h
         meta_gen/CodeGenWriter.cpp)
-add_executable(meta_test main_test.cpp)
+add_executable(meta_test main_test.cpp test.h)
 
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -60,3 +60,27 @@ target_compile_options(pf_meta_gen PRIVATE ${flags})
 target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_options(meta_test PRIVATE ${test_flags})
+
+
+
+get_target_property(INCLUDES meta_test INCLUDE_DIRECTORIES)
+
+
+foreach(include ${INCLUDES})
+    list(APPEND INCLUDE_ARGS "${include}")
+endforeach()
+
+list(APPEND HEADERS_FOR_META test.h)
+
+get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+execute_process(COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/scripts/pf_meta_config_create.py
+        -p meta_test
+        -r ${CMAKE_SOURCE_DIR}
+        -o ${CMAKE_BINARY_DIR}
+        -f ${CXXFLAGS}
+        -I ${INCLUDE_ARGS}
+        -H ${HEADERS_FOR_META}
+        )
