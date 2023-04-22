@@ -21,13 +21,17 @@ namespace pf::meta {
 
 
     // TODO: hack for empty ranges
-    //template<auto R, typename F>
-    //requires(std::ranges::size(R) == 0)
-    //constexpr decltype(auto) template_for_r(F &&f) {
-    //    using Vfds = std::ranges::range_value_t<decltype(R)>;
-    //    using A = decltype(f.template operator()<std::declval<Vfds>()>());
-    //    return std::optional<A>{};
-    //}
+    template<auto R, typename F>
+    requires(std::ranges::size(R) == 0)
+    constexpr decltype(auto) template_for_r(F &&f) {
+        using ElementT = std::ranges::range_value_t<decltype(R)>;
+        if constexpr (std::is_default_constructible_v<ElementT>) {
+            using Optional = decltype(f.template operator()<ElementT{}>());
+            return Optional{std::nullopt};
+        } else {
+            return std::optional<bool>{}; // FIXME
+        }
+    }
 
 }
 

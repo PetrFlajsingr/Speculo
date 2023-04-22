@@ -1,8 +1,16 @@
 
 
-#include <test.generated.hpp>
+#include "generated/test.hpp"
+
+#include "tmp.hpp"
 
 namespace pf {
+    class Hoho : Haha {
+        PF_META_GENERATED();
+    private:
+        int stan;
+    };
+
     enum class [[pf::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]],

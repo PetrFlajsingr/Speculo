@@ -1,24 +1,31 @@
 {
-  "name" : "pf-meta",
-  "version" : "0.0.1",
-  "dependencies" : [ {
-    "name" : "pf-common",
-    "version>=" : "1.3.2"
-  }, {
-    "name" : "spdlog",
-    "version>=" : "1.11.0"
-  }, {
-    "name" : "tl-expected",
-    "version>=" : "2022-11-24"
-  }, {
-    "name" : "fmt",
-    "version>=" : "9.1.0#1"
-  }, {
-    "name" : "stduuid",
-    "version>=" : "1.2.2"
-  }, {
-    "name" : "nlohmann-json",
-    "version>=" : "3.11.2"
-  } ],
-  "builtin-baseline" : "36fb23307e10cc6ffcec566c46c4bb3f567c82c6"
+  "name": "pf-meta",
+  "version": "0.0.1",
+  "dependencies": [
+    {
+      "name": "pf-common",
+      "version>=": "1.3.2"
+    },
+    {
+      "name": "spdlog",
+      "version>=": "1.11.0"
+    },
+    {
+      "name": "tl-expected",
+      "version>=": "2022-11-24"
+    },
+    {
+      "name": "fmt",
+      "version>=": "9.1.0#1"
+    },
+    {
+      "name": "stduuid",
+      "version>=": "1.2.2"
+    },
+    {
+      "name": "nlohmann-json",
+      "version>=": "3.11.2"
+    }
+  ],
+  "builtin-baseline": "36fb23307e10cc6ffcec566c46c4bb3f567c82c6"
 }

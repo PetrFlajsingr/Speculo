@@ -18,6 +18,12 @@
 #include<nlohmann/json.hpp>
 #include <fstream>
 
+#include <cppcoro/static_thread_pool.hpp>
+#include <cppcoro/task.hpp>
+#include <cppcoro/when_all.hpp>
+#include <cppcoro/sync_wait.hpp>
+#include "spdlog/sinks/stdout_color_sinks.h"
+
 static llvm::cl::OptionCategory PfMetaGenCategory("pf_meta_gen options");
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
@@ -33,44 +39,61 @@ static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpM
 
 #include "meta_gen/Config.h"
 
-[[nodiscard]] std::optional<pf::meta_gen::Config> createConfig(const std::filesystem::path &configPath) {
+[[nodiscard]] std::optional<std::vector<pf::meta_gen::Config>> createConfigs(const std::filesystem::path &configPath) {
     std::ifstream configFile{configPath};
     if (!configFile.is_open()) {
         spdlog::error("Can't open file '{}'", configPath.string());
         return std::nullopt;
     }
     auto data = nlohmann::json::parse(configFile);
-    // TODO: multiple input files
-    auto inputFile = std::filesystem::path{std::string{data["header_paths"][0]}};
-    auto metaHeader = inputFile;
-    metaHeader.replace_extension("meta.hpp");
-    auto generatedHeader = inputFile;
-    generatedHeader.replace_extension("generated.hpp");
-    auto generatedSource = inputFile;
-    generatedSource.replace_extension("generated.cpp");
 
-    const auto projectRoot = std::filesystem::path{std::string{data["project_root"]}};
-    inputFile = projectRoot / inputFile;
-    metaHeader = projectRoot / metaHeader;
-    generatedHeader = projectRoot / generatedHeader;
-    generatedSource = projectRoot / generatedSource;
+    std::vector<pf::meta_gen::Config> result{};
+    for (const auto &input : data["header_paths"]) {
+        // TODO: multiple input files
+        auto inputFile = std::filesystem::path{std::string{input}};
+        const auto inputFileIncludePath = inputFile;
+        const auto fileName = inputFile.filename();
 
-    std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
-    for (const auto &flag: data["compiler_flags"]) {
-        flags.push_back(flag);
+        const auto projectRoot = std::filesystem::path{std::string{data["project_root"]}};
+        inputFile = projectRoot / inputFile;
+
+        auto metaFolder = inputFile;
+        metaFolder.remove_filename();
+        metaFolder = projectRoot / metaFolder / "meta";
+        auto generatedFolder = inputFile;
+        generatedFolder.remove_filename();
+        generatedFolder = projectRoot / generatedFolder / "generated";
+
+        auto metaHeader = metaFolder / fileName;
+        metaHeader.replace_extension();
+        metaHeader.concat(".hpp");
+        auto generatedHeader = generatedFolder / fileName;
+        generatedHeader.replace_extension();
+        generatedHeader.concat(".hpp");
+        auto generatedSource = generatedFolder / fileName;
+        generatedSource.replace_extension();
+        generatedSource.concat(".cpp");
+
+        if (!std::filesystem::exists(metaFolder)) { std::filesystem::create_directory(metaFolder); }
+        if (!std::filesystem::exists(generatedFolder)) { std::filesystem::create_directory(generatedFolder); }
+
+        std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
+        for (const auto &flag: data["compiler_flags"]) {
+            flags.push_back(flag);
+            if (!flags.back().starts_with('-')) { flags.back() = fmt::format("-{}", flags.back()); }
+        }
+        for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
+        result.push_back({.inputSource = inputFile,
+                                    .outputMetaHeader = metaHeader,
+                                    .outputCodegenHeader = generatedHeader,
+                                    .outputCodegenSource = generatedSource,
+                                    .projectRootDir = projectRoot,
+                                    .ignoreIncludes = IgnoreIncludes,
+                                    .formatOutput = FormatOutput,
+                                    .compilerFlags = std::move(flags),
+                                    .inputIncludePath = inputFileIncludePath.string()});
     }
-    for (const auto &includePath: data["include_paths"]) {
-        flags.push_back(fmt::format("-I{}", std::string{includePath}));
-    }
-    return pf::meta_gen::Config{.inputSource = inputFile,
-            .outputMetaHeader = metaHeader,
-            .outputCodegenHeader = generatedHeader,
-            .outputCodegenSource = generatedSource,
-            .projectRootDir = projectRoot,
-            .ignoreIncludes = IgnoreIncludes,
-            .formatOutput = FormatOutput,
-            .compilerFlags = std::move(flags),
-            .inputIncludePath = inputFile.string()};
+    return result;
 }
 
 #include <unordered_set>
@@ -169,6 +192,8 @@ template<>
 
 int main(int argc, const char **argv) {
     spdlog::set_level(spdlog::level::debug);
+    spdlog::default_logger()->sinks().clear();
+    spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
     /*
@@ -194,42 +219,60 @@ int main(int argc, const char **argv) {
 
      return 0;*/
 
-    const auto configOpt = createConfig(std::filesystem::path{std::string{ConfigArg}});
-    if (!configOpt.has_value()) {
+    auto configsOpt = createConfigs(std::filesystem::path{std::string{ConfigArg}});
+    if (!configsOpt.has_value()) {
         return 0;
     }
-    const auto config = *configOpt;
-    std::vector<std::string> sources{config.inputSource.string()};
+    const auto configs = std::move(*configsOpt);
 
-    clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
-    //std::string err;
-    //auto db = clang::tooling::FixedCompilationDatabase::loadFromFile("C:\\Users\\xflajs00\\CLionProjects\\libclang_test\\cmake-build-debug\\compile_commands.json", err);// fixedCompilationDatabase{".", config.compilerFlags};
-    //clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
-    clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
+    cppcoro::static_thread_pool threadPool;
+
+    const auto generateMetaForSource = [&threadPool](pf::meta_gen::Config config) -> cppcoro::task<std::optional<std::filesystem::path>> {
+        co_await threadPool.schedule();
+
+        std::vector<std::string> sources{config.inputSource.string()};
+
+        clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
+
+        clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
 
-    std::error_code errorCode;
-    auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode,
-                                                                llvm::sys::fs::OpenFlags::OF_Text);
-    if (errorCode) {
-        spdlog::error("Failed to open output file: {}", errorCode.message());
-        return 1;
-    }
-    auto codeGenOutStream =
-            std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode,
-                                                   llvm::sys::fs::OpenFlags::OF_Text);
-    if (errorCode) {
-        spdlog::error("Failed to open output file: {}", errorCode.message());
-        return 1;
-    }
-    auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-    pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, idGenerator};
-    if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
+        std::error_code errorCode;
+        auto metaOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode,
+                                                                    llvm::sys::fs::OpenFlags::OF_Text);
+        if (errorCode) {
+            spdlog::error("Failed to open output file: {}", errorCode.message());
+            co_return config.outputMetaHeader;
+        }
+        auto codeGenOutStream =
+                std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode,
+                                                       llvm::sys::fs::OpenFlags::OF_Text);
+        if (errorCode) {
+            spdlog::error("Failed to open output file: {}", errorCode.message());
+            co_return config.outputMetaHeader;
+        }
+        auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
+        pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, idGenerator};
+        if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
-    metaOutStream->close();
-    codeGenOutStream->close();
+        metaOutStream->close();
+        codeGenOutStream->close();
 
-    if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
+        if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
+        co_return std::nullopt;
+    };
+
+    std::vector<cppcoro::task<std::optional<std::filesystem::path>>> tasks;
+    std::ranges::for_each(configs, [&](const pf::meta_gen::Config &config) {
+        tasks.emplace_back(generateMetaForSource(config));
+    });
+
+    const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
+    std::ranges::for_each(results | std::views::filter(&std::optional<std::filesystem::path>::has_value), [&](const auto &v) {
+       spdlog::error("File '{}' failed", v->string());
+    });
+
+
 
     return 0;
 }
