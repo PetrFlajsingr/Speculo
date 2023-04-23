@@ -42,6 +42,7 @@ add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstAct
         meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h
         meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h
         meta_gen/CodeGenWriter.cpp)
+add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 add_executable(meta_test main_test.cpp)
 
 
@@ -63,6 +64,13 @@ target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
+
+
+target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
+target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/include)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid)
+target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
 target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
