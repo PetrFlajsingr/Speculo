@@ -4,6 +4,7 @@
 
 #include "meta/fundamental_types.meta.h"
 #include "src/meta/test.hpp"
+#include "meta/meta.hpp"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 #include <vector>
