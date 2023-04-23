@@ -48,11 +48,11 @@ namespace pf::meta_gen {
         // Skip if found decl is not definition
         const auto definition = recordDecl->getDefinition();
         if (definition != decl) {
-            spdlog::info("ASTRecordParser: skipping, not a definition");
+            spdlog::trace("ASTRecordParser: skipping, not a definition");
             return std::nullopt;
         }
         if (recordDecl->isAnonymousStructOrUnion()) {
-            spdlog::info("ASTRecordParser: skipping, anonymous struct or union");
+            spdlog::trace("ASTRecordParser: skipping, anonymous struct or union");
             return std::nullopt;
         }
 
@@ -73,7 +73,24 @@ namespace pf::meta_gen {
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
 
-        result.originalCode = clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(recordDecl->getSourceRange()), sourceManager, langOpts).str();
+        result.originalCode =
+                clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(recordDecl->getSourceRange()), sourceManager, langOpts)
+                        .str();
+
+        // check that there is a semicolon at the end of the macro so we don't miss any functions or ctors
+        constexpr std::string_view metaGenMacro = "PF_META_GENERATED()";
+        bool pfMetaGeneratedMacroFound = false;
+        if (auto pos = result.originalCode.find(metaGenMacro); pos != std::string::npos) {
+            pos += metaGenMacro.size();
+            if (result.originalCode[pos] != ';') {
+                spdlog::error("Class {} contains 'PF_META_GENERATED()', but it's missing a semicolon at the end, preventing proper "
+                              "parsing, please provide it 'PF_META_GENERATED();'",
+                              result.fullName);
+                spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
+                return std::nullopt;
+            }
+            pfMetaGeneratedMacroFound = true;
+        }
 
         result.sourceLocation.line = sourceManager.getPresumedLineNumber(recordDecl->getSourceRange().getBegin());
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
@@ -300,108 +317,6 @@ namespace pf::meta_gen {
 
             result.constructors.push_back(constructorInfo);
         }
-        // default ctors
-       /* {
-            if (recordDecl->hasDefaultConstructor() && !recordDecl->hasUserProvidedDefaultConstructor()) {
-                ConstructorInfo constructorInfo;
-                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
-                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
-                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
-                constructorInfo.isConsteval = false;
-                constructorInfo.isExplicit = false;
-                constructorInfo.access = Access::Public;
-                constructorInfo.sourceLocation.line = 0;
-                constructorInfo.sourceLocation.column = 0;
-                constructorInfo.sourceLocation.filename = "<generated>";
-                constructorInfo.isCopy = false;
-                constructorInfo.isMove = false;
-                result.destructor.attributes = {};
-
-                const auto mangledName = mangleFunction(
-                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                  }));
-                constructorInfo.id = getIdGenerator().generateId(mangledName);
-
-                result.constructors.push_back(constructorInfo);
-            }
-            if (recordDecl->hasSimpleCopyConstructor() && !recordDecl->hasUserDeclaredCopyConstructor()) {
-                ConstructorInfo constructorInfo;
-                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
-                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
-                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
-                constructorInfo.isConsteval = false;
-                constructorInfo.isExplicit = false;
-                constructorInfo.access = Access::Public;
-                constructorInfo.sourceLocation.line = 0;
-                constructorInfo.sourceLocation.column = 0;
-                constructorInfo.sourceLocation.filename = "<generated>";
-                constructorInfo.isCopy = true;
-                constructorInfo.isMove = false;
-                result.destructor.attributes = {};
-
-                FunctionArgument argument;
-                argument.name = "";
-                argument.fullName = "";
-                argument.typeName = fmt::format("const {}&", result.fullName);
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation.line = 0;
-                argument.sourceLocation.column = 0;
-                argument.sourceLocation.filename = "<generated>";
-                argument.attributes = {};
-                constructorInfo.arguments.push_back(argument);
-
-                const auto mangledName = mangleFunction(
-                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                  }));
-                // mangling names for argument IDs
-                for (auto &argument: constructorInfo.arguments) {
-                    argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
-                }
-                constructorInfo.id = getIdGenerator().generateId(mangledName);
-
-                result.constructors.push_back(constructorInfo);
-            }
-            if (recordDecl->hasSimpleMoveConstructor() && !recordDecl->hasUserDeclaredMoveConstructor()) {
-                ConstructorInfo constructorInfo;
-                constructorInfo.fullName = fmt::format("{}::{}", result.fullName, result.name);
-                constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
-                constructorInfo.isConstexpr = recordDecl->defaultedDestructorIsConstexpr();
-                constructorInfo.isConsteval = false;
-                constructorInfo.isExplicit = false;
-                constructorInfo.access = Access::Public;
-                constructorInfo.sourceLocation.line = 0;
-                constructorInfo.sourceLocation.column = 0;
-                constructorInfo.sourceLocation.filename = "<generated>";
-                constructorInfo.isCopy = false;
-                constructorInfo.isMove = true;
-                result.destructor.attributes = {};
-
-                FunctionArgument argument;
-                argument.name = "";
-                argument.fullName = "";
-                argument.typeName = fmt::format("{}&&", result.fullName);
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation.line = 0;
-                argument.sourceLocation.column = 0;
-                argument.sourceLocation.filename = "<generated>";
-                argument.attributes = {};
-                constructorInfo.arguments.push_back(argument);
-
-                const auto mangledName = mangleFunction(
-                        constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                      return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                  }));
-                // mangling names for argument IDs
-                for (auto &argument: constructorInfo.arguments) {
-                    argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
-                }
-                constructorInfo.id = getIdGenerator().generateId(mangledName);
-
-                result.constructors.push_back(constructorInfo);
-            }
-        }*/
         if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
             result.destructor.fullName = destructor->getQualifiedNameAsString();
             result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
@@ -451,6 +366,20 @@ namespace pf::meta_gen {
             result.baseClasses.push_back(baseClassInfo);
         }
 
+        if (!pfMetaGeneratedMacroFound) {
+            if (std::ranges::any_of(result.constructors, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result.staticFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result.memberFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result.staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result.memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                result.destructor.access != Access::Public) {
+                spdlog::error("Class {} does not contain 'PF_META_GENERATED()', but it contains private or protected constructors, "
+                              "destructor, variables or functions - the macro is required to access these",
+                              result.fullName);
+                spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
+                return std::nullopt;
+            }
+        }
 
         return result;
     }
