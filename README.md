@@ -15,7 +15,7 @@ Static type info generation system.
     constexpr auto enumInfo = PF_REFLECT(E); // create an object for accessing static type info
     // wanna-be template for for statically iterating over constexpr containers - this version has an early exit
     const auto result =
-            pf::meta::template_fPor_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<std::string_view> {
+            pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<std::string_view> {
                 if (PF_SPLICE(valueInfo) == value) { return std::optional{pf::meta::name_of<valueInfo>()}; }
                 return std::nullopt;
             });
