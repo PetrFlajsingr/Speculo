@@ -156,6 +156,7 @@ namespace pf::meta_gen {
                               "source_file"_a = recordInfo.sourceLocation.filename, "source_line"_a = recordInfo.sourceLocation.line,
                               "source_column"_a = recordInfo.sourceLocation.column, "attributes"_a = attributesStr,
                               "name"_a = recordInfo.name, "full_name"_a = recordInfo.fullName, "is_union"_a = recordInfo.isUnion,
+                              "is_class"_a = recordInfo.isClass, "is_struct"_a = recordInfo.isStruct,
                               "is_poly"_a = recordInfo.isPolymorphic, "is_abstract"_a = recordInfo.isAbstract,
                               "is_final"_a = recordInfo.isFinal, "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
                               "ctors"_a = idsToStringMakeArray(recordInfo.constructors), "dtor"_a = idToString(recordInfo.destructor.id),

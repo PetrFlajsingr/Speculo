@@ -31,6 +31,7 @@ static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ign
                                           llvm::cl::value_desc("bool"), llvm::cl::init(true));
 static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
+static llvm::cl::opt<bool> ForceRegen("force", llvm::cl::desc("Force regeneration"), llvm::cl::value_desc("bool"), llvm::cl::init(false));
 
 
 namespace nlohmann {
@@ -64,9 +65,7 @@ namespace nlohmann {
     auto data = nlohmann::json::parse(istream);
     istream.close();
     std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> result{};
-    for (const auto &rec: data.items()) {
-        result[std::string{rec.key()}] = std::chrono::time_point<std::chrono::file_clock>{rec.value()};
-    }
+    for (const auto &rec: data.items()) { result[std::string{rec.key()}] = std::chrono::time_point<std::chrono::file_clock>{rec.value()}; }
     return result;
 }
 // only pass those parsed by this process
@@ -76,15 +75,13 @@ void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::
     pf::meta_gen::FileLockGuard guard{lock};
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
-    if (istream.is_open()) {
-        data = nlohmann::json::parse(istream);
-    }
+    if (istream.is_open()) { data = nlohmann::json::parse(istream); }
     istream.close();
 
     for (const auto &[key, stamp]: newStamps) { data[key] = stamp; }
     auto ostream = std::ofstream{databasePath};
     if (!ostream.is_open()) {
-        spdlog::error("Can't open file for write '{}': {}", databasePath.string(),  strerror(errno));
+        spdlog::error("Can't open file for write '{}': {}", databasePath.string(), strerror(errno));
         return;
     }
     ostream << data.dump(4);
@@ -178,10 +175,12 @@ int main(int argc, const char **argv) {
         co_await threadPool.schedule();
 
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
-        if( const auto iter = timestampDB.find(config.inputSource.string()); iter != timestampDB.end()) {
-            if (lastWriteTime < iter->second) {
-                spdlog::info("File '{}' was not changed", config.inputSource.string());
-                co_return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
+        if (!static_cast<bool>(ForceRegen)) {
+            if (const auto iter = timestampDB.find(config.inputSource.string()); iter != timestampDB.end()) {
+                if (lastWriteTime < iter->second) {
+                    spdlog::info("File '{}' was not changed", config.inputSource.string());
+                    co_return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
+                }
             }
         }
 
