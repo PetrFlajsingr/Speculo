@@ -6,9 +6,9 @@
 
 #include <pf_common/macros.h>
 
-#include "clang_tooling_wrap.h"
+#include "clang_tooling_wrap.hpp"
 
-#include "info_structs.h"
+#include "info_structs.hpp"
 
 namespace pf::meta_gen {
 

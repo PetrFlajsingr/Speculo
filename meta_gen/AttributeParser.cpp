@@ -2,14 +2,14 @@
 // Created by xflajs00 on 17.03.2023.
 //
 
-#include "AttributeParser.h"
+#include "AttributeParser.hpp"
 
 #include <pf_common/algorithms.h>
 #include <pf_common/array.h>
 
 #include <spdlog/spdlog.h>
 
-#include "clang_utils.h"
+#include "clang_utils.hpp"
 
 // FIXME: deduplicate code
 namespace pf::meta_gen {
@@ -325,7 +325,9 @@ namespace pf::meta_gen {
                         if (!attributeNamespace.empty()) {
                             result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         } else {
-                            if (const auto iter = std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; }); iter != attributeName.end()) {
+                            if (const auto iter =
+                                        std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; });
+                                iter != attributeName.end()) {
                                 const auto index = std::ranges::distance(attributeName.begin(), iter);
                                 attributeNamespace = attributeName.substr(0, index);
                                 attributeName = attributeName.substr(index + 2);
@@ -347,7 +349,9 @@ namespace pf::meta_gen {
                         if (!attributeNamespace.empty()) {
                             result.emplace_back(attributeNamespace, attributeName, attributeParams);
                         } else {
-                            if (const auto iter = std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; }); iter != attributeName.end()) {
+                            if (const auto iter =
+                                        std::ranges::adjacent_find(attributeName, [](auto v1, auto v2) { return v1 == ':' && v2 == ':'; });
+                                iter != attributeName.end()) {
                                 const auto index = std::ranges::distance(attributeName.begin(), iter);
                                 attributeNamespace = attributeName.substr(0, index);
                                 attributeName = attributeName.substr(index + 2);

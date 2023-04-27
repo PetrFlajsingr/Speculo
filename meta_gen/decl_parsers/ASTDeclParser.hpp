@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../IdGenerator.h"
-#include "../clang_tooling_wrap.h"
-#include "../info_structs.h"
+#include "../IdGenerator.hpp"
+#include "../clang_tooling_wrap.hpp"
+#include "../info_structs.hpp"
 
 #include <memory>
 #include <optional>

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <string>
 #include <filesystem>
+#include <string>
 
 namespace pf::meta_gen {
 
@@ -24,4 +24,4 @@ namespace pf::meta_gen {
         std::string inputIncludePath;
     };
 
-}
+}// namespace pf::meta_gen

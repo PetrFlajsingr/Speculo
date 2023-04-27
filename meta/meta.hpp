@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "Info.h"
-#include "template_for.h"
+#include "Info.hpp"
+#include "template_for.hpp"
 
 #include <concepts>
 #include <optional>
@@ -80,6 +80,12 @@ namespace pf::meta {
             result[i] = Impl::MemberVariables[i] - Impl::MemberFunctions.size();
         }
         return result;
+    }
+    template<Info I>
+        requires Enum<I>
+    [[nodiscard]] consteval details::RangeOf<Info> auto members_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::EnumValues;
     }
     template<Info I>
         requires Record<I>
@@ -547,14 +553,14 @@ namespace pf::meta {
     // TODO make_signed
     // TODO make_unsigned
     template<Info I>
-    requires MemberFunction<I>
+        requires MemberFunction<I>
     consteval Info this_ref_type_of() {
         using Impl = details::StaticInfo<I.implId>;
         return Impl::TypeID;
     }
     // TODO common_type
     template<Info I>
-    requires Enum<I>
+        requires Enum<I>
     consteval Info underlying_type_of() {
         using Impl = details::StaticInfo<I.implId>;
         return details::getTypeId<Impl::UnderlyingType>();
@@ -568,14 +574,28 @@ namespace pf::meta {
         requires Named<I>// TODO: decide which name to actually return here
     [[nodiscard]] consteval std::string_view name_of() {
         using Impl = details::StaticInfo<I.implId>;
-        return Impl::FullName;
+        return static_cast<std::string_view>(Impl::Name);
     }
     template<Info I>
         requires Named<I>// TODO: decide which name to actually return here
     [[nodiscard]] consteval std::string_view display_name_of() {
         using Impl = details::StaticInfo<I.implId>;
-        return Impl::Name;
+        return static_cast<std::string_view>(Impl::FullName);
     }
     // expressions not supported
+
+
+    /**************** EXTENSIONS *******************/
+    template<Info I>
+    [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
+        using impl = details::StaticInfo<I.implId>;
+        if constexpr (requires {
+                          { impl::Attributes } -> details::RangeOf<Attribute>;
+                      }) {
+            return std::span<const Attribute>(impl::Attributes);
+        } else {
+            return std::span<const Attribute>{};
+        }
+    }
 
 }// namespace pf::meta

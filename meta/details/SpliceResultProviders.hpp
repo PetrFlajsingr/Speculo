@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Info.h"
-#include "details/ID.h"
-#include "details/StaticInfo.h"
+#include "Info.hpp"
+#include "details/ID.hpp"
+#include "details/StaticInfo.hpp"
 
 
 #define PF_SPLICE_TYPE(I) ::pf::meta::details::StaticInfo<I.implId>::Type
@@ -28,7 +28,7 @@
 #define PF_SPLICE_CTOR(I)                                                                                                                  \
     []<::pf::meta::Info i>() consteval {                                                                                                   \
         using impl = ::pf::meta::details::StaticInfo<i.implId>;                                                                            \
-        return impl::CtorWrap;                                                                                                            \
+        return impl::CtorWrap;                                                                                                             \
     }.template operator()<I>()
 
 namespace pf::meta::details {

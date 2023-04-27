@@ -2,8 +2,8 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "ASTRecordParser.h"
-#include "../AttributeParser.h"
+#include "ASTRecordParser.hpp"
+#include "../AttributeParser.hpp"
 #include <clang/Sema/Sema.h>
 #include <pf_common/concepts/ranges.h>
 #include <spdlog/spdlog.h>

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Info.h"
-#include "details/ID.h"
-#include "details/StaticInfo.h"
+#include "Info.hpp"
+#include "details/ID.hpp"
+#include "details/StaticInfo.hpp"
 
 #define PF_REFLECT_TYPE(X)                                                                                                                 \
     ::pf::meta::Info { ::pf::meta::details::getTypeId<X>() }
@@ -36,4 +36,4 @@ namespace pf::meta::details {
         return ValueReflectInfoProvider<V>{};
     }
 
-}
+}// namespace pf::meta::details

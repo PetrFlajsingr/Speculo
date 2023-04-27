@@ -2,11 +2,11 @@
 // Created by xflajs00 on 18.03.2023.
 //
 
-#include "ASTParser.h"
-#include "AttributeParser.h"
-#include "IdGenerator.h"
+#include "ASTParser.hpp"
+#include "AttributeParser.hpp"
+#include "IdGenerator.hpp"
 
-#include "decl_parsers/factory.h"
+#include "decl_parsers/factory.hpp"
 
 namespace pf::meta_gen {
 

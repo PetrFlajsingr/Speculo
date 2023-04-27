@@ -11,14 +11,14 @@ namespace pf::meta_gen {
 #pragma once
 
 #include <{file_include}>
-#include <meta/details/array.h>
-#include <meta/details/RangeOf.h>
+#include <meta/details/array.hpp>
+#include <meta/details/RangeOf.hpp>
 #include <type_traits>
-#include <meta/details/StaticInfo.h>
-#include <meta/details/StaticInfo_Wrappers.h>
-#include <meta/details/ID.h>
-#include <meta/Attribute.h>
-#include <meta/Info.h>
+#include <meta/details/StaticInfo.hpp>
+#include <meta/details/StaticInfo_Wrappers.hpp>
+#include <meta/details/ID.hpp>
+#include <meta/Attribute.hpp>
+#include <meta/Info.hpp>
 
 namespace pf::meta::details {{
 )fmt";

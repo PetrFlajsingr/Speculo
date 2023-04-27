@@ -5,7 +5,7 @@
 #ifndef PF_META_CLANG_UTILS_H
 #define PF_META_CLANG_UTILS_H
 
-#include "clang_tooling_wrap.h"
+#include "clang_tooling_wrap.hpp"
 
 #include <pf_common/concepts/ranges.h>
 

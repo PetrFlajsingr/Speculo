@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ASTDeclParser.h"
+#include "ASTDeclParser.hpp"
 
 namespace pf::meta_gen {
     class ASTRecordParser final : public ASTDeclParser {

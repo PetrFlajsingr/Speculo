@@ -2,57 +2,15 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-#include "meta/fundamental_types.meta.h"
+#include "meta/fundamental_types.meta.hpp"
 #include "src/meta/test.hpp"
 #include "meta/meta.hpp"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 #include <vector>
 
-#include "meta/reflect.h"
-#include "meta/template_for.h"
-
-namespace pf::meta {
-    template<Info I>
-    concept Named = requires {
-        { std::string_view{details::StaticInfo<I.implId>::Name} };
-        { std::string_view{details::StaticInfo<I.implId>::FullName} };
-    };
-    template<Info I>
-    concept Enum = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::EnumType;
-
-    template<Info I>
-        requires(Enum<I>)
-    [[nodiscard]] consteval RangeOf<Info> auto members_of() {
-        using impl = details::StaticInfo<I.implId>;
-        return impl::EnumValues;
-    }
-
-    template<Info I>
-        requires(Named<I>)
-    [[nodiscard]] consteval std::string_view name_of() {
-        using impl = details::StaticInfo<I.implId>;
-        return static_cast<std::string_view>(impl::Name);
-    }
-
-    template<Info I>
-    [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
-        using impl = details::StaticInfo<I.implId>;
-        if constexpr (requires {
-                          { impl::Attributes } -> RangeOf<Attribute>;
-                      }) {
-            return std::span<const Attribute>(impl::Attributes);
-        } else {
-            return std::span<const Attribute>{};
-        }
-    }
-
-    template<Info I1, Info I2>
-    [[nodiscard]] consteval bool reflects_same() {
-        return I1.implId == I2.implId;
-    }
-
-}// namespace pf::meta
+#include "meta/reflect.hpp"
+#include "meta/template_for.hpp"
 
 
 template<typename E>
@@ -220,8 +178,8 @@ int main() {
         for (const auto &arg: attr.arguments) { std::cout << arg << std::endl; }
     }
     constexpr auto boolInfo = PF_REFLECT(bool);
-    static_assert(pf::meta::reflects_same<boolInfo, boolInfo>());
-    static_assert(!pf::meta::reflects_same<boolInfo, PF_REFLECT(bool *)>());
+    static_assert(pf::meta::is_same<boolInfo, boolInfo>());
+    static_assert(!pf::meta::is_same<boolInfo, PF_REFLECT(bool *)>());
     [[maybe_unused]] PF_SPLICE(boolInfo) hihi = false;
 
     pf::meta::template_for<pf::meta::members_of<enumInfo>()>(

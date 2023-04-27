@@ -5,8 +5,8 @@
 #ifndef PF_META_DETAILS_STATICINFO_WRAPPERS_H
 #define PF_META_DETAILS_STATICINFO_WRAPPERS_H
 
-#include "StaticInfo.h"
-#include "ID.h"
+#include "ID.hpp"
+#include "StaticInfo.hpp"
 
 namespace pf::meta::details {
     template<ID I, ID ParentID>
@@ -15,8 +15,7 @@ namespace pf::meta::details {
         constexpr static ID TypeID = I;
         constexpr static bool IsConst = true;
         constexpr static auto Name = StringLiteral{"const "} + details::StaticInfo<ParentID>::Name;
-        constexpr static auto FullName =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName;
+        constexpr static auto FullName = StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName;
     };
     template<ID I, ID ParentID>
     struct StaticInfo_LRefWrap : details::StaticInfo<ParentID> {
@@ -32,10 +31,8 @@ namespace pf::meta::details {
         constexpr static ID TypeID = I;
         constexpr static bool IsLvalueReference = true;
         constexpr static bool IsConst = true;
-        constexpr static auto Name =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" &"};
-        constexpr static auto FullName =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" &"};
+        constexpr static auto Name = StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" &"};
+        constexpr static auto FullName = StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" &"};
     };
     template<ID I, ID ParentID>
     struct StaticInfo_RRefWrap : details::StaticInfo<ParentID> {
@@ -59,11 +56,9 @@ namespace pf::meta::details {
         constexpr static ID TypeID = I;
         constexpr static bool IsPtr = true;
         constexpr static bool IsConst = true;
-        constexpr static auto Name =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" *"};
-        constexpr static auto FullName =
-                StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" *"};
+        constexpr static auto Name = StringLiteral{"const "} + details::StaticInfo<ParentID>::Name + StringLiteral{" *"};
+        constexpr static auto FullName = StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" *"};
     };
-}
+}// namespace pf::meta::details
 
-#endif //PF_META_DETAILS_STATICINFO_WRAPPERS_H
+#endif//PF_META_DETAILS_STATICINFO_WRAPPERS_H

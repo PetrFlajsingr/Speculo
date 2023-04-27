@@ -7,10 +7,10 @@
 #include <variant>
 #include <vector>
 
-#include "Config.h"
-#include "IdGenerator.h"
-#include "clang_tooling_wrap.h"
-#include "info_structs.h"
+#include "Config.hpp"
+#include "IdGenerator.hpp"
+#include "clang_tooling_wrap.hpp"
+#include "info_structs.hpp"
 
 namespace pf::meta_gen {
 
