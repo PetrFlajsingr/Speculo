@@ -7,15 +7,15 @@
 
 #include <memory>
 
-#include "ASTParser.h"
+#include "ASTParser.hpp"
 #include "CodeGenWriter.hpp"
-#include "Config.h"
-#include "IdGenerator.h"
-#include "MetaInfoWriter.h"
-#include "clang_tooling_wrap.h"
-#include "info_structs.h"
+#include "Config.hpp"
+#include "IdGenerator.hpp"
+#include "MetaInfoWriter.hpp"
+#include "clang_tooling_wrap.hpp"
+#include "info_structs.hpp"
 
-#include "clang/Frontend/CompilerInstance.h"
+#include <clang/Frontend/CompilerInstance.h>
 
 namespace pf::meta_gen {
 

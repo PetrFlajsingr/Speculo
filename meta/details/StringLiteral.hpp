@@ -61,7 +61,9 @@ namespace pf {
             return result;
         }
 
-        [[nodiscard]] constexpr int compare(string_view_type other) const noexcept { return static_cast<string_view_type>(*this).compare(other); }
+        [[nodiscard]] constexpr int compare(string_view_type other) const noexcept {
+            return static_cast<string_view_type>(*this).compare(other);
+        }
 
         template<size_type N2>
         [[nodiscard]] constexpr BasicStringLiteral<TChar, N + N2 - 1, traits_type> insert(size_type index,
@@ -106,7 +108,9 @@ namespace pf {
         }
 
         [[nodiscard]] constexpr bool ends_with(TChar ch) const noexcept { return static_cast<string_view_type>(*this).ends_with(ch); }
-        [[nodiscard]] constexpr bool ends_with(string_view_type sv) const noexcept { return static_cast<string_view_type>(*this).ends_with(sv); }
+        [[nodiscard]] constexpr bool ends_with(string_view_type sv) const noexcept {
+            return static_cast<string_view_type>(*this).ends_with(sv);
+        }
 
         [[nodiscard]] constexpr bool contains(TChar ch) const noexcept { return find(ch) != npos; }
         [[nodiscard]] constexpr bool contains(string_view_type sv) const noexcept { return find(sv) != npos; }
@@ -214,69 +218,83 @@ namespace pf {
         }
 
         template<size_type N2>
-        [[nodiscard]] constexpr friend auto operator<=>(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend auto operator<=>(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                        const TChar (&rhs)[N2]) noexcept {
             const auto cmp_result = lhs.compare(string_view_type{rhs});
             if (cmp_result < 0) { return std::strong_ordering::less; }
             if (cmp_result > 0) { return std::strong_ordering::greater; }
             return std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator==(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator==(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                       const TChar (&rhs)[N2]) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator!=(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator!=(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                       const TChar (&rhs)[N2]) noexcept {
             return !(lhs == rhs);
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator<(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator<(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                      const TChar (&rhs)[N2]) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::less;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator<=(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator<=(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                       const TChar (&rhs)[N2]) noexcept {
             const auto cmp_result = lhs <=> rhs;
             return cmp_result == std::strong_ordering::less || cmp_result == std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator>(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator>(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                      const TChar (&rhs)[N2]) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::greater;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator>=(const BasicStringLiteral<TChar, N, CharTraits> &lhs, const TChar (&rhs)[N2]) noexcept {
+        [[nodiscard]] constexpr friend bool operator>=(const BasicStringLiteral<TChar, N, CharTraits> &lhs,
+                                                       const TChar (&rhs)[N2]) noexcept {
             const auto cmp_result = lhs <=> rhs;
             return cmp_result == std::strong_ordering::greater || cmp_result == std::strong_ordering::equal;
         }
 
         template<size_type N2>
-        [[nodiscard]] constexpr friend auto operator<=>(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend auto operator<=>(const TChar (&lhs)[N2],
+                                                        const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             const auto cmp_result = rhs.compare(lhs) * -1;
             if (cmp_result < 0) { return std::strong_ordering::less; }
             if (cmp_result > 0) { return std::strong_ordering::greater; }
             return std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator==(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator==(const TChar (&lhs)[N2],
+                                                       const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator!=(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator!=(const TChar (&lhs)[N2],
+                                                       const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             return !(lhs == rhs);
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator<(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator<(const TChar (&lhs)[N2],
+                                                      const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::less;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator<=(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator<=(const TChar (&lhs)[N2],
+                                                       const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             const auto cmp_result = lhs <=> rhs;
             return cmp_result == std::strong_ordering::less || cmp_result == std::strong_ordering::equal;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator>(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator>(const TChar (&lhs)[N2],
+                                                      const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             return (lhs <=> rhs) == std::strong_ordering::greater;
         }
         template<size_type N2>
-        [[nodiscard]] constexpr friend bool operator>=(const TChar (&lhs)[N2], const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
+        [[nodiscard]] constexpr friend bool operator>=(const TChar (&lhs)[N2],
+                                                       const BasicStringLiteral<TChar, N, CharTraits> &rhs) noexcept {
             const auto cmp_result = lhs <=> rhs;
             return cmp_result == std::strong_ordering::greater || cmp_result == std::strong_ordering::equal;
         }
@@ -336,12 +354,12 @@ namespace pf {
 
 // Can't do deduction guides for templated aliases, so it has to be done this way
 #define PF_STRINGLITERAL_SPECIALIZATION(name, char_type)                                                                                   \
-  template<std::size_t N>                                                                                                                  \
-  struct name : BasicStringLiteral<char_type, N> {                                                                                         \
-    using BasicStringLiteral<char_type, N>::BasicStringLiteral;                                                                            \
-  };                                                                                                                                       \
-  template<std::size_t N>                                                                                                                  \
-  name(const char_type(&)[N]) -> name<N - 1>;
+    template<std::size_t N>                                                                                                                \
+    struct name : BasicStringLiteral<char_type, N> {                                                                                       \
+        using BasicStringLiteral<char_type, N>::BasicStringLiteral;                                                                        \
+    };                                                                                                                                     \
+    template<std::size_t N>                                                                                                                \
+    name(const char_type(&)[N]) -> name<N - 1>;
 
     PF_STRINGLITERAL_SPECIALIZATION(StringLiteral, char)
     PF_STRINGLITERAL_SPECIALIZATION(U8StringLiteral, char8_t)
@@ -361,20 +379,20 @@ namespace pf {
 }// namespace pf
 
 #define PF_STRINGLITERAL_HASH(name)                                                                                                        \
-  template<std::size_t N>                                                                                                                  \
-  struct hash<pf::name<N>> {                                                                                                               \
-    constexpr hash() = default;                                                                                                            \
-    constexpr ~hash() = default;                                                                                                           \
-    constexpr hash(const hash &) = default;                                                                                                \
-    constexpr hash(hash &&) noexcept {}                                                                                                    \
-    constexpr hash &operator=(const hash &) = default;                                                                                     \
-    constexpr hash &operator=(hash &&) = default;                                                                                          \
+    template<std::size_t N>                                                                                                                \
+    struct hash<pf::name<N>> {                                                                                                             \
+        constexpr hash() = default;                                                                                                        \
+        constexpr ~hash() = default;                                                                                                       \
+        constexpr hash(const hash &) = default;                                                                                            \
+        constexpr hash(hash &&) noexcept {}                                                                                                \
+        constexpr hash &operator=(const hash &) = default;                                                                                 \
+        constexpr hash &operator=(hash &&) = default;                                                                                      \
                                                                                                                                            \
-    [[nodiscard]] constexpr std::uint64_t operator()(const pf::name<N> &str) const noexcept {                                              \
-      using string_view_type = typename pf::name<N>::string_view_type;                                                                     \
-      return std::hash<string_view_type>{}(static_cast<string_view_type>(str));                                                            \
-    }                                                                                                                                      \
-  }
+        [[nodiscard]] constexpr std::uint64_t operator()(const pf::name<N> &str) const noexcept {                                          \
+            using string_view_type = typename pf::name<N>::string_view_type;                                                               \
+            return std::hash<string_view_type>{}(static_cast<string_view_type>(str));                                                      \
+        }                                                                                                                                  \
+    }
 
 namespace std {
     PF_STRINGLITERAL_HASH(StringLiteral);

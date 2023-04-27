@@ -6,8 +6,8 @@
 
 #include <llvm/Support/raw_ostream.h>
 
-#include "IdGenerator.h"
-#include "info_structs.h"
+#include "IdGenerator.hpp"
+#include "info_structs.hpp"
 #include <pf_common/concepts/ranges.h>
 
 

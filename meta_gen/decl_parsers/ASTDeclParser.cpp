@@ -2,7 +2,7 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "ASTDeclParser.h"
+#include "ASTDeclParser.hpp"
 
 namespace pf::meta_gen {
 

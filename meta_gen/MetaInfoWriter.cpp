@@ -2,23 +2,23 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "MetaInfoWriter.h"
+#include "MetaInfoWriter.hpp"
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 
-#include "src_templates/GetConstantID_template.h"
-#include "src_templates/GetTypeID_template.h"
-#include "src_templates/StaticArgumentInfo_template.h"
-#include "src_templates/StaticBaseInfo_template.h"
-#include "src_templates/StaticConstructorInfo_template.h"
-#include "src_templates/StaticDestructorInfo_template.h"
-#include "src_templates/StaticMemberFunctionInfo_template.h"
-#include "src_templates/StaticMemberVariableInfo_template.h"
-#include "src_templates/StaticStaticFunctionInfo_template.h"
-#include "src_templates/StaticStaticVariableInfo_template.h"
-#include "src_templates/StaticTypeInfo_template.h"
-#include "src_templates/StaticValueInfo_template.h"
+#include "src_templates/GetConstantID_template.hpp"
+#include "src_templates/GetTypeID_template.hpp"
+#include "src_templates/StaticArgumentInfo_template.hpp"
+#include "src_templates/StaticBaseInfo_template.hpp"
+#include "src_templates/StaticConstructorInfo_template.hpp"
+#include "src_templates/StaticDestructorInfo_template.hpp"
+#include "src_templates/StaticMemberFunctionInfo_template.hpp"
+#include "src_templates/StaticMemberVariableInfo_template.hpp"
+#include "src_templates/StaticStaticFunctionInfo_template.hpp"
+#include "src_templates/StaticStaticVariableInfo_template.hpp"
+#include "src_templates/StaticTypeInfo_template.hpp"
+#include "src_templates/StaticValueInfo_template.hpp"
 #include <pf_common/Visitor.h>
 
 namespace pf::meta_gen {

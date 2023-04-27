@@ -1,5 +1,5 @@
-#include <meta/macros.h>
-#include <meta/details/StaticInfo.h>
+#include <meta/macros.hpp>
+#include <meta/details/StaticInfo.hpp>
 #undef PF_META_GENERATED_FILE_ID
 #define PF_META_GENERATED_FILE_ID 1d357157_e406_54f7_8143_c187668705c5
 #define PF_META_GENERATED_9_1d357157_e406_54f7_8143_c187668705c5 friend struct ::pf::meta::details::StaticInfo<::pf::meta::details::ID{0x2f5a3626a1752cfeu, 0xd7cd52d84ba02299u}>;friend struct ::pf::meta::details::StaticInfo<::pf::meta::details::ID{0x3a523ac17eee65cfu, 0x590ed0e3af7dcf9fu}>;

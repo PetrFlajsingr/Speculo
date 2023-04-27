@@ -1,7 +1,7 @@
-#include "meta/Info.h"
-#include "meta/details/array.h"
-#include "meta_gen/IdGenerator.h"
-#include "format.h"
+#include "meta/Info.hpp"
+#include "meta/details/array.hpp"
+#include "meta_gen/IdGenerator.hpp"
+#include "format.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 #include <fmt/format.h>
@@ -126,12 +126,12 @@ int main(int argc, char **argv) {
 
     *outStream << R"(#pragma once
 
-#include <meta/Attribute.h>
-#include <meta/Info.h>
-#include <meta/details/StaticInfo.h>
+#include <meta/Attribute.hpp>
+#include <meta/Info.hpp>
+#include <meta/details/StaticInfo.hpp>
 #include <meta/details/StringLiteral.hpp>
-#include <meta/details/StaticInfo_Wrappers.h>
-#include <meta/details/array.h>
+#include <meta/details/StaticInfo_Wrappers.hpp>
+#include <meta/details/array.hpp>
 
 namespace pf::meta::details {
 

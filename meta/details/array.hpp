@@ -15,4 +15,4 @@ namespace pf::meta::details {
     [[nodiscard]] constexpr std::array<T, sizeof...(Args)> make_array(Args &&...args) {
         return {std::forward<Args>(args)...};
     }
-}// namespace pf
+}// namespace pf::meta::details

@@ -12,6 +12,6 @@ namespace pf::meta::details {
     template<typename...>
     constexpr bool AlwaysFalseT = false;
 
-}
+}// namespace pf::meta::details
 
-#endif //PF_META_DETAILS_META_HELPERS_H
+#endif//PF_META_DETAILS_META_HELPERS_H

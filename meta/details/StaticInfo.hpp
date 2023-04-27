@@ -5,9 +5,9 @@
 #ifndef PF_META_DETAILS_STATICTYPEINFO_H
 #define PF_META_DETAILS_STATICTYPEINFO_H
 
-#include "ID.h"
-#include "meta_helpers.h"
+#include "ID.hpp"
 #include "meta/details/StringLiteral.hpp"
+#include "meta_helpers.hpp"
 
 namespace pf::meta::details {
 

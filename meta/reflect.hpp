@@ -5,11 +5,11 @@
 #ifndef PF_META_REFLECT_H
 #define PF_META_REFLECT_H
 
-#include "Info.h"
-#include "details/ID.h"
+#include "Info.hpp"
+#include "details/ID.hpp"
 #include "details/ReflectInfoProviders.hpp"
 #include "details/SpliceResultProviders.hpp"
-#include "details/StaticInfo.h"
+#include "details/StaticInfo.hpp"
 
 
 #define PF_REFLECT(X) ::pf::meta::details::provideReflectInfo<X>().Result

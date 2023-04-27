@@ -8,9 +8,9 @@
 
 #include <llvm/Support/raw_ostream.h>
 
-#include "info_structs.h"
-#include <pf_common/concepts/ranges.h>
+#include "info_structs.hpp"
 #include <fmt/format.h>
+#include <pf_common/concepts/ranges.h>
 
 namespace pf::meta_gen {
 

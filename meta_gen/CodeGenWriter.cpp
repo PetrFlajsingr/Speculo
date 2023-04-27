@@ -16,8 +16,8 @@ namespace pf::meta_gen {
         const auto fileUUID = uuidGenerator(fileName);
         fileUUIDstr = to_string(fileUUID);
         std::ranges::replace(fileUUIDstr, '-', '_');
-        write("#include <meta/macros.h>\n");
-        write("#include <meta/details/StaticInfo.h>\n");
+        write("#include <meta/macros.hpp>\n");
+        write("#include <meta/details/StaticInfo.hpp>\n");
         write(fmt::format(R"(#undef PF_META_GENERATED_FILE_ID
 #define PF_META_GENERATED_FILE_ID {}
 )",
@@ -35,9 +35,7 @@ namespace pf::meta_gen {
                                std::size_t generatedMacroLineOffset{};
                                if (const auto pos = recordInfo.originalCode.find("PF_META_GENERATED"); pos != std::string::npos) {
                                    for (auto i = 0; i < pos; ++i) {
-                                       if (recordInfo.originalCode[i] == '\n') {
-                                           ++generatedMacroLineOffset;
-                                       }
+                                       if (recordInfo.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
                                    }
                                }
                                generatedMacroLineOffset += recordInfo.sourceLocation.line;
@@ -66,7 +64,8 @@ namespace pf::meta_gen {
                                }
                                if (recordInfo.destructor.access != Access::Public) { appendFriend(recordInfo.destructor.id); }
 
-                               write(fmt::format(friendMacroTemplate, "line"_a = generatedMacroLineOffset, "file_id"_a = fileUUIDstr, "body"_a = macroBody));
+                               write(fmt::format(friendMacroTemplate, "line"_a = generatedMacroLineOffset, "file_id"_a = fileUUIDstr,
+                                                 "body"_a = macroBody));
                                write("\n");
                            },
                            [](auto) { spdlog::error("CodeGenWriter: unimplemented type"); }},

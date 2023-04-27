@@ -1,14 +1,14 @@
-#include "meta/Info.h"
+#include "meta/Info.hpp"
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 
-#include "meta_gen/AttributeParser.h"
-#include "meta_gen/IdGenerator.h"
-#include "meta_gen/clang_tooling_compilationdatabase_wrap.h"
-#include "meta_gen/info_structs.h"
+#include "meta_gen/AttributeParser.hpp"
+#include "meta_gen/IdGenerator.hpp"
+#include "meta_gen/clang_tooling_compilationdatabase_wrap.hpp"
+#include "meta_gen/info_structs.hpp"
 
-#include "format.h"
-#include "meta_gen/AstActions.h"
+#include "format.hpp"
+#include "meta_gen/AstActions.hpp"
 #include <clang/Tooling/CommonOptionsParser.h>
 
 #include <fstream>
@@ -16,7 +16,7 @@
 #include <tl/expected.hpp>
 
 #include "FileLock.hpp"
-#include "meta_gen/Config.h"
+#include "meta_gen/Config.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include <cppcoro/static_thread_pool.hpp>
 #include <cppcoro/sync_wait.hpp>

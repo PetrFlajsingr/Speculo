@@ -2,8 +2,8 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "../AttributeParser.h"
-#include "ASTEnumParser.h"
+#include "../AttributeParser.hpp"
+#include "ASTEnumParser.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -34,7 +34,9 @@ namespace pf::meta_gen {
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
 
-        result.originalCode = clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(enumDecl->getSourceRange()), sourceManager, langOpts).str();
+        result.originalCode =
+                clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(enumDecl->getSourceRange()), sourceManager, langOpts)
+                        .str();
 
 
         result.sourceLocation.line = sourceManager.getPresumedLineNumber(enumDecl->getSourceRange().getBegin());

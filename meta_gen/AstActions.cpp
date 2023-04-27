@@ -2,9 +2,9 @@
 // Created by xflajs00 on 18.03.2023.
 //
 
-#include "AstActions.h"
-#include "ASTParser.h"
-#include "src_templates/MetaFilePrologueEpilogue.h"
+#include "AstActions.hpp"
+#include "ASTParser.hpp"
+#include "src_templates/MetaFilePrologueEpilogue.hpp"
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
 
