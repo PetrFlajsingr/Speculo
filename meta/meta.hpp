@@ -116,8 +116,18 @@ namespace pf::meta {
         using DtorImpl = details::StaticInfo<Impl::Destructor>;
         return DtorImpl::IsVirtual;
     }
-    // TODO is_declared_class
-    // TODO is_declared_struct
+    template<Info I>
+        requires Record<I>
+    [[nodiscard]] consteval bool is_declared_class() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsClass;
+    }
+    template<Info I>
+        requires Record<I>
+    [[nodiscard]] consteval bool is_declared_struct() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsStruct;
+    }
 
     template<Info I>
     [[nodiscard]] consteval bool is_data_member() {

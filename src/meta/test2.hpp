@@ -37,6 +37,8 @@ struct StaticInfo<ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u}> {
     constexpr static auto FullName = StringLiteral{"SimpleStruct"};
 
     constexpr static bool IsUnion = false;
+    constexpr static bool IsClass = false;
+    constexpr static bool IsStruct = true;
     constexpr static bool IsPolymorphic = false;
     constexpr static bool IsAbstract = false;
     constexpr static bool IsFinal = false;

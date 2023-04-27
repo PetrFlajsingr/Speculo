@@ -150,6 +150,8 @@ namespace pf::meta_gen {
 
     struct RecordTypeInfo : TypeInfo {
         bool isUnion;
+        bool isClass;
+        bool isStruct;
         std::vector<Attribute> attributes;
 
         std::vector<BaseClassInfo> baseClasses;

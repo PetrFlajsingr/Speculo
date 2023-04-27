@@ -89,6 +89,8 @@ struct StaticInfo<{type_id}> {{
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
     constexpr static bool IsUnion = {is_union};
+    constexpr static bool IsClass = {is_class};
+    constexpr static bool IsStruct = {is_struct};
     constexpr static bool IsPolymorphic = {is_poly};
     constexpr static bool IsAbstract = {is_abstract};
     constexpr static bool IsFinal = {is_final};

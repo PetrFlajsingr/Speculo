@@ -58,7 +58,6 @@ namespace pf::meta_gen {
 
         RecordTypeInfo result{};
 
-
         result.fullName = recordDecl->getQualifiedNameAsString();
         result.name = recordDecl->getNameAsString();
         result.id = getIdGenerator().generateId(result.fullName);
@@ -98,6 +97,8 @@ namespace pf::meta_gen {
 
         result.attributes = attributeParser.parseRecordAttributes(astContext, *recordDecl);
 
+        result.isClass = recordDecl->isClass();
+        result.isStruct = recordDecl->isStruct();
         result.isUnion = recordDecl->isUnion();
         result.isPolymorphic = recordDecl->isPolymorphic();
         result.isAbstract = recordDecl->isAbstract();
