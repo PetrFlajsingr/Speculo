@@ -28,7 +28,7 @@ namespace pf::meta::details {
 
     template<ID ID>
     struct StaticInfo {
-        static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type");
+        static_assert(AlwaysFalseV<ID>, "Static reflection not generated for type or the required meta file was not included");
     };
 
     constexpr static std::array<std::string_view, 0> EmptyAttributeArgArray{};

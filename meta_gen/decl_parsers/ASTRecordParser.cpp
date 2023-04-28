@@ -243,6 +243,7 @@ namespace pf::meta_gen {
             if (method->isStatic()) {
                 result.staticFunctions.push_back(functionInfo);
             } else {
+                functionInfo.isFinal = method->hasAttr<clang::FinalAttr>();
                 result.memberFunctions.push_back(functionInfo);
             }
         }
@@ -330,6 +331,8 @@ namespace pf::meta_gen {
             result.destructor.isConsteval = destructor->isConsteval();
             result.destructor.isVirtual = destructor->isVirtual();
             result.destructor.isPureVirtual = destructor->isPure();
+            const auto methodDecl = clang::dyn_cast<clang::CXXMethodDecl>(destructor);
+            result.destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
         } else if (recordDecl->hasSimpleDestructor()) {
             result.destructor.fullName = fmt::format("{}::~{}", result.fullName, result.name);
             result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
@@ -342,6 +345,7 @@ namespace pf::meta_gen {
             result.destructor.isConsteval = false;
             result.destructor.isVirtual = false;
             result.destructor.isPureVirtual = false;
+            result.destructor.isFinal = false;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {

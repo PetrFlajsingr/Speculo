@@ -277,7 +277,7 @@ namespace pf::meta_gen {
                               "is_private"_a = recordInfo.destructor.access == Access::Private,
                               "is_constexpr"_a = recordInfo.destructor.isConstexpr, "is_consteval"_a = recordInfo.destructor.isConsteval,
                               "is_virtual"_a = recordInfo.destructor.isVirtual, "is_pure_virtual"_a = recordInfo.destructor.isPureVirtual,
-                              "name"_a = fmt::format("~{}", recordInfo.name)));
+                              "is_final"_a = recordInfo.destructor.isFinal, "name"_a = fmt::format("~{}", recordInfo.name)));
         }
 
         for (const auto &mbrFncInfo: recordInfo.memberFunctions) {
@@ -331,8 +331,9 @@ namespace pf::meta_gen {
                     "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
                     "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval, "is_const"_a = mbrFncInfo.isConst,
                     "is_virtual"_a = mbrFncInfo.isVirtual, "is_pure_virtual"_a = mbrFncInfo.isPureVirtual,
-                    "return_type_id"_a = idToString(mbrFncInfo.returnTypeId), "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments),
-                    "member_type"_a = mbrFncType, "member"_a = mbrFncInfo.fullName));
+                    "is_final"_a = mbrFncInfo.isFinal, "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
+                    "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
+                    "member"_a = mbrFncInfo.fullName));
         }
 
         for (const auto &mbrVarInfo: recordInfo.memberVariables) {

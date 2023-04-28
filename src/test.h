@@ -26,13 +26,15 @@ namespace pf {
         A(int a) : test{a} {}
         A(int sadfsdf, float asdsa) {}
 
+        virtual ~A() final {}
+
         A &operator=(const A &) { return *this; }
         A &operator=(A &&) = delete;
 
 
         [[yeet]] [[maybe_unused]] int c [[cxvxc]];
         [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) [[kjhnn]];
-        [[maybe_unused]] int foo2([[letadlo()]] int dzea2) [[kjhnn]] { [[yeetus]]; }
+        [[maybe_unused]] virtual int foo2([[letadlo()]] int dzea2) [[kjhnn]] final { [[yeetus]]; }
 
         int test{10};
 

@@ -28,6 +28,7 @@ struct StaticInfo<{id}> {{
     constexpr static auto IsConsteval = {is_consteval};
     constexpr static auto IsVirtual = {is_virtual};
     constexpr static auto IsPureVirtual = {is_pure_virtual};
+    constexpr static auto IsFinal = {is_final};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
