@@ -107,6 +107,7 @@ namespace pf::meta_gen {
         bool isConsteval;
         bool isVirtual;
         bool isPureVirtual;
+        bool isFinal;
     };
 
     // TODO: operators separately?
@@ -124,6 +125,7 @@ namespace pf::meta_gen {
         bool isConst;
         bool isVirtual;
         bool isPureVirtual;
+        bool isFinal;
         SourceLocationInfo sourceLocation;
     };
 

@@ -55,8 +55,6 @@ namespace nlohmann {
         return {};
     }
 
-    pf::meta_gen::FileLock lock{databasePath};
-    pf::meta_gen::FileLockGuard guard{lock};
     auto istream = std::ifstream{databasePath};
     if (!istream.is_open()) {
         spdlog::error("Can't open file '{}': {}", databasePath.string(), strerror(errno));
@@ -71,8 +69,6 @@ namespace nlohmann {
 // only pass those parsed by this process
 void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> &newStamps) {
     const auto databasePath = std::filesystem::current_path() / "pf_meta_database.json";
-    pf::meta_gen::FileLock lock{databasePath};
-    pf::meta_gen::FileLockGuard guard{lock};
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
     if (istream.is_open()) { data = nlohmann::json::parse(istream); }

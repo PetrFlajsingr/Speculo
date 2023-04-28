@@ -236,9 +236,14 @@ namespace pf::meta {
     // TODO is_inline_specified
     // TODO is_constexpr
     // TODO is_consteval
-    // TODO is_final
-    // TODO is_defined - probably unsupported
-    // TODO is_complete - probably unsupported
+    template<Info I>
+        requires MemberFunction<I> || Destructor<I> || Record<I>
+    [[nodiscard]] consteval bool is_final() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsFinal;
+    }
+    // TODO is_defined - unsupported
+    // TODO is_complete - unsupported
     // TODO is_namespace - probably unsupported
     template<Info I>
     [[nodiscard]] consteval bool is_enum() {
