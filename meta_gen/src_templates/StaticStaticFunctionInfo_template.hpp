@@ -2,8 +2,7 @@
 // Created by xflajs00 on 27.03.2023.
 //
 
-#ifndef PF_META_GEN_STATICSTATICFUNCTIONINFO_TEMPLATE_H
-#define PF_META_GEN_STATICSTATICFUNCTIONINFO_TEMPLATE_H
+#pragma once
 
 constexpr auto StaticTypeInfoTemplate_StaticFunction = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -26,6 +25,8 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsPrivate = {is_private};
     constexpr static bool IsConstexpr = {is_constexpr};
     constexpr static bool IsConsteval = {is_consteval};
+    constexpr static bool IsInline = {is_inline};
+    constexpr static bool IsInlineSpecified = {is_inline_specified};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -57,6 +58,8 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsPrivate = {is_private};
     constexpr static bool IsConstexpr = {is_constexpr};
     constexpr static bool IsConsteval = {is_consteval};
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = {is_inline_specified};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -68,4 +71,3 @@ struct StaticInfo<{id}> {{
     }};
 )fmt";
 
-#endif//PF_META_GEN_STATICSTATICFUNCTIONINFO_TEMPLATE_H

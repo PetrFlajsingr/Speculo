@@ -154,6 +154,8 @@ struct StaticInfo<ID{0x9653fcd84478bbcau, 0xfa251342884931b0u}> {
     constexpr static auto IsVirtual = false;
     constexpr static auto IsPureVirtual = false;
     constexpr static auto IsFinal = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"~Hoho"};
     constexpr static auto FullName = StringLiteral{"pf::Hoho::~Hoho"};
@@ -237,8 +239,8 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
 template<>
 struct StaticInfo<ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u}> {
     struct details {
-constexpr static auto ArgArray_6501012646009461149 = pf::meta::details::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
-constexpr static auto ArgArray_5347295727022332854 = pf::meta::details::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
+constexpr static auto ArgArray_6132704268799782527 = pf::meta::details::make_array<std::string_view>(R"arg(()()()((())))arg", R"arg([[nodiscard]])arg", R"arg(1ll)arg", R"arg(1.011)arg", R"arg([]{}())arg", R"arg("yeet")arg", R"arg('a')arg", R"arg([][][]:::3214234...[][][][])arg");
+constexpr static auto ArgArray_5886809756711013642 = pf::meta::details::make_array<std::string_view>(R"arg(1ll)arg", R"arg(1.011)arg", R"arg("yeet")arg");
 };
     using Type = pf::SomeEnum;
     constexpr static ID TypeID = ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u};
@@ -247,7 +249,7 @@ constexpr static auto ArgArray_5347295727022332854 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 15;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"operators", std::span<const std::string_view>{details::ArgArray_6501012646009461149}}, Attribute{"hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"operators2", std::span<const std::string_view>{details::ArgArray_5347295727022332854}}, Attribute{"pf::hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"operators", std::span<const std::string_view>{details::ArgArray_6132704268799782527}}, Attribute{"hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"operators2", std::span<const std::string_view>{details::ArgArray_5886809756711013642}}, Attribute{"pf::hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -474,6 +476,8 @@ struct StaticInfo<ID{0xbb5a664b988f77f8u, 0x531e167743e766b6u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B2"};
     constexpr static auto FullName = StringLiteral{"pf::B2::B2"};
@@ -526,6 +530,8 @@ struct StaticInfo<ID{0xee55b15e030f0b51u, 0xb0990502d492e5a3u}> {
     constexpr static bool IsMove = true;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B2"};
     constexpr static auto FullName = StringLiteral{"pf::B2::B2"};
@@ -559,6 +565,8 @@ struct StaticInfo<ID{0xf7527360fc6ada92u, 0xa4133785a1400e82u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B2"};
     constexpr static auto FullName = StringLiteral{"pf::B2::B2"};
@@ -592,6 +600,8 @@ struct StaticInfo<ID{0x75598d2a0e986fadu, 0x24bfa1eb9392f7a5u}> {
     constexpr static auto IsVirtual = false;
     constexpr static auto IsPureVirtual = false;
     constexpr static auto IsFinal = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"~B2"};
     constexpr static auto FullName = StringLiteral{"pf::B2::~B2"};
@@ -640,6 +650,8 @@ struct StaticInfo<ID{0x99580cca89f72044u, 0x584f40bbf7150b4u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"operator="};
     constexpr static auto FullName = StringLiteral{"pf::B2::operator="};
@@ -693,6 +705,8 @@ struct StaticInfo<ID{0x69576a33bcbc4b77u, 0x4121319930da7291u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"operator="};
     constexpr static auto FullName = StringLiteral{"pf::B2::operator="};
@@ -841,6 +855,8 @@ struct StaticInfo<ID{0x775e6404bd915ec5u, 0x87c8ed532da21da5u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B3"};
     constexpr static auto FullName = StringLiteral{"pf::B3::B3"};
@@ -893,6 +909,8 @@ struct StaticInfo<ID{0x459f578dbb543d1u, 0x8a25947060a5b983u}> {
     constexpr static bool IsMove = true;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B3"};
     constexpr static auto FullName = StringLiteral{"pf::B3::B3"};
@@ -926,6 +944,8 @@ struct StaticInfo<ID{0x9158d51e7c91adbbu, 0xcdaeb1cb5d6ea09fu}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"B3"};
     constexpr static auto FullName = StringLiteral{"pf::B3::B3"};
@@ -959,6 +979,8 @@ struct StaticInfo<ID{0x115b1c832b9d7569u, 0x163a50a92d0c318bu}> {
     constexpr static auto IsVirtual = false;
     constexpr static auto IsPureVirtual = false;
     constexpr static auto IsFinal = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"~B3"};
     constexpr static auto FullName = StringLiteral{"pf::B3::~B3"};
@@ -1007,6 +1029,8 @@ struct StaticInfo<ID{0x2f51c76461390f4eu, 0xfec8eb2dbd761c92u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"operator="};
     constexpr static auto FullName = StringLiteral{"pf::B3::operator="};
@@ -1060,6 +1084,8 @@ struct StaticInfo<ID{0x885387cda84d6d70u, 0xf66d08849e9edca8u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"operator="};
     constexpr static auto FullName = StringLiteral{"pf::B3::operator="};
@@ -1255,6 +1281,8 @@ struct StaticInfo<ID{0xf597eea5e1760bfu, 0x797c08db90791d84u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = true;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"A"};
     constexpr static auto FullName = StringLiteral{"pf::A::A"};
@@ -1307,6 +1335,8 @@ struct StaticInfo<ID{0x815407ebc8e88a02u, 0x2149a35bbcc7e2b3u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"A"};
     constexpr static auto FullName = StringLiteral{"pf::A::A"};
@@ -1378,6 +1408,8 @@ struct StaticInfo<ID{0x57555b6607562e41u, 0xa37e35a1094ff4a2u}> {
     constexpr static bool IsMove = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"A"};
     constexpr static auto FullName = StringLiteral{"pf::A::A"};
@@ -1411,6 +1443,8 @@ struct StaticInfo<ID{0x985d28b56ec36af8u, 0x3517760838a68a86u}> {
     constexpr static auto IsVirtual = false;
     constexpr static auto IsPureVirtual = false;
     constexpr static auto IsFinal = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"~A"};
     constexpr static auto FullName = StringLiteral{"pf::A::~A"};
@@ -1459,6 +1493,8 @@ struct StaticInfo<ID{0x225525f0788858deu, 0x9edf3c90fb14daacu}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"operator="};
     constexpr static auto FullName = StringLiteral{"pf::A::operator="};
@@ -1473,7 +1509,7 @@ struct StaticInfo<ID{0x225525f0788858deu, 0x9edf3c90fb14daacu}> {
 template<>
 struct StaticInfo<ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u}> {
     struct details {
-constexpr static auto ArgArray_8893277258603837289 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
+constexpr static auto ArgArray_12181414547763499625 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
 };
     constexpr static ID ArgumentID = ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u};
     constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
@@ -1482,7 +1518,7 @@ constexpr static auto ArgArray_8893277258603837289 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 36;
     constexpr static std::uint64_t SourceColumn = 69;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_8893277258603837289}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_12181414547763499625}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
 
@@ -1513,7 +1549,7 @@ struct StaticInfo<ID{0x505f49fe2f26ad62u, 0x466eafc2e33858a3u}> {
 template<>
 struct StaticInfo<ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}> {
     struct details {
-constexpr static auto ArgArray_3907988417556698585 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
+constexpr static auto ArgArray_15508606940625337194 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
 };
     constexpr static ID FunctionID = ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u};
     constexpr static ID TypeID = ID{0xdc56cd7e6204e1a9u, 0xddca1a3d5e5b2389u};
@@ -1522,7 +1558,7 @@ constexpr static auto ArgArray_3907988417556698585 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 36;
     constexpr static std::uint64_t SourceColumn = 26;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_3907988417556698585}}, Attribute{"yuh", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"yuh2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"kjhnn", std::span<const std::string_view>{EmptyAttributeArgArray}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"maybe_unused", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"letadlo", std::span<const std::string_view>{details::ArgArray_15508606940625337194}}, Attribute{"yuh", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"yuh2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"kjhnn", std::span<const std::string_view>{EmptyAttributeArgArray}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::MemberFunction;
 
@@ -1535,6 +1571,8 @@ constexpr static auto ArgArray_3907988417556698585 = pf::meta::details::make_arr
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = true;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"foo"};
     constexpr static auto FullName = StringLiteral{"pf::A::foo"};
@@ -1588,6 +1626,8 @@ struct StaticInfo<ID{0xb651642ac8c5f237u, 0xfe0f1011e8f1b95u}> {
     constexpr static auto IsFinal = true;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"foo2"};
     constexpr static auto FullName = StringLiteral{"pf::A::foo2"};
@@ -1622,6 +1662,8 @@ struct StaticInfo<ID{0x9f5d7b21263d723fu, 0xc090822c6cd77cb1u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"letadlo"};
     constexpr static auto FullName = StringLiteral{"pf::A::letadlo"};
@@ -1656,6 +1698,8 @@ struct StaticInfo<ID{0xb151275a6f2b5b4bu, 0x932b3500b737d4a6u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = true;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"letadlo2"};
     constexpr static auto FullName = StringLiteral{"pf::A::letadlo2"};
@@ -1709,6 +1753,8 @@ struct StaticInfo<ID{0x3d55f23651de9cbcu, 0x3ec37599fa78fcb3u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"letadlo3"};
     constexpr static auto FullName = StringLiteral{"pf::A::letadlo3"};
@@ -1869,6 +1915,8 @@ struct StaticInfo<ID{0x645f1db97c2f0115u, 0xb3e5baae4a842bb6u}> {
     constexpr static bool IsPrivate = true;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"statFoo"};
     constexpr static auto FullName = StringLiteral{"pf::A::statFoo"};
@@ -1898,6 +1946,8 @@ struct StaticInfo<ID{0x735d748eea9251efu, 0xe50efb391449b093u}> {
     constexpr static bool IsProtected = false;
     constexpr static bool IsPrivate = false;
     constexpr static bool IsConstexpr = true;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"constexpr_test"};
     constexpr static auto FullName = StringLiteral{"pf::A::constexpr_test"};
@@ -1924,6 +1974,8 @@ struct StaticInfo<ID{0x5353cb42e1a5c7a7u, 0x962a030897c298a4u}> {
     constexpr static bool IsProtected = false;
     constexpr static bool IsPrivate = true;
     constexpr static bool IsConstexpr = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = true;
 
     constexpr static auto Name = StringLiteral{"statValue"};
     constexpr static auto FullName = StringLiteral{"pf::A::statValue"};

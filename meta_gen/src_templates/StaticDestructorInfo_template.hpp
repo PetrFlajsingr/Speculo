@@ -2,8 +2,7 @@
 // Created by xflajs00 on 27.03.2023.
 //
 
-#ifndef PF_META_GEN_STATICDESTRUCTORINFO_TEMPLATE_H
-#define PF_META_GEN_STATICDESTRUCTORINFO_TEMPLATE_H
+#pragma once
 
 constexpr auto StaticTypeInfoTemplate_Destructor = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -29,10 +28,11 @@ struct StaticInfo<{id}> {{
     constexpr static auto IsVirtual = {is_virtual};
     constexpr static auto IsPureVirtual = {is_pure_virtual};
     constexpr static auto IsFinal = {is_final};
+    constexpr static bool IsInline = {is_inline};
+    constexpr static bool IsInlineSpecified = {is_inline_specified};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
     }};
 )fmt";
 
-#endif//PF_META_GEN_STATICDESTRUCTORINFO_TEMPLATE_H

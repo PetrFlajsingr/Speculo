@@ -2,8 +2,7 @@
 // Created by xflajs00 on 17.03.2023.
 //
 
-#ifndef PF_META_GEN_STATICTYPEINFO_TEMPLATE_H
-#define PF_META_GEN_STATICTYPEINFO_TEMPLATE_H
+#pragma once
 
 namespace pf::meta_gen {
 
@@ -133,4 +132,3 @@ struct StaticInfo<{const_ptr_type_id}>
 
 }// namespace pf::meta_gen
 
-#endif//PF_META_GEN_STATICTYPEINFO_TEMPLATE_H

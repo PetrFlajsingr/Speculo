@@ -252,7 +252,8 @@ namespace pf::meta_gen {
                               "is_copy"_a = ctorInfo.isCopy, "is_move"_a = ctorInfo.isMove, "name"_a = recordInfo.name,
                               "is_constexpr"_a = ctorInfo.isConstexpr, "is_consteval"_a = ctorInfo.isConsteval,
                               "arguments"_a = idsToStringMakeArray(ctorInfo.arguments), "ctor_wrap_lambda"_a = wrapLambdaStr,
-                              "new_wrap_lambda"_a = newLambdaStr));
+                              "new_wrap_lambda"_a = newLambdaStr, "is_inline"_a = ctorInfo.isInline,
+                              "is_inline_specified"_a = ctorInfo.isInlineSpecified));
         }
 
         {
@@ -269,17 +270,18 @@ namespace pf::meta_gen {
             }
             const auto attributesStr = StringifyAttributes(recordInfo.destructor.attributes, argsArrayNames);
 
-            write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = recordInfo.destructor.fullName,
-                              "id"_a = idToString(recordInfo.destructor.id), "details"_a = createDetailsStruct(detailsContents),
-                              "type_id"_a = idToString(recordInfo.id), "source_file"_a = recordInfo.destructor.sourceLocation.filename,
-                              "source_line"_a = recordInfo.destructor.sourceLocation.line,
-                              "source_column"_a = recordInfo.destructor.sourceLocation.column, "attributes"_a = attributesStr,
-                              "is_public"_a = recordInfo.destructor.access == Access::Public,
-                              "is_protected"_a = recordInfo.destructor.access == Access::Protected,
-                              "is_private"_a = recordInfo.destructor.access == Access::Private,
-                              "is_constexpr"_a = recordInfo.destructor.isConstexpr, "is_consteval"_a = recordInfo.destructor.isConsteval,
-                              "is_virtual"_a = recordInfo.destructor.isVirtual, "is_pure_virtual"_a = recordInfo.destructor.isPureVirtual,
-                              "is_final"_a = recordInfo.destructor.isFinal, "name"_a = fmt::format("~{}", recordInfo.name)));
+            const auto &destructor = recordInfo.destructor;
+            write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = destructor.fullName, "id"_a = idToString(destructor.id),
+                              "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
+                              "source_file"_a = destructor.sourceLocation.filename, "source_line"_a = destructor.sourceLocation.line,
+                              "source_column"_a = destructor.sourceLocation.column, "attributes"_a = attributesStr,
+                              "is_public"_a = destructor.access == Access::Public,
+                              "is_protected"_a = destructor.access == Access::Protected,
+                              "is_private"_a = destructor.access == Access::Private, "is_constexpr"_a = destructor.isConstexpr,
+                              "is_consteval"_a = destructor.isConsteval, "is_virtual"_a = destructor.isVirtual,
+                              "is_pure_virtual"_a = destructor.isPureVirtual, "is_final"_a = destructor.isFinal,
+                              "name"_a = fmt::format("~{}", recordInfo.name), "is_inline"_a = destructor.isInline,
+                              "is_inline_specified"_a = destructor.isInlineSpecified));
         }
 
         for (const auto &mbrFncInfo: recordInfo.memberFunctions) {
@@ -363,7 +365,7 @@ namespace pf::meta_gen {
                                   "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
                                   "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "consteval_wrap"_a = constevalWrapStr,
-                                  "member"_a = mbrFncInfo.fullName));
+                                  "member"_a = mbrFncInfo.fullName, "is_inline_specified"_a = mbrFncInfo.isInlineSpecified));
             } else {
                 const auto mbrFncType =
                         fmt::format("{return_type}({type}::*MemberPtr)({arguments})", "return_type"_a = mbrFncInfo.returnTypeName,
@@ -380,7 +382,8 @@ namespace pf::meta_gen {
                                   "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
                                   "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
-                                  "member"_a = mbrFncInfo.fullName));
+                                  "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
+                                  "is_inline_specified"_a = mbrFncInfo.isInlineSpecified));
             }
         }
 
@@ -482,7 +485,8 @@ namespace pf::meta_gen {
                                   "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
                                   "return_type_id"_a = idToString(statFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
-                                  "member"_a = statFncInfo.fullName, "consteval_wrap"_a = constevalWrapStr));
+                                  "member"_a = statFncInfo.fullName, "consteval_wrap"_a = constevalWrapStr,
+                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified));
             } else {
                 write(fmt::format(StaticTypeInfoTemplate_StaticFunction, "full_name"_a = statFncInfo.fullName,
                                   "id"_a = idToString(statFncInfo.id), "details"_a = createDetailsStruct(detailsContents),
@@ -494,7 +498,8 @@ namespace pf::meta_gen {
                                   "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
                                   "return_type_id"_a = idToString(statFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
-                                  "member"_a = statFncInfo.fullName));
+                                  "member"_a = statFncInfo.fullName, "is_inline"_a = statFncInfo.isInline,
+                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified));
             }
         }
 
@@ -520,7 +525,8 @@ namespace pf::meta_gen {
                               "attributes"_a = attributesStr, "is_public"_a = statVarInfo.access == Access::Public,
                               "is_protected"_a = statVarInfo.access == Access::Protected, "is_constexpr"_a = statVarInfo.isConstexpr,
                               "is_private"_a = statVarInfo.access == Access::Private, "name"_a = statVarInfo.name,
-                              "member_type"_a = statVarType, "member"_a = statVarInfo.fullName));
+                              "member_type"_a = statVarType, "member"_a = statVarInfo.fullName, "is_inline"_a = statVarInfo.isInline,
+                              "is_inline_specified"_a = statVarInfo.isInlineSpecified));
         }
     }
 

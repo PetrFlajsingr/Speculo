@@ -132,6 +132,8 @@ struct StaticInfo<ID{0x9959c038d505396du, 0x313031533c943cb1u}> {
     constexpr static auto IsVirtual = false;
     constexpr static auto IsPureVirtual = false;
     constexpr static auto IsFinal = false;
+    constexpr static bool IsInline = false;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"~SimpleStruct"};
     constexpr static auto FullName = StringLiteral{"SimpleStruct::~SimpleStruct"};
@@ -161,6 +163,8 @@ struct StaticInfo<ID{0x23561358310a0cbeu, 0xebb11a197749f289u}> {
     constexpr static auto IsFinal = false;
     constexpr static bool IsConstexpr = false;
     constexpr static bool IsConsteval = false;
+    constexpr static bool IsInline = true;
+    constexpr static bool IsInlineSpecified = false;
 
     constexpr static auto Name = StringLiteral{"footadlo"};
     constexpr static auto FullName = StringLiteral{"SimpleStruct::footadlo"};
