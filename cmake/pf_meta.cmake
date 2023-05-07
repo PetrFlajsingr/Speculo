@@ -23,9 +23,9 @@ function(pf_meta_create_config)
 
     get_target_property(INCLUDES ${_args_TARGET} INCLUDE_DIRECTORIES)
 
-    foreach(include ${INCLUDES})
+    foreach (include ${INCLUDES})
         list(APPEND INCLUDE_ARGS "${include}")
-    endforeach()
+    endforeach ()
 
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
@@ -46,20 +46,29 @@ endfunction()
 #
 # Arguments:
 #   FORMAT - format output
+#   FORCE_REGEN - force regeneration even if the files have not changed
 #   TARGET - target to generate for
 function(pf_meta_run_gen)
-    set(options FORMAT)
+    set(options FORMAT FORCE_REGEN)
     set(oneValueArgs TARGET)
     set(multiValueArgs)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
+
+    if (DEFINED _args_FORMAT)
+        set(formatArg --format-output)
+    endif()
+    if (DEFINED _args_FORCE_REGEN)
+        set(forceArg --force)
+    endif()
 
     #pf_meta_check_fnc_arg_provided("TARGET")
     #pf_meta_check_fnc_arg_provided("HEADERS")
     #pf_meta_check_fnc_arg_provided("FLAGS")
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
-            ${PF_META_GEN_DIR}/pf_meta_gen.exe --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json" --ignore-includes $<$<BOOL:${_args_FORMAT}>:--format-output>)
+            ${PF_META_GEN_DIR}/pf_meta_gen.exe --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
+            --ignore-includes ${formatArg} ${forceArg})
 
     add_dependencies(meta_test meta_test_generate_meta)
 endfunction()
@@ -68,11 +77,12 @@ endfunction()
 #
 # Arguments:
 #   FORMAT - format output
+#   FORCE_REGEN - force regeneration even if the files have not changed
 #   TARGET - target to generate for
 #   FLAGS - clang compiler flags
 #   HEADER - files to generate for
 function(pf_meta_register)
-    set(options FORMAT)
+    set(options FORMAT FORCE_REGEN)
     set(oneValueArgs TARGET)
     set(multiValueArgs FLAGS HEADERS)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
@@ -84,5 +94,5 @@ function(pf_meta_register)
             HEADERS ${_args_HEADERS}
     )
 
-    pf_meta_run_gen(TARGET ${_args_TARGET} $<$<BOOL:${_args_FORMAT}>:FORMAT>)
+    pf_meta_run_gen(TARGET ${_args_TARGET} $<$<BOOL:${_args_FORMAT}>:FORMAT> $<$<BOOL:${_args_FORCE_REGEN}>:FORCE_REGEN>)
 endfunction()

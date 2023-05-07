@@ -24,6 +24,7 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsPublic = {is_public};
     constexpr static bool IsProtected = {is_protected};
     constexpr static bool IsPrivate = {is_private};
+    constexpr static bool IsConstexpr = {is_constexpr};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};

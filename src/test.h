@@ -23,30 +23,33 @@ namespace pf {
     struct [[first]] [[second, third]] A : B1, B2, private B3 {
         PF_META_GENERATED();
 
+        consteval A() : test{0} {}
         A(int a) : test{a} {}
         A(int sadfsdf, float asdsa) {}
 
-        virtual ~A() final {}
+        constexpr ~A() {}
 
         A &operator=(const A &) { return *this; }
         A &operator=(A &&) = delete;
 
 
-        [[yeet]] [[maybe_unused]] int c [[cxvxc]];
-        [[maybe_unused]] int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) [[kjhnn]];
-        [[maybe_unused]] virtual int foo2([[letadlo()]] int dzea2) [[kjhnn]] final { [[yeetus]]; }
+        [[maybe_unused]] consteval int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
+            return test +  dzea + A;
+        }
+        [[maybe_unused]] virtual int foo2([[letadlo()]] int dzea2) [[kjhnn]] final { [[yeetus]]; return 0; }
 
         int test{10};
+        constexpr static auto constexpr_test = 123;
 
     private:
         int letadlo() { return test; }
-        void letadlo2() {}
+        constexpr void letadlo2() {}
         void letadlo3(int asdasdas) {}
 
-        int privateVar;
-        int privateVar2;
-        int privateVar3;
-        int privateVar4;
+        int privateVar{};
+        int privateVar2{};
+        int privateVar3{};
+        int privateVar4{};
 
         static int statFoo() { return 4324; }
         inline static int statValue = 19;

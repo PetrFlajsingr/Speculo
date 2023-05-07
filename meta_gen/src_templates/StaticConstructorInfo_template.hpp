@@ -27,6 +27,8 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsExplicit = {is_explicit};
     constexpr static bool IsCopy = {is_copy};
     constexpr static bool IsMove = {is_move};
+    constexpr static bool IsConstexpr = {is_constexpr};
+    constexpr static bool IsConsteval = {is_consteval};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -34,7 +36,6 @@ struct StaticInfo<{id}> {{
     constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>({arguments});
 
     constexpr static auto CtorWrap = {ctor_wrap_lambda};
-    constexpr static auto PlacementNewCtorWrap = {placement_new_wrap_lambda};
     constexpr static auto NewCtorWrap = {new_wrap_lambda};
     }};
 )fmt";
