@@ -147,6 +147,8 @@ namespace pf::meta_gen {
                     variableInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(var->getSourceRange().getBegin());
                     variableInfo.sourceLocation.filename = sourceManager.getFilename(var->getSourceRange().getBegin());
 
+                    variableInfo.isConstexpr = var->isConstexpr();
+
                     result.staticVariables.push_back(variableInfo);
                 }
             }

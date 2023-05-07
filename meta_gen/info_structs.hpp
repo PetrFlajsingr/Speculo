@@ -137,7 +137,8 @@ namespace pf::meta_gen {
         std::string typeName;
         std::vector<Attribute> attributes;
         Access access;
-        bool isMutable;
+        bool isMutable;  // only for members
+        bool isConstexpr;// only for statics
         SourceLocationInfo sourceLocation;
     };
 

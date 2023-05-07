@@ -187,10 +187,13 @@ int main() {
     for (const auto v: getEnumValues<pf::SomeEnum>()) { std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl; }
 
     constexpr auto AINFO = PF_REFLECT(pf::A);
+    constexpr pf::A cA = pf::A();
+    using ImplFoo = pf::meta::details::StaticInfo<pf::meta::details::ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}>;
+
 
     constexpr auto ctors = getConstructors<AINFO>();
 
-    auto dfsds = PF_SPLICE(ctors[0])(131);
+    auto dfsds = PF_SPLICE(ctors[1])(131);
     constexpr auto mbrInfo = functionByName<AINFO>("letadlo");
     if (!mbrInfo.has_value()) {
         std::cout << "Function not found" << std::endl;

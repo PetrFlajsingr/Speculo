@@ -36,11 +36,15 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 add_subdirectory(third_party/cppcoro)
 
-add_executable(pf_meta_gen main.cpp meta_gen/AttributeParser.cpp meta_gen/AstActions.cpp meta_gen/ASTParser.cpp
-        meta_gen/MetaInfoWriter.cpp meta_gen/decl_parsers/ASTDeclParser.cpp meta_gen/decl_parsers/ASTDeclParser.h
-        meta_gen/decl_parsers/ASTEnumDeclParser.cpp meta_gen/decl_parsers/ASTEnumParser.h
-        meta_gen/decl_parsers/ASTRecordParser.cpp meta_gen/decl_parsers/ASTRecordParser.h
-        meta_gen/decl_parsers/factory.cpp meta_gen/decl_parsers/factory.h
+add_executable(pf_meta_gen main.cpp
+        meta_gen/AttributeParser.cpp
+        meta_gen/AstActions.cpp
+        meta_gen/ASTParser.cpp
+        meta_gen/MetaInfoWriter.cpp
+        meta_gen/decl_parsers/ASTDeclParser.cpp
+        meta_gen/decl_parsers/ASTEnumDeclParser.cpp
+        meta_gen/decl_parsers/ASTRecordParser.cpp
+        meta_gen/decl_parsers/factory.cpp
         meta_gen/CodeGenWriter.cpp)
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 add_executable(meta_test main_test.cpp)
@@ -75,7 +79,7 @@ target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_options(meta_test PRIVATE ${test_flags})
-
+add_dependencies(meta_test pf_meta_gen)
 
 
 # we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
@@ -88,7 +92,7 @@ pf_meta_register(
         HEADERS src/test.h src/test2.hpp
         FORMAT
 )
-
+add_dependencies(meta_test_generate_meta pf_meta_gen)
 
 
 #find_package(Python3 REQUIRED COMPONENTS Interpreter)
