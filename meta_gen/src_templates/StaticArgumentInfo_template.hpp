@@ -2,8 +2,7 @@
 // Created by xflajs00 on 27.03.2023.
 //
 
-#ifndef PF_META_GEN_STATICARGUMENTINFO_TEMPLATE_H
-#define PF_META_GEN_STATICARGUMENTINFO_TEMPLATE_H
+#pragma once
 
 constexpr auto StaticTypeInfoTemplate_Argument = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -26,4 +25,3 @@ struct StaticInfo<{id}> {{
     }};
 )fmt";
 
-#endif//PF_META_GEN_STATICARGUMENTINFO_TEMPLATE_H

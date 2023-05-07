@@ -232,10 +232,30 @@ namespace pf::meta {
     // TODO is_externally_linked
     // TODO is_internally_linked
     // TODO is_extern_specified
-    // TODO is_inline
-    // TODO is_inline_specified
-    // TODO is_constexpr
-    // TODO is_consteval
+    template<Info I>
+        requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I>
+    [[nodiscard]] consteval bool is_inline() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsInline;
+    }
+    template<Info I>
+        requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I>
+    [[nodiscard]] consteval bool is_inline_specified() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsInlineSpecified;
+    }
+    template<Info I>
+        requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I> || MemberVariable<I>
+    [[nodiscard]] consteval bool is_constexpr() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsConstexpr;
+    }
+    template<Info I>
+        requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I> || MemberVariable<I>
+    [[nodiscard]] consteval bool is_consteval() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsConsteval;
+    }
     template<Info I>
         requires MemberFunction<I> || Destructor<I> || Record<I>
     [[nodiscard]] consteval bool is_final() {

@@ -148,7 +148,8 @@ namespace pf::meta_gen {
                     variableInfo.sourceLocation.filename = sourceManager.getFilename(var->getSourceRange().getBegin());
 
                     variableInfo.isConstexpr = var->isConstexpr();
-
+                    variableInfo.isInline = var->isInlineSpecified();
+                    variableInfo.isInlineSpecified = var->isInlineSpecified();
                     result.staticVariables.push_back(variableInfo);
                 }
             }
@@ -171,6 +172,8 @@ namespace pf::meta_gen {
             FunctionInfo functionInfo;
             functionInfo.name = method->getNameAsString();
             functionInfo.fullName = method->getQualifiedNameAsString();
+            functionInfo.isInline = method->hasInlineBody();
+            functionInfo.isInlineSpecified = method->isInlineSpecified();
 
             if (method->isDeleted() || method->isInvalidDecl()) { continue; }
             if (method->isCopyAssignmentOperator() && method->isImplicit()) {
@@ -256,8 +259,8 @@ namespace pf::meta_gen {
             if (ctor->isCopyConstructor() && ctor->isImplicit()) {
                 // Class has user declared move ctor or assign.
                 if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
-                // Class has non static const member.
-                // Class has non static reference member.
+                // Class has non-static const member.
+                // Class has non-static reference member.
                 if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
                         return field->getType().isConstQualified() || field->getType()->isReferenceType();
                     })) {
@@ -308,6 +311,8 @@ namespace pf::meta_gen {
             constructorInfo.isCopy = ctor->isCopyConstructor();
             constructorInfo.isMove = ctor->isMoveConstructor();
             constructorInfo.attributes = attributeParser.parseConstructorAttributes(astContext, *ctor);
+            constructorInfo.isInline = ctor->hasInlineBody();
+            constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
 
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
@@ -335,6 +340,8 @@ namespace pf::meta_gen {
             result.destructor.isPureVirtual = destructor->isPure();
             const auto methodDecl = clang::dyn_cast<clang::CXXMethodDecl>(destructor);
             result.destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
+            result.destructor.isInline = destructor->hasInlineBody();
+            result.destructor.isInlineSpecified = destructor->isInlineSpecified();
         } else if (recordDecl->hasSimpleDestructor()) {
             result.destructor.fullName = fmt::format("{}::~{}", result.fullName, result.name);
             result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
@@ -348,6 +355,7 @@ namespace pf::meta_gen {
             result.destructor.isVirtual = false;
             result.destructor.isPureVirtual = false;
             result.destructor.isFinal = false;
+            result.destructor.isInline = false;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {

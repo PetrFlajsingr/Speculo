@@ -95,6 +95,8 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
         bool isCopy;
         bool isMove;
+        bool isInline;
+        bool isInlineSpecified;
     };
 
     struct DestructorInfo {
@@ -108,6 +110,8 @@ namespace pf::meta_gen {
         bool isVirtual;
         bool isPureVirtual;
         bool isFinal;
+        bool isInline;
+        bool isInlineSpecified;
     };
 
     // TODO: operators separately?
@@ -127,6 +131,8 @@ namespace pf::meta_gen {
         bool isPureVirtual;
         bool isFinal;
         SourceLocationInfo sourceLocation;
+        bool isInline;
+        bool isInlineSpecified;
     };
 
     struct VariableInfo {
@@ -140,6 +146,8 @@ namespace pf::meta_gen {
         bool isMutable;  // only for members
         bool isConstexpr;// only for statics
         SourceLocationInfo sourceLocation;
+        bool isInline;         // only for statics
+        bool isInlineSpecified;// only for statics
     };
 
     struct BaseClassInfo {

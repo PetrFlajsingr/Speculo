@@ -2,8 +2,7 @@
 // Created by xflajs00 on 27.03.2023.
 //
 
-#ifndef PF_META_GEN_STATICMEMBERVARIABLEINFO_TEMPLATE_H
-#define PF_META_GEN_STATICMEMBERVARIABLEINFO_TEMPLATE_H
+#pragma once
 
 constexpr auto StaticTypeInfoTemplate_MemberVariable = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -32,5 +31,3 @@ struct StaticInfo<{id}> {{
     constexpr static {member_type} = &{member};
     }};
 )fmt";
-
-#endif//PF_META_GEN_STATICMEMBERVARIABLEINFO_TEMPLATE_H
