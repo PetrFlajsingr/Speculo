@@ -15,8 +15,7 @@
 #include <nlohmann/json.hpp>
 #include <tl/expected.hpp>
 
-#include "FileLock.hpp"
-#include "meta_gen/Config.hpp"
+#include "meta_gen/SourceConfig.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include <cppcoro/static_thread_pool.hpp>
 #include <cppcoro/sync_wait.hpp>
@@ -48,8 +47,9 @@ namespace nlohmann {
     };
 }// namespace nlohmann
 
-[[nodiscard]] std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> loadTimestampDatabase() {
-    const auto databasePath = std::filesystem::current_path() / "pf_meta_database.json";
+[[nodiscard]] std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>>
+loadTimestampDatabase(std::string_view projectName) {
+    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
     if (!std::filesystem::exists(databasePath)) {
         spdlog::info("Database file not found at '{}'", databasePath.string());
         return {};
@@ -67,8 +67,9 @@ namespace nlohmann {
     return result;
 }
 // only pass those parsed by this process
-void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> &newStamps) {
-    const auto databasePath = std::filesystem::current_path() / "pf_meta_database.json";
+void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> &newStamps,
+                             std::string_view projectName) {
+    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
     if (istream.is_open()) { data = nlohmann::json::parse(istream); }
@@ -84,15 +85,16 @@ void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::
 }
 
 
-[[nodiscard]] std::optional<std::vector<pf::meta_gen::Config>> createConfigs(const std::filesystem::path &configPath) {
+[[nodiscard]] std::optional<pf::meta_gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
     std::ifstream configFile{configPath};
     if (!configFile.is_open()) {
         spdlog::error("Can't open file '{}'", configPath.string());
         return std::nullopt;
     }
+    pf::meta_gen::ProjectConfig result{};
     auto data = nlohmann::json::parse(configFile);
 
-    std::vector<pf::meta_gen::Config> result{};
+    result.name = data["project"];
     for (const auto &input: data["header_paths"]) {
         // TODO: multiple input files
         auto inputFile = std::filesystem::path{std::string{input}};
@@ -128,15 +130,15 @@ void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::
             if (!flags.back().starts_with('-')) { flags.back() = fmt::format("-{}", flags.back()); }
         }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
-        result.push_back({.inputSource = inputFile,
-                          .outputMetaHeader = metaHeader,
-                          .outputCodegenHeader = generatedHeader,
-                          .outputCodegenSource = generatedSource,
-                          .projectRootDir = projectRoot,
-                          .ignoreIncludes = IgnoreIncludes,
-                          .formatOutput = FormatOutput,
-                          .compilerFlags = std::move(flags),
-                          .inputIncludePath = inputFileIncludePath.string()});
+        result.sourceConfigs.push_back({.inputSource = inputFile,
+                                        .outputMetaHeader = metaHeader,
+                                        .outputCodegenHeader = generatedHeader,
+                                        .outputCodegenSource = generatedSource,
+                                        .projectRootDir = projectRoot,
+                                        .ignoreIncludes = IgnoreIncludes,
+                                        .formatOutput = FormatOutput,
+                                        .compilerFlags = std::move(flags),
+                                        .inputIncludePath = inputFileIncludePath.string()});
     }
     return result;
 }
@@ -152,7 +154,7 @@ int main(int argc, const char **argv) {
     if (!configsOpt.has_value()) { return 0; }
     const auto configs = std::move(*configsOpt);
 
-    const auto timestampDB = loadTimestampDatabase();
+    const auto timestampDB = loadTimestampDatabase(configs.name);
 
     cppcoro::static_thread_pool threadPool;
 
@@ -167,7 +169,7 @@ int main(int argc, const char **argv) {
     };
 
     const auto generateMetaForSource =
-            [&timestampDB, &threadPool](pf::meta_gen::Config config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
+            [&timestampDB, &threadPool](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
         co_await threadPool.schedule();
 
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
@@ -212,7 +214,7 @@ int main(int argc, const char **argv) {
     };
 
     std::vector<cppcoro::task<tl::expected<ParseResult, ParseFailure>>> tasks;
-    std::ranges::for_each(configs, [&](const pf::meta_gen::Config &config) { tasks.emplace_back(generateMetaForSource(config)); });
+    std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { tasks.emplace_back(generateMetaForSource(config)); });
 
     std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> newTimestamps;
     const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
@@ -223,7 +225,7 @@ int main(int argc, const char **argv) {
             newTimestamps[v->inPath.string()] = v->stamp;
         }
     });
-    updateTimestampDatabase(newTimestamps);
+    updateTimestampDatabase(newTimestamps, configs.name);
 
 
     return 0;

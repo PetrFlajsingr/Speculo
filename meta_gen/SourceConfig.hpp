@@ -11,7 +11,7 @@
 
 namespace pf::meta_gen {
 
-    struct Config {
+    struct SourceConfig {
         std::filesystem::path inputSource;
         std::filesystem::path outputMetaHeader;
         std::filesystem::path outputCodegenHeader;
@@ -24,4 +24,8 @@ namespace pf::meta_gen {
         std::string inputIncludePath;
     };
 
+    struct ProjectConfig {
+        std::string name;
+        std::vector<SourceConfig> sourceConfigs;
+    };
 }// namespace pf::meta_gen
