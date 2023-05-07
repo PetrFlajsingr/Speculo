@@ -146,8 +146,10 @@ namespace pf::meta_gen {
         bool isMutable;  // only for members
         bool isConstexpr;// only for statics
         SourceLocationInfo sourceLocation;
-        bool isInline;         // only for statics
-        bool isInlineSpecified;// only for statics
+        bool isInline;           // only for statics
+        bool isInlineSpecified;  // only for statics
+        bool isBitfield;         // only for members
+        std::size_t bitfieldSize;// only for members
     };
 
     struct BaseClassInfo {

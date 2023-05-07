@@ -55,10 +55,10 @@ function(pf_meta_run_gen)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
-    if (DEFINED _args_FORMAT)
+    if (_args_FORMAT)
         set(formatArg --format-output)
     endif()
-    if (DEFINED _args_FORCE_REGEN)
+    if (_args_FORCE_REGEN)
         set(forceArg --force)
     endif()
 
@@ -93,6 +93,12 @@ function(pf_meta_register)
             FLAGS ${_args_FLAGS}
             HEADERS ${_args_HEADERS}
     )
+    if (_args_FORMAT)
+        set(formatArg --format-output)
+    endif()
+    if (_args_FORCE_REGEN)
+        set(forceArg --force)
+    endif()
 
-    pf_meta_run_gen(TARGET ${_args_TARGET} $<$<BOOL:${_args_FORMAT}>:FORMAT> $<$<BOOL:${_args_FORCE_REGEN}>:FORCE_REGEN>)
+    pf_meta_run_gen(TARGET ${_args_TARGET} ${formatArg} ${forceArg})
 endfunction()
