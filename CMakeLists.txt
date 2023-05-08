@@ -83,7 +83,7 @@ add_dependencies(meta_test pf_meta_gen)
 
 
 # we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
-list(APPEND CXXFLAGS "std=c++20")
+list(APPEND CXXFLAGS "-std=c++20")
 message(STATUS ${CXXFLAGS})
 
 pf_meta_register(

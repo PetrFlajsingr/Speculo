@@ -36,9 +36,9 @@ function(pf_meta_create_config)
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
             -o ${BINARY_DIR}
-            -f ${_args_FLAGS}
             -I ${INCLUDE_ARGS}
             -H ${_args_HEADERS}
+            -f ${_args_FLAGS}
             )
 endfunction()
 

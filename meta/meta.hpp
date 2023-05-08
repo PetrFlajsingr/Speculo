@@ -8,6 +8,7 @@
 
 #include "Info.hpp"
 #include "template_for.hpp"
+#include "details/RangeOf.hpp"
 
 #include <concepts>
 #include <optional>

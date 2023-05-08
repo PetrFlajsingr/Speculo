@@ -1,3 +1,4 @@
+import argparse
 from argparse import ArgumentParser
 import json
 from pathlib import Path
@@ -7,9 +8,9 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--projectname', required=True)
     parser.add_argument('-r', '--projectroot', required=True)
     parser.add_argument('-o', '--outputdir', required=True)
-    parser.add_argument('-f', '--compilerflags', nargs='+')
     parser.add_argument('-I', '--includepaths', nargs='*', default=[])
     parser.add_argument('-H', '--headerfiles', nargs='*', default=[])
+    parser.add_argument('-f', '--compilerflags', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
     if args.includepaths is None:

@@ -50,7 +50,7 @@ Built-in attributes:
   ```cmake
   include(cmake/pf_meta.cmake)
   # ... 
-  list(APPEND CXXFLAGS "-std=c++20")
+  list(APPEND CXXFLAGS "-std=c++20") # gotta use clang flags
   
   pf_meta_register(
           TARGET meta_test
