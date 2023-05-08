@@ -122,6 +122,11 @@ namespace pf::meta_gen {
             variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(field->getSourceRange().getBegin());
             variableInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(field->getSourceRange().getBegin());
             variableInfo.sourceLocation.filename = sourceManager.getFilename(field->getSourceRange().getBegin());
+            variableInfo.isBitfield = field->isBitField();
+            variableInfo.bitfieldSize = 0;
+            if (variableInfo.isBitfield) {
+                variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
+            }
 
             result.memberVariables.push_back(variableInfo);
         }

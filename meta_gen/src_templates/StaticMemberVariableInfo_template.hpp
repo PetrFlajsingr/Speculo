@@ -24,10 +24,37 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsProtected = {is_protected};
     constexpr static bool IsPrivate = {is_private};
     constexpr static bool IsMutable = {is_mutable};
+    constexpr static bool IsBitfield = {is_bitfield};
+    {bitfield_block}
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
-    constexpr static {member_type} = &{member};
+    {member_ptr_block}
     }};
+)fmt";
+
+
+constexpr auto StaticTypeInfo_BitfieldAccessor = R"fmt(
+    template<bool IsConst>
+    struct BitfieldAccessor {{
+        using Parent = std::conditional_t<IsConst, const {parent_type}, {parent_type}>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{{p}} {{}}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {{
+            parent->{bitfield_name} = rhs;
+            return *this;
+        }}
+        constexpr explicit(false) operator int() const {{
+            return parent->{bitfield_name};
+        }}
+    private:
+        Parent *parent;
+    }};
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor({parent_type} *self) {{
+        return BitfieldAccessor<false>{{self}};
+    }}
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const {parent_type} *self) {{
+        return BitfieldAccessor<true>{{self}};
+    }}
 )fmt";

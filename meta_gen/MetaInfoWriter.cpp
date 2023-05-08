@@ -404,6 +404,17 @@ namespace pf::meta_gen {
             const auto mbrVarType =
                     fmt::format("{return_type} {type}::* MemberPtr", "return_type"_a = mbrVarInfo.typeName, "type"_a = recordInfo.fullName);
 
+            std::string bitfieldBlock{};
+            std::string memberPtrBlock{};
+            if (mbrVarInfo.isBitfield) {
+                bitfieldBlock = fmt::format("constexpr static std::size_t BitfieldSize = {};\n", mbrVarInfo.bitfieldSize);
+                bitfieldBlock.append(fmt::format(StaticTypeInfo_BitfieldAccessor, "parent_type"_a = recordInfo.fullName,
+                                                 "bitfield_name"_a = mbrVarInfo.name));
+            } else {
+                memberPtrBlock = fmt::format("constexpr static {member_type} = &{member};", "member_type"_a = mbrVarType,
+                                             "member"_a = mbrVarInfo.fullName);
+            }
+
             write(fmt::format(StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName,
                               "id"_a = idToString(mbrVarInfo.id), "details"_a = createDetailsStruct(detailsContents),
                               "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrVarInfo.sourceLocation.filename,
@@ -411,7 +422,8 @@ namespace pf::meta_gen {
                               "attributes"_a = attributesStr, "is_public"_a = mbrVarInfo.access == Access::Public,
                               "is_protected"_a = mbrVarInfo.access == Access::Protected,
                               "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
-                              "is_mutable"_a = mbrVarInfo.isMutable, "member_type"_a = mbrVarType, "member"_a = mbrVarInfo.fullName));
+                              "is_mutable"_a = mbrVarInfo.isMutable, "member_ptr_block"_a = memberPtrBlock,
+                              "is_bitfield"_a = mbrVarInfo.isBitfield, "bitfield_block"_a = bitfieldBlock));
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {
