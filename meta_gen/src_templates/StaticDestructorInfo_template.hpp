@@ -37,4 +37,3 @@ struct StaticInfo<{id}> {{
     constexpr static auto DtorWrap = {dtor_wrap_lambda};
     }};
 )fmt";
-

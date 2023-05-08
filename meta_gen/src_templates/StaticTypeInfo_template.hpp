@@ -131,4 +131,3 @@ struct StaticInfo<{const_ptr_type_id}>
 )fmt";
 
 }// namespace pf::meta_gen
-
