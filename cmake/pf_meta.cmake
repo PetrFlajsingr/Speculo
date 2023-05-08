@@ -36,9 +36,9 @@ function(pf_meta_create_config)
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
             -o ${BINARY_DIR}
-            -f ${_args_FLAGS}
             -I ${INCLUDE_ARGS}
             -H ${_args_HEADERS}
+            -f ${_args_FLAGS}
             )
 endfunction()
 
@@ -67,7 +67,7 @@ function(pf_meta_run_gen)
     #pf_meta_check_fnc_arg_provided("FLAGS")
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
-            ${PF_META_GEN_DIR}/pf_meta_gen.exe --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
+            ${PF_META_GEN_PATH} --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
             --ignore-includes ${formatArg} ${forceArg})
 
     add_dependencies(meta_test meta_test_generate_meta)

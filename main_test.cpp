@@ -3,48 +3,17 @@
 //
 
 #include "meta/fundamental_types.meta.hpp"
+#include "meta/meta.hpp"
 #include "src/meta/test.hpp"
 #include "src/meta/test2.hpp"
-#include "meta/meta.hpp"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
 #include <vector>
 
+#include "meta/enums.hpp"
 #include "meta/reflect.hpp"
 #include "meta/template_for.hpp"
 
-
-template<typename E>
-[[nodiscard]] constexpr std::string_view to_string(E value) {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
-    const auto result =
-            pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<std::string_view> {
-                if (PF_SPLICE(valueInfo) == value) { return std::optional{pf::meta::name_of<valueInfo>()}; }
-                return std::nullopt;
-            });
-    return result.value_or("<INVALID_ENUM_VALUE>");
-}
-
-template<typename E>
-[[nodiscard]] constexpr std::optional<E> from_string(std::string_view name) {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
-    return pf::meta::template_for_r<pf::meta::members_of<enumInfo>()>([&]<pf::meta::Info valueInfo>() -> std::optional<E> {
-        if (pf::meta::name_of<valueInfo>() == name) { return PF_SPLICE(valueInfo); }
-        return std::nullopt;
-    });
-}
-
-template<typename E>
-[[nodiscard]] constexpr pf::meta::details::RangeOf<E> auto getEnumValues() {
-    constexpr pf::meta::Info enumInfo = PF_REFLECT(E);
-    static_assert(pf::meta::Enum<enumInfo>);
-    using impl = pf::meta::details::StaticInfo<enumInfo.implId>;
-
-    std::array<E, impl::EnumValues.size()> result{};
-    std::size_t i{};
-    pf::meta::template_for<pf::meta::members_of<enumInfo>()>([&]<auto VI>() { result[i++] = PF_SPLICE(VI); });
-    return result;
-}
 
 template<pf::meta::Info Type>
 [[nodiscard]] constexpr std::optional<pf::meta::Info> functionByName(std::string_view name) {
@@ -84,19 +53,19 @@ template<pf::meta::Info I>
 
 
 int main() {
-    std::cout << to_string(pf::SomeEnum{0}) << std::endl;
-    std::cout << to_string(pf::SomeEnum::Value1) << std::endl;
-    std::cout << to_string(pf::SomeEnum::Value2) << std::endl;
+    std::cout << pf::meta::to_string(pf::SomeEnum{0}) << std::endl;
+    std::cout << pf::meta::to_string(pf::SomeEnum::Value1) << std::endl;
+    std::cout << pf::meta::to_string(pf::SomeEnum::Value2) << std::endl;
 
-    constexpr auto a = from_string<pf::SomeEnum>("Value1");
+    constexpr auto a = pf::meta::from_string<pf::SomeEnum>("Value1");
     static_assert(a.has_value());
-    constexpr auto b = from_string<pf::SomeEnum>("Value2");
+    constexpr auto b = pf::meta::from_string<pf::SomeEnum>("Value2");
     static_assert(b.has_value());
-    constexpr auto c = from_string<pf::SomeEnum>("Value3");
+    constexpr auto c = pf::meta::from_string<pf::SomeEnum>("Value3");
     static_assert(!c.has_value());
 
-    std::cout << to_string(*a) << std::endl;
-    std::cout << to_string(*b) << std::endl;
+    std::cout << pf::meta::to_string(*a) << std::endl;
+    std::cout << pf::meta::to_string(*b) << std::endl;
 
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum);
@@ -185,7 +154,9 @@ int main() {
 
     pf::meta::template_for<pf::meta::members_of<enumInfo>()>(
             []<auto VI>() { std::cout << pf::meta::name_of<VI>() << "=" << static_cast<int>(PF_SPLICE(VI)) << std::endl; });
-    for (const auto v: getEnumValues<pf::SomeEnum>()) { std::cout << to_string(v) << "=" << static_cast<int>(v) << std::endl; }
+    for (const auto v: pf::meta::enumerator_values<pf::SomeEnum>()) {
+        std::cout << pf::meta::to_string(v) << "=" << static_cast<int>(v) << std::endl;
+    }
 
     constexpr auto AINFO = PF_REFLECT(pf::A);
     constexpr pf::A cA = pf::A();

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Info.hpp"
+#include "details/RangeOf.hpp"
 #include "template_for.hpp"
 
 #include <concepts>
@@ -77,7 +78,7 @@ namespace pf::meta {
         std::size_t i{};
         for (; i < Impl::MemberFunctions.size(); ++i) { result[i] = Impl::MemberFunctions[i]; }
         for (; i < Impl::MemberFunctions.size() + Impl::MemberVariables.size(); ++i) {
-            result[i] = Impl::MemberVariables[i- Impl::MemberFunctions.size()];
+            result[i] = Impl::MemberVariables[i - Impl::MemberFunctions.size()];
         }
         return result;
     }
@@ -638,7 +639,7 @@ namespace pf::meta {
         }
     }
     template<Info I>
-    requires (is_bit_field<I>())
+        requires(is_bit_field<I>())
     [[nodiscard]] constexpr auto create_bit_field_accessor(auto parentPtr) {
         using impl = details::StaticInfo<I.implId>;
         return impl::CreateBitfieldAccessor(parentPtr);

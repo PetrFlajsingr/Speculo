@@ -127,7 +127,6 @@ void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::
         std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
         for (const auto &flag: data["compiler_flags"]) {
             flags.push_back(flag);
-            if (!flags.back().starts_with('-')) { flags.back() = fmt::format("-{}", flags.back()); }
         }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         result.sourceConfigs.push_back({.inputSource = inputFile,
