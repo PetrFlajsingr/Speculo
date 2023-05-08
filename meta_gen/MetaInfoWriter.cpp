@@ -257,9 +257,11 @@ namespace pf::meta_gen {
         }
 
         {
+            const auto &destructor = recordInfo.destructor;
+
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
-            for (const auto &attr: recordInfo.destructor.attributes) {
+            for (const auto &attr: destructor.attributes) {
                 if (attr.arguments.empty()) {
                     argsArrayNames.push_back("EmptyAttributeArgArray");
                 } else {
@@ -268,9 +270,16 @@ namespace pf::meta_gen {
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
-            const auto attributesStr = StringifyAttributes(recordInfo.destructor.attributes, argsArrayNames);
+            const auto attributesStr = StringifyAttributes(destructor.attributes, argsArrayNames);
 
-            const auto &destructor = recordInfo.destructor;
+
+            std::string dtorModifier;
+            if (destructor.isConstexpr) { dtorModifier = "constexpr"; }
+            if (destructor.isConsteval) { dtorModifier = "consteval"; }
+            std::string wrapLambdaStr =
+                    fmt::format(R"([]({full_type} &self) {modifier} -> void {{ self.~{type}(); }})", "full_type"_a = recordInfo.fullName,
+                                "type"_a = recordInfo.name, "modifier"_a = dtorModifier);
+
             write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = destructor.fullName, "id"_a = idToString(destructor.id),
                               "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
                               "source_file"_a = destructor.sourceLocation.filename, "source_line"_a = destructor.sourceLocation.line,
@@ -281,7 +290,7 @@ namespace pf::meta_gen {
                               "is_consteval"_a = destructor.isConsteval, "is_virtual"_a = destructor.isVirtual,
                               "is_pure_virtual"_a = destructor.isPureVirtual, "is_final"_a = destructor.isFinal,
                               "name"_a = fmt::format("~{}", recordInfo.name), "is_inline"_a = destructor.isInline,
-                              "is_inline_specified"_a = destructor.isInlineSpecified));
+                              "is_inline_specified"_a = destructor.isInlineSpecified, "dtor_wrap_lambda"_a = wrapLambdaStr));
         }
 
         for (const auto &mbrFncInfo: recordInfo.memberFunctions) {

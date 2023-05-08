@@ -137,6 +137,8 @@ struct StaticInfo<ID{0x9959c038d505396du, 0x313031533c943cb1u}> {
 
     constexpr static auto Name = StringLiteral{"~SimpleStruct"};
     constexpr static auto FullName = StringLiteral{"SimpleStruct::~SimpleStruct"};
+
+    constexpr static auto DtorWrap = [](SimpleStruct &self) constexpr -> void { self.~SimpleStruct(); };
     };
 
 /****************************** SimpleStruct::footadlo START ******************************/
