@@ -122,6 +122,10 @@ namespace pf::meta_gen {
             })) {
             return;
         }
+        // skipping private and protected nested types
+        if (recordInfo.isNestedType && recordInfo.nestedAccess != Access::Public) {
+            return;
+        }
         using namespace fmt::literals;
 
         const auto idsToStringMakeArray = [](std::ranges::range auto &&range) {

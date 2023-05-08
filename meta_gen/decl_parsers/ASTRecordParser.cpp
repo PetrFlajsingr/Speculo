@@ -67,6 +67,8 @@ namespace pf::meta_gen {
         result.constLrefId = getIdGenerator().generateId("const " + result.fullName + "&");
         result.ptrId = getIdGenerator().generateId(result.fullName + "*");
         result.constPtrId = getIdGenerator().generateId("const" + result.fullName + "*");
+        result.isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
+        if (result.isNestedType) { result.nestedAccess = clangAccesConv(recordDecl->getAccess()); }
 
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
@@ -124,9 +126,7 @@ namespace pf::meta_gen {
             variableInfo.sourceLocation.filename = sourceManager.getFilename(field->getSourceRange().getBegin());
             variableInfo.isBitfield = field->isBitField();
             variableInfo.bitfieldSize = 0;
-            if (variableInfo.isBitfield) {
-                variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
-            }
+            if (variableInfo.isBitfield) { variableInfo.bitfieldSize = field->getBitWidthValue(astContext); }
 
             result.memberVariables.push_back(variableInfo);
         }

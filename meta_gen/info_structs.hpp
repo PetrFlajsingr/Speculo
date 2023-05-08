@@ -13,6 +13,23 @@
 #include "../meta/details/ID.hpp"
 
 namespace pf::meta_gen {
+    enum class Access { Private, Protected, Public };
+
+    [[nodiscard]] constexpr std::string_view AccessToString(Access access) {
+        switch (access) {
+            case Access::Private: {
+                return "Private";
+            }
+            case Access::Protected: {
+                return "Protected";
+            }
+            case Access::Public: {
+                return "Public";
+            }
+        }
+        return "";
+        // std::unreachable
+    }
 
     struct Attribute {
         std::string nnamespace;
@@ -37,6 +54,9 @@ namespace pf::meta_gen {
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;
+
+        bool isNestedType;
+        Access nestedAccess; // only relevant if isNestedType == true
 
         std::string originalCode;
     };
@@ -64,24 +84,6 @@ namespace pf::meta_gen {
         std::vector<Attribute> attributes;
         SourceLocationInfo sourceLocation;
     };
-
-    enum class Access { Private, Protected, Public };
-
-    [[nodiscard]] constexpr std::string_view AccessToString(Access access) {
-        switch (access) {
-            case Access::Private: {
-                return "Private";
-            }
-            case Access::Protected: {
-                return "Protected";
-            }
-            case Access::Public: {
-                return "Public";
-            }
-        }
-        return "";
-        // std::unreachable
-    }
 
     struct ConstructorInfo {
         meta::details::ID id;
