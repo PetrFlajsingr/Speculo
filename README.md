@@ -42,6 +42,25 @@ template<typename E>
 Built-in attributes:
 * `pf::no_sti` - disables STI generation for type
 
+## Usage
+1. Copy `script` folder to the root of your project.
+2. Copy `pf_meta.cmake` to your project.
+3. Build `pf_meta_gen` target and put the resulting exe wherever you want.
+4. Register your project in CMake:
+  ```cmake
+  include(cmake/pf_meta.cmake)
+  # ... 
+  list(APPEND CXXFLAGS "-std=c++20")
+  
+  pf_meta_register(
+          TARGET meta_test
+          FLAGS ${CXXFLAGS}
+          HEADERS src/test.h
+          FORMAT
+  )
+  ```
+5. Provide cmake with the path to `pf_meta_gen` executable `-DPF_META_GEN_PATH=<path_to_exe>`
+
 ## Extensions
 #### Attributes
 The tool collects attributes wherever they are allowed by the standard. They are accessed as follows:
