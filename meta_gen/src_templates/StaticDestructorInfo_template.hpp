@@ -33,6 +33,8 @@ struct StaticInfo<{id}> {{
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
+
+    constexpr static auto DtorWrap = {dtor_wrap_lambda};
     }};
 )fmt";
 
