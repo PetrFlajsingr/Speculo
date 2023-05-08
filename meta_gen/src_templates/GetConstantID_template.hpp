@@ -16,4 +16,3 @@ return {value_id};
 )fmt";
 
 }
-

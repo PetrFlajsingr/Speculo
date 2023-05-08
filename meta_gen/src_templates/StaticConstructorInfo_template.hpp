@@ -40,4 +40,3 @@ struct StaticInfo<{id}> {{
     constexpr static auto NewCtorWrap = {new_wrap_lambda};
     }};
 )fmt";
-

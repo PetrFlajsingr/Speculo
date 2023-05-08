@@ -27,4 +27,3 @@ struct StaticInfo<{id}> {{
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
     }};
 )fmt";
-

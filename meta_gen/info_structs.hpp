@@ -56,7 +56,7 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
 
         bool isNestedType;
-        Access nestedAccess; // only relevant if isNestedType == true
+        Access nestedAccess;// only relevant if isNestedType == true
 
         std::string originalCode;
     };

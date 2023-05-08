@@ -26,4 +26,3 @@ namespace pf::meta::details {{
 )fmt";
 
 }// namespace pf::meta_gen
-
