@@ -47,7 +47,7 @@ struct StaticInfo<ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u}> {
     constexpr static Info Destructor = ID{0x9959c038d505396du, 0x313031533c943cb1u};
     constexpr static RangeOf<Info> auto MemberFunctions = pf::meta::details::make_array<Info>(ID{0x23561358310a0cbeu, 0xebb11a197749f289u});
     constexpr static RangeOf<Info> auto StaticFunctions = pf::meta::details::make_array<Info>();
-    constexpr static RangeOf<Info> auto MemberVariables = pf::meta::details::make_array<Info>();
+    constexpr static RangeOf<Info> auto MemberVariables = pf::meta::details::make_array<Info>(ID{0xb85e7b5dbcb67be4u, 0x5e9ed30670dab999u}, ID{0x685f6a6c23efb491u, 0x30d16e2ef7d8ffb1u}, ID{0xb55d3aef7b4ffe23u, 0x8f06566db59c83b7u}, ID{0xaa5626b34ff6b026u, 0xd0e32ef8310e1abau}, ID{0x875a46f77d5b032du, 0x5ed1a863bb6b3e8eu});
     constexpr static RangeOf<Info> auto StaticVariables = pf::meta::details::make_array<Info>();
 };
 
@@ -147,7 +147,7 @@ struct StaticInfo<ID{0x23561358310a0cbeu, 0xebb11a197749f289u}> {
     constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
 
     constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
-    constexpr static std::uint64_t SourceLine = 14;
+    constexpr static std::uint64_t SourceLine = 21;
     constexpr static std::uint64_t SourceColumn = 5;
 
     constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
@@ -173,6 +173,261 @@ struct StaticInfo<ID{0x23561358310a0cbeu, 0xebb11a197749f289u}> {
     constexpr static RangeOf<Info> auto Arguments = pf::meta::details::make_array<Info>();
 
     constexpr static void(SimpleStruct::*MemberPtr)() = &SimpleStruct::footadlo;
+    };
+
+/****************************** SimpleStruct::b1 START ******************************/
+template<>
+struct StaticInfo<ID{0xb85e7b5dbcb67be4u, 0x5e9ed30670dab999u}> {
+    
+    constexpr static ID VariableID = ID{0xb85e7b5dbcb67be4u, 0x5e9ed30670dab999u};
+    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
+
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
+    constexpr static std::uint64_t SourceLine = 14;
+    constexpr static std::uint64_t SourceColumn = 5;
+
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberVariable;
+
+    constexpr static bool IsPublic = true;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = false;
+    constexpr static bool IsMutable = false;
+    constexpr static bool IsBitfield = true;
+    constexpr static std::size_t BitfieldSize = 1;
+
+    template<bool IsConst>
+    struct BitfieldAccessor {
+        using Parent = std::conditional_t<IsConst, const SimpleStruct, SimpleStruct>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{p} {}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {
+            parent->b1 = rhs;
+            return *this;
+        }
+        constexpr explicit(false) operator int() const {
+            return parent->b1;
+        }
+    private:
+        Parent *parent;
+    };
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor(SimpleStruct *self) {
+        return BitfieldAccessor<false>{self};
+    }
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const SimpleStruct *self) {
+        return BitfieldAccessor<true>{self};
+    }
+
+
+    constexpr static auto Name = StringLiteral{"b1"};
+    constexpr static auto FullName = StringLiteral{"SimpleStruct::b1"};
+
+    
+    };
+
+/****************************** SimpleStruct::b2 START ******************************/
+template<>
+struct StaticInfo<ID{0x685f6a6c23efb491u, 0x30d16e2ef7d8ffb1u}> {
+    
+    constexpr static ID VariableID = ID{0x685f6a6c23efb491u, 0x30d16e2ef7d8ffb1u};
+    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
+
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
+    constexpr static std::uint64_t SourceLine = 15;
+    constexpr static std::uint64_t SourceColumn = 5;
+
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberVariable;
+
+    constexpr static bool IsPublic = true;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = false;
+    constexpr static bool IsMutable = false;
+    constexpr static bool IsBitfield = true;
+    constexpr static std::size_t BitfieldSize = 2;
+
+    template<bool IsConst>
+    struct BitfieldAccessor {
+        using Parent = std::conditional_t<IsConst, const SimpleStruct, SimpleStruct>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{p} {}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {
+            parent->b2 = rhs;
+            return *this;
+        }
+        constexpr explicit(false) operator int() const {
+            return parent->b2;
+        }
+    private:
+        Parent *parent;
+    };
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor(SimpleStruct *self) {
+        return BitfieldAccessor<false>{self};
+    }
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const SimpleStruct *self) {
+        return BitfieldAccessor<true>{self};
+    }
+
+
+    constexpr static auto Name = StringLiteral{"b2"};
+    constexpr static auto FullName = StringLiteral{"SimpleStruct::b2"};
+
+    
+    };
+
+/****************************** SimpleStruct::b3 START ******************************/
+template<>
+struct StaticInfo<ID{0xb55d3aef7b4ffe23u, 0x8f06566db59c83b7u}> {
+    
+    constexpr static ID VariableID = ID{0xb55d3aef7b4ffe23u, 0x8f06566db59c83b7u};
+    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
+
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
+    constexpr static std::uint64_t SourceLine = 16;
+    constexpr static std::uint64_t SourceColumn = 5;
+
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberVariable;
+
+    constexpr static bool IsPublic = true;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = false;
+    constexpr static bool IsMutable = false;
+    constexpr static bool IsBitfield = true;
+    constexpr static std::size_t BitfieldSize = 3;
+
+    template<bool IsConst>
+    struct BitfieldAccessor {
+        using Parent = std::conditional_t<IsConst, const SimpleStruct, SimpleStruct>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{p} {}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {
+            parent->b3 = rhs;
+            return *this;
+        }
+        constexpr explicit(false) operator int() const {
+            return parent->b3;
+        }
+    private:
+        Parent *parent;
+    };
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor(SimpleStruct *self) {
+        return BitfieldAccessor<false>{self};
+    }
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const SimpleStruct *self) {
+        return BitfieldAccessor<true>{self};
+    }
+
+
+    constexpr static auto Name = StringLiteral{"b3"};
+    constexpr static auto FullName = StringLiteral{"SimpleStruct::b3"};
+
+    
+    };
+
+/****************************** SimpleStruct::b4 START ******************************/
+template<>
+struct StaticInfo<ID{0xaa5626b34ff6b026u, 0xd0e32ef8310e1abau}> {
+    
+    constexpr static ID VariableID = ID{0xaa5626b34ff6b026u, 0xd0e32ef8310e1abau};
+    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
+
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
+    constexpr static std::uint64_t SourceLine = 17;
+    constexpr static std::uint64_t SourceColumn = 5;
+
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberVariable;
+
+    constexpr static bool IsPublic = true;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = false;
+    constexpr static bool IsMutable = false;
+    constexpr static bool IsBitfield = true;
+    constexpr static std::size_t BitfieldSize = 4;
+
+    template<bool IsConst>
+    struct BitfieldAccessor {
+        using Parent = std::conditional_t<IsConst, const SimpleStruct, SimpleStruct>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{p} {}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {
+            parent->b4 = rhs;
+            return *this;
+        }
+        constexpr explicit(false) operator int() const {
+            return parent->b4;
+        }
+    private:
+        Parent *parent;
+    };
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor(SimpleStruct *self) {
+        return BitfieldAccessor<false>{self};
+    }
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const SimpleStruct *self) {
+        return BitfieldAccessor<true>{self};
+    }
+
+
+    constexpr static auto Name = StringLiteral{"b4"};
+    constexpr static auto FullName = StringLiteral{"SimpleStruct::b4"};
+
+    
+    };
+
+/****************************** SimpleStruct::b5 START ******************************/
+template<>
+struct StaticInfo<ID{0x875a46f77d5b032du, 0x5ed1a863bb6b3e8eu}> {
+    
+    constexpr static ID VariableID = ID{0x875a46f77d5b032du, 0x5ed1a863bb6b3e8eu};
+    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
+
+    constexpr static auto SourceFile = R"path(C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp)path";
+    constexpr static std::uint64_t SourceLine = 18;
+    constexpr static std::uint64_t SourceColumn = 5;
+
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
+
+    constexpr static auto StaticInfoObjectType = StaticInfoType::MemberVariable;
+
+    constexpr static bool IsPublic = true;
+    constexpr static bool IsProtected = false;
+    constexpr static bool IsPrivate = false;
+    constexpr static bool IsMutable = false;
+    constexpr static bool IsBitfield = true;
+    constexpr static std::size_t BitfieldSize = 5;
+
+    template<bool IsConst>
+    struct BitfieldAccessor {
+        using Parent = std::conditional_t<IsConst, const SimpleStruct, SimpleStruct>;
+        constexpr explicit BitfieldAccessor(Parent *p) : parent{p} {}
+        constexpr auto &operator=(int rhs) requires (!IsConst) {
+            parent->b5 = rhs;
+            return *this;
+        }
+        constexpr explicit(false) operator int() const {
+            return parent->b5;
+        }
+    private:
+        Parent *parent;
+    };
+
+    constexpr static BitfieldAccessor<false> CreateBitfieldAccessor(SimpleStruct *self) {
+        return BitfieldAccessor<false>{self};
+    }
+    constexpr static BitfieldAccessor<true> CreateBitfieldAccessor(const SimpleStruct *self) {
+        return BitfieldAccessor<true>{self};
+    }
+
+
+    constexpr static auto Name = StringLiteral{"b5"};
+    constexpr static auto FullName = StringLiteral{"SimpleStruct::b5"};
+
+    
     };
 
 }

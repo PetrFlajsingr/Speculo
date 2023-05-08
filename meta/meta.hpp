@@ -77,7 +77,7 @@ namespace pf::meta {
         std::size_t i{};
         for (; i < Impl::MemberFunctions.size(); ++i) { result[i] = Impl::MemberFunctions[i]; }
         for (; i < Impl::MemberFunctions.size() + Impl::MemberVariables.size(); ++i) {
-            result[i] = Impl::MemberVariables[i] - Impl::MemberFunctions.size();
+            result[i] = Impl::MemberVariables[i- Impl::MemberFunctions.size()];
         }
         return result;
     }
@@ -141,7 +141,12 @@ namespace pf::meta {
     [[nodiscard]] consteval bool is_nonstatic_data_member() {
         return MemberVariable<I>;
     }
-    // TODO is_bit_field
+    template<Info I>
+        requires MemberVariable<I>
+    [[nodiscard]] consteval bool is_bit_field() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::IsBitfield;
+    }
     template<Info I>
         requires MemberVariable<I>
     [[nodiscard]] consteval bool is_mutable() {
@@ -631,6 +636,12 @@ namespace pf::meta {
         } else {
             return std::span<const Attribute>{};
         }
+    }
+    template<Info I>
+    requires (is_bit_field<I>())
+    [[nodiscard]] constexpr auto create_bit_field_accessor(auto parentPtr) {
+        using impl = details::StaticInfo<I.implId>;
+        return impl::CreateBitfieldAccessor(parentPtr);
     }
 
 }// namespace pf::meta

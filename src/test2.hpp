@@ -10,6 +10,13 @@
 
 struct SimpleStruct {
     PF_META_GENERATED();
+
+    unsigned int b1 : 1;
+    unsigned int b2 : 2;
+    unsigned int b3 : 3;
+    unsigned int b4 : 4;
+    unsigned int b5 : 5;
+
 private:
     void footadlo() {}
 };

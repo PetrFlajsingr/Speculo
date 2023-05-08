@@ -4,6 +4,7 @@
 
 #include "meta/fundamental_types.meta.hpp"
 #include "src/meta/test.hpp"
+#include "src/meta/test2.hpp"
 #include "meta/meta.hpp"
 #include <optional>
 #include <pf_common/concepts/ranges.h>
@@ -203,6 +204,16 @@ int main() {
     std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << (dfsds.*PF_SPLICE(*mbrInfo))() << std::endl;
     dfsds.test = 100;
     std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << invoke<*mbrInfo>(&dfsds) << std::endl;
+
+    constexpr auto b1 = pf::meta::members_of<PF_REFLECT(SimpleStruct)>()[1];
+    std::cout << pf::meta::display_name_of<b1>() << std::endl;
+    SimpleStruct s{};
+    auto accessor = pf::meta::create_bit_field_accessor<b1>(&s);
+    std::cout << s.b1 << std::endl;
+    accessor = 1;
+    std::cout << s.b1 << std::endl;
+    int v = accessor;
+    std::cout << v << std::endl;
 
     return 0;
 }
