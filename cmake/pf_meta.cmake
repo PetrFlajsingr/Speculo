@@ -10,10 +10,11 @@ endmacro()
 #   TARGET - name of the target to generate for
 #   FLAGS - clang compiler flags
 #   HEADERS - files to generate for
+#   DEFINES - macros
 function(pf_meta_create_config)
     set(options)
     set(oneValueArgs TARGET)
-    set(multiValueArgs FLAGS HEADERS)
+    set(multiValueArgs FLAGS HEADERS DEFINES)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
@@ -21,10 +22,49 @@ function(pf_meta_create_config)
     #pf_meta_check_fnc_arg_provided("HEADERS")
     #pf_meta_check_fnc_arg_provided("FLAGS")
 
+    get_target_property(DEFINITIONS ${_args_TARGET} COMPILE_DEFINITIONS)
+    foreach (def ${_args_DEFINITIONS})
+        list(APPEND DEFINITIONS ${def})
+    endforeach()
+    get_directory_property(GLOBAL_DEFINITIONS COMPILE_DEFINITIONS)
+    foreach (def ${GLOBAL_DEFINITIONS})
+        list(APPEND DEFINITIONS ${def})
+    endforeach()
+
     get_target_property(INCLUDES ${_args_TARGET} INCLUDE_DIRECTORIES)
 
     foreach (include ${INCLUDES})
         list(APPEND INCLUDE_ARGS "${include}")
+    endforeach ()
+
+    get_target_property(DEPENDENCIES ${_args_TARGET} LINK_LIBRARIES)
+
+    foreach (dependency ${DEPENDENCIES})
+        get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
+        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
+        if (LENGTH_RESULT EQUAL 1)
+            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
+                continue()
+            endif()
+        endif()
+
+        foreach (include ${DEPENDENCY_INCLUDES})
+            list(APPEND INCLUDE_ARGS "${include}")
+        endforeach ()
+    endforeach ()
+
+    foreach (dependency ${DEPENDENCIES})
+        get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
+        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
+        if (LENGTH_RESULT EQUAL 1)
+            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
+                continue()
+            endif()
+        endif()
+
+        foreach (include ${DEPENDENCY_INCLUDES})
+            list(APPEND INCLUDE_ARGS "${include}")
+        endforeach ()
     endforeach ()
 
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
@@ -38,6 +78,7 @@ function(pf_meta_create_config)
             -o ${BINARY_DIR}
             -I ${INCLUDE_ARGS}
             -H ${_args_HEADERS}
+            -D ${DEFINITIONS}
             -f ${_args_FLAGS}
             )
 endfunction()
@@ -70,7 +111,7 @@ function(pf_meta_run_gen)
             ${PF_META_GEN_PATH} --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
             --ignore-includes ${formatArg} ${forceArg})
 
-    add_dependencies(meta_test meta_test_generate_meta)
+    add_dependencies(${_args_TARGET} ${_args_TARGET}_generate_meta)
 endfunction()
 
 # Register target for meta generation
@@ -81,10 +122,11 @@ endfunction()
 #   TARGET - target to generate for
 #   FLAGS - clang compiler flags
 #   HEADER - files to generate for
+#   DEFINES - macros
 function(pf_meta_register)
     set(options FORMAT FORCE_REGEN)
     set(oneValueArgs TARGET)
-    set(multiValueArgs FLAGS HEADERS)
+    set(multiValueArgs FLAGS HEADERS DEFINES)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
@@ -92,6 +134,7 @@ function(pf_meta_register)
             TARGET ${_args_TARGET}
             FLAGS ${_args_FLAGS}
             HEADERS ${_args_HEADERS}
+            DEFINES ${_args_DEFINES}
     )
     if (_args_FORMAT)
         set(formatArg --format-output)

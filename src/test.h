@@ -20,7 +20,7 @@ namespace pf {
     struct B2 {};
     struct B3 {};
 
-    struct [[first]] [[second, third]] A : B1, B2, private B3 {
+    struct [[nodiscard]] [[first]] [[second, third]] A : B1, B2, private B3 {
         PF_META_GENERATED();
 
         consteval A() : test{0} {}

@@ -17,6 +17,13 @@ struct SimpleStruct {
     unsigned int b4 : 4;
     unsigned int b5 : 5;
 
+    struct NestedPublic {
+        int a;
+    };
+
 private:
+    struct NestedPrivate {
+        int a;
+    };
     void footadlo() {}
 };
