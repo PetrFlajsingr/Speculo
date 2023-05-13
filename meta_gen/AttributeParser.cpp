@@ -76,13 +76,17 @@ namespace pf::meta_gen {
             constexpr auto stopTokens = make_array<clang::tok::TokenKind>(clang::tok::TokenKind::l_paren, clang::tok::TokenKind::comma);
             auto begin = srcRange.getBegin().getLocWithOffset(-1);
             clang::Token token{};
-            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts)) {
+                return {};
+            }
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
             while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
                 begin = begin.getLocWithOffset(-1);
-                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts)) {
+                    break;
+                }
                 if (token.getKind() == clang::tok::TokenKind::r_square) {
                     if (foundRSquare) {
                         inAttrs = true;
@@ -223,6 +227,7 @@ namespace pf::meta_gen {
         clang::SourceLocation result;
 
         auto token = clang::Lexer::findNextToken(srcRange.getBegin(), sourceManager, langOpts);
+        if (!token.has_value()) { return std::nullopt; }
         bool foundLSquare = false;
         for (auto i = token->getLocation(); i != srcRange.getEnd();) {
             if (!token.has_value()) { return std::nullopt; }
@@ -246,6 +251,7 @@ namespace pf::meta_gen {
         auto &langOpts = astContext.getLangOpts();
 
         auto token = clang::Lexer::findNextToken(srcRange.getBegin(), sourceManager, langOpts);
+        if (!token.has_value()) { return std::nullopt; }
 
         bool foundRSquare = false;
         std::size_t parensNestingCnt{};
@@ -426,13 +432,17 @@ namespace pf::meta_gen {
                                                                           clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
             auto begin = srcRange.getBegin().getLocWithOffset(-1);
             clang::Token token{};
-            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts)) {
+                return {};
+            }
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
             while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
                 begin = begin.getLocWithOffset(-1);
-                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts)) {
+                    break;
+                }
                 if (token.getKind() == clang::tok::TokenKind::r_square) {
                     if (foundRSquare) {
                         inAttrs = true;
@@ -520,13 +530,17 @@ namespace pf::meta_gen {
                                                                           clang::tok::TokenKind::colon, clang::tok::TokenKind::semi);
             auto begin = srcRange.getBegin().getLocWithOffset(-1);
             clang::Token token{};
-            clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+            if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts)) {
+                return {};
+            }
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
             while (inAttrs || !pf::contains(stopTokens, token.getKind())) {
                 begin = begin.getLocWithOffset(-1);
-                clang::Lexer::getRawToken(begin, token, sourceManager, langOpts);
+                if (clang::Lexer::getRawToken(begin, token, sourceManager, langOpts) ) {
+                    break;
+                }
                 if (token.getKind() == clang::tok::TokenKind::r_square) {
                     if (foundRSquare) {
                         inAttrs = true;

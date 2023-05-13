@@ -10,6 +10,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outputdir', required=True)
     parser.add_argument('-I', '--includepaths', nargs='*', default=[])
     parser.add_argument('-H', '--headerfiles', nargs='*', default=[])
+    parser.add_argument('-D', '--defines', nargs='*', default=[])
     parser.add_argument('-f', '--compilerflags', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -24,6 +25,7 @@ if __name__ == '__main__':
         "project_root": args.projectroot,
         "include_paths": args.includepaths,
         "compiler_flags": args.compilerflags,
+        "defines": args.defines,
         "header_paths": args.headerfiles
     }
     out_path = Path(args.outputdir) / f'pf_meta_{args.projectname}_config.json'
