@@ -47,8 +47,12 @@ namespace nlohmann {
     };
 }// namespace nlohmann
 
-[[nodiscard]] std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>>
-loadTimestampDatabase(std::string_view projectName) {
+struct ProjectDatabase {
+    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> fileTimestamps;
+    std::vector<std::string> compilerFlags;
+};
+
+[[nodiscard]] ProjectDatabase loadProjectDatabase(std::string_view projectName) {
     const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
     if (!std::filesystem::exists(databasePath)) {
         spdlog::info("Database file not found at '{}'", databasePath.string());
@@ -62,20 +66,30 @@ loadTimestampDatabase(std::string_view projectName) {
     }
     auto data = nlohmann::json::parse(istream);
     istream.close();
-    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> result{};
-    for (const auto &rec: data.items()) { result[std::string{rec.key()}] = std::chrono::time_point<std::chrono::file_clock>{rec.value()}; }
+    ProjectDatabase result{};
+    for (const auto &rec: data["files"]) {
+        result.fileTimestamps[rec["file"]] = std::chrono::time_point<std::chrono::file_clock>{rec["timestamp"]};
+    }
+    for (const auto &flag: data["compiler_flags"]) { result.compilerFlags.push_back(flag); }
     return result;
 }
 // only pass those parsed by this process
-void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> &newStamps,
-                             std::string_view projectName) {
+void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectName) {
     const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
     if (istream.is_open()) { data = nlohmann::json::parse(istream); }
     istream.close();
 
-    for (const auto &[key, stamp]: newStamps) { data[key] = stamp; }
+    auto &filesData = data["files"];
+    for (const auto &[file, stamp]: db.fileTimestamps) {
+        nlohmann::json fileData{{"file", file}, {"timestamp", stamp}};
+        filesData.push_back(fileData);
+    }
+    auto &flagsData = data["compiler_flags"];
+    for (const auto &flag: db.compilerFlags) {
+        flagsData.push_back(flag);
+    }
     auto ostream = std::ofstream{databasePath};
     if (!ostream.is_open()) {
         spdlog::error("Can't open file for write '{}': {}", databasePath.string(), strerror(errno));
@@ -125,12 +139,8 @@ void updateTimestampDatabase(const std::unordered_map<std::string, std::chrono::
         if (!std::filesystem::exists(generatedFolder)) { std::filesystem::create_directory(generatedFolder); }
 
         std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
-        for (const auto &flag: data["compiler_flags"]) {
-            flags.push_back(flag);
-        }
-        for (const auto &define: data["defines"]) {
-            flags.push_back(fmt::format("-D {}", define));
-        }
+        for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
+        for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", define)); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         result.sourceConfigs.push_back({.inputSource = inputFile,
                                         .outputMetaHeader = metaHeader,
@@ -156,7 +166,7 @@ int main(int argc, const char **argv) {
     if (!configsOpt.has_value()) { return 0; }
     const auto configs = std::move(*configsOpt);
 
-    const auto timestampDB = loadTimestampDatabase(configs.name);
+    auto timestampDB = loadProjectDatabase(configs.name);
 
     cppcoro::static_thread_pool threadPool;
 
@@ -170,13 +180,19 @@ int main(int argc, const char **argv) {
         std::filesystem::path outPath;
     };
 
+    auto compilerFlagsChanged = false;
+    if (!configs.sourceConfigs.empty()) {
+        compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags;
+    }
+
     const auto generateMetaForSource =
-            [&timestampDB, &threadPool](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
+            [&timestampDB, &threadPool, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
         co_await threadPool.schedule();
 
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
-        if (!static_cast<bool>(ForceRegen)) {
-            if (const auto iter = timestampDB.find(config.inputSource.string()); iter != timestampDB.end()) {
+        // if regeneration is forced or if compiler flags changed we need to regenerate
+        if (!static_cast<bool>(ForceRegen) || !compilerFlagsChanged) {
+            if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
                 if (lastWriteTime < iter->second) {
                     spdlog::info("File '{}' was not changed", config.inputSource.string());
                     co_return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
@@ -218,16 +234,17 @@ int main(int argc, const char **argv) {
     std::vector<cppcoro::task<tl::expected<ParseResult, ParseFailure>>> tasks;
     std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { tasks.emplace_back(generateMetaForSource(config)); });
 
-    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> newTimestamps;
+    timestampDB.fileTimestamps.clear();
+    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
     const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
     std::ranges::for_each(results, [&](const auto &v) {
         if (!v.has_value()) {
             spdlog::error("File '{}' failed", v.error().inPath.string());
         } else {
-            newTimestamps[v->inPath.string()] = v->stamp;
+            timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
         }
     });
-    updateTimestampDatabase(newTimestamps, configs.name);
+    updateProjectDatabase(timestampDB, configs.name);
 
 
     return 0;
