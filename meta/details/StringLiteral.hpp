@@ -12,9 +12,9 @@
 
 namespace pf {
     /**
- * @brief Constexpr friendly fixed string.
- * @tparam N Size of the string
- */
+     * @brief Constexpr friendly fixed string.
+     * @tparam N Size of the string
+     */
     template<typename TChar, std::size_t N, typename CharTraits = std::char_traits<TChar>>
     class BasicStringLiteral {
     public:

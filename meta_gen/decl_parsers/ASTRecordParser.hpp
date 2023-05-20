@@ -9,7 +9,7 @@
 namespace pf::meta_gen {
     class ASTRecordParser final : public ASTDeclParser {
     public:
-        explicit ASTRecordParser(std::shared_ptr<IdGenerator> idGen);
+        ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser);
 
         ~ASTRecordParser() override = default;
 

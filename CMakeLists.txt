@@ -33,6 +33,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
 add_subdirectory(third_party/cppcoro)
 
@@ -46,6 +47,7 @@ add_executable(pf_meta_gen main.cpp
         meta_gen/decl_parsers/ASTRecordParser.cpp
         meta_gen/decl_parsers/factory.cpp
         meta_gen/CodeGenWriter.cpp)
+target_include_directories(pf_meta_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 add_executable(meta_test main_test.cpp)
 

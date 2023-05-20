@@ -6,7 +6,8 @@
 
 namespace pf::meta_gen {
 
-    ASTDeclParser::ASTDeclParser(std::shared_ptr<IdGenerator> idGen) : idGenerator{std::move(idGen)} {}
+    ASTDeclParser::ASTDeclParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
+        : idGenerator{std::move(idGen)}, attributeParser{std::move(attribParser)} {}
 
     ASTDeclParser::~ASTDeclParser() = default;
 

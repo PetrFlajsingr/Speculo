@@ -63,7 +63,7 @@ namespace pf::meta_gen {
             std::string detailsContents;
             for (const auto &attr: info.attributes) {
                 if (attr.arguments.empty()) {
-                    argsArrayNames.push_back("EmptyAttributeArgArray");
+                    argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
                     argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
@@ -559,8 +559,8 @@ namespace pf::meta_gen {
         for (auto i = 0ull; i < attrs.size(); ++i) {
             const auto &attr = attrs[i];
             const auto &argArrayName = argArrayNames[i];
-            attributesString.append(
-                    fmt::format(R"(Attribute{{"{}", std::span<const std::string_view>{{{}}}}}, )", attr.name, argArrayName));
+            attributesString.append(fmt::format(R"(Attribute{{"{}", "{}", std::span<const std::string_view>{{{}}}}}, )", attr.nnamespace,
+                                                attr.name, argArrayName));
         }
         if (!attrs.empty()) { return attributesString.substr(0, attributesString.length() - 2); }
         return attributesString;

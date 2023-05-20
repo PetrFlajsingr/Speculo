@@ -25,6 +25,9 @@
     {
       "name": "nlohmann-json",
       "version>=": "3.11.2"
+    },
+    {
+      "name": "flat"
     }
   ],
   "builtin-baseline": "36fb23307e10cc6ffcec566c46c4bb3f567c82c6"

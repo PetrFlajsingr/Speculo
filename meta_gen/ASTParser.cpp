@@ -10,7 +10,8 @@
 
 namespace pf::meta_gen {
 
-    ASTParser::ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen) : config{c}, idGenerator{std::move(idGen)} {}
+    ASTParser::ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
+        : config{c}, idGenerator{std::move(idGen)}, attributeParser{std::move(attribParser)} {}
 
     std::vector<TypeInfoVariant> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();
@@ -25,7 +26,7 @@ namespace pf::meta_gen {
             auto &sourceManager = astContext.getSourceManager();
             if (config->ignoreIncludes && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
-            if (auto parser = createDeclParser(astContext, decl, idGenerator); parser != nullptr) {
+            if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser); parser != nullptr) {
                 if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
                     result.emplace_back(std::move(*parseResult));
                 }

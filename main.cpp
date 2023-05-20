@@ -87,9 +87,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         filesData.push_back(fileData);
     }
     auto &flagsData = data["compiler_flags"];
-    for (const auto &flag: db.compilerFlags) {
-        flagsData.push_back(flag);
-    }
+    for (const auto &flag: db.compilerFlags) { flagsData.push_back(flag); }
     auto ostream = std::ofstream{databasePath};
     if (!ostream.is_open()) {
         spdlog::error("Can't open file for write '{}': {}", databasePath.string(), strerror(errno));
@@ -138,7 +136,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         if (!std::filesystem::exists(metaFolder)) { std::filesystem::create_directory(metaFolder); }
         if (!std::filesystem::exists(generatedFolder)) { std::filesystem::create_directory(generatedFolder); }
 
-        std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes"};
+        std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes", "-Wno-pragma-once-outside-header"};
         for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", define)); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
@@ -181,12 +179,11 @@ int main(int argc, const char **argv) {
     };
 
     auto compilerFlagsChanged = false;
-    if (!configs.sourceConfigs.empty()) {
-        compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags;
-    }
+    if (!configs.sourceConfigs.empty()) { compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags; }
 
     const auto generateMetaForSource =
-            [&timestampDB, &threadPool, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
+            [&timestampDB, &threadPool,
+             compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
         co_await threadPool.schedule();
 
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
@@ -221,7 +218,7 @@ int main(int argc, const char **argv) {
             co_return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
         }
         auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-        pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, idGenerator};
+        pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, std::move(idGenerator)};
         if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
         metaOutStream->close();
