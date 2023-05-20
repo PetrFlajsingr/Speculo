@@ -23,15 +23,15 @@ namespace pf::meta_gen {
     public:
         explicit ASTConsumer(const SourceConfig *c, std::shared_ptr<llvm::raw_fd_ostream> metaOstream,
                              std::shared_ptr<llvm::raw_fd_ostream> codeGenOstream, std::shared_ptr<IdGenerator> idGen)
-            : config{c}, astParser{c, idGen}, metaWriter{std::move(metaOstream), idGen}, codeGenWriter{std::move(codeGenOstream)} {}
+            : config{c}, metaWriter{std::move(metaOstream), idGen}, idGenerator{idGen}, codeGenWriter{std::move(codeGenOstream)} {}
 
         void HandleTranslationUnit(clang::ASTContext &context) override;
 
     private:
         const SourceConfig *config;
-        ASTParser astParser;
         MetaInfoWriter metaWriter;
         CodeGenWriter codeGenWriter;
+        std::shared_ptr<IdGenerator> idGenerator;
     };
 
 

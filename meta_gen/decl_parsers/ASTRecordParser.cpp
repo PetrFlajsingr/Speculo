@@ -27,7 +27,8 @@ namespace pf::meta_gen {
         return Access::Public;
     }
 
-    ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser(idGen) {}
+    ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
+        : ASTDeclParser{std::move(idGen), std::move(attribParser)} {}
 
     // TODO: divide this up into separate functions
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
@@ -42,8 +43,6 @@ namespace pf::meta_gen {
         }
 
         spdlog::info("ASTRecordParser: parsing {}", recordDecl->getQualifiedNameAsString());
-
-        AttributeParser attributeParser{};
 
         // Skip if found decl is not definition
         const auto definition = recordDecl->getDefinition();
@@ -97,7 +96,7 @@ namespace pf::meta_gen {
         result.sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
         result.sourceLocation.filename = sourceManager.getFilename(recordDecl->getSourceRange().getBegin());
 
-        result.attributes = attributeParser.parseRecordAttributes(astContext, *recordDecl);
+        result.attributes = getAttributeParser().parseRecordAttributes(astContext, *recordDecl);
 
         result.isClass = recordDecl->isClass();
         result.isStruct = recordDecl->isStruct();
@@ -118,7 +117,7 @@ namespace pf::meta_gen {
                 variableInfo.typeName = field->getType().getAsString(printingPolicy);
             }
             variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-            variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *field);
+            variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *field);
             variableInfo.access = clangAccesConv(field->getAccess());
             variableInfo.isMutable = field->isMutable();
             variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(field->getSourceRange().getBegin());
@@ -145,7 +144,7 @@ namespace pf::meta_gen {
                         variableInfo.typeName = var->getType().getAsString(printingPolicy);
                     }
                     variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-                    variableInfo.attributes = attributeParser.parseFieldAttributes(astContext, *var);
+                    variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *var);
                     variableInfo.access = clangAccesConv(var->getAccess());
 
                     variableInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(var->getSourceRange().getBegin());
@@ -205,7 +204,7 @@ namespace pf::meta_gen {
                 // TODO:
                 // Class has a base class which can't be move assigned.
             }
-
+            auto att = getAttributeParser().parseFunctionAttributes(astContext, *method);
             for (const clang::ParmVarDecl *param: method->parameters()) {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
@@ -219,10 +218,10 @@ namespace pf::meta_gen {
                 argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
                 argument.sourceLocation.column = sourceManager.getPresumedColumnNumber(param->getSourceRange().getBegin());
                 argument.sourceLocation.filename = sourceManager.getFilename(param->getSourceRange().getBegin());
-                argument.attributes = attributeParser.parseArgumentAttributes(astContext, *param);
+                argument.attributes = std::move(att.argumentAttributes[argument.name]);
                 functionInfo.arguments.push_back(argument);
             }
-            functionInfo.attributes = attributeParser.parseFunctionAttributes(astContext, *method);
+            functionInfo.attributes = std::move(att.attributes);
             if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); returnTypeRecordDecl != nullptr) {
                 functionInfo.returnTypeName = returnTypeRecordDecl->getQualifiedNameAsString();
             } else {
@@ -289,6 +288,8 @@ namespace pf::meta_gen {
             ConstructorInfo constructorInfo;
             constructorInfo.fullName = ctor->getQualifiedNameAsString();
             constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
+
+            auto att = getAttributeParser().parseConstructorAttributes(astContext, *ctor);
             for (const clang::ParmVarDecl *param: ctor->parameters()) {
                 FunctionArgument argument;
                 argument.name = param->getNameAsString();
@@ -303,7 +304,7 @@ namespace pf::meta_gen {
                 argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
                 argument.sourceLocation.column = sourceManager.getPresumedColumnNumber(param->getSourceRange().getBegin());
                 argument.sourceLocation.filename = sourceManager.getFilename(param->getSourceRange().getBegin());
-                argument.attributes = attributeParser.parseArgumentAttributes(astContext, *param);
+                argument.attributes = std::move(att.argumentAttributes[argument.name]);
                 constructorInfo.arguments.push_back(argument);
             }
             constructorInfo.isConstexpr = ctor->isConstexpr();
@@ -315,7 +316,7 @@ namespace pf::meta_gen {
             constructorInfo.sourceLocation.filename = sourceManager.getFilename(ctor->getSourceRange().getBegin());
             constructorInfo.isCopy = ctor->isCopyConstructor();
             constructorInfo.isMove = ctor->isMoveConstructor();
-            constructorInfo.attributes = attributeParser.parseConstructorAttributes(astContext, *ctor);
+            constructorInfo.attributes = std::move(att.attributes);
             constructorInfo.isInline = ctor->hasInlineBody();
             constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
 
@@ -338,7 +339,7 @@ namespace pf::meta_gen {
             result.destructor.sourceLocation.line = sourceManager.getPresumedLineNumber(destructor->getSourceRange().getBegin());
             result.destructor.sourceLocation.column = sourceManager.getPresumedColumnNumber(destructor->getSourceRange().getBegin());
             result.destructor.sourceLocation.filename = sourceManager.getFilename(destructor->getSourceRange().getBegin());
-            result.destructor.attributes = attributeParser.parseDestructorAttributes(astContext, *destructor);
+            result.destructor.attributes = std::move(getAttributeParser().parseDestructorAttributes(astContext, *destructor).attributes);
             result.destructor.isConstexpr = destructor->isConstexpr();
             result.destructor.isConsteval = destructor->isConsteval();
             result.destructor.isVirtual = destructor->isVirtual();

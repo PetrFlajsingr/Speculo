@@ -10,7 +10,7 @@ namespace pf::meta_gen {
 
     class ASTEnumParser final : public ASTDeclParser {
     public:
-        explicit ASTEnumParser(std::shared_ptr<IdGenerator> idGen);
+        ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser);
 
         ~ASTEnumParser() override = default;
 

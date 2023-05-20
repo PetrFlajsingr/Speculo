@@ -12,6 +12,7 @@ namespace pf::meta_gen {
 
     void ASTConsumer::HandleTranslationUnit(clang::ASTContext &context) {
         using namespace fmt::literals;
+        ASTParser astParser{config, idGenerator, std::make_shared<AttributeParser>(context)};
         const auto infos = astParser.parse(context);
         spdlog::info("Writing meta info to {}", config->outputMetaHeader.string());
         metaWriter.write(fmt::format(MetaFilePrologue, "file_include"_a = config->inputIncludePath));

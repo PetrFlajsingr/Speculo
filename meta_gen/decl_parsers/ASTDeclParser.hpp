@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "../AttributeParser.hpp"
 #include "../IdGenerator.hpp"
 #include "../clang_tooling_wrap.hpp"
 #include "../info_structs.hpp"
@@ -15,7 +16,7 @@ namespace pf::meta_gen {
 
     class ASTDeclParser {
     public:
-        explicit ASTDeclParser(std::shared_ptr<IdGenerator> idGen);
+        ASTDeclParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser);
 
         virtual ~ASTDeclParser() = 0;
 
@@ -23,9 +24,11 @@ namespace pf::meta_gen {
 
     protected:
         [[nodiscard]] IdGenerator &getIdGenerator() { return *idGenerator; }
+        [[nodiscard]] AttributeParser &getAttributeParser() { return *attributeParser; }
 
     private:
         std::shared_ptr<IdGenerator> idGenerator;
+        std::shared_ptr<AttributeParser> attributeParser;
     };
 
 }// namespace pf::meta_gen

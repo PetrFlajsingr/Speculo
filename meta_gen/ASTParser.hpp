@@ -7,6 +7,7 @@
 #include <variant>
 #include <vector>
 
+#include "AttributeParser.hpp"
 #include "IdGenerator.hpp"
 #include "SourceConfig.hpp"
 #include "clang_tooling_wrap.hpp"
@@ -16,7 +17,7 @@ namespace pf::meta_gen {
 
     class ASTParser {
     public:
-        ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen);
+        ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser);
 
         [[nodiscard]] std::vector<TypeInfoVariant> parse(clang::ASTContext &astContext);
 
@@ -25,6 +26,7 @@ namespace pf::meta_gen {
 
         const SourceConfig *config;
         std::shared_ptr<IdGenerator> idGenerator;
+        std::shared_ptr<AttributeParser> attributeParser;
     };
 
 }// namespace pf::meta_gen

@@ -1,0 +1,6 @@
+#include <meta/macros.hpp>
+#include <meta/details/StaticInfo.hpp>
+#undef PF_META_GENERATED_FILE_ID
+#define PF_META_GENERATED_FILE_ID 1d357157_e406_54f7_8143_c187668705c5
+#define PF_META_GENERATED_19_1d357157_e406_54f7_8143_c187668705c5 
+#define PF_META_GENERATED_20_1d357157_e406_54f7_8143_c187668705c5 

@@ -13,12 +13,13 @@
 namespace pf::meta_gen {
 
     std::unique_ptr<ASTDeclParser> createDeclParser(clang::ASTContext &astContext, clang::Decl *decl,
-                                                    const std::shared_ptr<IdGenerator> &idGen) {
+                                                    const std::shared_ptr<IdGenerator> &idGen,
+                                                    std::shared_ptr<AttributeParser> attributeParser) {
         if (decl->isInvalidDecl()) { spdlog::warn("createDeclParser: invalid decl of kind {} encountered", decl->getDeclKindName()); }
         if (const auto enumDecl = clang::dyn_cast<clang::EnumDecl>(decl); enumDecl != nullptr) {
-            return std::make_unique<ASTEnumParser>(idGen);
+            return std::make_unique<ASTEnumParser>(idGen, std::move(attributeParser));
         } else if (const auto recordDecl = clang::dyn_cast<clang::CXXRecordDecl>(decl); recordDecl != nullptr) {
-            return std::make_unique<ASTRecordParser>(idGen);
+            return std::make_unique<ASTRecordParser>(idGen, std::move(attributeParser));
         } else {
             spdlog::trace("createDeclParser: unsupported decl of kind {}", decl->getDeclKindName());
             return nullptr;

@@ -8,7 +8,8 @@
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
-    ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen) : ASTDeclParser{std::move(idGen)} {
+    ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
+        : ASTDeclParser{std::move(idGen), std::move(attribParser)} {
         spdlog::info("Creating ASTEnumDeclParser");
     }
 
@@ -64,8 +65,7 @@ namespace pf::meta_gen {
         }
 
         {
-            AttributeParser attributeParser{};
-            auto enumAttributes = attributeParser.parseEnumAttributes(astContext, *enumDecl);
+            auto enumAttributes = getAttributeParser().parseEnumAttributes(astContext, *enumDecl);
             result.attributes = std::move(enumAttributes.attributes);
 
             for (auto [name, attributes]: enumAttributes.valueAttributes) { result.values[name].attributes = std::move(attributes); }

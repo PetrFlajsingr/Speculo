@@ -5,20 +5,24 @@
 #include "tmp.hpp"
 
 namespace pf {
-    class Hoho : Haha {
+    /*   class Hoho : Haha {
         PF_META_GENERATED();
     private:
         int stan;
-    };
+    };*/
 
-    enum class [[pf::no_sti]] Hihi {};
-    enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
-                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]],
-                                                                                           Value2};
+    // enum class [[pf::no_sti]] Hihi {};
+    //enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
+    //             hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{Value1 [[pf::test, pf::test2]] [[pf::test3]],
+    //                                                                                       Value2};
 
     struct [[pf::no_sti]] B1 {};
-    struct B2 {};
-    struct B3 {};
+    struct B2 {
+        [[test1]] int [[test2]] value [[test3]];
+        [[test1]] int [[test2]] value2 [[test3]] = 10;
+        [[test1]] inline static int [[test2]] value3 [[test3]] = 10;
+    };
+    /*struct B3 {};
 
     struct [[nodiscard]] [[first]] [[second, third]] A : B1, B2, private B3 {
         PF_META_GENERATED();
@@ -33,7 +37,7 @@ namespace pf {
         A &operator=(A &&) = delete;
 
 
-        [[maybe_unused]] consteval int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
+        [[maybe_unused, nodiscard]] consteval int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
             return test +  dzea + A;
         }
         [[maybe_unused]] virtual int foo2([[letadlo()]] int dzea2) [[kjhnn]] final { [[yeetus]]; return 0; }
@@ -53,9 +57,7 @@ namespace pf {
 
         static int statFoo() { return 4324; }
         inline static int statValue = 19;
-
-
-    };
+    };*/
 
     /*struct B {
        virtual ~B() = default;
