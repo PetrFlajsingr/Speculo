@@ -23,10 +23,10 @@ if __name__ == '__main__':
     output = {
         "project": args.projectname,
         "project_root": args.projectroot,
-        "include_paths": args.includepaths,
-        "compiler_flags": args.compilerflags,
-        "defines": args.defines,
-        "header_paths": args.headerfiles
+        "include_paths": list(set(args.includepaths)),
+        "compiler_flags": list(set(args.compilerflags)),
+        "defines": list(set(args.defines)),
+        "header_paths": list(set(args.headerfiles))
     }
     out_path = Path(args.outputdir) / f'pf_meta_{args.projectname}_config.json'
     with open(out_path, 'w') as f:
