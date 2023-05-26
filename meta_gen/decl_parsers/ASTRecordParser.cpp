@@ -35,10 +35,16 @@ namespace pf::meta_gen {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
         const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
 
+
         // TODO: verify how this works
         // not supporting templates for now
         if (recordDecl->isTemplateDecl()) {
             spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
+            return std::nullopt;
+        }
+
+        if (recordDecl->isLambda()) {
+            spdlog::warn("Skipping lambda record {}", recordDecl->getQualifiedNameAsString());
             return std::nullopt;
         }
 
@@ -83,7 +89,7 @@ namespace pf::meta_gen {
         if (auto pos = result.originalCode.find(metaGenMacro); pos != std::string::npos) {
             pos += metaGenMacro.size();
             if (result.originalCode[pos] != ';') {
-                spdlog::error("Class {} contains 'PF_META_GENERATED()', but it's missing a semicolon at the end, preventing proper "
+                spdlog::error("Class {} Contains 'PF_META_GENERATED()', but it's missing a semicolon at the end, preventing proper "
                               "parsing, please provide it 'PF_META_GENERATED();'",
                               result.fullName);
                 spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
@@ -394,7 +400,7 @@ namespace pf::meta_gen {
                 std::ranges::any_of(result.staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
                 std::ranges::any_of(result.memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
                 result.destructor.access != Access::Public) {
-                spdlog::error("Class {} does not contain 'PF_META_GENERATED()', but it contains private or protected constructors, "
+                spdlog::error("Class {} does not contain 'PF_META_GENERATED()', but it Contains private or protected constructors, "
                               "destructor, variables or functions - the macro is required to access these",
                               result.fullName);
                 spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
