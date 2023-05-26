@@ -138,7 +138,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
         std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes", "-Wno-pragma-once-outside-header"};
         for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
-        for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", define)); }
+        for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         result.sourceConfigs.push_back({.inputSource = inputFile,
                                         .outputMetaHeader = metaHeader,

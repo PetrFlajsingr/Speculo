@@ -65,7 +65,7 @@ include(AddLLVM)
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_gen PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
+target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
 target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
@@ -74,7 +74,7 @@ target_compile_options(pf_meta_gen PRIVATE ${flags})
 
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 

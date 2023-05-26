@@ -59,7 +59,7 @@ namespace cppcoro
 		/// The maximum number of slots to claim.
 		///
 		/// \return
-		/// Returns an awaitable object that when awaited returns a sequence_range that contains
+		/// Returns an awaitable object that when awaited returns a sequence_range that Contains
 		/// the range of sequence numbers that were claimed. Once you have written element values
 		/// to all of the claimed slots you must publish() the sequence range in order to make
 		/// the elements available to consumers.

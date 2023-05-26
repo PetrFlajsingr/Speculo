@@ -9,6 +9,8 @@
 #include "clang_tooling_wrap.hpp"
 
 #include "info_structs.hpp"
+#include <clang/Frontend/CompilerInstance.h>
+#include <clang/Tooling/Syntax/Tokens.h>
 #include <flat/flat_map.hpp>
 #include <pf_common/concepts/ranges.h>
 
@@ -19,7 +21,7 @@ namespace pf::meta_gen {
         /**
          * Caches file's tokens.
          */
-        explicit AttributeParser(clang::ASTContext &astContext);
+        AttributeParser(clang::ASTContext &astContext, clang::syntax::TokenBuffer &&tokBuff);
 
         struct EnumAttributes {
             std::vector<Attribute> attributes;
@@ -47,21 +49,33 @@ namespace pf::meta_gen {
                                                                        const clang::CXXDestructorDecl &decl) const;
 
     private:
+        clang::SourceManager &sourceManager;
+
         struct EnumTypeAttributeParseResult {
             std::vector<Attribute> attributes;
             clang::SourceLocation end;
         };
 
-        std::vector<clang::Token> tokens;
+        clang::syntax::TokenBuffer tokenBuffer;
+        // TODO: main file tokens only
+        std::vector<clang::syntax::Token> tokens;
         using TokensIter = typename decltype(tokens)::iterator;
 
         struct TokensRange {
             TokensIter begin_;
             TokensIter end_;
+            TokensRange() : begin_{}, end_{} {}
+            TokensRange(TokensIter b, TokensIter e) : begin_{b}, end_{e} { assert(begin_ <= end_); }
 
-            [[nodiscard]] TokensIter begin() const { return begin_; }
+            [[nodiscard]] TokensIter begin() const {
+                assert(begin_ <= end_);
+                return begin_;
+            }
 
-            [[nodiscard]] TokensIter end() const { return end_; }
+            [[nodiscard]] TokensIter end() const {
+                assert(begin_ <= end_);
+                return end_;
+            }
         };
 
         TokensRange allTokensRange;
@@ -78,32 +92,36 @@ namespace pf::meta_gen {
         [[nodiscard]] fc::vector_map<std::string, std::vector<Attribute>> parseEnumValueAttributes(clang::ASTContext &astContext,
                                                                                                    clang::SourceRange srcRange) const;
 
-        [[nodiscard]] static std::optional<TokensIter> findAttributesStart([[maybe_unused]] clang::ASTContext &astContext,
+        [[nodiscard]] static std::optional<TokensIter> FindAttributesStart([[maybe_unused]] clang::ASTContext &astContext,
                                                                            const TokensRange &tokensRange);
 
-        [[nodiscard]] static std::optional<TokensIter> findAttributesEnd(clang::ASTContext &astContext, const TokensRange &tokensRange);
+        [[nodiscard]] static std::optional<TokensIter> FindAttributesEnd(clang::ASTContext &astContext, const TokensRange &tokensRange);
 
-        [[nodiscard]] static std::vector<Attribute> parseAttributes(clang::ASTContext &astContext, const TokensRange &tokensRange);
+        [[nodiscard]] static std::vector<Attribute> ParseAttributes(clang::ASTContext &astContext, const TokensRange &tokensRange);
 
-        [[nodiscard]] static clang::SourceLocation advanceByTokens(clang::ASTContext &astContext, const clang::SourceLocation &loc,
-                                                                   std::size_t count);
-
-        [[nodiscard]] static std::optional<clang::Token> getToken(clang::ASTContext &astContext, const clang::SourceLocation &loc);
 
         [[nodiscard]] std::optional<TokensRange> sourceRangeToTokensRange(const clang::SourceRange &srcRange) const;
 
-        [[nodiscard]] static bool contains(TokensRange range, pf::RangeOf<clang::tok::TokenKind> auto &&kinds) {
+        [[nodiscard]] static bool Contains(TokensRange range, pf::RangeOf<clang::tok::TokenKind> auto &&kinds) {
             return std::ranges::any_of(
-                    range, [&](const auto &token) { return std::ranges::find(kinds, token.getKind()) != std::ranges::end(kinds); });
+                    range, [&](const auto &token) { return std::ranges::find(kinds, token.kind()) != std::ranges::end(kinds); });
         }
 
         [[nodiscard]] TokensIter findNearestToken(const clang::SourceLocation &sourceLocation) const {
             if (tokens.empty()) { return allTokensRange.end(); }
+
+            auto nearest = allTokensRange.begin();
+            auto nearestDiff = std::numeric_limits<std::uint64_t>::max();
             for (auto iter = allTokensRange.begin(); iter != allTokensRange.end() - 1; ++iter) {
-                if (iter->getLocation() == sourceLocation) { return iter; }
-                if (std::ranges::next(iter)->getLocation() > sourceLocation) { return iter; }
+                if (iter->location() == sourceLocation) { return iter; }
+
+                const auto diff = iter->location().getRawEncoding() - sourceLocation.getRawEncoding();
+                if (diff < nearestDiff) {
+                    nearestDiff = diff;
+                    nearest = iter;
+                }
             }
-            return allTokensRange.end() - 1;
+            return nearest;
         }
     };
 
