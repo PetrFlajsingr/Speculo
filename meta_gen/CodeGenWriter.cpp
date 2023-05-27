@@ -31,6 +31,8 @@ namespace pf::meta_gen {
 
         std::visit(Visitor{[&](const EnumTypeInfo &enumInfo) {},
                            [&](const RecordTypeInfo &recordInfo) {
+                               // no need to write friends because macro is not in use
+                               if (!recordInfo.hasPfMetaGeneratedMacro) { return; }
                                std::string macroBody;
                                std::size_t generatedMacroLineOffset{};
                                if (const auto pos = recordInfo.originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
