@@ -33,7 +33,7 @@ namespace pf::meta_gen {
                            [&](const RecordTypeInfo &recordInfo) {
                                std::string macroBody;
                                std::size_t generatedMacroLineOffset{};
-                               if (const auto pos = recordInfo.originalCode.find("PF_META_GENERATED"); pos != std::string::npos) {
+                               if (const auto pos = recordInfo.originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
                                    for (auto i = 0; i < pos; ++i) {
                                        if (recordInfo.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
                                    }

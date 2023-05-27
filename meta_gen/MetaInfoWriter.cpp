@@ -178,7 +178,6 @@ namespace pf::meta_gen {
         }
 
         for (const auto &baseInfo: recordInfo.baseClasses) {
-
             write(fmt::format(StaticTypeInfoTemplate_Base, "full_name"_a = baseInfo.fullName, "id"_a = idToString(baseInfo.id),
                               "details"_a = "", "type_id"_a = idToString(idGenerator->generateId(baseInfo.fullName)),
                               "source_file"_a = baseInfo.sourceLocation.filename, "source_line"_a = baseInfo.sourceLocation.line,
@@ -187,6 +186,7 @@ namespace pf::meta_gen {
                               "is_virtual"_a = baseInfo.isVirtual, "name"_a = baseInfo.name));
         }
         for (const auto &ctorInfo: recordInfo.constructors) {
+            if (!recordInfo.hasPfMetaGeneratedMacro && ctorInfo.access != Access::Public) { continue; }
             for (const auto &argInfo: ctorInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
                 std::string detailsContents;
@@ -261,41 +261,45 @@ namespace pf::meta_gen {
         {
             const auto &destructor = recordInfo.destructor;
 
-            std::vector<std::string> argsArrayNames;
-            std::string detailsContents;
-            for (const auto &attr: destructor.attributes) {
-                if (attr.arguments.empty()) {
-                    argsArrayNames.push_back("EmptyAttributeArgArray");
-                } else {
-                    const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
-                    detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+            if (!recordInfo.hasPfMetaGeneratedMacro && destructor.access != Access::Public) {
+                std::vector<std::string> argsArrayNames;
+                std::string detailsContents;
+                for (const auto &attr: destructor.attributes) {
+                    if (attr.arguments.empty()) {
+                        argsArrayNames.push_back("EmptyAttributeArgArray");
+                    } else {
+                        const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
+                        argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                        detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
+                    }
                 }
+                const auto attributesStr = StringifyAttributes(destructor.attributes, argsArrayNames);
+
+
+                std::string dtorModifier;
+                if (destructor.isConstexpr) { dtorModifier = "constexpr"; }
+                if (destructor.isConsteval) { dtorModifier = "consteval"; }
+                std::string wrapLambdaStr =
+                        fmt::format(R"([]({full_type} &self) {modifier} -> void {{ self.~{type}(); }})",
+                                    "full_type"_a = recordInfo.fullName, "type"_a = recordInfo.name, "modifier"_a = dtorModifier);
+
+                write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = destructor.fullName,
+                                  "id"_a = idToString(destructor.id), "details"_a = createDetailsStruct(detailsContents),
+                                  "type_id"_a = idToString(recordInfo.id), "source_file"_a = destructor.sourceLocation.filename,
+                                  "source_line"_a = destructor.sourceLocation.line, "source_column"_a = destructor.sourceLocation.column,
+                                  "attributes"_a = attributesStr, "is_public"_a = destructor.access == Access::Public,
+                                  "is_protected"_a = destructor.access == Access::Protected,
+                                  "is_private"_a = destructor.access == Access::Private, "is_constexpr"_a = destructor.isConstexpr,
+                                  "is_consteval"_a = destructor.isConsteval, "is_virtual"_a = destructor.isVirtual,
+                                  "is_pure_virtual"_a = destructor.isPureVirtual, "is_final"_a = destructor.isFinal,
+                                  "name"_a = fmt::format("~{}", recordInfo.name), "is_inline"_a = destructor.isInline,
+                                  "is_inline_specified"_a = destructor.isInlineSpecified, "dtor_wrap_lambda"_a = wrapLambdaStr));
             }
-            const auto attributesStr = StringifyAttributes(destructor.attributes, argsArrayNames);
-
-
-            std::string dtorModifier;
-            if (destructor.isConstexpr) { dtorModifier = "constexpr"; }
-            if (destructor.isConsteval) { dtorModifier = "consteval"; }
-            std::string wrapLambdaStr =
-                    fmt::format(R"([]({full_type} &self) {modifier} -> void {{ self.~{type}(); }})", "full_type"_a = recordInfo.fullName,
-                                "type"_a = recordInfo.name, "modifier"_a = dtorModifier);
-
-            write(fmt::format(StaticTypeInfoTemplate_Destructor, "full_name"_a = destructor.fullName, "id"_a = idToString(destructor.id),
-                              "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
-                              "source_file"_a = destructor.sourceLocation.filename, "source_line"_a = destructor.sourceLocation.line,
-                              "source_column"_a = destructor.sourceLocation.column, "attributes"_a = attributesStr,
-                              "is_public"_a = destructor.access == Access::Public,
-                              "is_protected"_a = destructor.access == Access::Protected,
-                              "is_private"_a = destructor.access == Access::Private, "is_constexpr"_a = destructor.isConstexpr,
-                              "is_consteval"_a = destructor.isConsteval, "is_virtual"_a = destructor.isVirtual,
-                              "is_pure_virtual"_a = destructor.isPureVirtual, "is_final"_a = destructor.isFinal,
-                              "name"_a = fmt::format("~{}", recordInfo.name), "is_inline"_a = destructor.isInline,
-                              "is_inline_specified"_a = destructor.isInlineSpecified, "dtor_wrap_lambda"_a = wrapLambdaStr));
         }
 
         for (const auto &mbrFncInfo: recordInfo.memberFunctions) {
+            if (!recordInfo.hasPfMetaGeneratedMacro && mbrFncInfo.access != Access::Public) { continue; }
+
             for (const auto &argInfo: mbrFncInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
                 std::string detailsContents;
@@ -399,6 +403,8 @@ namespace pf::meta_gen {
         }
 
         for (const auto &mbrVarInfo: recordInfo.memberVariables) {
+            if (!recordInfo.hasPfMetaGeneratedMacro && mbrVarInfo.access != Access::Public) { continue; }
+
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
             for (const auto &attr: mbrVarInfo.attributes) {
@@ -438,6 +444,8 @@ namespace pf::meta_gen {
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {
+            if (!recordInfo.hasPfMetaGeneratedMacro && statFncInfo.access != Access::Public) { continue; }
+
             for (const auto &argInfo: statFncInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
                 std::string detailsContents;
@@ -527,6 +535,8 @@ namespace pf::meta_gen {
         }
 
         for (const auto &statVarInfo: recordInfo.staticVariables) {
+            if (!recordInfo.hasPfMetaGeneratedMacro && statVarInfo.access != Access::Public) { continue; }
+
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
             for (const auto &attr: statVarInfo.attributes) {

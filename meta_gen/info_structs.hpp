@@ -180,6 +180,8 @@ namespace pf::meta_gen {
         bool isPolymorphic;
         bool isAbstract;
         bool isFinal;
+
+        bool hasPfMetaGeneratedMacro;
     };
 
     using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;
