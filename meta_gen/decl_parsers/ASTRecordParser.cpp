@@ -44,7 +44,7 @@ namespace pf::meta_gen {
         }
 
         if (recordDecl->isLambda()) {
-            spdlog::warn("Skipping lambda record {}", recordDecl->getQualifiedNameAsString());
+            spdlog::info("Skipping lambda record {}", recordDecl->getQualifiedNameAsString());
             return std::nullopt;
         }
 
