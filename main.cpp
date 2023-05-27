@@ -22,6 +22,7 @@
 #include <cppcoro/task.hpp>
 #include <cppcoro/when_all.hpp>
 
+
 static llvm::cl::OptionCategory PfMetaGenCategory("pf_meta_gen options");
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
@@ -31,6 +32,8 @@ static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ign
 static llvm::cl::opt<bool> FormatOutput("format-output", llvm::cl::desc("Reformat outputs"), llvm::cl::value_desc("bool"),
                                         llvm::cl::init(false));
 static llvm::cl::opt<bool> ForceRegen("force", llvm::cl::desc("Force regeneration"), llvm::cl::value_desc("bool"), llvm::cl::init(false));
+static llvm::cl::opt<bool> VerboseLogging("verbose", llvm::cl::desc("Verbose logging"), llvm::cl::value_desc("bool"),
+                                          llvm::cl::init(false));
 
 
 namespace nlohmann {
@@ -155,10 +158,18 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
 
 int main(int argc, const char **argv) {
-    spdlog::set_level(spdlog::level::debug);
     spdlog::default_logger()->sinks().clear();
     spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
     llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
+    if (static_cast<bool>(VerboseLogging)) {
+        spdlog::set_level(spdlog::level::trace);
+    } else {
+#ifdef NDEBUG
+        spdlog::set_level(spdlog::level::info);
+#else
+        spdlog::set_level(spdlog::level::debug);
+#endif
+    }
 
     auto configsOpt = createConfigs(std::filesystem::path{std::string{ConfigArg}});
     if (!configsOpt.has_value()) { return 0; }

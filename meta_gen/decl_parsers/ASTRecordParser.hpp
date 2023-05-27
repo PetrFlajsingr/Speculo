@@ -14,6 +14,13 @@ namespace pf::meta_gen {
         ~ASTRecordParser() override = default;
 
         std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
+
+    private:
+        /**
+         * Create qualified name properly, including template arguments.
+         */
+        [[nodiscard]] static std::string GetProperQualifiedName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        [[nodiscard]] static std::string GetProperName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
     };
 
 }// namespace pf::meta_gen
