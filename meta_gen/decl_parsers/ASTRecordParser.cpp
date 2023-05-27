@@ -400,13 +400,13 @@ namespace pf::meta_gen {
                 std::ranges::any_of(result.staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
                 std::ranges::any_of(result.memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
                 result.destructor.access != Access::Public) {
-                spdlog::error("Class {} does not contain 'PF_META_GENERATED()', but it Contains private or protected constructors, "
+                spdlog::warn("Class {} does not contain 'PF_META_GENERATED()', but it contains private or protected constructors, "
                               "destructor, variables or functions - the macro is required to access these",
                               result.fullName);
-                spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
-                return std::nullopt;
+                spdlog::warn("Reflection data for {} will only allow access to private members", result.fullName);
             }
         }
+        result.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
 
         return result;
     }
