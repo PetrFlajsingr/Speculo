@@ -5,7 +5,6 @@
 #pragma once
 
 constexpr auto StaticTypeInfoTemplate_Base = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{id}> {{
     {details}

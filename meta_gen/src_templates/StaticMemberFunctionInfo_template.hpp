@@ -5,7 +5,6 @@
 #pragma once
 
 constexpr auto StaticTypeInfoTemplate_MemberFunction = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{id}> {{
     {details}
@@ -43,7 +42,6 @@ struct StaticInfo<{id}> {{
 )fmt";
 
 constexpr auto StaticTypeInfoTemplate_ConstevalMemberFunction = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{id}> {{
     {details}
