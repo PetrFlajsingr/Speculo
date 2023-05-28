@@ -5,7 +5,7 @@
 #ifndef PF_META_TYPEIDGENERATOR_H
 #define PF_META_TYPEIDGENERATOR_H
 
-#include "../meta/Info.hpp"
+#include <meta/Info.hpp>
 #include <random>
 
 #include <stduuid/uuid.h>

@@ -10,7 +10,7 @@
 #include <variant>
 #include <vector>
 
-#include "../meta/details/ID.hpp"
+#include <meta/details/ID.hpp>
 
 namespace pf::meta_gen {
     enum class Access { Private, Protected, Public };

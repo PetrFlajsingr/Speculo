@@ -50,7 +50,8 @@ namespace pf::meta_gen {
             return;
         }
 
-        write(fmt::format(R"fmt(// Enum {}, location {}:{}:{} with {} enumerators)fmt", enumInfo.fullName,
+        write(fmt::format(R"fmt(// Enum {}, location {}:{}:{} with {} enumerators
+)fmt", enumInfo.fullName,
                           enumInfo.sourceLocation.filename, enumInfo.sourceLocation.line,
                           enumInfo.sourceLocation.column, enumInfo.values.size()));
 
