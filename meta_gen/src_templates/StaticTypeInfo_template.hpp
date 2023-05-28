@@ -7,7 +7,6 @@
 namespace pf::meta_gen {
 
     constexpr auto StaticTypeInfoTemplate_Enum = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{type_id}> {{
     {details}
@@ -59,12 +58,9 @@ struct StaticInfo<{ptr_type_id}>
 template<>
 struct StaticInfo<{const_ptr_type_id}>
     : StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
-
-/****************************** {full_name} END ******************************/
 )fmt";
 
     constexpr auto StaticTypeInfoTemplate_Record = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{type_id}> {{
     {details}
@@ -126,8 +122,6 @@ struct StaticInfo<{ptr_type_id}>
 template<>
 struct StaticInfo<{const_ptr_type_id}>
     : StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
-
-/****************************** {full_name} END ******************************/
 )fmt";
 
 }// namespace pf::meta_gen

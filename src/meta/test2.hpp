@@ -12,8 +12,7 @@
 #include <meta/Info.hpp>
 
 namespace pf::meta::details {
-
-/****************************** SimpleStruct START ******************************/
+// Record SimpleStruct, location C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp:11:1 
 template<>
 struct StaticInfo<ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u}> {
     
@@ -75,10 +74,8 @@ struct StaticInfo<ID{0x1a5e99b4864623d8u, 0xb556a16070162094u}>
 template<>
 struct StaticInfo<ID{0x9752a19bdbed23b1u, 0x423461463d9b5492u}>
     : StaticInfo_ConstPtrWrap<ID{0x9752a19bdbed23b1u, 0x423461463d9b5492u}, ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u}> {};
+// Record SimpleStruct static info getters
 
-/****************************** SimpleStruct END ******************************/
-
-/****************************** SimpleStruct START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<SimpleStruct>() {
     return ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
@@ -107,41 +104,8 @@ template<>
 [[nodiscard]] consteval ID getTypeId<const SimpleStruct *>() {
     return ID{0x9752a19bdbed23b1u, 0x423461463d9b5492u};
 }
-/****************************** SimpleStruct END ******************************/
+// Record SimpleStruct member function SimpleStruct::footadlo
 
-/****************************** SimpleStruct::~SimpleStruct START ******************************/
-template<>
-struct StaticInfo<ID{0x9959c038d505396du, 0x313031533c943cb1u}> {
-    
-    constexpr static ID DestructorID = ID{0x9959c038d505396du, 0x313031533c943cb1u};
-    constexpr static ID TypeID = ID{0x8a5eea7eb9fa4825u, 0x12c601cd168aca3u};
-
-    constexpr static auto SourceFile = R"path(<generated>)path";
-    constexpr static std::uint64_t SourceLine = 0;
-    constexpr static std::uint64_t SourceColumn = 0;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Destructor;
-
-    constexpr static bool IsPublic = true;
-    constexpr static bool IsProtected = false;
-    constexpr static bool IsPrivate = false;
-    constexpr static auto IsConstexpr = true;
-    constexpr static auto IsConsteval = false;
-    constexpr static auto IsVirtual = false;
-    constexpr static auto IsPureVirtual = false;
-    constexpr static auto IsFinal = false;
-    constexpr static bool IsInline = false;
-    constexpr static bool IsInlineSpecified = false;
-
-    constexpr static auto Name = StringLiteral{"~SimpleStruct"};
-    constexpr static auto FullName = StringLiteral{"SimpleStruct::~SimpleStruct"};
-
-    constexpr static auto DtorWrap = [](SimpleStruct &self) constexpr -> void { self.~SimpleStruct(); };
-    };
-
-/****************************** SimpleStruct::footadlo START ******************************/
 template<>
 struct StaticInfo<ID{0x23561358310a0cbeu, 0xebb11a197749f289u}> {
     
@@ -176,8 +140,8 @@ struct StaticInfo<ID{0x23561358310a0cbeu, 0xebb11a197749f289u}> {
 
     constexpr static void(SimpleStruct::*MemberPtr)() = &SimpleStruct::footadlo;
     };
+// Record SimpleStruct member variable SimpleStruct::b1
 
-/****************************** SimpleStruct::b1 START ******************************/
 template<>
 struct StaticInfo<ID{0xb85e7b5dbcb67be4u, 0x5e9ed30670dab999u}> {
     
@@ -227,8 +191,8 @@ struct StaticInfo<ID{0xb85e7b5dbcb67be4u, 0x5e9ed30670dab999u}> {
 
     
     };
+// Record SimpleStruct member variable SimpleStruct::b2
 
-/****************************** SimpleStruct::b2 START ******************************/
 template<>
 struct StaticInfo<ID{0x685f6a6c23efb491u, 0x30d16e2ef7d8ffb1u}> {
     
@@ -278,8 +242,8 @@ struct StaticInfo<ID{0x685f6a6c23efb491u, 0x30d16e2ef7d8ffb1u}> {
 
     
     };
+// Record SimpleStruct member variable SimpleStruct::b3
 
-/****************************** SimpleStruct::b3 START ******************************/
 template<>
 struct StaticInfo<ID{0xb55d3aef7b4ffe23u, 0x8f06566db59c83b7u}> {
     
@@ -329,8 +293,8 @@ struct StaticInfo<ID{0xb55d3aef7b4ffe23u, 0x8f06566db59c83b7u}> {
 
     
     };
+// Record SimpleStruct member variable SimpleStruct::b4
 
-/****************************** SimpleStruct::b4 START ******************************/
 template<>
 struct StaticInfo<ID{0xaa5626b34ff6b026u, 0xd0e32ef8310e1abau}> {
     
@@ -380,8 +344,8 @@ struct StaticInfo<ID{0xaa5626b34ff6b026u, 0xd0e32ef8310e1abau}> {
 
     
     };
+// Record SimpleStruct member variable SimpleStruct::b5
 
-/****************************** SimpleStruct::b5 START ******************************/
 template<>
 struct StaticInfo<ID{0x875a46f77d5b032du, 0x5ed1a863bb6b3e8eu}> {
     
@@ -431,8 +395,7 @@ struct StaticInfo<ID{0x875a46f77d5b032du, 0x5ed1a863bb6b3e8eu}> {
 
     
     };
-
-/****************************** SimpleStruct::NestedPublic START ******************************/
+// Record SimpleStruct **END**// Record SimpleStruct::NestedPublic, location C:\Users\xflajs00\CLionProjects\libclang_test\src\test2.hpp:20:5 
 template<>
 struct StaticInfo<ID{0xcb52df3a8620d8fbu, 0xa4b482a29391dc9bu}> {
     
@@ -494,10 +457,8 @@ struct StaticInfo<ID{0xc65d4063dfdf6e44u, 0x75ef5aead431ef99u}>
 template<>
 struct StaticInfo<ID{0xc7514f5356c934c9u, 0x782b4af47abab689u}>
     : StaticInfo_ConstPtrWrap<ID{0xc7514f5356c934c9u, 0x782b4af47abab689u}, ID{0xcb52df3a8620d8fbu, 0xa4b482a29391dc9bu}> {};
+// Record SimpleStruct::NestedPublic static info getters
 
-/****************************** SimpleStruct::NestedPublic END ******************************/
-
-/****************************** SimpleStruct::NestedPublic START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<SimpleStruct::NestedPublic>() {
     return ID{0xcb52df3a8620d8fbu, 0xa4b482a29391dc9bu};
@@ -526,41 +487,8 @@ template<>
 [[nodiscard]] consteval ID getTypeId<const SimpleStruct::NestedPublic *>() {
     return ID{0xc7514f5356c934c9u, 0x782b4af47abab689u};
 }
-/****************************** SimpleStruct::NestedPublic END ******************************/
+// Record SimpleStruct::NestedPublic member variable SimpleStruct::NestedPublic::a
 
-/****************************** SimpleStruct::NestedPublic::~NestedPublic START ******************************/
-template<>
-struct StaticInfo<ID{0xe85925bf304d3be0u, 0x2a872c900c954884u}> {
-    
-    constexpr static ID DestructorID = ID{0xe85925bf304d3be0u, 0x2a872c900c954884u};
-    constexpr static ID TypeID = ID{0xcb52df3a8620d8fbu, 0xa4b482a29391dc9bu};
-
-    constexpr static auto SourceFile = R"path(<generated>)path";
-    constexpr static std::uint64_t SourceLine = 0;
-    constexpr static std::uint64_t SourceColumn = 0;
-
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>();
-
-    constexpr static auto StaticInfoObjectType = StaticInfoType::Destructor;
-
-    constexpr static bool IsPublic = true;
-    constexpr static bool IsProtected = false;
-    constexpr static bool IsPrivate = false;
-    constexpr static auto IsConstexpr = true;
-    constexpr static auto IsConsteval = false;
-    constexpr static auto IsVirtual = false;
-    constexpr static auto IsPureVirtual = false;
-    constexpr static auto IsFinal = false;
-    constexpr static bool IsInline = false;
-    constexpr static bool IsInlineSpecified = false;
-
-    constexpr static auto Name = StringLiteral{"~NestedPublic"};
-    constexpr static auto FullName = StringLiteral{"SimpleStruct::NestedPublic::~NestedPublic"};
-
-    constexpr static auto DtorWrap = [](SimpleStruct::NestedPublic &self) constexpr -> void { self.~NestedPublic(); };
-    };
-
-/****************************** SimpleStruct::NestedPublic::a START ******************************/
 template<>
 struct StaticInfo<ID{0x995e8284d41542d4u, 0x6ed26f5e7949a893u}> {
     
@@ -587,5 +515,5 @@ struct StaticInfo<ID{0x995e8284d41542d4u, 0x6ed26f5e7949a893u}> {
 
     constexpr static int SimpleStruct::NestedPublic::* MemberPtr = &SimpleStruct::NestedPublic::a;
     };
-
+// Record SimpleStruct::NestedPublic **END**
 }

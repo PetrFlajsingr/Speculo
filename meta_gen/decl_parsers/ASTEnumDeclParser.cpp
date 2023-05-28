@@ -10,7 +10,7 @@
 namespace pf::meta_gen {
     ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
         : ASTDeclParser{std::move(idGen), std::move(attribParser)} {
-        spdlog::info("Creating ASTEnumDeclParser");
+        spdlog::trace("Creating ASTEnumDeclParser");
     }
 
     std::optional<TypeInfoVariant> ASTEnumParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
@@ -50,13 +50,13 @@ namespace pf::meta_gen {
             std::variant<bool, std::uint64_t, std::int64_t> value;
             if (enumDecl->getIntegerType()->isBooleanType()) {
                 value = enumerator->getInitVal().getBoolValue();
-                spdlog::info("ASTEnumDeclParser: detected bool as underlying type");
+                spdlog::trace("ASTEnumDeclParser: detected bool as underlying type");
             } else if (enumDecl->getIntegerType()->isSignedIntegerType()) {
                 value = enumerator->getInitVal().getSExtValue();
-                spdlog::info("ASTEnumDeclParser: detected signed int as underlying type");
+                spdlog::trace("ASTEnumDeclParser: detected signed int as underlying type");
             } else if (enumDecl->getIntegerType()->isUnsignedIntegerType()) {
                 value = enumerator->getInitVal().getExtValue();
-                spdlog::info("ASTEnumDeclParser: detected unsigned int as underlying type");
+                spdlog::trace("ASTEnumDeclParser: detected unsigned int as underlying type");
             }
             const auto line = sourceManager.getPresumedLineNumber(enumerator->getSourceRange().getBegin());
             const auto column = sourceManager.getPresumedColumnNumber(enumerator->getSourceRange().getBegin());
@@ -83,6 +83,7 @@ namespace pf::meta_gen {
             info.fullName = fmt::format("{}::{}", result.fullName, name);
             const auto valueId = getIdGenerator().generateId(info.fullName);
             info.id = valueId;
+            info.sourceLocation.filename = result.sourceLocation.filename;
         }
 
         return result;

@@ -7,7 +7,6 @@
 namespace pf::meta_gen {
 
     constexpr auto StaticValueInfoTemplate_Enum = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 struct StaticInfo<{value_id}> {{
     {details}
@@ -29,7 +28,6 @@ struct StaticInfo<{value_id}> {{
     constexpr static {underlying_type} UnderlyingValue = {underlying_value};
     constexpr static {type} Value = {value};
 }};
-/****************************** {full_name} END ******************************/
 )fmt";
 
 }

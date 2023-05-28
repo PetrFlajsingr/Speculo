@@ -7,7 +7,6 @@
 namespace pf::meta_gen {
 
     constexpr auto GetTypeIDTemplate = R"fmt(
-/****************************** {full_name} START ******************************/
 template<>
 [[nodiscard]] consteval ID getTypeId<{type}>() {{
     return {type_id};
@@ -36,7 +35,6 @@ template<>
 [[nodiscard]] consteval ID getTypeId<const {type} *>() {{
     return {const_ptr_type_id};
 }}
-/****************************** {full_name} END ******************************/
 )fmt";
 
 }
