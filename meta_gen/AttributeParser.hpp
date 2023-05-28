@@ -82,6 +82,8 @@ namespace pf::meta_gen {
 
         [[nodiscard]] std::vector<Attribute> parseVariableAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange) const;
 
+        [[nodiscard]] static std::vector<Attribute> MinimizeAttributes(const std::vector<Attribute> &attrs);
+
         [[nodiscard]] FunctionLikeAttributes
         parseFunctionLikeAttributes(clang::ASTContext &astContext, clang::SourceRange srcRange,
                                     const fc::vector_map<std::string, clang::SourceRange> &argumentSrcRanges) const;

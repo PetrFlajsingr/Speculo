@@ -6,28 +6,23 @@
 namespace pf {
     class Hoho : Haha {
         PF_META_GENERATED();
+
     private:
         int stan;
     };
 
-    enum class [[pf::no_sti]] Hihi {
-    };
-    enum class [[using pf: operators(()()()((())),[[nodiscard]], 1ll, 1.011,[] {
-    }(), "yeet", 'a',[][][]:: : 3214234...[][][][]),
-    hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int {
-        Value1 [[pf::test, pf::test2]] [[pf::test3]],
-        Value2
-    };
+    enum class [[pf::no_sti]] Hihi {};
+    enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
+                 hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{
+            Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 
-    struct [[pf::no_sti]] B1 {
-    };
+    struct [[pf::no_sti]] B1 {};
     struct B2 {
         [[test1]] int [[test2]] value [[test3]]{};
         [[test1]] int [[test2]] value2 [[test3]] = 10;
         [[test1]] inline static int [[test2]] value3 [[test3]] = 10;
     };
-    struct B3 {
-    };
+    struct [[lala(111), lala(222)]] [[lala(333, 444)]] B3 {};
 
     struct [[nodiscard]] [[first]] [[second, third]] A : B1, B2, private B3 {
         PF_META_GENERATED();
@@ -45,8 +40,7 @@ namespace pf {
         A &operator=(A &&) = delete;
 
 
-        [[maybe_unused, nodiscard]] consteval int
-        foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
+        [[maybe_unused, nodiscard]] consteval int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
             return test + dzea + A;
         }
 
@@ -99,16 +93,11 @@ namespace pf {
         Test(T) {}
 
     protected:
-        void pure_foo(int a) override {
+        void pure_foo(int a) override {}
 
-        }
-
-        void virt_foo(int a) override {
-            B::virt_foo(a);
-        }
+        void virt_foo(int a) override { B::virt_foo(a); }
 
     public:
-
         int a{};
         int b{};
         float c{}, d{};
@@ -116,7 +105,8 @@ namespace pf {
         inline static int inline_static_int = 10;
         static int static_int;
 
-        void foo(int a, int b) {};
+        void foo(int a, int b){};
+
     protected:
         void foo(int a, int b) const {};
 
@@ -127,34 +117,15 @@ namespace pf {
     };
 
 
-    enum class EmptyEnum {
-    };
+    enum class EmptyEnum {};
 
-    enum class E1 {
-        A, B, C, D, E
-    };
-    enum class E2 {
-        A, B, C, D, E
-    };
-    enum class E3 {
-        A, B, C, D, E
-    };
-    enum class E4 {
-        A, B, C, D, E
-    };
-    enum class E5 {
-        A, B, C, D, E
-    };
-    enum class E6 {
-        A, B, C, D, E
-    };
-    enum class E7 {
-        A, B, C, D, E
-    };
-    enum class E8 {
-        A, B, C, D, E
-    };
-    enum class E9 {
-        A, B, C, D, E
-    };
+    enum class E1 { A, B, C, D, E };
+    enum class E2 { A, B, C, D, E };
+    enum class E3 { A, B, C, D, E };
+    enum class E4 { A, B, C, D, E };
+    enum class E5 { A, B, C, D, E };
+    enum class E6 { A, B, C, D, E };
+    enum class E7 { A, B, C, D, E };
+    enum class E8 { A, B, C, D, E };
+    enum class E9 { A, B, C, D, E };
 }// namespace pf

@@ -18,7 +18,7 @@ namespace pf::meta_gen {
 
         const auto enumDecl = clang::cast<clang::EnumDecl>(decl);
 
-        spdlog::info("ASTEnumDeclParser: parsing {}", enumDecl->getQualifiedNameAsString());
+        spdlog::trace("ASTEnumDeclParser: parsing {}", enumDecl->getQualifiedNameAsString());
 
         // Skip if found decl is not definition
         const auto definition = enumDecl->getDefinition();
