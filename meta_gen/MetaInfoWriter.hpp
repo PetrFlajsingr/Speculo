@@ -35,9 +35,7 @@ namespace pf::meta_gen {
         [[nodiscard]] static std::string CreateAttributeArgArray(std::string_view name, const Attribute &attr);
 
         [[nodiscard]] static bool ContainsNoSTIAttribute(const std::vector<Attribute> &attrs) {
-            return std::ranges::any_of(attrs, [](const auto &attr) {
-                return attr.nnamespace == "pf" && attr.name == "no_sti";
-            });
+            return std::ranges::any_of(attrs, [](const auto &attr) { return attr.nnamespace == "pf" && attr.name == "no_sti"; });
         }
 
         std::shared_ptr<IdGenerator> idGenerator;
