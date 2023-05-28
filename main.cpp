@@ -85,11 +85,13 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
     istream.close();
 
     auto &filesData = data["files"];
+    filesData.clear();
     for (const auto &[file, stamp]: db.fileTimestamps) {
         nlohmann::json fileData{{"file", file}, {"timestamp", stamp}};
         filesData.push_back(fileData);
     }
     auto &flagsData = data["compiler_flags"];
+    flagsData.clear();
     for (const auto &flag: db.compilerFlags) { flagsData.push_back(flag); }
     auto ostream = std::ofstream{databasePath};
     if (!ostream.is_open()) {
@@ -242,9 +244,11 @@ int main(int argc, const char **argv) {
     std::vector<cppcoro::task<tl::expected<ParseResult, ParseFailure>>> tasks;
     std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { tasks.emplace_back(generateMetaForSource(config)); });
 
+    const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
+
     timestampDB.fileTimestamps.clear();
     if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
-    const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
+
     std::ranges::for_each(results, [&](const auto &v) {
         if (!v.has_value()) {
             spdlog::error("File '{}' failed", v.error().inPath.string());

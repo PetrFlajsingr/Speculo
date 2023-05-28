@@ -55,47 +55,65 @@ function(pf_meta_create_config)
     endif()
 
     get_target_property(INCLUDES ${_args_TARGET} INCLUDE_DIRECTORIES)
+    set(SKIP_INCLUDES FALSE)
+    list(LENGTH INCLUDES LENGTH_RESULT)
+    if (LENGTH_RESULT EQUAL 1)
+        if(${INCLUDES} STREQUAL INCLUDES-NOTFOUND)
+            set(SKIP_INCLUDES TRUE)
+        endif()
+    endif()
 
-    foreach (include ${INCLUDES})
-        list(APPEND INCLUDE_ARGS "${include}")
-    endforeach ()
+    if (NOT ${SKIP_INCLUDES})
+        foreach (include ${INCLUDES})
+            list(APPEND INCLUDE_ARGS "${include}")
+        endforeach ()
+    endif ()
 
     get_target_property(DEPENDENCIES ${_args_TARGET} LINK_LIBRARIES)
-
-    foreach (dependency ${DEPENDENCIES})
-        get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
-        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
-        if (LENGTH_RESULT EQUAL 1)
-            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
-                continue()
-            endif()
+    list(LENGTH DEPENDENCIES LENGTH_RESULT)
+    set(DEPENDENCIES_INVALID FALSE)
+    if (LENGTH_RESULT EQUAL 1)
+        if(${DEPENDENCIES} STREQUAL DEPENDENCIES-NOTFOUND)
+            set(DEPENDENCIES_INVALID TRUE)
         endif()
+    endif()
 
-        foreach (include ${DEPENDENCY_INCLUDES})
-            list(APPEND INCLUDE_ARGS "${include}")
-        endforeach ()
-    endforeach ()
-
-    foreach (dependency ${DEPENDENCIES})
-        get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
-        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
-        if (LENGTH_RESULT EQUAL 1)
-            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
-                continue()
+    if (NOT ${DEPENDENCIES_INVALID})
+        foreach (dependency ${DEPENDENCIES})
+            get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
+            list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
+            if (LENGTH_RESULT EQUAL 1)
+                if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
+                    continue()
+                endif()
             endif()
-        endif()
 
-        foreach (include ${DEPENDENCY_INCLUDES})
-            list(APPEND INCLUDE_ARGS "${include}")
+            foreach (include ${DEPENDENCY_INCLUDES})
+                list(APPEND INCLUDE_ARGS "${include}")
+            endforeach ()
         endforeach ()
-    endforeach ()
+
+        foreach (dependency ${DEPENDENCIES})
+            get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
+            list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
+            if (LENGTH_RESULT EQUAL 1)
+                if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
+                    continue()
+                endif()
+            endif()
+
+            foreach (include ${DEPENDENCY_INCLUDES})
+                list(APPEND INCLUDE_ARGS "${include}")
+            endforeach ()
+        endforeach ()
+    endif()
 
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     execute_process(COMMAND ${Python3_EXECUTABLE}
-            ${CMAKE_SOURCE_DIR}/scripts/pf_meta_config_create.py
+            ${PF_META_GEN_SCRIPTS_PATH}/pf_meta_config_create.py
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
             -o ${BINARY_DIR}
@@ -152,6 +170,8 @@ function(pf_meta_register)
     set(multiValueArgs FLAGS HEADERS DEFINES)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
+
+    target_link_libraries(${_args_TARGET} PUBLIC pf_meta::pf_meta)
 
     pf_meta_create_config(
             TARGET ${_args_TARGET}

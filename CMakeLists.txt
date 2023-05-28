@@ -9,6 +9,17 @@ else ()
     set(CMAKE_CXX_STANDARD 20)
 endif ()
 
+# Set PF_META_GEN_PATH to current binary output if not provided
+# global variables
+# allows for using the project as subdirectory
+if (NOT DEFINED PF_META_GEN_PATH)
+    # FIXME: windows exe only for now
+    set(PF_META_GEN_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_PATH")
+endif ()
+
+if (NOT DEFINED PF_META_GEN_SCRIPTS_PATH)
+    set(PF_META_GEN_SCRIPTS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts CACHE INTERNAL "PF_META_GEN_SCRIPTS_PATH")
+endif ()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/std:c++latest" "/W4" "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030")
@@ -37,6 +48,10 @@ find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
 add_subdirectory(third_party/cppcoro)
 
+add_library(pf_meta INTERFACE)
+add_library(pf_meta::pf_meta ALIAS pf_meta)
+target_include_directories(pf_meta INTERFACE include)
+
 add_executable(pf_meta_gen main.cpp
         meta_gen/AttributeParser.cpp
         meta_gen/AstActions.cpp
@@ -64,9 +79,8 @@ include(AddLLVM)
 
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
-target_include_directories(pf_meta_gen PRIVATE meta_gen/include)
 target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro)
+target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro pf_meta::pf_meta)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
@@ -75,10 +89,10 @@ target_compile_options(pf_meta_gen PRIVATE ${flags})
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/include)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
-target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
-target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
 target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_options(meta_test PRIVATE ${test_flags})
 add_dependencies(meta_test pf_meta_gen)
