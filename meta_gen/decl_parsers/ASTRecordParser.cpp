@@ -49,7 +49,7 @@ namespace pf::meta_gen {
             return std::nullopt;
         }
 
-        spdlog::info("ASTRecordParser: parsing {}", GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
+        spdlog::trace("ASTRecordParser: parsing {}", GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
 
         const auto isTemplateSpecialization = recordDecl->getTemplateSpecializationKind() != clang::TSK_Undeclared;
         if (isTemplateSpecialization) {

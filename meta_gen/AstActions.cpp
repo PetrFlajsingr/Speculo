@@ -25,12 +25,12 @@ namespace pf::meta_gen {
         ASTParser astParser{config, idGenerator,
                             std::make_shared<AttributeParser>(context, std::move(parent->getTokenCollector()).consume())};
         const auto infos = astParser.parse(context);
-        spdlog::info("Writing meta info to {}", config->outputMetaHeader.string());
+        spdlog::trace("Writing meta info to {}", config->outputMetaHeader.string());
         metaWriter.write(fmt::format(MetaFilePrologue, "file_include"_a = config->inputIncludePath));
         for (const auto &info: infos) { metaWriter.write(info); }
         metaWriter.write(MetaFileEpilogue);
 
-        spdlog::info("Writing generated code to {} and {}", config->outputCodegenHeader.string(), config->outputCodegenSource.string());
+        spdlog::trace("Writing generated code to {} and {}", config->outputCodegenHeader.string(), config->outputCodegenSource.string());
 
         codeGenWriter.start(std::filesystem::relative(config->outputCodegenHeader, config->projectRootDir).string());
         codeGenWriter.generate(infos);
