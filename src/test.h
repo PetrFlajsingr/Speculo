@@ -26,7 +26,7 @@ namespace pf {
         [[test1]] int [[test2]] value2 [[test3]] = 10;
         [[test1]] inline static int [[test2]] value3 [[test3]] = 10;
     };
-    struct B3 {
+    struct [[lala(111), lala(222)]] [[lala(333, 444)]] B3 {
     };
 
     struct [[nodiscard]] [[first]] [[second, third]] A : B1, B2, private B3 {
