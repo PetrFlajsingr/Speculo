@@ -1,5 +1,7 @@
 #include "meta/Info.hpp"
 #include <fmt/core.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>
 
 #include "meta_gen/AttributeParser.hpp"
@@ -161,17 +163,24 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
 int main(int argc, const char **argv) {
     spdlog::default_logger()->sinks().clear();
-    spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
-    if (static_cast<bool>(VerboseLogging)) {
-        spdlog::set_level(spdlog::level::trace);
-    } else {
+    {
+        auto &stdoutSink = spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+        if (static_cast<bool>(VerboseLogging)) {
+            stdoutSink->set_level(spdlog::level::trace);
+        } else {
 #ifdef NDEBUG
-        spdlog::set_level(spdlog::level::info);
+            stdoutSink->set_level(spdlog::level::info);
 #else
-        spdlog::set_level(spdlog::level::debug);
+            stdoutSink->set_level(spdlog::level::debug);
 #endif
+        }
+        spdlog::default_logger()
+                ->sinks()
+                .emplace_back(std::make_shared<spdlog::sinks::daily_file_sink_mt>(
+                        (std::filesystem::current_path() / "logs/daily.log").string(), 0, 0))
+                ->set_level(spdlog::level::trace);
     }
+    llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
     auto configsOpt = createConfigs(std::filesystem::path{std::string{ConfigArg}});
     if (!configsOpt.has_value()) { return 0; }
@@ -201,7 +210,7 @@ int main(int argc, const char **argv) {
 
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
         // if regeneration is forced or if compiler flags changed we need to regenerate
-        if (!static_cast<bool>(ForceRegen) || !compilerFlagsChanged) {
+        if (!static_cast<bool>(ForceRegen) && !compilerFlagsChanged) {
             if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
                 if (lastWriteTime < iter->second) {
                     spdlog::info("File '{}' was not changed", config.inputSource.string());
