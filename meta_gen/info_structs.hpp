@@ -152,6 +152,7 @@ namespace pf::meta_gen {
         bool isInlineSpecified;  // only for statics
         bool isBitfield;         // only for members
         std::size_t bitfieldSize;// only for members
+        std::size_t byteOffset;      // only for members (except bitfields)
     };
 
     struct BaseClassInfo {
@@ -161,6 +162,7 @@ namespace pf::meta_gen {
         bool isVirtual;
         Access access;
         SourceLocationInfo sourceLocation;
+        std::size_t byteOffset;
     };
 
     struct RecordTypeInfo : TypeInfo {

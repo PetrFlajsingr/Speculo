@@ -140,7 +140,9 @@ namespace pf::meta_gen {
             variableInfo.sourceLocation.filename = sourceManager.getFilename(field->getSourceRange().getBegin());
             variableInfo.isBitfield = field->isBitField();
             variableInfo.bitfieldSize = 0;
-            if (variableInfo.isBitfield) { variableInfo.bitfieldSize = field->getBitWidthValue(astContext); }
+            if (variableInfo.isBitfield) { variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
+            }
+            variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
 
             result.memberVariables.push_back(variableInfo);
         }

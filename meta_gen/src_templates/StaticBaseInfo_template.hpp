@@ -21,6 +21,7 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsProtected = {is_protected};
     constexpr static bool IsPrivate = {is_private};
     constexpr static auto IsVirtual = {is_virtual};
+    constexpr static std::size_t Offset = {offset};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};

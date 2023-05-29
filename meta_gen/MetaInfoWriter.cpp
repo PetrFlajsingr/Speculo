@@ -529,6 +529,8 @@ namespace pf::meta_gen {
 )fmt",
                               recordInfo.fullName, mbrVarInfo.fullName));
 
+
+
             write(fmt::format(StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName,
                               "id"_a = idToString(mbrVarInfo.id), "details"_a = createDetailsStruct(detailsContents),
                               "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrVarInfo.sourceLocation.filename,
@@ -537,7 +539,7 @@ namespace pf::meta_gen {
                               "is_protected"_a = mbrVarInfo.access == Access::Protected,
                               "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
                               "is_mutable"_a = mbrVarInfo.isMutable, "member_ptr_block"_a = memberPtrBlock,
-                              "is_bitfield"_a = mbrVarInfo.isBitfield, "bitfield_block"_a = bitfieldBlock));
+                              "is_bitfield"_a = mbrVarInfo.isBitfield, "bitfield_block"_a = bitfieldBlock, "offset"_a = mbrVarInfo.byteOffset));
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {
