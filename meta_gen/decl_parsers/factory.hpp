@@ -2,8 +2,7 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#ifndef PF_META_GEN_FACTORY_H
-#define PF_META_GEN_FACTORY_H
+#pragma once
 
 #include "ASTDeclParser.hpp"
 
@@ -14,5 +13,3 @@ namespace pf::meta_gen {
                                                                   std::shared_ptr<AttributeParser> attributeParser);
 
 }
-
-#endif//PF_META_GEN_FACTORY_H

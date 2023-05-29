@@ -2,12 +2,11 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_DETAILS_STATICTYPEINFO_H
-#define PF_META_DETAILS_STATICTYPEINFO_H
+#pragma once
 
-#include "ID.hpp"
-#include "meta/details/StringLiteral.hpp"
-#include "meta_helpers.hpp"
+#include <meta/details/ID.hpp>
+#include <meta/details/StringLiteral.hpp>
+#include <meta/details/meta_helpers.hpp>
 
 namespace pf::meta::details {
 
@@ -34,5 +33,3 @@ namespace pf::meta::details {
     constexpr static std::array<std::string_view, 0> EmptyAttributeArgArray{};
 
 }// namespace pf::meta::details
-
-#endif//PF_META_DETAILS_STATICTYPEINFO_H

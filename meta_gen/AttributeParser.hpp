@@ -4,15 +4,14 @@
 
 #pragma once
 
-#include <pf_common/macros.h>
-
 #include "clang_tooling_wrap.hpp"
 
 #include "info_structs.hpp"
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Tooling/Syntax/Tokens.h>
 #include <flat/flat_map.hpp>
-#include <pf_common/concepts/ranges.h>
+
+#include <meta/details/RangeOf.hpp>
 
 namespace pf::meta_gen {
 
@@ -104,7 +103,7 @@ namespace pf::meta_gen {
 
         [[nodiscard]] std::optional<TokensRange> sourceRangeToTokensRange(const clang::SourceRange &srcRange) const;
 
-        [[nodiscard]] static bool Contains(TokensRange range, pf::RangeOf<clang::tok::TokenKind> auto &&kinds) {
+        [[nodiscard]] static bool Contains(TokensRange range, meta::details::RangeOf<clang::tok::TokenKind> auto &&kinds) {
             return std::ranges::any_of(
                     range, [&](const auto &token) { return std::ranges::find(kinds, token.kind()) != std::ranges::end(kinds); });
         }

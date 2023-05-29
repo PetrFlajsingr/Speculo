@@ -8,7 +8,7 @@
 
 #include "IdGenerator.hpp"
 #include "info_structs.hpp"
-#include <pf_common/concepts/ranges.h>
+#include <meta/details/RangeOf.hpp>
 
 
 namespace pf::meta_gen {
@@ -19,7 +19,7 @@ namespace pf::meta_gen {
 
         void write(std::string_view str);
 
-        void write(RangeOf<TypeInfoVariant> auto &&typeInfos) {
+        void write(meta::details::RangeOf<TypeInfoVariant> auto &&typeInfos) {
             std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos), [this](auto &&typeInfo) { write(typeInfo); });
         }
 

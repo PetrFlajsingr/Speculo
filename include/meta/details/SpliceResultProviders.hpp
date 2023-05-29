@@ -6,9 +6,10 @@
 
 #pragma once
 
-#include "Info.hpp"
-#include "details/ID.hpp"
-#include "details/StaticInfo.hpp"
+#include <meta/Info.hpp>
+#include <meta/details/ID.hpp>
+#include <meta/details/StaticInfo.hpp>
+#include <meta/details/meta_helpers.hpp>
 
 
 #define PF_SPLICE_TYPE(I) ::pf::meta::details::StaticInfo<I.implId>::Type
@@ -41,7 +42,7 @@ namespace pf::meta::details {
 
     template<pf::meta::Info I>
     struct SpliceResultProvider {
-        static_assert(sizeof(I) == 0, "Not implemented or splice not supported for this meta type");
+        static_assert(AlwaysFalseV<I>, "Not implemented or splice not supported for this meta type");
     };
 
     template<pf::meta::Info I>

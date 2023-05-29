@@ -15,13 +15,6 @@ namespace pf::meta_gen {
     void ASTConsumer::HandleTranslationUnit(clang::ASTContext &context) {
         using namespace fmt::literals;
 
-        /* const auto tokens = std::move(parent->getTokenCollector()).consume();
-        for (const auto &t : tokens.expandedTokens()) {
-            if (!parent->getCompilerInstance().getSourceManager().isInMainFile(t.location())) { continue; }
-            std::cout << std::string{t.text(parent->getCompilerInstance().getSourceManager())} << " ";
-        }
-        std::cout.flush();*/
-
         ASTParser astParser{config, idGenerator,
                             std::make_shared<AttributeParser>(context, std::move(parent->getTokenCollector()).consume())};
         const auto infos = astParser.parse(context);

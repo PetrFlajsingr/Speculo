@@ -8,10 +8,10 @@
 
 #include <string_view>
 
-#include "details/RangeOf.hpp"
-#include "meta.hpp"
-#include "reflect.hpp"
-#include "template_for.hpp"
+#include <meta/details/RangeOf.hpp>
+#include <meta/meta.hpp>
+#include <meta/reflect.hpp>
+#include <meta/template_for.hpp>
 
 namespace pf::meta {
     template<typename E>

@@ -10,7 +10,7 @@
 
 #include "info_structs.hpp"
 #include <fmt/format.h>
-#include <pf_common/concepts/ranges.h>
+#include <meta/details/RangeOf.hpp>
 
 namespace pf::meta_gen {
 
@@ -22,7 +22,7 @@ namespace pf::meta_gen {
         void start(std::string_view fileName);
         void end();
 
-        void generate(RangeOf<TypeInfoVariant> auto &&typeInfos) {
+        void generate(meta::details::RangeOf<TypeInfoVariant> auto &&typeInfos) {
             std::ranges::for_each(std::forward<decltype(typeInfos)>(typeInfos), [this](auto &&typeInfo) { generate(typeInfo); });
         }
 

@@ -2,8 +2,7 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_DETAILS_TEMPLATE_FOR_H
-#define PF_META_DETAILS_TEMPLATE_FOR_H
+#pragma once
 
 #include <cstddef>
 #include <optional>
@@ -34,5 +33,3 @@ namespace pf::meta::details {
         }
     }
 }// namespace pf::meta::details
-
-#endif//PF_META_DETAILS_TEMPLATE_FOR_H

@@ -4,6 +4,7 @@
 
 #include "MetaInfoWriter.hpp"
 
+#include "Visitor.hpp"
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 
@@ -19,7 +20,6 @@
 #include "src_templates/StaticStaticVariableInfo_template.hpp"
 #include "src_templates/StaticTypeInfo_template.hpp"
 #include "src_templates/StaticValueInfo_template.hpp"
-#include <pf_common/Visitor.h>
 
 namespace pf::meta_gen {
     [[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
