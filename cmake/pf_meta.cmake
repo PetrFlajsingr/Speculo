@@ -171,8 +171,6 @@ function(pf_meta_register)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
-    target_link_libraries(${_args_TARGET} PUBLIC pf_meta::pf_meta)
-
     pf_meta_create_config(
             TARGET ${_args_TARGET}
             FLAGS ${_args_FLAGS}
