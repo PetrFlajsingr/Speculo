@@ -2,11 +2,10 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_DETAILS_STATICINFO_WRAPPERS_H
-#define PF_META_DETAILS_STATICINFO_WRAPPERS_H
+#pragma once
 
-#include "ID.hpp"
-#include "StaticInfo.hpp"
+#include <meta/details/ID.hpp>
+#include <meta/details/StaticInfo.hpp>
 
 namespace pf::meta::details {
     template<ID I, ID ParentID>
@@ -60,5 +59,3 @@ namespace pf::meta::details {
         constexpr static auto FullName = StringLiteral{"const "} + details::StaticInfo<ParentID>::FullName + StringLiteral{" *"};
     };
 }// namespace pf::meta::details
-
-#endif//PF_META_DETAILS_STATICINFO_WRAPPERS_H

@@ -2,8 +2,7 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_ATTRIBUTE_H
-#define PF_META_ATTRIBUTE_H
+#pragma once
 
 #include <span>
 #include <string_view>
@@ -20,5 +19,3 @@ namespace pf::meta {
     };
 
 }// namespace pf::meta
-
-#endif//PF_META_ATTRIBUTE_H

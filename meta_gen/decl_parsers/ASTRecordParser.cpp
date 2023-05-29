@@ -3,9 +3,7 @@
 //
 
 #include "ASTRecordParser.hpp"
-#include "../AttributeParser.hpp"
 #include <clang/Sema/Sema.h>
-#include <pf_common/concepts/ranges.h>
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -177,7 +175,7 @@ namespace pf::meta_gen {
         }
 
         const auto mangleFunction = [](std::string_view fullName,
-                                       RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames) {
+                                       meta::details::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames) {
             std::string result{fullName};
             for (const auto &[type, name]: argumentTypesAndNames) { result.append(fmt::format("_{}_{}", type, name)); }
             return result;

@@ -5,9 +5,9 @@
 #ifndef PF_META_FORMAT_H
 #define PF_META_FORMAT_H
 
-#include <pf_common/macros.h>
+#include <boost/config.hpp>
 
-#if PF_GCC == 1
+#if defined(BOOST_GCC)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
@@ -24,7 +24,7 @@
 #include <llvm/Support/InitLLVM.h>
 #include <llvm/Support/Process.h>
 
-#if PF_GCC == 1
+#if defined(BOOST_GCC)
 #pragma GCC diagnostic pop
 #endif
 

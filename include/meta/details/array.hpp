@@ -7,8 +7,7 @@
 #pragma once
 
 #include <array>
-#include <pf_common/concepts/CommonType.h>
-#include <type_traits>
+#include <concepts>
 
 namespace pf::meta::details {
     template<typename T, std::convertible_to<T>... Args>

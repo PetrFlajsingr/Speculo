@@ -4,9 +4,6 @@
 
 #include "AttributeParser.hpp"
 
-#include <pf_common/algorithms.h>
-#include <pf_common/array.h>
-
 #include <iostream>
 #include <spdlog/spdlog.h>
 
@@ -14,6 +11,9 @@
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Lex/PreprocessorOptions.h"
 #include <flat/flat_map.hpp>
+
+#include "Contains.hpp"
+#include <meta/details/array.hpp>
 // FIXME: deduplicate code
 namespace pf::meta_gen {
 
@@ -50,8 +50,8 @@ namespace pf::meta_gen {
 
         // skipping `class` or `struct`
         if ((tokensRange->begin()->kind() == clang::tok::raw_identifier || tokensRange->begin()->kind() == clang::tok::identifier) &&
-            pf::contains(pf::make_array<std::string_view>("struct", "class"),
-                         std::string_view{tokensRange->begin()->text(sourceManager)})) {
+            contains(meta::details::make_array<std::string_view>("struct", "class"),
+                     std::string_view{tokensRange->begin()->text(sourceManager)})) {
             ++tokensRange->begin_;
         }
 
@@ -60,7 +60,7 @@ namespace pf::meta_gen {
             foundAttributes = false;
             if (const auto start = FindAttributesStart(astContext, *tokensRange); start.has_value()) {
                 if (Contains(TokensRange{tokensRange->begin(), *start},
-                             pf::make_array<clang::tok::TokenKind>(clang::tok::raw_identifier, clang::tok::identifier))) {
+                             meta::details::make_array<clang::tok::TokenKind>(clang::tok::raw_identifier, clang::tok::identifier))) {
                     // found class name, thus we're out of class type's attributes
                     break;
                 }
@@ -122,7 +122,8 @@ namespace pf::meta_gen {
         }
         // skipping `class` or `struct`
         if ((tokenRange->begin()->kind() == clang::tok::raw_identifier || tokenRange->begin()->kind() == clang::tok::identifier) &&
-            pf::contains(pf::make_array<std::string_view>("struct", "class"), std::string_view{tokenRange->begin()->text(sourceManager)})) {
+            contains(meta::details::make_array<std::string_view>("struct", "class"),
+                     std::string_view{tokenRange->begin()->text(sourceManager)})) {
             ++tokenRange->begin_;
         }
 
@@ -131,7 +132,7 @@ namespace pf::meta_gen {
             foundAttributes = false;
             if (const auto start = FindAttributesStart(astContext, *tokenRange); start.has_value()) {
                 if (Contains(TokensRange{tokenRange->begin(), *start},
-                             pf::make_array<clang::tok::TokenKind>(clang::tok::raw_identifier, clang::tok::identifier))) {
+                             meta::details::make_array<clang::tok::TokenKind>(clang::tok::raw_identifier, clang::tok::identifier))) {
                     // found enum name, thus we're out of enum type's attributes
                     break;
                 }
@@ -212,7 +213,7 @@ namespace pf::meta_gen {
                 foundAttributes = false;
                 if (const auto start = FindAttributesStart(astContext, *tokensRange); start.has_value()) {
                     if (Contains(TokensRange{tokensRange->begin(), *start},
-                                 pf::make_array<clang::tok::TokenKind>(clang::tok::comma, clang::tok::r_brace))) {
+                                 meta::details::make_array<clang::tok::TokenKind>(clang::tok::comma, clang::tok::r_brace))) {
                         // found value divider, these attributes belong to a different value
                         break;
                     }
@@ -406,8 +407,8 @@ namespace pf::meta_gen {
         TokensIter tokensBegin;
         // move as far to the left as possible to collect all attributes
         {
-            constexpr auto stopTokens =
-                    make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace, clang::tok::colon, clang::tok::semi);
+            constexpr auto stopTokens = meta::details::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
+                                                                                         clang::tok::colon, clang::tok::semi);
             auto beginLocation = srcRange.getBegin().getLocWithOffset(-1);
 
             auto iter = findNearestToken(beginLocation);
@@ -416,7 +417,7 @@ namespace pf::meta_gen {
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
-            while (inAttrs || !pf::contains(stopTokens, iter->kind())) {
+            while (inAttrs || !contains(stopTokens, iter->kind())) {
                 if (iter == allTokensRange.begin()) { break; }
                 iter = std::ranges::prev(iter);
                 if (iter->kind() == clang::tok::r_square) {
@@ -446,8 +447,8 @@ namespace pf::meta_gen {
         TokensIter tokensEnd{};
         // move as far to the right as possible to collect trailing attributes
         {
-            constexpr auto stopTokens =
-                    make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace, clang::tok::colon, clang::tok::semi);
+            constexpr auto stopTokens = meta::details::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
+                                                                                         clang::tok::colon, clang::tok::semi);
             auto endLocation = srcRange.getEnd();
 
             auto iter = findNearestToken(endLocation);
@@ -455,7 +456,7 @@ namespace pf::meta_gen {
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
-            while (inAttrs || !pf::contains(stopTokens, iter->kind())) {
+            while (inAttrs || !contains(stopTokens, iter->kind())) {
                 ++iter;
                 if (iter == allTokensRange.end()) { break; }
                 if (iter->kind() == clang::tok::r_square) {
@@ -507,8 +508,8 @@ namespace pf::meta_gen {
         TokensIter tokensBegin;
         // move as far to the left as possible to collect all attributes
         {
-            constexpr auto stopTokens =
-                    make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace, clang::tok::colon, clang::tok::semi);
+            constexpr auto stopTokens = meta::details::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
+                                                                                         clang::tok::colon, clang::tok::semi);
             auto beginLocation = srcRange.getBegin();
 
             auto iter = findNearestToken(beginLocation);
@@ -517,7 +518,7 @@ namespace pf::meta_gen {
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
-            while (inAttrs || !pf::contains(stopTokens, iter->kind())) {
+            while (inAttrs || !contains(stopTokens, iter->kind())) {
                 if (iter == allTokensRange.begin()) { break; }
                 iter = std::ranges::prev(iter);
                 if (iter->kind() == clang::tok::r_square) {
@@ -546,15 +547,15 @@ namespace pf::meta_gen {
         TokensIter tokensEnd;
         // move as far to the right as possible to collect trailing attributes
         {
-            constexpr auto stopTokens =
-                    make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace, clang::tok::colon, clang::tok::semi);
+            constexpr auto stopTokens = meta::details::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
+                                                                                         clang::tok::colon, clang::tok::semi);
             auto iter = findNearestToken(srcRange.getEnd());
             if (iter == allTokensRange.end()) { return {}; }
 
             bool foundRSquare = false;
             bool foundLSquare = false;
             bool inAttrs = false;
-            while (inAttrs || !pf::contains(stopTokens, iter->kind())) {
+            while (inAttrs || !contains(stopTokens, iter->kind())) {
                 ++iter;
                 if (iter == allTokensRange.end()) { break; }
                 if (iter->kind() == clang::tok::r_square) {

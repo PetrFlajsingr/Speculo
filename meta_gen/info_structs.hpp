@@ -2,8 +2,7 @@
 // Created by xflajs00 on 17.03.2023.
 //
 
-#ifndef PF_META_INFO_STRUCTS_H
-#define PF_META_INFO_STRUCTS_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -189,5 +188,3 @@ namespace pf::meta_gen {
     using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;
 
 }// namespace pf::meta_gen
-
-#endif//PF_META_INFO_STRUCTS_H

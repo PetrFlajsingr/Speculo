@@ -2,10 +2,9 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-#ifndef PF_META_INFO_H
-#define PF_META_INFO_H
+#pragma once
 
-#include "details/ID.hpp"
+#include <meta/details/ID.hpp>
 
 namespace pf::meta {
 
@@ -17,5 +16,3 @@ namespace pf::meta {
     };
 
 }// namespace pf::meta
-
-#endif//PF_META_INFO_H
