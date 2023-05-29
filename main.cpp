@@ -24,9 +24,6 @@
 #include <cppcoro/task.hpp>
 #include <cppcoro/when_all.hpp>
 
-
-static llvm::cl::OptionCategory PfMetaGenCategory("pf_meta_gen options");
-
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
                                             llvm::cl::value_desc("filename"));
 static llvm::cl::opt<bool> IgnoreIncludes("ignore-includes", llvm::cl::desc("Ignore includes while parsing the file"),
@@ -163,6 +160,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
 int main(int argc, const char **argv) {
     spdlog::default_logger()->sinks().clear();
+    spdlog::default_logger()->set_level(spdlog::level::trace);
     {
         auto &stdoutSink = spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
         if (static_cast<bool>(VerboseLogging)) {

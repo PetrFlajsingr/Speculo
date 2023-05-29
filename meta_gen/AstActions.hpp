@@ -2,8 +2,7 @@
 // Created by xflajs00 on 18.03.2023.
 //
 
-#ifndef PF_META_GEN_ASTACTIONS_H
-#define PF_META_GEN_ASTACTIONS_H
+#pragma once
 
 #include <memory>
 
@@ -88,4 +87,3 @@ namespace pf::meta_gen {
     };
 }// namespace pf::meta_gen
 
-#endif//PF_META_GEN_ASTACTIONS_H

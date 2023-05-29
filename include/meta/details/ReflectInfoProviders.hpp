@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Info.hpp"
-#include "details/ID.hpp"
-#include "details/StaticInfo.hpp"
+#include <meta/Info.hpp>
+#include <meta/details/ID.hpp>
+#include <meta/details/StaticInfo.hpp>
 
 #define PF_REFLECT_TYPE(X)                                                                                                                 \
     ::pf::meta::Info { ::pf::meta::details::getTypeId<X>() }

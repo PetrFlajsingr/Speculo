@@ -2,11 +2,10 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_DETAILS_ID_H
-#define PF_META_DETAILS_ID_H
+#pragma once
 
-#include "meta_helpers.hpp"
 #include <array>
+#include <meta/details/meta_helpers.hpp>
 
 namespace pf::meta::details {
 
@@ -39,5 +38,3 @@ namespace pf::meta::details {
     }
 
 }// namespace pf::meta::details
-
-#endif//PF_META_DETAILS_ID_H

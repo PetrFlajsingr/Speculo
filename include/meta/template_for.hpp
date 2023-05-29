@@ -2,10 +2,9 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_TEMPLATE_FOR_H
-#define PF_META_TEMPLATE_FOR_H
+#pragma once
 
-#include "details/template_for.hpp"
+#include <meta/details/template_for.hpp>
 
 namespace pf::meta {
 
@@ -34,5 +33,3 @@ namespace pf::meta {
     }
 
 }// namespace pf::meta
-
-#endif//PF_META_TEMPLATE_FOR_H

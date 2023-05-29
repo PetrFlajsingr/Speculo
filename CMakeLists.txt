@@ -64,7 +64,6 @@ add_executable(pf_meta_gen main.cpp
         meta_gen/CodeGenWriter.cpp)
 target_include_directories(pf_meta_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
-add_executable(meta_test main_test.cpp)
 
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -92,15 +91,21 @@ target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangF
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
-target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
-target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
-target_compile_options(meta_test PRIVATE ${test_flags})
-add_dependencies(meta_test pf_meta_gen)
 
 
 # we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
 list(APPEND CXXFLAGS "-std=c++20")
 message(STATUS ${CXXFLAGS})
+
+
+
+
+add_executable(meta_test main_test.cpp)
+
+target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
+target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
+target_compile_options(meta_test PRIVATE ${test_flags})
+add_dependencies(meta_test pf_meta_gen)
 
 pf_meta_register(
         TARGET meta_test

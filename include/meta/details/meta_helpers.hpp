@@ -2,8 +2,7 @@
 // Created by xflajs00 on 15.03.2023.
 //
 
-#ifndef PF_META_DETAILS_META_HELPERS_H
-#define PF_META_DETAILS_META_HELPERS_H
+#pragma once
 
 namespace pf::meta::details {
 
@@ -13,5 +12,3 @@ namespace pf::meta::details {
     constexpr bool AlwaysFalseT = false;
 
 }// namespace pf::meta::details
-
-#endif//PF_META_DETAILS_META_HELPERS_H

@@ -2,8 +2,7 @@
 // Created by xflajs00 on 17.03.2023.
 //
 
-#ifndef PF_META_TYPEIDGENERATOR_H
-#define PF_META_TYPEIDGENERATOR_H
+#pragma once
 
 #include <meta/Info.hpp>
 #include <random>
@@ -36,4 +35,3 @@ namespace pf::meta_gen {
 
 }// namespace pf::meta_gen
 
-#endif//PF_META_TYPEIDGENERATOR_H
