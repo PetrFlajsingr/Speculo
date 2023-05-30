@@ -45,6 +45,7 @@ function(pf_meta_collect_linked_libraries TARGET_NAME)
             set(RESULT ${RESULT} ${TARGET_DEPENDENCIES})
         endforeach ()
     endif()
+    list(REMOVE_DUPLICATES RESULT)
     set(TARGET_DEPENDENCIES ${RESULT} PARENT_SCOPE)
 endfunction()
 
