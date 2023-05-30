@@ -116,6 +116,9 @@ function(pf_meta_create_config)
     pf_meta_collect_linked_libraries(${_args_TARGET})
 
     foreach (dependency ${TARGET_DEPENDENCIES})
+        if (NOT TARGET ${dependency})
+            break()
+        endif ()
         get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
         list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
         if (LENGTH_RESULT EQUAL 1)
@@ -130,6 +133,9 @@ function(pf_meta_create_config)
     endforeach ()
 
     foreach (dependency ${TARGET_DEPENDENCIES})
+        if (NOT TARGET ${dependency})
+            break()
+        endif ()
         get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
         list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
         if (LENGTH_RESULT EQUAL 1)
@@ -156,7 +162,7 @@ function(pf_meta_create_config)
             -H ${_args_HEADERS}
             -D ${DEFINITIONS}
             -f ${_args_FLAGS}
-            )
+    )
 endfunction()
 
 # Run meta generation as a pre-compilation step
