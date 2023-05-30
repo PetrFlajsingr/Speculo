@@ -154,7 +154,9 @@ function(pf_meta_create_config)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    add_custom_target(pf_meta_generate_${_args_TARGET}_config COMMAND ${Python3_EXECUTABLE}
+    add_custom_target(pf_meta_generate_${_args_TARGET}_config
+            ALL
+            COMMAND ${Python3_EXECUTABLE}
             ${PF_META_GEN_SCRIPTS_PATH}/pf_meta_config_create.py
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
@@ -193,7 +195,7 @@ function(pf_meta_run_gen)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
             ${PF_META_GEN_PATH} --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
             --ignore-includes ${formatArg} ${forceArg})
-
+    add_dependencies(${_args_TARGET}_generate_meta pf_meta_generate_${_args_TARGET}_config)
     add_dependencies(${_args_TARGET} ${_args_TARGET}_generate_meta)
 endfunction()
 
