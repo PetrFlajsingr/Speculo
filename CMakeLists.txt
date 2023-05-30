@@ -65,10 +65,12 @@ add_executable(pf_meta_gen main.cpp
 target_include_directories(pf_meta_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 
-
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
-add_definitions(${LLVM_DEFINITIONS_LIST})
-include_directories(${LLVM_INCLUDE_DIRS})
+
+target_compile_definitions(pf_meta_gen PRIVATE ${LLVM_DEFINITIONS_LIST})
+target_include_directories(pf_meta_gen PRIVATE ${LLVM_INCLUDE_DIRS})
+target_compile_definitions(pf_meta_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST})
+target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
 
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
 set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)

@@ -45,6 +45,7 @@ function(pf_meta_collect_linked_libraries TARGET_NAME)
             set(RESULT ${RESULT} ${TARGET_DEPENDENCIES})
         endforeach ()
     endif()
+    list(REMOVE_DUPLICATES RESULT)
     set(TARGET_DEPENDENCIES ${RESULT} PARENT_SCOPE)
 endfunction()
 
@@ -116,6 +117,9 @@ function(pf_meta_create_config)
     pf_meta_collect_linked_libraries(${_args_TARGET})
 
     foreach (dependency ${TARGET_DEPENDENCIES})
+        if (NOT TARGET ${dependency})
+            continue()
+        endif ()
         get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
         list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
         if (LENGTH_RESULT EQUAL 1)
@@ -130,6 +134,9 @@ function(pf_meta_create_config)
     endforeach ()
 
     foreach (dependency ${TARGET_DEPENDENCIES})
+        if (NOT TARGET ${dependency})
+            continue()
+        endif ()
         get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
         list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
         if (LENGTH_RESULT EQUAL 1)
@@ -147,7 +154,9 @@ function(pf_meta_create_config)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    execute_process(COMMAND ${Python3_EXECUTABLE}
+    add_custom_target(pf_meta_generate_${_args_TARGET}_config
+            ALL
+            COMMAND ${Python3_EXECUTABLE}
             ${PF_META_GEN_SCRIPTS_PATH}/pf_meta_config_create.py
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
@@ -156,7 +165,7 @@ function(pf_meta_create_config)
             -H ${_args_HEADERS}
             -D ${DEFINITIONS}
             -f ${_args_FLAGS}
-            )
+    )
 endfunction()
 
 # Run meta generation as a pre-compilation step
@@ -186,7 +195,7 @@ function(pf_meta_run_gen)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
             ${PF_META_GEN_PATH} --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
             --ignore-includes ${formatArg} ${forceArg})
-
+    add_dependencies(${_args_TARGET}_generate_meta pf_meta_generate_${_args_TARGET}_config)
     add_dependencies(${_args_TARGET} ${_args_TARGET}_generate_meta)
 endfunction()
 
