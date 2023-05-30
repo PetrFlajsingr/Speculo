@@ -154,7 +154,7 @@ function(pf_meta_create_config)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    execute_process(COMMAND ${Python3_EXECUTABLE}
+    add_custom_target(pf_meta_generate_${_args_TARGET}_config COMMAND ${Python3_EXECUTABLE}
             ${PF_META_GEN_SCRIPTS_PATH}/pf_meta_config_create.py
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
