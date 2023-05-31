@@ -162,6 +162,8 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
 
 int main(int argc, const char **argv) {
+    llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
+
     spdlog::default_logger()->sinks().clear();
     spdlog::default_logger()->set_level(spdlog::level::trace);
     {
@@ -181,7 +183,6 @@ int main(int argc, const char **argv) {
                         (std::filesystem::current_path() / "logs/daily.log").string(), 0, 0))
                 ->set_level(spdlog::level::trace);
     }
-    llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
     auto configsOpt = createConfigs(std::filesystem::path{std::string{ConfigArg}});
     if (!configsOpt.has_value()) { return 0; }

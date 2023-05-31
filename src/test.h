@@ -3,6 +3,15 @@
 #include "generated/test.hpp"
 #include "tmp.hpp"
 
+#include<source_location>
+
+struct S {
+    S(std::source_location l = std::source_location::current()) {
+
+    }
+};
+
+/*
 namespace pf {
     class Hoho : Haha {
         PF_META_GENERATED();
@@ -128,4 +137,4 @@ namespace pf {
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
-}// namespace pf
+}// namespace pf*/
