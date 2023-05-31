@@ -412,7 +412,7 @@ namespace pf::meta_gen {
                 spdlog::warn("Class {} does not contain 'PF_META_GENERATED()', but it contains private or protected constructors, "
                              "destructor, variables or functions - the macro is required to access these",
                              result.fullName);
-                spdlog::warn("Reflection data for {} will only allow access to private members", result.fullName);
+                spdlog::warn("Reflection data for {} will only allow access to public members", result.fullName);
             }
         }
         result.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
