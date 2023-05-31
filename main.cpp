@@ -1,6 +1,5 @@
 #include "meta/Info.hpp"
 #include <fmt/core.h>
-#include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>
 
@@ -115,7 +114,6 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
     result.name = data["project"];
     for (const auto &input: data["header_paths"]) {
-        // TODO: multiple input files
         auto inputFile = std::filesystem::path{std::string{input}};
         const auto inputFileIncludePath = inputFile;
         const auto fileName = inputFile.filename();
@@ -147,6 +145,8 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
+        // TODO: move elsewhere
+        flags.push_back("-D PF_META_GENERATOR_RUNNING");
         result.sourceConfigs.push_back({.inputSource = inputFile,
                                         .outputMetaHeader = metaHeader,
                                         .outputCodegenHeader = generatedHeader,
@@ -243,7 +243,7 @@ int main(int argc, const char **argv) {
                 return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
             }
             auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-            pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, std::move(idGenerator)};
+            pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
             if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
             metaOutStream->close();
@@ -294,25 +294,9 @@ int main(int argc, const char **argv) {
 
             clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-            std::error_code errorCode;
-            auto metaOutStream =
-                    std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
-                co_return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
-            auto codeGenOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode,
-                                                                           llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
-                co_return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
             auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-            pf::meta_gen::ActionFactory factory{config, metaOutStream, codeGenOutStream, std::move(idGenerator)};
+            pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
             if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
-
-            metaOutStream->close();
-            codeGenOutStream->close();
 
             if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
             co_return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
