@@ -205,8 +205,8 @@ struct StaticInfo<ID{0x445d2037590be14au, 0xd949752de2aa1786u}> {
 template<>
 struct StaticInfo<ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u}> {
     struct details {
-constexpr static auto ArgArray_9170144620877318980 = pf::meta::details::make_array<std::string_view>(R"arg("yeet")arg", R"arg('a')arg", R"arg(()()()((())))arg", R"arg(1.011)arg", R"arg(1ll)arg", R"arg([[nodiscard]])arg", R"arg([][][]:::3214234...[][][][])arg", R"arg([]{}())arg");
-constexpr static auto ArgArray_14405929684405942724 = pf::meta::details::make_array<std::string_view>(R"arg("yeet")arg", R"arg(1.011)arg", R"arg(1ll)arg");
+constexpr static auto ArgArray_6776361387383357379 = pf::meta::details::make_array<std::string_view>(R"arg("yeet")arg", R"arg('a')arg", R"arg(()()()((())))arg", R"arg(1.011)arg", R"arg(1ll)arg", R"arg([[nodiscard]])arg", R"arg([][][]:::3214234...[][][][])arg", R"arg([]{}())arg");
+constexpr static auto ArgArray_738019622607267986 = pf::meta::details::make_array<std::string_view>(R"arg("yeet")arg", R"arg(1.011)arg", R"arg(1ll)arg");
 };
     using Type = pf::SomeEnum;
     constexpr static ID TypeID = ID{0x2b53af1c1cf57f8au, 0xe97917064d8b3696u};
@@ -215,7 +215,7 @@ constexpr static auto ArgArray_14405929684405942724 = pf::meta::details::make_ar
     constexpr static std::uint64_t SourceLine = 15;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"", "nodiscard", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"", "operators", std::span<const std::string_view>{details::ArgArray_9170144620877318980}}, Attribute{"", "pf", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"pf", "hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"pf", "operators2", std::span<const std::string_view>{details::ArgArray_14405929684405942724}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "hihi", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"", "nodiscard", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"", "operators", std::span<const std::string_view>{details::ArgArray_6776361387383357379}}, Attribute{"", "pf", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"pf", "hihi2", std::span<const std::string_view>{EmptyAttributeArgArray}}, Attribute{"pf", "operators2", std::span<const std::string_view>{details::ArgArray_738019622607267986}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::EnumType;
 
@@ -734,7 +734,7 @@ struct StaticInfo<ID{0x6b5dfe9e58a89813u, 0x3b9081e7e6e13aaau}> {
 template<>
 struct StaticInfo<ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu}> {
     struct details {
-constexpr static auto ArgArray_16342875233566624745 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_20348998631020464 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     using Type = pf::B3;
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -743,7 +743,7 @@ constexpr static auto ArgArray_16342875233566624745 = pf::meta::details::make_ar
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 5;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_16342875233566624745}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_20348998631020464}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::RecordType;
 
@@ -848,7 +848,7 @@ struct StaticInfo<ID{0x51519b03f24f807du, 0xf2ed29cf6856493u}> {
 template<>
 struct StaticInfo<ID{0x775e6404bd915ec5u, 0x87c8ed532da21da5u}> {
     struct details {
-constexpr static auto ArgArray_4400067565972790747 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_10708230223768933262 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     constexpr static ID ConstructorID = ID{0x775e6404bd915ec5u, 0x87c8ed532da21da5u};
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -857,7 +857,7 @@ constexpr static auto ArgArray_4400067565972790747 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 56;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_4400067565972790747}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_10708230223768933262}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
 
@@ -905,7 +905,7 @@ struct StaticInfo<ID{0xa35a4f4501553963u, 0x5c8421596d3fc18du}> {
 template<>
 struct StaticInfo<ID{0x459f578dbb543d1u, 0x8a25947060a5b983u}> {
     struct details {
-constexpr static auto ArgArray_17458434997557189597 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_5748369386615800748 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     constexpr static ID ConstructorID = ID{0x459f578dbb543d1u, 0x8a25947060a5b983u};
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -914,7 +914,7 @@ constexpr static auto ArgArray_17458434997557189597 = pf::meta::details::make_ar
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 56;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_17458434997557189597}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_5748369386615800748}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
 
@@ -943,7 +943,7 @@ constexpr static auto ArgArray_17458434997557189597 = pf::meta::details::make_ar
 template<>
 struct StaticInfo<ID{0x9158d51e7c91adbbu, 0xcdaeb1cb5d6ea09fu}> {
     struct details {
-constexpr static auto ArgArray_4741082888044095596 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_3895331746436813147 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     constexpr static ID ConstructorID = ID{0x9158d51e7c91adbbu, 0xcdaeb1cb5d6ea09fu};
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -952,7 +952,7 @@ constexpr static auto ArgArray_4741082888044095596 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 56;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_4741082888044095596}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_3895331746436813147}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Constructor;
 
@@ -1000,7 +1000,7 @@ struct StaticInfo<ID{0xaa5a62f996d64f5bu, 0x776f9a0f5bd417b5u}> {
 template<>
 struct StaticInfo<ID{0x2f51c76461390f4eu, 0xfec8eb2dbd761c92u}> {
     struct details {
-constexpr static auto ArgArray_16953346121536892627 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_14749696678180296701 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     constexpr static ID FunctionID = ID{0x2f51c76461390f4eu, 0xfec8eb2dbd761c92u};
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -1009,7 +1009,7 @@ constexpr static auto ArgArray_16953346121536892627 = pf::meta::details::make_ar
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 56;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_16953346121536892627}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_14749696678180296701}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::MemberFunction;
 
@@ -1057,7 +1057,7 @@ struct StaticInfo<ID{0x505688227faa7d73u, 0x398c86ec0ca4029fu}> {
 template<>
 struct StaticInfo<ID{0x885387cda84d6d70u, 0xf66d08849e9edca8u}> {
     struct details {
-constexpr static auto ArgArray_6441188562086349245 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
+constexpr static auto ArgArray_16749144970645834361 = pf::meta::details::make_array<std::string_view>(R"arg(111)arg", R"arg(222)arg", R"arg(333)arg", R"arg(444)arg");
 };
     constexpr static ID FunctionID = ID{0x885387cda84d6d70u, 0xf66d08849e9edca8u};
     constexpr static ID TypeID = ID{0xf0524c50359e569cu, 0x4c14cca06db4089cu};
@@ -1066,7 +1066,7 @@ constexpr static auto ArgArray_6441188562086349245 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 25;
     constexpr static std::uint64_t SourceColumn = 56;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_6441188562086349245}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "lala", std::span<const std::string_view>{details::ArgArray_16749144970645834361}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::MemberFunction;
 
@@ -1473,7 +1473,7 @@ struct StaticInfo<ID{0x225525f0788858deu, 0x9edf3c90fb14daacu}> {
 template<>
 struct StaticInfo<ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u}> {
     struct details {
-constexpr static auto ArgArray_3852112086206293845 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
+constexpr static auto ArgArray_15403234008793880435 = pf::meta::details::make_array<std::string_view>(R"arg(dzea)arg", R"arg(dzea2)arg");
 };
     constexpr static ID ArgumentID = ID{0x285fa243136a2539u, 0xd92a9fbd3c821b8u};
     constexpr static ID TypeID = ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
@@ -1482,7 +1482,7 @@ constexpr static auto ArgArray_3852112086206293845 = pf::meta::details::make_arr
     constexpr static std::uint64_t SourceLine = 43;
     constexpr static std::uint64_t SourceColumn = 80;
 
-    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "letadlo", std::span<const std::string_view>{details::ArgArray_3852112086206293845}});
+    constexpr static RangeOf<Attribute> auto Attributes = pf::meta::details::make_array<Attribute>(Attribute{"", "letadlo", std::span<const std::string_view>{details::ArgArray_15403234008793880435}});
 
     constexpr static auto StaticInfoObjectType = StaticInfoType::Argument;
 
