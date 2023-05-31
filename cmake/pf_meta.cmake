@@ -4,51 +4,6 @@ macro(pf_meta_check_fnc_arg_provided ARG_NAME)
     endif ()
 endmacro()
 
-# Collect all linked libraries of a target (including transitive).
-# Returns result in variable TARGET_DEPENDENCIES
-function(pf_meta_collect_linked_libraries TARGET_NAME)
-    if (NOT TARGET ${TARGET_NAME})
-        set(TARGET_DEPENDENCIES "" PARENT_SCOPE)
-        return()
-    endif ()
-    set(RESULT "")
-
-    get_target_property(DEPENDENCIES ${TARGET_NAME} LINK_LIBRARIES)
-    set(DEPENDENCIES_INVALID FALSE)
-    list(LENGTH DEPENDENCIES LENGTH_RESULT)
-    if (LENGTH_RESULT EQUAL 1)
-        if(${DEPENDENCIES} STREQUAL DEPENDENCIES-NOTFOUND)
-            set(DEPENDENCIES_INVALID TRUE)
-        endif()
-    endif()
-
-    get_target_property(INTERFACE_DEPENDENCIES ${TARGET_NAME} INTERFACE_LINK_LIBRARIES)
-    set(INTERFACE_DEPENDENCIES_INVALID FALSE)
-    list(LENGTH INTERFACE_DEPENDENCIES LENGTH_RESULT)
-    if (LENGTH_RESULT EQUAL 1)
-        if(${INTERFACE_DEPENDENCIES} STREQUAL INTERFACE_DEPENDENCIES-NOTFOUND)
-            set(INTERFACE_DEPENDENCIES_INVALID TRUE)
-        endif()
-    endif()
-
-    if (NOT ${DEPENDENCIES_INVALID})
-        foreach (dependency ${DEPENDENCIES})
-            list(APPEND RESULT ${dependency})
-            pf_meta_collect_linked_libraries(${dependency})
-            set(RESULT ${RESULT} ${TARGET_DEPENDENCIES})
-        endforeach ()
-    endif()
-    if (NOT ${INTERFACE_DEPENDENCIES_INVALID})
-        foreach (dependency ${INTERFACE_DEPENDENCIES})
-            list(APPEND RESULT ${dependency})
-            pf_meta_collect_linked_libraries(${dependency})
-            set(RESULT ${RESULT} ${TARGET_DEPENDENCIES})
-        endforeach ()
-    endif()
-    list(REMOVE_DUPLICATES RESULT)
-    set(TARGET_DEPENDENCIES ${RESULT} PARENT_SCOPE)
-endfunction()
-
 # Create a configuration json for meta generation in BINARY_DIR
 #
 # Arguments:
@@ -67,89 +22,6 @@ function(pf_meta_create_config)
     #pf_meta_check_fnc_arg_provided("HEADERS")
     #pf_meta_check_fnc_arg_provided("FLAGS")
 
-    get_target_property(COMPILE_DEFINITIONS ${_args_TARGET} COMPILE_DEFINITIONS)
-    set(SKIP_COMPILE_DEFINITIONS FALSE)
-    list(LENGTH COMPILE_DEFINITIONS LENGTH_RESULT)
-    if (LENGTH_RESULT EQUAL 1)
-        if(${COMPILE_DEFINITIONS} STREQUAL COMPILE_DEFINITIONS-NOTFOUND)
-            set(SKIP_COMPILE_DEFINITIONS TRUE)
-        endif()
-    endif()
-    if (NOT SKIP_COMPILE_DEFINITIONS)
-        foreach (def ${COMPILE_DEFINITIONS})
-            list(APPEND DEFINITIONS ${def})
-        endforeach()
-    endif()
-
-    foreach (def ${_args_DEFINITIONS})
-        list(APPEND DEFINITIONS ${def})
-    endforeach()
-
-    get_directory_property(GLOBAL_DEFINITIONS COMPILE_DEFINITIONS)
-    set(SKIP_GLOBAL_DEFINITIONS FALSE)
-    list(LENGTH GLOBAL_DEFINITIONS LENGTH_RESULT)
-    if (LENGTH_RESULT EQUAL 1)
-        if(${GLOBAL_DEFINITIONS} STREQUAL GLOBAL_DEFINITIONS-NOTFOUND)
-            set(SKIP_GLOBAL_DEFINITIONS TRUE)
-        endif()
-    endif()
-    if (NOT SKIP_GLOBAL_DEFINITIONS)
-        foreach (def ${GLOBAL_DEFINITIONS})
-            list(APPEND DEFINITIONS ${def})
-        endforeach()
-    endif()
-
-    get_target_property(INCLUDES ${_args_TARGET} INCLUDE_DIRECTORIES)
-    set(SKIP_INCLUDES FALSE)
-    list(LENGTH INCLUDES LENGTH_RESULT)
-    if (LENGTH_RESULT EQUAL 1)
-        if(${INCLUDES} STREQUAL INCLUDES-NOTFOUND)
-            set(SKIP_INCLUDES TRUE)
-        endif()
-    endif()
-
-    if (NOT ${SKIP_INCLUDES})
-        foreach (include ${INCLUDES})
-            list(APPEND INCLUDE_ARGS "${include}")
-        endforeach ()
-    endif ()
-
-    pf_meta_collect_linked_libraries(${_args_TARGET})
-
-    foreach (dependency ${TARGET_DEPENDENCIES})
-        if (NOT TARGET ${dependency})
-            continue()
-        endif ()
-        get_target_property(DEPENDENCY_INCLUDES ${dependency} INCLUDE_DIRECTORIES)
-        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
-        if (LENGTH_RESULT EQUAL 1)
-            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
-                continue()
-            endif()
-        endif()
-
-        foreach (include ${DEPENDENCY_INCLUDES})
-            list(APPEND INCLUDE_ARGS "${include}")
-        endforeach ()
-    endforeach ()
-
-    foreach (dependency ${TARGET_DEPENDENCIES})
-        if (NOT TARGET ${dependency})
-            continue()
-        endif ()
-        get_target_property(DEPENDENCY_INCLUDES ${dependency} INTERFACE_INCLUDE_DIRECTORIES)
-        list(LENGTH DEPENDENCY_INCLUDES LENGTH_RESULT)
-        if (LENGTH_RESULT EQUAL 1)
-            if(${DEPENDENCY_INCLUDES} STREQUAL DEPENDENCY_INCLUDES-NOTFOUND)
-                continue()
-            endif()
-        endif()
-
-        foreach (include ${DEPENDENCY_INCLUDES})
-            list(APPEND INCLUDE_ARGS "${include}")
-        endforeach ()
-    endforeach ()
-
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
@@ -161,10 +33,11 @@ function(pf_meta_create_config)
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
             -o ${BINARY_DIR}
-            -I ${INCLUDE_ARGS}
+            -I "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>,$<SEMICOLON>>"
             -H ${_args_HEADERS}
-            -D ${DEFINITIONS}
+            -D "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},COMPILE_DEFINITIONS>,$<SEMICOLON>>"
             -f ${_args_FLAGS}
+            COMMAND_EXPAND_LISTS
     )
 endfunction()
 
