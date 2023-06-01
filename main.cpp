@@ -147,6 +147,8 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         // TODO: move elsewhere
         flags.push_back("-D PF_META_GENERATOR_RUNNING");
+        // FIXME: remove once clang claims consteval support
+        flags.push_back("-D __cpp_consteval=201811L");
         result.sourceConfigs.push_back({.inputSource = inputFile,
                                         .outputMetaHeader = metaHeader,
                                         .outputCodegenHeader = generatedHeader,

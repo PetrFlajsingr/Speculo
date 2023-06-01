@@ -6,7 +6,7 @@
 #include<source_location>
 
 struct S {
-    S(std::source_location l = std::source_location::current()) {
+    S(std::source_location l) {
 
     }
 };
