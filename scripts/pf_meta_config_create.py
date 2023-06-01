@@ -20,13 +20,24 @@ if __name__ == '__main__':
         args.headerfiles = []
     if args.compilerflags is None:
         args.compilerflags = []
+
+    include_paths = list(set(args.includepaths))
+    compiler_flags = list(set(args.compilerflags))
+    defines = list(set(args.defines))
+    header_paths = list(set(args.headerfiles))
+
+    include_paths.sort()
+    compiler_flags.sort()
+    defines.sort()
+    header_paths.sort()
+
     output = {
         "project": args.projectname,
         "project_root": args.projectroot,
-        "include_paths": list(set(args.includepaths)).sort(),
-        "compiler_flags": list(set(args.compilerflags)).sort(),
-        "defines": list(set(args.defines)).sort(),
-        "header_paths": list(set(args.headerfiles)).sort()
+        "include_paths": include_paths,
+        "compiler_flags": compiler_flags,
+        "defines": defines,
+        "header_paths": header_paths
     }
     out_path = Path(args.outputdir) / f'pf_meta_{args.projectname}_config.json'
     with open(out_path, 'w') as f:
