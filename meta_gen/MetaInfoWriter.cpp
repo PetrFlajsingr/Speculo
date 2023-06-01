@@ -30,8 +30,7 @@ namespace pf::meta_gen {
     }
 
     MetaInfoWriter::MetaInfoWriter(std::shared_ptr<llvm::raw_ostream> os, std::shared_ptr<IdGenerator> idGen)
-        : idGenerator(std::move(idGen)), ostream(std::move(os)) {
-    }
+        : idGenerator(std::move(idGen)), ostream(std::move(os)) {}
 
     void MetaInfoWriter::write(std::string_view str) { *ostream << str; }
 

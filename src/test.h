@@ -3,12 +3,10 @@
 #include "generated/test.hpp"
 #include "tmp.hpp"
 
-#include<source_location>
+#include <source_location>
 
 struct S {
-    S(std::source_location l) {
-
-    }
+    S(std::source_location l) {}
 };
 
 /*
