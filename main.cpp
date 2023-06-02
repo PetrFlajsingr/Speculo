@@ -111,7 +111,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
     result.name = data["project"];
     for (const auto &input: data["header_paths"]) {
         auto inputFile = std::filesystem::path{std::string{input}};
-        const auto inputFileIncludePath = inputFile;
+        const auto inputProjectPath = inputFile;
         const auto fileName = inputFile.filename();
 
         const auto projectRoot = std::filesystem::path{std::string{data["project_root"]}};
@@ -153,7 +153,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
                                         .ignoreIncludes = IgnoreIncludes,
                                         .formatOutput = FormatOutput,
                                         .compilerFlags = std::move(flags),
-                                        .inputIncludePath = inputFileIncludePath.string()});
+                                        .inputProjectPath = inputProjectPath});
     }
     return result;
 }
