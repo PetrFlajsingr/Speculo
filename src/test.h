@@ -1,7 +1,9 @@
 
 
-#include "generated/test.hpp"
 #include "tmp.hpp"
+
+#include "generated/test.hpp"
+
 
 namespace pf {
     class Hoho : Haha {
