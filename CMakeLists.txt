@@ -79,7 +79,7 @@ install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
         "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
 
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
@@ -125,6 +125,14 @@ target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/i
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
+
+
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
 
 
 
