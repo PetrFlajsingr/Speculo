@@ -142,9 +142,9 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         // TODO: move elsewhere
-        flags.push_back("-D PF_META_GENERATOR_RUNNING");
+        flags.emplace_back("-D PF_META_GENERATOR_RUNNING");
         // FIXME: remove once clang claims consteval support
-        flags.push_back("-D __cpp_consteval=201811L");
+        flags.emplace_back("-D __cpp_consteval=201811L");
         result.sourceConfigs.push_back({.inputSource = inputFile,
                                         .outputMetaHeader = metaHeader,
                                         .outputCodegenHeader = generatedHeader,
@@ -243,20 +243,20 @@ int main(int argc, const char **argv) {
 
     threadPool.finishAndStop();
 
-    timestampDB.fileTimestamps.clear();
-    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
-
+    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> newTimestamps;
     std::ranges::for_each(results, [&](auto &r) {
         const auto v = r.get();
         if (!v.has_value()) {
             spdlog::error("File '{}' failed", v.error().inPath.string());
         } else {
-            timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
+            newTimestamps[v->inPath.string()] = v->stamp;
         }
     });
 
-    updateProjectDatabase(timestampDB, configs.name);
+    timestampDB.fileTimestamps = std::move(newTimestamps);
+    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
 
+    updateProjectDatabase(timestampDB, configs.name);
 
     return 0;
 }
