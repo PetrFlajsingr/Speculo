@@ -11,12 +11,12 @@ else ()
     set(CMAKE_CXX_STANDARD 20)
 endif ()
 
-# Set PF_META_GEN_PATH to current binary output if not provided
+# Set PF_META_GEN_EXE_PATH to current binary output if not provided
 # global variables
 # allows for using the project as subdirectory
-if (NOT DEFINED PF_META_GEN_PATH)
+if (NOT DEFINED PF_META_GEN_EXE_PATH)
     # FIXME: windows exe only for now
-    set(PF_META_GEN_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_PATH")
+    set(PF_META_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_EXE_PATH")
 endif ()
 
 if (NOT DEFINED PF_META_GEN_SCRIPTS_PATH)
@@ -64,6 +64,12 @@ write_basic_package_version_file("pf_metaConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
         COMPATIBILITY SameMajorVersion)
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Debug/bin)
+else ()
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Release/bin)
+endif ()
+
 configure_package_config_file(
         "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
         "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
@@ -79,8 +85,10 @@ install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
         "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
 
+
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION .)
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/pf_meta.cmake DESTINATION cmake)
 
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
