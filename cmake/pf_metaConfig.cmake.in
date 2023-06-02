@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+
+include("${CMAKE_CURRENT_LIST_DIR}/pf_metaTargets.cmake")
+check_required_components("pf_meta")
+
+set(PF_META_GEN_SCRIPTS_PATH @CMAKE_INSTALL_PREFIX@/scripts)
+set(PF_META_GEN_EXE_PATH @PF_META_GEN_EXE_PATH_INSTALL@)

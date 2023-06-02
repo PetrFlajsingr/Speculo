@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
-project(pf_meta_gen)
+project(pf_meta_gen VERSION 0.1.0)
 
-include(cmake/pf_meta.cmake)
+include(CMakePackageConfigHelpers)
+
+option(PF_META_ENABLE_TEST_EXE "Enable test exe target" OFF)
 
 if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129 AND CMAKE_VERSION VERSION_GREATER 3.20.3)
     set(CMAKE_CXX_STANDARD 23)
@@ -9,12 +11,12 @@ else ()
     set(CMAKE_CXX_STANDARD 20)
 endif ()
 
-# Set PF_META_GEN_PATH to current binary output if not provided
+# Set PF_META_GEN_EXE_PATH to current binary output if not provided
 # global variables
 # allows for using the project as subdirectory
-if (NOT DEFINED PF_META_GEN_PATH)
+if (NOT DEFINED PF_META_GEN_EXE_PATH)
     # FIXME: windows exe only for now
-    set(PF_META_GEN_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_PATH")
+    set(PF_META_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_EXE_PATH")
 endif ()
 
 if (NOT DEFINED PF_META_GEN_SCRIPTS_PATH)
@@ -46,11 +48,11 @@ find_package(stduuid CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
-add_subdirectory(third_party/cppcoro)
-
 add_library(pf_meta INTERFACE)
 add_library(pf_meta::pf_meta ALIAS pf_meta)
-target_include_directories(pf_meta INTERFACE include)
+target_include_directories(pf_meta INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 add_executable(pf_meta_gen main.cpp
         meta_gen/AttributeParser.cpp
@@ -80,8 +82,8 @@ include(AddLLVM)
 
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
-target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro pf_meta::pf_meta)
+target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
+target_link_libraries(pf_meta_gen PRIVATE stduuid pf_meta::pf_meta)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
@@ -89,43 +91,87 @@ target_compile_options(pf_meta_gen PRIVATE ${flags})
 
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
 
 
-# we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
-list(APPEND CXXFLAGS "-std=c++20")
-message(STATUS ${CXXFLAGS})
+install(TARGETS pf_meta
+        EXPORT pf_meta_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+write_basic_package_version_file("pf_metaConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Debug/bin)
+else ()
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Release/bin)
+endif ()
+
+if (WIN32)
+    set(PF_META_GEN_EXE_PATH_INSTALL ${PF_META_GEN_EXE_PATH_INSTALL}/pf_meta_gen.exe)
+else ()
+    set(PF_META_GEN_EXE_PATH_INSTALL ${PF_META_GEN_EXE_PATH_INSTALL}/pf_meta_gen)
+endif ()
+
+configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        INSTALL_DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(EXPORT pf_meta_Targets
+        FILE pf_metaTargets.cmake
+        NAMESPACE pf_meta::
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION .)
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/pf_meta.cmake DESTINATION cmake)
+
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+
+include(CPack)
+
+
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
 
 
 
 
-add_executable(meta_test main_test.cpp)
+if (${PF_META_ENABLE_TEST_EXE})
+    include(cmake/pf_meta.cmake)
+    list(APPEND CXXFLAGS "-std=c++20")
+    message(STATUS ${CXXFLAGS})
 
-target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
-target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
-target_compile_options(meta_test PRIVATE ${test_flags})
-add_dependencies(meta_test pf_meta_gen)
+    add_executable(meta_test main_test.cpp)
 
-pf_meta_register(
-        TARGET meta_test
-        FLAGS ${CXXFLAGS}
-        HEADERS src/test.h src/test2.hpp
-        FORMAT
-        FORCE_REGEN
-)
-add_dependencies(meta_test_generate_meta pf_meta_gen)
+    target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog_header_only tl::expected pf_meta::pf_meta)
+    target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
+    target_compile_options(meta_test PRIVATE ${test_flags})
+    add_dependencies(meta_test pf_meta_gen)
 
-
-#find_package(Python3 REQUIRED COMPONENTS Interpreter)
-#execute_process(COMMAND ${Python3_EXECUTABLE}
-#        ${CMAKE_SOURCE_DIR}/scripts/pf_meta_config_create.py
-#        -p meta_test
-#        -r ${CMAKE_SOURCE_DIR}
-#        -o ${CMAKE_BINARY_DIR}
-#        -f ${CXXFLAGS}
-#        -I ${INCLUDE_ARGS}
-#        -H ${HEADERS_FOR_META}
-#        )
+    pf_meta_register(
+            TARGET meta_test
+            FLAGS ${CXXFLAGS}
+            HEADERS src/test.h src/test2.hpp
+            FORMAT
+            FORCE_REGEN
+    )
+    add_dependencies(meta_test_generate_meta pf_meta_gen)
+endif ()

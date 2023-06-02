@@ -175,9 +175,12 @@ namespace pf::meta_gen {
         }
 
         const auto mangleFunction = [](std::string_view fullName,
-                                       meta::details::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames) {
+                                       meta::details::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames,
+                                       bool isConst) {
             std::string result{fullName};
-            for (const auto &[type, name]: argumentTypesAndNames) { result.append(fmt::format("_{}_{}", type, name)); }
+            for (const auto &[type, name]: argumentTypesAndNames) {
+                result.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
+            }
             return result;
         };
 
@@ -256,7 +259,8 @@ namespace pf::meta_gen {
             const auto mangledName = mangleFunction(functionInfo.fullName,
                                                     functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
                                                         return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                    }));
+                                                    }),
+                                                    functionInfo.isConst);
             // mangling names for argument IDs
             for (auto &argument: functionInfo.arguments) {
                 argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
@@ -338,7 +342,7 @@ namespace pf::meta_gen {
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
                                                         return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                    }));
+                                                    }), false);
             // mangling names for argument IDs
             for (auto &argument: constructorInfo.arguments) {
                 argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));

@@ -59,7 +59,7 @@ Built-in attributes:
           FORMAT
   )
   ```
-5. Provide cmake with the path to `pf_meta_gen` executable `-DPF_META_GEN_PATH=<path_to_exe>`
+5. Provide cmake with the path to `pf_meta_gen` executable `-PF_META_GEN_EXE_PATH=<path_to_exe>`
 
 ## Extensions
 #### Attributes
