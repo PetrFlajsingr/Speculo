@@ -227,25 +227,9 @@ int main(int argc, const char **argv) {
 
         clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-        std::error_code errorCode;
-        auto metaOutStream =
-                std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
-        if (errorCode) {
-            spdlog::error("Failed to open output file: {}", errorCode.message());
-            return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-        }
-        auto codeGenOutStream =
-                std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
-        if (errorCode) {
-            spdlog::error("Failed to open output file: {}", errorCode.message());
-            return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-        }
         auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
         pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
         if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
-
-        metaOutStream->close();
-        codeGenOutStream->close();
 
         if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
         return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
