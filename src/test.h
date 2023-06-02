@@ -3,13 +3,6 @@
 #include "generated/test.hpp"
 #include "tmp.hpp"
 
-#include <source_location>
-
-struct S {
-    S(std::source_location l) {}
-};
-
-
 namespace pf {
     class Hoho : Haha {
         PF_META_GENERATED();

@@ -171,7 +171,7 @@ if (${PF_META_ENABLE_TEST_EXE})
             FLAGS ${CXXFLAGS}
             HEADERS src/test.h src/test2.hpp
             FORMAT
-            FORCE_REGEN
+            #FORCE_REGEN
     )
     add_dependencies(meta_test_generate_meta pf_meta_gen)
 endif ()

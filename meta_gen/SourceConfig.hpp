@@ -21,7 +21,7 @@ namespace pf::meta_gen {
         bool formatOutput;
         std::vector<std::string> compilerFlags;
 
-        std::string inputIncludePath;
+        std::filesystem::path inputProjectPath;
     };
 
     struct ProjectConfig {

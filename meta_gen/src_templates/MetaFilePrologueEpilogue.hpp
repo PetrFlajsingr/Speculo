@@ -9,7 +9,7 @@ namespace pf::meta_gen {
     constexpr auto MetaFilePrologue = R"fmt(
 #pragma once
 
-#include <{file_include}>
+#include "{relative_include_path}"
 #include <meta/details/array.hpp>
 #include <meta/details/RangeOf.hpp>
 #include <type_traits>
