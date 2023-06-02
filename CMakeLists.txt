@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 project(pf_meta_gen)
 
-include(cmake/pf_meta.cmake)
+option(PF_META_ENABLE_TEST_EXE "Enable test exe target" OFF)
 
 if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129 AND CMAKE_VERSION VERSION_GREATER 3.20.3)
     set(CMAKE_CXX_STANDARD 23)
@@ -95,37 +95,25 @@ target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
 
 
-# we need clang flags so can't do this get_target_property(CXXFLAGS pf_meta_gen COMPILE_OPTIONS)
-list(APPEND CXXFLAGS "-std=c++20")
-message(STATUS ${CXXFLAGS})
 
+if (${PF_META_ENABLE_TEST_EXE})
+    include(cmake/pf_meta.cmake)
+    list(APPEND CXXFLAGS "-std=c++20")
+    message(STATUS ${CXXFLAGS})
 
+    add_executable(meta_test main_test.cpp)
 
+    target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
+    target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
+    target_compile_options(meta_test PRIVATE ${test_flags})
+    add_dependencies(meta_test pf_meta_gen)
 
-add_executable(meta_test main_test.cpp)
-
-target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
-target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
-target_compile_options(meta_test PRIVATE ${test_flags})
-add_dependencies(meta_test pf_meta_gen)
-
-pf_meta_register(
-        TARGET meta_test
-        FLAGS ${CXXFLAGS}
-        HEADERS src/test.h src/test2.hpp
-        FORMAT
-        FORCE_REGEN
-)
-add_dependencies(meta_test_generate_meta pf_meta_gen)
-
-
-#find_package(Python3 REQUIRED COMPONENTS Interpreter)
-#execute_process(COMMAND ${Python3_EXECUTABLE}
-#        ${CMAKE_SOURCE_DIR}/scripts/pf_meta_config_create.py
-#        -p meta_test
-#        -r ${CMAKE_SOURCE_DIR}
-#        -o ${CMAKE_BINARY_DIR}
-#        -f ${CXXFLAGS}
-#        -I ${INCLUDE_ARGS}
-#        -H ${HEADERS_FOR_META}
-#        )
+    pf_meta_register(
+            TARGET meta_test
+            FLAGS ${CXXFLAGS}
+            HEADERS src/test.h src/test2.hpp
+            FORMAT
+            FORCE_REGEN
+    )
+    add_dependencies(meta_test_generate_meta pf_meta_gen)
+endif ()
