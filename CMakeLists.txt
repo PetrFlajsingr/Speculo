@@ -54,46 +54,6 @@ target_include_directories(pf_meta INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-install(TARGETS pf_meta
-        EXPORT pf_meta_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-write_basic_package_version_file("pf_metaConfigVersion.cmake"
-        VERSION ${PROJECT_VERSION}
-        COMPATIBILITY SameMajorVersion)
-
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Debug/bin)
-else ()
-    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Release/bin)
-endif ()
-
-configure_package_config_file(
-        "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
-        "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
-        INSTALL_DESTINATION
-        ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
-
-install(EXPORT pf_meta_Targets
-        FILE pf_metaTargets.cmake
-        NAMESPACE pf_meta::
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
-
-install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
-        "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
-
-
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION .)
-install(FILES ${PROJECT_SOURCE_DIR}/cmake/pf_meta.cmake DESTINATION cmake)
-
-set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
-
-include(CPack)
-
 add_executable(pf_meta_gen main.cpp
         meta_gen/AttributeParser.cpp
         meta_gen/AstActions.cpp
@@ -134,6 +94,54 @@ target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/i
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
+
+
+
+install(TARGETS pf_meta
+        EXPORT pf_meta_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+write_basic_package_version_file("pf_metaConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Debug/bin)
+else ()
+    set(PF_META_GEN_EXE_PATH_INSTALL ${CMAKE_INSTALL_PREFIX}/Release/bin)
+endif ()
+
+if (WIN32)
+    set(PF_META_GEN_EXE_PATH_INSTALL ${PF_META_GEN_EXE_PATH_INSTALL}/pf_meta_gen.exe)
+else ()
+    set(PF_META_GEN_EXE_PATH_INSTALL ${PF_META_GEN_EXE_PATH_INSTALL}/pf_meta_gen)
+endif ()
+
+configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        INSTALL_DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(EXPORT pf_meta_Targets
+        FILE pf_metaTargets.cmake
+        NAMESPACE pf_meta::
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION .)
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/pf_meta.cmake DESTINATION cmake)
+
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+
+include(CPack)
 
 
 install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
