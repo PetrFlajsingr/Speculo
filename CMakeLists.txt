@@ -46,8 +46,6 @@ find_package(stduuid CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
-add_subdirectory(third_party/cppcoro)
-
 add_library(pf_meta INTERFACE)
 add_library(pf_meta::pf_meta ALIAS pf_meta)
 target_include_directories(pf_meta INTERFACE include)
@@ -81,7 +79,7 @@ include(AddLLVM)
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro pf_meta::pf_meta)
+target_link_libraries(pf_meta_gen PRIVATE stduuid pf_meta::pf_meta)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
 target_compile_options(pf_meta_gen PRIVATE ${flags})

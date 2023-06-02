@@ -17,12 +17,8 @@
 #include <tl/expected.hpp>
 
 #include "meta_gen/SourceConfig.hpp"
+#include "meta_gen/ThreadPool.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
-#include <cppcoro/static_thread_pool.hpp>
-#include <cppcoro/sync_wait.hpp>
-#include <cppcoro/task.hpp>
-#include <cppcoro/when_all.hpp>
-
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
                                             llvm::cl::value_desc("filename"));
@@ -192,7 +188,8 @@ int main(int argc, const char **argv) {
 
     auto timestampDB = loadProjectDatabase(configs.name);
 
-    cppcoro::static_thread_pool threadPool;
+    const auto threadCount = static_cast<bool>(RunSequential) ? 1 : std::thread::hardware_concurrency();
+    pf::meta_gen::ThreadPool threadPool{threadCount};
 
     struct ParseResult {
         std::filesystem::path inPath;
@@ -207,120 +204,73 @@ int main(int argc, const char **argv) {
     auto compilerFlagsChanged = false;
     if (!configs.sourceConfigs.empty()) { compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags; }
 
-    if (static_cast<bool>(RunSequential)) {
-        const auto generateMetaForSource =
-                [&timestampDB, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
-            if (!std::filesystem::exists(config.inputSource)) {
-                spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
-                return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
-            const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
-            // if regeneration is forced or if compiler flags changed we need to regenerate
-            if (!static_cast<bool>(ForceRegen) && !compilerFlagsChanged) {
-                if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string());
-                    iter != timestampDB.fileTimestamps.end()) {
-                    if (lastWriteTime < iter->second) {
-                        spdlog::info("File '{}' was not changed", config.inputSource.string());
-                        return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
-                    }
+    const auto generateMetaForSource =
+            [&timestampDB, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
+        if (!std::filesystem::exists(config.inputSource)) {
+            spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
+            return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
+        }
+        const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
+        // if regeneration is forced or if compiler flags changed we need to regenerate
+        if (!static_cast<bool>(ForceRegen) && !compilerFlagsChanged) {
+            if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
+                if (lastWriteTime < iter->second) {
+                    spdlog::info("File '{}' was not changed", config.inputSource.string());
+                    return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
                 }
             }
+        }
 
-            std::vector<std::string> sources{config.inputSource.string()};
+        std::vector<std::string> sources{config.inputSource.string()};
 
-            clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
+        clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
 
-            clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
+        clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-            std::error_code errorCode;
-            auto metaOutStream =
-                    std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
-                return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
-            auto codeGenOutStream = std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode,
-                                                                           llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
-                return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
-            auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-            pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
-            if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
+        std::error_code errorCode;
+        auto metaOutStream =
+                std::make_shared<llvm::raw_fd_ostream>(config.outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+        if (errorCode) {
+            spdlog::error("Failed to open output file: {}", errorCode.message());
+            return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
+        }
+        auto codeGenOutStream =
+                std::make_shared<llvm::raw_fd_ostream>(config.outputCodegenHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+        if (errorCode) {
+            spdlog::error("Failed to open output file: {}", errorCode.message());
+            return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
+        }
+        auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
+        pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
+        if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
-            metaOutStream->close();
-            codeGenOutStream->close();
+        metaOutStream->close();
+        codeGenOutStream->close();
 
-            if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
-            return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
-        };
+        if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
+        return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
+    };
 
-        std::vector<tl::expected<ParseResult, ParseFailure>> results;
-        std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { results.emplace_back(generateMetaForSource(config)); });
 
-        timestampDB.fileTimestamps.clear();
-        if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
+    std::vector<std::future<tl::expected<ParseResult, ParseFailure>>> results;
+    std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) {
+        results.emplace_back(threadPool.enqueue([=] { return generateMetaForSource(config); }));
+    });
 
-        std::ranges::for_each(results, [&](const auto &v) {
-            if (!v.has_value()) {
-                spdlog::error("File '{}' failed", v.error().inPath.string());
-            } else {
-                timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
-            }
-        });
-    } else {
-        const auto generateMetaForSource =
-                [&timestampDB, &threadPool,
-                 compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> cppcoro::task<tl::expected<ParseResult, ParseFailure>> {
-            co_await threadPool.schedule();
+    threadPool.finishAndStop();
 
-            if (!std::filesystem::exists(config.inputSource)) {
-                spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
-                co_return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
-            }
-            const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
-            // if regeneration is forced or if compiler flags changed we need to regenerate
-            if (!static_cast<bool>(ForceRegen) && !compilerFlagsChanged) {
-                if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string());
-                    iter != timestampDB.fileTimestamps.end()) {
-                    if (lastWriteTime < iter->second) {
-                        spdlog::info("File '{}' was not changed", config.inputSource.string());
-                        co_return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
-                    }
-                }
-            }
+    timestampDB.fileTimestamps.clear();
+    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
 
-            std::vector<std::string> sources{config.inputSource.string()};
+    std::ranges::for_each(results, [&](auto &r) {
+        const auto v = r.get();
+        if (!v.has_value()) {
+            spdlog::error("File '{}' failed", v.error().inPath.string());
+        } else {
+            timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
+        }
+    });
 
-            clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
-
-            clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
-
-            auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-            pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
-            if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
-
-            if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
-            co_return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
-        };
-
-        std::vector<cppcoro::task<tl::expected<ParseResult, ParseFailure>>> tasks;
-        std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { tasks.emplace_back(generateMetaForSource(config)); });
-
-        const auto results = cppcoro::sync_wait(cppcoro::when_all(std::move(tasks)));
-
-        timestampDB.fileTimestamps.clear();
-        if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
-
-        std::ranges::for_each(results, [&](const auto &v) {
-            if (!v.has_value()) {
-                spdlog::error("File '{}' failed", v.error().inPath.string());
-            } else {
-                timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
-            }
-        });
-    }
     updateProjectDatabase(timestampDB, configs.name);
 
 
