@@ -29,7 +29,8 @@ namespace pf::meta_gen {
                 return;
             }
             auto metaWriter = MetaInfoWriter{metaOutStream, idGenerator};
-            metaWriter.write(fmt::format(MetaFilePrologue, "file_include"_a = config->inputIncludePath));
+            metaWriter.write(fmt::format(MetaFilePrologue,
+                                         "relative_include_path"_a = fmt::format("../{}", config->inputProjectPath.filename().string())));
             for (const auto &info: infos) { metaWriter.write(info); }
             metaWriter.write(MetaFileEpilogue);
         }
