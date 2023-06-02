@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
-project(pf_meta_gen)
+project(pf_meta_gen VERSION 0.1.0)
+
+include(CMakePackageConfigHelpers)
 
 option(PF_META_ENABLE_TEST_EXE "Enable test exe target" OFF)
 
@@ -46,11 +48,42 @@ find_package(stduuid CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
-add_subdirectory(third_party/cppcoro)
-
 add_library(pf_meta INTERFACE)
 add_library(pf_meta::pf_meta ALIAS pf_meta)
-target_include_directories(pf_meta INTERFACE include)
+target_include_directories(pf_meta INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+install(TARGETS pf_meta
+        EXPORT pf_meta_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+write_basic_package_version_file("pf_metaConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        INSTALL_DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(EXPORT pf_meta_Targets
+        FILE pf_metaTargets.cmake
+        NAMESPACE pf_meta::
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/meta DESTINATION include)
+
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+
+include(CPack)
 
 add_executable(pf_meta_gen main.cpp
         meta_gen/AttributeParser.cpp
@@ -81,7 +114,7 @@ include(AddLLVM)
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(pf_meta_gen PRIVATE stduuid cppcoro pf_meta::pf_meta)
+target_link_libraries(pf_meta_gen PRIVATE stduuid pf_meta::pf_meta)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
 target_compile_options(pf_meta_gen PRIVATE ${flags})
@@ -92,6 +125,14 @@ target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/i
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
+
+
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS pf_meta_gen pf_meta_generate_fundamental_types
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
 
 
 

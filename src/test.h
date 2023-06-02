@@ -9,7 +9,7 @@ struct S {
     S(std::source_location l) {}
 };
 
-/*
+
 namespace pf {
     class Hoho : Haha {
         PF_META_GENERATED();
@@ -85,6 +85,7 @@ namespace pf {
     };
 
     struct Test : public A, protected B {
+        PF_META_GENERATED();
     public:
         Test() = default;
 
@@ -135,4 +136,4 @@ namespace pf {
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
-}// namespace pf*/
+}// namespace pf
