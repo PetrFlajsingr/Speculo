@@ -244,8 +244,6 @@ int main(int argc, const char **argv) {
     threadPool.finishAndStop();
 
     timestampDB.fileTimestamps.clear();
-    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
-
     std::ranges::for_each(results, [&](auto &r) {
         const auto v = r.get();
         if (!v.has_value()) {
@@ -254,6 +252,8 @@ int main(int argc, const char **argv) {
             timestampDB.fileTimestamps[v->inPath.string()] = v->stamp;
         }
     });
+
+    if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }
 
     updateProjectDatabase(timestampDB, configs.name);
 
