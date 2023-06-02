@@ -123,6 +123,11 @@ namespace pf::meta_gen {
             VariableInfo variableInfo;
             variableInfo.name = field->getNameAsString();
             variableInfo.fullName = field->getQualifiedNameAsString();
+            // FIXME: this is a hack, gotta handle this better
+            // ignoring PF_META_GENERATED expansion mistakenly parsed as an int member
+            if (variableInfo.name.starts_with("PF_META_GENERATED_")) {
+                continue;
+            }
             variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
             if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                 variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
