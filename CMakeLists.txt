@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
-project(pf_meta_gen)
+project(pf_meta_gen VERSION 0.1.0)
+
+include(CMakePackageConfigHelpers)
 
 option(PF_META_ENABLE_TEST_EXE "Enable test exe target" OFF)
 
@@ -48,7 +50,40 @@ find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 
 add_library(pf_meta INTERFACE)
 add_library(pf_meta::pf_meta ALIAS pf_meta)
-target_include_directories(pf_meta INTERFACE include)
+target_include_directories(pf_meta INTERFACE
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+install(TARGETS pf_meta
+        EXPORT pf_meta_Targets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+write_basic_package_version_file("pf_metaConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/pf_metaConfig.cmake.in"
+        "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        INSTALL_DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(EXPORT pf_meta_Targets
+        FILE pf_metaTargets.cmake
+        NAMESPACE pf_meta::
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(FILES "${PROJECT_BINARY_DIR}/pf_metaConfig.cmake"
+        "${PROJECT_BINARY_DIR}/pf_metaConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pf_meta/cmake)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION include)
+
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+
+include(CPack)
 
 add_executable(pf_meta_gen main.cpp
         meta_gen/AttributeParser.cpp
