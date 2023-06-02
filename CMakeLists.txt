@@ -82,7 +82,7 @@ include(AddLLVM)
 
 
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
-target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected nlohmann_json::nlohmann_json)
+target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
 target_link_libraries(pf_meta_gen PRIVATE stduuid pf_meta::pf_meta)
 # FIXME: only on win
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
@@ -91,7 +91,7 @@ target_compile_options(pf_meta_gen PRIVATE ${flags})
 
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE meta_gen/include)
-target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog tl::expected)
+target_link_libraries(pf_meta_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
 target_link_libraries(pf_meta_generate_fundamental_types PRIVATE stduuid pf_meta::pf_meta)
 target_compile_options(pf_meta_generate_fundamental_types PRIVATE ${flags})
 
@@ -161,7 +161,7 @@ if (${PF_META_ENABLE_TEST_EXE})
 
     add_executable(meta_test main_test.cpp)
 
-    target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog tl::expected pf_meta::pf_meta)
+    target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog_header_only tl::expected pf_meta::pf_meta)
     target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
     target_compile_options(meta_test PRIVATE ${test_flags})
     add_dependencies(meta_test pf_meta_gen)
