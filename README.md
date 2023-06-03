@@ -130,3 +130,5 @@ pf::meta_gen::CodeGenerator *create();
 void destroy(pf::meta_gen::CodeGenerator *ptr);
 }
 ```
+
+The plugin can generate code which will be placed inside `PF_META_GENERATED()` for given type, `PF_META_GENERATED_HEADER()` for header sources and in `<filename>.generated.cpp` for implementation.
