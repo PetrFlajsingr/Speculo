@@ -126,10 +126,12 @@ namespace pf::meta_gen {
 
             outStreamCpp << fmt::format(R"(#include "{}"
 
-)", config->outputCodegenHeader.filename().string());
+)",
+                                        config->outputCodegenHeader.filename().string());
 
             std::ranges::for_each(codeGenerators, [&](auto codeGenerator) {
-                codeGenerator->initialize(hppFileUUIDstr, cppFileUUIDstr);
+                codeGenerator->initialize(hppFileUUIDstr, cppFileUUIDstr,
+                                          fmt::format("../{}", config->inputProjectPath.filename().string()));
 
                 auto startData = codeGenerator->start();
                 outStreamHpp << startData.hppCode;
