@@ -20,12 +20,12 @@ namespace pf::meta_gen {
     public:
         MetaSupportCodeGenerator() = default;
 
-        void start() override;
-        void end() override;
-        void handle(const TypeInfoVariant &typeInfo) override;
+        [[nodiscard]] GenerationResult start() override;
+        [[nodiscard]] GenerationResult end() override;
+        [[nodiscard]] RecordGenerationResult generate(const RecordTypeInfo &typeInfo) override;
+        [[nodiscard]] GenerationResult generate(const EnumTypeInfo &typeInfo) override;
 
         [[nodiscard]] uint64_t getPriority() const override;
-
     };
 
 }// namespace pf::meta_gen

@@ -169,7 +169,7 @@ if (${PF_META_ENABLE_TEST_EXE})
     pf_meta_register(
             TARGET meta_test
             FLAGS ${CXXFLAGS}
-            HEADERS src/test.h #src/test2.hpp
+            HEADERS src/test.h src/test2.hpp
             FORMAT
             #FORCE_REGEN
     )

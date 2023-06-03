@@ -9,25 +9,36 @@
 #include "../info_structs.hpp"
 #include <iostream>
 
+
 namespace pf::meta_gen {
+
+    struct GenerationResult {
+        std::string hppCode;
+        std::string cppCode;
+    };
+
+    struct RecordGenerationResult {
+        std::string typeBodyCode;
+        std::string hppCode;
+        std::string cppCode;
+    };
 
     class CodeGenerator {
     public:
         CodeGenerator() = default;
         virtual ~CodeGenerator() = default;
 
-        void initialize(std::ostream &cppOstream, std::ostream &hppOstream, std::string uuidHeader, std::string uuidCpp) {
-            cppOut = &cppOstream;
-            hppOut = &hppOstream;
+        void initialize(std::string uuidHeader, std::string uuidCpp) {
             headerUUID = std::move(uuidHeader);
             cppUUID = std::move(uuidCpp);
         }
 
-        virtual void start() = 0;
+        [[nodiscard]] virtual GenerationResult start() = 0;
 
-        virtual void handle(const TypeInfoVariant &typeInfo) = 0;
+        [[nodiscard]] virtual RecordGenerationResult generate(const RecordTypeInfo &typeInfo) = 0;
+        [[nodiscard]] virtual GenerationResult generate(const EnumTypeInfo &typeInfo) = 0;
 
-        virtual void end() = 0;
+        [[nodiscard]] virtual GenerationResult end() = 0;
 
 
         [[nodiscard]] virtual std::uint64_t getPriority() const = 0;
@@ -35,14 +46,8 @@ namespace pf::meta_gen {
         [[nodiscard]] std::string_view getHeaderUuid() const { return headerUUID; }
         [[nodiscard]] std::string_view getCppUuid() const { return cppUUID; }
 
-    protected:
-        void writeToHpp(std::string_view data) { (*hppOut) << data; }
-        void writeToCpp(std::string_view data) { (*cppOut) << data; }
-
 
     private:
-        std::ostream *cppOut{};
-        std::ostream *hppOut{};
         std::string headerUUID;
         std::string cppUUID;
     };

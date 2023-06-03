@@ -4,6 +4,8 @@
 
 #include "AstActions.hpp"
 #include "ASTParser.hpp"
+#include "StringReplace.hpp"
+#include "Visitor.hpp"
 #include "src_templates/MetaFilePrologueEpilogue.hpp"
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -80,11 +82,76 @@ namespace pf::meta_gen {
             auto cppFileUUIDstr = to_string(cppFileUUID);
             std::ranges::replace(cppFileUUIDstr, '-', '_');
 
+
+            outStreamHpp << fmt::format(R"(
+#undef PF_META_GENERATED_FILE_ID
+#define PF_META_GENERATED_FILE_ID {}
+)",
+                                        hppFileUUIDstr);
+
+            constexpr auto generatedMacroNameTemplate = R"(PF_META_GENERATED_{line}_{file_id})";
+
+            // macro name, macro body
+            std::unordered_map<const RecordTypeInfo *, std::pair<std::string, std::string>> generatedMacros;
+            // prepare generated macro map
+            std::ranges::for_each(infos, [&](const auto &info) {
+                std::visit(Visitor{[&](const RecordTypeInfo &info) {
+                                       if (!info.hasPfMetaGeneratedMacro) { return; }
+                                       std::size_t generatedMacroLineOffset{};
+                                       if (const auto pos = info.originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
+                                           for (auto i = 0; i < pos; ++i) {
+                                               if (info.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
+                                           }
+                                       }
+                                       generatedMacroLineOffset += info.sourceLocation.line;
+                                       generatedMacros.emplace(
+                                               &info, std::pair<std::string, std::string>{fmt::format(generatedMacroNameTemplate,
+                                                                                                      "line"_a = generatedMacroLineOffset,
+                                                                                                      "file_id"_a = hppFileUUIDstr),
+                                                                                          ""});
+                                   },
+                                   [&](const auto &) {}},
+                           info);
+            });
+
+
             auto metaCodeGen = MetaSupportCodeGenerator{};
-            metaCodeGen.initialize(outStreamCpp, outStreamHpp, hppFileUUIDstr, cppFileUUIDstr);
-            metaCodeGen.start();
-            std::ranges::for_each(infos, [&](const auto &i) { metaCodeGen.handle(i); });
-            metaCodeGen.end();
+            metaCodeGen.initialize(hppFileUUIDstr, cppFileUUIDstr);
+
+            const auto startData = metaCodeGen.start();
+            outStreamHpp << startData.hppCode;
+            outStreamCpp << startData.cppCode;
+
+            std::ranges::for_each(infos, [&](const auto &info) {
+                std::visit(Visitor{[&](const RecordTypeInfo &info) {
+                                       auto genCode = metaCodeGen.generate(info);
+                                       if (const auto iter = generatedMacros.find(&info); iter != generatedMacros.end()) {
+                                           // add \ to new lines, because it's generated into a macro body
+                                           replaceAllOccurrences(genCode.typeBodyCode, "\n", "\\\n");
+                                           iter->second.second.append(genCode.typeBodyCode);
+                                       }
+                                       outStreamHpp << genCode.hppCode;
+                                       outStreamCpp << genCode.cppCode;
+                                   },
+                                   [&](const EnumTypeInfo &info) {
+                                       const auto genCode = metaCodeGen.generate(info);
+                                       outStreamHpp << genCode.hppCode;
+                                       outStreamCpp << genCode.cppCode;
+                                   }},
+                           info);
+            });
+
+            const auto endData = metaCodeGen.end();
+            outStreamHpp << endData.hppCode;
+            outStreamCpp << endData.cppCode;
+
+            // write PF_META_GENERATED macro definitions
+            std::ranges::for_each(generatedMacros, [&](const auto &m) {
+                const auto &macroName = m.second.first;
+                const auto &macroBody = m.second.second;
+                const auto macro = fmt::format(R"(#define {} {})", macroName, macroBody);
+                outStreamHpp << macro << "\n";
+            });
         }
     }
 
