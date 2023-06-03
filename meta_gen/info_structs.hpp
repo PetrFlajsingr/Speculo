@@ -53,6 +53,8 @@ namespace pf::meta_gen {
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;
+        std::size_t size;
+        std::size_t alignment;
 
         bool isNestedType;
         Access nestedAccess;// only relevant if isNestedType == true
@@ -147,11 +149,13 @@ namespace pf::meta_gen {
         bool isMutable;  // only for members
         bool isConstexpr;// only for statics
         SourceLocationInfo sourceLocation;
-        bool isInline;           // only for statics
-        bool isInlineSpecified;  // only for statics
-        bool isBitfield;         // only for members
-        std::size_t bitfieldSize;// only for members
-        std::size_t byteOffset;      // only for members (except bitfields)
+        bool isInline;             // only for statics
+        bool isInlineSpecified;    // only for statics
+        bool isBitfield;           // only for members
+        std::size_t bitfieldSize;  // only for members
+        std::size_t bitfieldOffset;// only for members
+        std::size_t byteOffset;    // only for members
+        std::size_t size;          // only for members
     };
 
     struct BaseClassInfo {
@@ -162,6 +166,7 @@ namespace pf::meta_gen {
         Access access;
         SourceLocationInfo sourceLocation;
         std::size_t byteOffset;
+        std::size_t size;
     };
 
     struct RecordTypeInfo : TypeInfo {

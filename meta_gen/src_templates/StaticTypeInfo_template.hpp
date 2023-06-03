@@ -31,6 +31,8 @@ struct StaticInfo<{type_id}> {{
 
     using UnderlyingType = {underlying_type};
     constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
+    constexpr static std::size_t Size = {size};
+    constexpr static std::size_t Alignment = {alignment};
     constexpr static RangeOf<Info> auto EnumValues = pf::meta::details::make_array<Info>({enum_value_ids});
 }};
 
@@ -79,6 +81,8 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsRvalueReference = false;
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
+    constexpr static std::size_t Size = {size};
+    constexpr static std::size_t Alignment = {alignment};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};

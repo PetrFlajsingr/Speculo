@@ -29,10 +29,10 @@ namespace pf::meta_gen {
         return fmt::format("struct details {{\n{}}};", contents);
     }
 
-    MetaInfoWriter::MetaInfoWriter(std::shared_ptr<llvm::raw_ostream> os, std::shared_ptr<IdGenerator> idGen)
-        : idGenerator(std::move(idGen)), ostream(std::move(os)) {}
+    MetaInfoWriter::MetaInfoWriter(std::ostream &os, std::shared_ptr<IdGenerator> idGen)
+        : idGenerator(std::move(idGen)), ostream(os) {}
 
-    void MetaInfoWriter::write(std::string_view str) { *ostream << str; }
+    void MetaInfoWriter::write(std::string_view str) { ostream << str; }
 
     void MetaInfoWriter::write(const TypeInfoVariant &typeInfo) {
         std::visit(Visitor{[&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
@@ -114,7 +114,8 @@ namespace pf::meta_gen {
                           "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = idToString(enumInfo.constId),
                           "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
                           "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
-                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId)));
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "size"_a = enumInfo.size,
+                          "alignment"_a = enumInfo.alignment));
 
         write(fmt::format(R"fmt(// Enum {} static info getters
 )fmt",
@@ -194,7 +195,8 @@ namespace pf::meta_gen {
                               "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables),
                               "const_type_id"_a = idToString(recordInfo.constId), "lref_type_id"_a = idToString(recordInfo.lrefId),
                               "const_lref_type_id"_a = idToString(recordInfo.constLrefId), "rref_type_id"_a = idToString(recordInfo.rrefId),
-                              "ptr_type_id"_a = idToString(recordInfo.ptrId), "const_ptr_type_id"_a = idToString(recordInfo.constPtrId)));
+                              "ptr_type_id"_a = idToString(recordInfo.ptrId), "const_ptr_type_id"_a = idToString(recordInfo.constPtrId),
+                              "size"_a = recordInfo.size, "alignment"_a = recordInfo.alignment));
 
 
             write(fmt::format(R"fmt(// Record {} static info getters
@@ -218,7 +220,8 @@ namespace pf::meta_gen {
                               "source_file"_a = baseInfo.sourceLocation.filename, "source_line"_a = baseInfo.sourceLocation.line,
                               "source_column"_a = baseInfo.sourceLocation.column, "is_public"_a = baseInfo.access == Access::Public,
                               "is_protected"_a = baseInfo.access == Access::Protected, "is_private"_a = baseInfo.access == Access::Private,
-                              "is_virtual"_a = baseInfo.isVirtual, "name"_a = baseInfo.name));
+                              "is_virtual"_a = baseInfo.isVirtual, "name"_a = baseInfo.name, "offset"_a = baseInfo.byteOffset,
+                              "size"_a = baseInfo.size));
         }
         for (const auto &ctorInfo: recordInfo.constructors) {
             if (ContainsNoSTIAttribute(ctorInfo.attributes)) {
@@ -517,7 +520,9 @@ namespace pf::meta_gen {
             std::string bitfieldBlock{};
             std::string memberPtrBlock{};
             if (mbrVarInfo.isBitfield) {
-                bitfieldBlock = fmt::format("constexpr static std::size_t BitfieldSize = {};\n", mbrVarInfo.bitfieldSize);
+                bitfieldBlock =
+                        fmt::format("constexpr static std::size_t BitfieldSize = {};\nconstexpr static std::size_t BitfieldOffset = {};\n",
+                                    mbrVarInfo.bitfieldSize, mbrVarInfo.bitfieldOffset);
                 bitfieldBlock.append(fmt::format(StaticTypeInfo_BitfieldAccessor, "parent_type"_a = recordInfo.fullName,
                                                  "bitfield_name"_a = mbrVarInfo.name));
             } else {
@@ -530,16 +535,15 @@ namespace pf::meta_gen {
                               recordInfo.fullName, mbrVarInfo.fullName));
 
 
-
-            write(fmt::format(StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName,
-                              "id"_a = idToString(mbrVarInfo.id), "details"_a = createDetailsStruct(detailsContents),
-                              "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrVarInfo.sourceLocation.filename,
-                              "source_line"_a = mbrVarInfo.sourceLocation.line, "source_column"_a = mbrVarInfo.sourceLocation.column,
-                              "attributes"_a = attributesStr, "is_public"_a = mbrVarInfo.access == Access::Public,
-                              "is_protected"_a = mbrVarInfo.access == Access::Protected,
-                              "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
-                              "is_mutable"_a = mbrVarInfo.isMutable, "member_ptr_block"_a = memberPtrBlock,
-                              "is_bitfield"_a = mbrVarInfo.isBitfield, "bitfield_block"_a = bitfieldBlock, "offset"_a = mbrVarInfo.byteOffset));
+            write(fmt::format(
+                    StaticTypeInfoTemplate_MemberVariable, "full_name"_a = mbrVarInfo.fullName, "id"_a = idToString(mbrVarInfo.id),
+                    "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
+                    "source_file"_a = mbrVarInfo.sourceLocation.filename, "source_line"_a = mbrVarInfo.sourceLocation.line,
+                    "source_column"_a = mbrVarInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                    "is_public"_a = mbrVarInfo.access == Access::Public, "is_protected"_a = mbrVarInfo.access == Access::Protected,
+                    "is_private"_a = mbrVarInfo.access == Access::Private, "name"_a = mbrVarInfo.name,
+                    "is_mutable"_a = mbrVarInfo.isMutable, "member_ptr_block"_a = memberPtrBlock, "is_bitfield"_a = mbrVarInfo.isBitfield,
+                    "bitfield_block"_a = bitfieldBlock, "offset"_a = mbrVarInfo.byteOffset, "size"_a = mbrVarInfo.size));
         }
 
         for (const auto &statFncInfo: recordInfo.staticFunctions) {

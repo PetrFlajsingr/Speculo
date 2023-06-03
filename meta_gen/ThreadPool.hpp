@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "SafeQueue.h"
+#include "SafeQueue.hpp"
 #include <algorithm>
 #include <concepts>
 #include <functional>

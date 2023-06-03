@@ -45,6 +45,8 @@ namespace pf::meta_gen {
         result.sourceLocation.filename = sourceManager.getFilename(enumDecl->getSourceRange().getBegin());
 
         result.underlyingType = enumDecl->getIntegerType().getAsString(printingPolicy);
+        result.size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
+        result.alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
 
         for (const auto &enumerator: enumDecl->enumerators()) {
             std::variant<bool, std::uint64_t, std::int64_t> value;
