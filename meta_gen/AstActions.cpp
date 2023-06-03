@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
 
+#include <fstream>
 #include <iostream>
 
 namespace pf::meta_gen {
@@ -21,14 +22,18 @@ namespace pf::meta_gen {
 
         {
             spdlog::trace("Writing meta info to {}", config->outputMetaHeader.string());
-            std::error_code errorCode;
-            auto metaOutStream =
-                    std::make_shared<llvm::raw_fd_ostream>(config->outputMetaHeader.string(), errorCode, llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
+
+            std::ofstream outStream;
+            outStream.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+            try {
+                outStream.open(config->outputMetaHeader);
+            } catch (const std::system_error &e) {
+                spdlog::error("Failed to open output file: {}", e.code().message());
                 return;
             }
-            auto metaWriter = MetaInfoWriter{metaOutStream, idGenerator};
+
+            auto metaWriter = MetaInfoWriter{outStream, idGenerator};
             metaWriter.write(fmt::format(MetaFilePrologue,
                                          "relative_include_path"_a = fmt::format("../{}", config->inputProjectPath.filename().string())));
             for (const auto &info: infos) { metaWriter.write(info); }
@@ -36,6 +41,26 @@ namespace pf::meta_gen {
         }
 
         {
+
+            std::ofstream outStreamHpp;
+            outStreamHpp.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+            try {
+                outStreamHpp.open(config->outputCodegenHeader);
+            } catch (const std::system_error &e) {
+                spdlog::error("Failed to open output file: {}", e.code().message());
+                return;
+            }
+            std::ofstream outStreamCpp;
+            outStreamCpp.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+            try {
+                outStreamCpp.open(config->outputCodegenSource);
+            } catch (const std::system_error &e) {
+                spdlog::error("Failed to open output file: {}", e.code().message());
+                return;
+            }
+
             std::error_code errorCode;
             auto codeGenOutStream = std::make_shared<llvm::raw_fd_ostream>(config->outputCodegenHeader.string(), errorCode,
                                                                            llvm::sys::fs::OpenFlags::OF_Text);
@@ -45,10 +70,21 @@ namespace pf::meta_gen {
             }
             spdlog::trace("Writing generated code to {} and {}", config->outputCodegenHeader.string(),
                           config->outputCodegenSource.string());
-            auto codeGenWriter = CodeGenWriter{codeGenOutStream};
-            codeGenWriter.start(std::filesystem::relative(config->outputCodegenHeader, config->projectRootDir).string());
-            codeGenWriter.generate(infos);
-            codeGenWriter.end();
+
+            // TODO: use absolute paths
+            uuids::uuid_name_generator uuidGenerator{uuids::uuid::from_string("471F3823-2574-4bfd-b411-99ed177d3e43").value()};
+            const auto hppFileUUID = uuidGenerator(std::filesystem::relative(config->outputCodegenHeader, config->projectRootDir).string());
+            auto hppFileUUIDstr = to_string(hppFileUUID);
+            std::ranges::replace(hppFileUUIDstr, '-', '_');
+            const auto cppFileUUID = uuidGenerator(std::filesystem::relative(config->outputCodegenSource, config->projectRootDir).string());
+            auto cppFileUUIDstr = to_string(cppFileUUID);
+            std::ranges::replace(cppFileUUIDstr, '-', '_');
+
+            auto metaCodeGen = MetaSupportCodeGenerator{};
+            metaCodeGen.initialize(outStreamCpp, outStreamHpp, hppFileUUIDstr, cppFileUUIDstr);
+            metaCodeGen.start();
+            std::ranges::for_each(infos, [&](const auto &i) { metaCodeGen.handle(i); });
+            metaCodeGen.end();
         }
     }
 

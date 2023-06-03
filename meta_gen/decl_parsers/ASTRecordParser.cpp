@@ -3,6 +3,7 @@
 //
 
 #include "ASTRecordParser.hpp"
+#include "clang/AST/RecordLayout.h"
 #include <clang/Sema/Sema.h>
 #include <spdlog/spdlog.h>
 
@@ -82,6 +83,9 @@ namespace pf::meta_gen {
         result.isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
         if (result.isNestedType) { result.nestedAccess = clangAccesConv(recordDecl->getAccess()); }
 
+        result.size = astContext.getASTRecordLayout(recordDecl).getSize().getQuantity();
+        result.alignment = astContext.getASTRecordLayout(recordDecl).getAlignment().getQuantity();
+
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
@@ -119,15 +123,14 @@ namespace pf::meta_gen {
         result.isFinal = recordDecl->isEffectivelyFinal();
 
         // TODO: inherited?
+        std::size_t previousFieldOffset = 0;
         for (const clang::FieldDecl *field: recordDecl->fields()) {
             VariableInfo variableInfo;
             variableInfo.name = field->getNameAsString();
             variableInfo.fullName = field->getQualifiedNameAsString();
             // FIXME: this is a hack, gotta handle this better
             // ignoring PF_META_GENERATED expansion mistakenly parsed as an int member
-            if (variableInfo.name.starts_with("PF_META_GENERATED_")) {
-                continue;
-            }
+            if (variableInfo.name.starts_with("PF_META_GENERATED_")) { continue; }
             variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
             if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                 variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
@@ -143,9 +146,16 @@ namespace pf::meta_gen {
             variableInfo.sourceLocation.filename = sourceManager.getFilename(field->getSourceRange().getBegin());
             variableInfo.isBitfield = field->isBitField();
             variableInfo.bitfieldSize = 0;
-            if (variableInfo.isBitfield) { variableInfo.bitfieldSize = field->getBitWidthValue(astContext); }
+            if (variableInfo.isBitfield) {
+                variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
+                variableInfo.bitfieldOffset = astContext.getFieldOffset(field) - previousFieldOffset;
+            }
+            variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
+            variableInfo.size = astContext.getTypeSizeInChars(field->getType()).getQuantity();
 
             result.memberVariables.push_back(variableInfo);
+
+            previousFieldOffset = astContext.getFieldOffset(field);
         }
         // TODO: inherited?
         // static variables
@@ -345,7 +355,8 @@ namespace pf::meta_gen {
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
                                                         return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                    }), false);
+                                                    }),
+                                                    false);
             // mangling names for argument IDs
             for (auto &argument: constructorInfo.arguments) {
                 argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
@@ -392,13 +403,13 @@ namespace pf::meta_gen {
 
         for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
             BaseClassInfo baseClassInfo;
-            if (const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl(); baseRecordDecl != nullptr) {
-                baseClassInfo.fullName = GetProperQualifiedName(baseRecordDecl, astContext.getPrintingPolicy());
-                baseClassInfo.name = GetProperName(baseRecordDecl, astContext.getPrintingPolicy());
-            } else {
-                baseClassInfo.fullName = base.getType().getAsString(printingPolicy);
-                baseClassInfo.name = base.getType().getAsString();
+            const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();
+            if (baseRecordDecl == nullptr) {
+                spdlog::error("Base class not recognized as a record");
+                continue;
             }
+            baseClassInfo.fullName = GetProperQualifiedName(baseRecordDecl, astContext.getPrintingPolicy());
+            baseClassInfo.name = GetProperName(baseRecordDecl, astContext.getPrintingPolicy());
             const auto mangledName = mangleBaseClass(result.fullName, baseClassInfo.fullName);
             baseClassInfo.id = getIdGenerator().generateId(mangledName);
             baseClassInfo.isVirtual = base.isVirtual();
@@ -406,6 +417,11 @@ namespace pf::meta_gen {
             baseClassInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(base.getSourceRange().getBegin());
             baseClassInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(base.getSourceRange().getBegin());
             baseClassInfo.sourceLocation.filename = sourceManager.getFilename(base.getSourceRange().getBegin());
+            const auto &layout = astContext.getASTRecordLayout(recordDecl);
+            baseClassInfo.byteOffset =
+                    (baseClassInfo.isVirtual ? layout.getVBaseClassOffset(baseRecordDecl) : layout.getBaseClassOffset(baseRecordDecl)).getQuantity();
+            baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
+
             result.baseClasses.push_back(baseClassInfo);
         }
 

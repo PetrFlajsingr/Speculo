@@ -7,9 +7,9 @@
 #include <memory>
 
 #include "ASTParser.hpp"
-#include "CodeGenWriter.hpp"
 #include "IdGenerator.hpp"
 #include "MetaInfoWriter.hpp"
+#include "codegen/MetaSupportCodeGenerator.hpp"
 #include "SourceConfig.hpp"
 #include "clang_tooling_wrap.hpp"
 #include "info_structs.hpp"

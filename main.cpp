@@ -17,7 +17,7 @@
 #include <tl/expected.hpp>
 
 #include "meta_gen/SourceConfig.hpp"
-#include "meta_gen/ThreadPool.h"
+#include "meta_gen/ThreadPool.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),

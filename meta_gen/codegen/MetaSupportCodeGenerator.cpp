@@ -1,6 +1,6 @@
 
-#include "CodeGenWriter.hpp"
-#include "Visitor.hpp"
+#include "MetaSupportCodeGenerator.hpp"
+#include "../Visitor.hpp"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -11,20 +11,17 @@ namespace pf::meta_gen {
 
     [[nodiscard]] std::string idToStringTEMP(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
-    void CodeGenWriter::start(std::string_view fileName) {
-        uuids::uuid_name_generator uuidGenerator{uuids::uuid::from_string("471F3823-2574-4bfd-b411-99ed177d3e43").value()};
-        const auto fileUUID = uuidGenerator(fileName);
-        fileUUIDstr = to_string(fileUUID);
-        std::ranges::replace(fileUUIDstr, '-', '_');
-        write("#include <meta/macros.hpp>\n");
-        write("#include <meta/details/StaticInfo.hpp>\n");
-        write(fmt::format(R"(#undef PF_META_GENERATED_FILE_ID
+
+    void MetaSupportCodeGenerator::start() {
+        writeToHpp(fmt::format(R"(#include <meta/macros.hpp>
+#include <meta/details/StaticInfo.hpp>
+#undef PF_META_GENERATED_FILE_ID
 #define PF_META_GENERATED_FILE_ID {}
 )",
-                          fileUUIDstr));
+                               getHeaderUuid()));
     }
 
-    void CodeGenWriter::generate(const meta_gen::TypeInfoVariant &typeInfo) {
+    void MetaSupportCodeGenerator::handle(const meta_gen::TypeInfoVariant &typeInfo) {
         using namespace fmt::literals;
         constexpr auto friendMacroTemplate = R"(#define PF_META_GENERATED_{line}_{file_id} {body})";
 
@@ -66,15 +63,16 @@ namespace pf::meta_gen {
                                }
                                if (recordInfo.destructor.access != Access::Public) { appendFriend(recordInfo.destructor.id); }
 
-                               write(fmt::format(friendMacroTemplate, "line"_a = generatedMacroLineOffset, "file_id"_a = fileUUIDstr,
-                                                 "body"_a = macroBody));
-                               write("\n");
+                               writeToHpp(fmt::format(friendMacroTemplate, "line"_a = generatedMacroLineOffset,
+                                                      "file_id"_a = getHeaderUuid(), "body"_a = macroBody));
+                               writeToHpp("\n");
                            },
-                           [](auto) { spdlog::error("CodeGenWriter: unimplemented type"); }},
+                           [](auto) { spdlog::error("MetaSupportCodeGenerator: unimplemented type"); }},
                    typeInfo);
     }
-    void CodeGenWriter::write(std::string_view str) { *ostream << str; }
 
-    void CodeGenWriter::end() {}
+    void MetaSupportCodeGenerator::end() {}
+
+    uint64_t MetaSupportCodeGenerator::getPriority() const { return 1; }
 
 }// namespace pf::meta_gen

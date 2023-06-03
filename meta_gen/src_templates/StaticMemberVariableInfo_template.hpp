@@ -24,6 +24,8 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsPrivate = {is_private};
     constexpr static bool IsMutable = {is_mutable};
     constexpr static bool IsBitfield = {is_bitfield};
+    constexpr static std::size_t Offset = {offset};
+    constexpr static std::size_t Size = {size};
     {bitfield_block}
 
     constexpr static auto Name = StringLiteral{{"{name}"}};

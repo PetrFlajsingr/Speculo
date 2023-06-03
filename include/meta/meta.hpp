@@ -31,6 +31,9 @@ namespace pf::meta {
     template<Info I>
     concept MemberVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::MemberVariable;
     template<Info I>
+    concept BitFieldMemberVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::MemberVariable &&
+                                     details::StaticInfo<I.implId>::IsBitfield;
+    template<Info I>
     concept StaticFunction = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::StaticFunction;
     template<Info I>
     concept StaticVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::StaticVariable;
@@ -477,12 +480,43 @@ namespace pf::meta {
     // TODO is_signed_type
     // TODO is_unsigned_type
     // TODO has_unique_object_representations
-    // TODO size_of
-    // TODO byte_size_of
-    // TODO bit_size_of
-    // TODO byte_offset_of
-    // TODO bit_offset_of
-    // TODO alignment_of
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval std::size_t size_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::Size;
+    }
+    template<Info I>
+        requires MemberVariable<I> || Base<I>
+    [[nodiscard]] consteval std::size_t byte_size_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::Size;
+    }
+    template<Info I>
+        requires BitFieldMemberVariable<I>
+    [[nodiscard]] consteval std::size_t bit_size_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::BitfieldSize;
+    }
+    template<Info I>
+        requires MemberVariable<I> || Base<I>
+    [[nodiscard]] consteval std::size_t byte_offset_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::Offset;
+    }
+    // FIXME: this one is likely returning wrong values
+    template<Info I>
+        requires BitFieldMemberVariable<I>
+    [[nodiscard]] consteval std::size_t bit_offset_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::BitfieldOffset;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval std::size_t alignment_of() {
+        using Impl = details::StaticInfo<I.implId>;
+        return Impl::Alignment;
+    }
     // TODO rank
     // TODO extent
     // TODO is_constructible(info, arguments)
