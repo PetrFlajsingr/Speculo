@@ -29,8 +29,7 @@ namespace pf::meta_gen {
         return fmt::format("struct details {{\n{}}};", contents);
     }
 
-    MetaInfoWriter::MetaInfoWriter(std::ostream &os, std::shared_ptr<IdGenerator> idGen)
-        : idGenerator(std::move(idGen)), ostream(os) {}
+    MetaInfoWriter::MetaInfoWriter(std::ostream &os, std::shared_ptr<IdGenerator> idGen) : idGenerator(std::move(idGen)), ostream(os) {}
 
     void MetaInfoWriter::write(std::string_view str) { ostream << str; }
 

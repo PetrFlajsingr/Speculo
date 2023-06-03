@@ -9,9 +9,9 @@
 #include "ASTParser.hpp"
 #include "IdGenerator.hpp"
 #include "MetaInfoWriter.hpp"
-#include "codegen/MetaSupportCodeGenerator.hpp"
 #include "SourceConfig.hpp"
 #include "clang_tooling_wrap.hpp"
+#include "codegen/MetaSupportCodeGenerator.hpp"
 #include "info_structs.hpp"
 
 #include <clang/Frontend/CompilerInstance.h>

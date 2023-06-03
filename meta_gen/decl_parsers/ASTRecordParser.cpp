@@ -34,6 +34,7 @@ namespace pf::meta_gen {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
         const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
 
+        if (recordDecl->isInvalidDecl()) { return std::nullopt; }
 
         // TODO: verify how this works
         // not supporting templates for now
@@ -419,7 +420,8 @@ namespace pf::meta_gen {
             baseClassInfo.sourceLocation.filename = sourceManager.getFilename(base.getSourceRange().getBegin());
             const auto &layout = astContext.getASTRecordLayout(recordDecl);
             baseClassInfo.byteOffset =
-                    (baseClassInfo.isVirtual ? layout.getVBaseClassOffset(baseRecordDecl) : layout.getBaseClassOffset(baseRecordDecl)).getQuantity();
+                    (baseClassInfo.isVirtual ? layout.getVBaseClassOffset(baseRecordDecl) : layout.getBaseClassOffset(baseRecordDecl))
+                            .getQuantity();
             baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
 
             result.baseClasses.push_back(baseClassInfo);

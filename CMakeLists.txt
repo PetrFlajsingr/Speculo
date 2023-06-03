@@ -63,7 +63,9 @@ add_executable(pf_meta_gen main.cpp
         meta_gen/decl_parsers/ASTEnumDeclParser.cpp
         meta_gen/decl_parsers/ASTRecordParser.cpp
         meta_gen/decl_parsers/factory.cpp
-        meta_gen/codegen/MetaSupportCodeGenerator.cpp)
+        meta_gen/codegen/MetaSupportCodeGenerator.cpp
+        meta_gen/codegen/PluginManager.cpp
+)
 target_include_directories(pf_meta_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 
@@ -169,7 +171,7 @@ if (${PF_META_ENABLE_TEST_EXE})
     pf_meta_register(
             TARGET meta_test
             FLAGS ${CXXFLAGS}
-            HEADERS src/test.h #src/test2.hpp
+            HEADERS src/test.h src/test2.hpp
             FORMAT
             #FORCE_REGEN
     )
