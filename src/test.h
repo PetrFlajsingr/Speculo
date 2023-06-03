@@ -131,4 +131,7 @@ namespace pf {
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
+
 }// namespace pf
+
+PF_META_GENERATED_HEADER();

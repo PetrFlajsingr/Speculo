@@ -50,7 +50,7 @@ endfunction()
 function(pf_meta_run_gen)
     set(options FORMAT FORCE_REGEN)
     set(oneValueArgs TARGET)
-    set(multiValueArgs)
+    set(multiValueArgs HEADERS)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
@@ -61,15 +61,33 @@ function(pf_meta_run_gen)
         set(forceArg --force)
     endif()
 
-    #pf_meta_check_fnc_arg_provided("TARGET")
-    #pf_meta_check_fnc_arg_provided("HEADERS")
-    #pf_meta_check_fnc_arg_provided("FLAGS")
+   #pf_meta_check_fnc_arg_provided("TARGET")
+   #pf_meta_check_fnc_arg_provided("HEADERS")
+   #pf_meta_check_fnc_arg_provided("FLAGS")
+
+    # create a target for invoking codegen tool
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
             ${PF_META_GEN_EXE_PATH} --config "${BINARY_DIR}/pf_meta_${_args_TARGET}_config.json"
             --ignore-includes ${formatArg} ${forceArg})
+    # tool invocation needs to wait for config creation
     add_dependencies(${_args_TARGET}_generate_meta pf_meta_generate_${_args_TARGET}_config)
-    add_dependencies(${_args_TARGET} ${_args_TARGET}_generate_meta)
+
+    # get list of all generated cpp files
+    foreach (HEADER ${_args_HEADERS})
+        get_filename_component(HEADER_FILENAME ${HEADER} NAME_WLE)
+        get_filename_component(HEADER_DIR ${HEADER} DIRECTORY)
+        list(APPEND GENERATED_SOURCES ${HEADER_DIR}/generated/${HEADER_FILENAME}.cpp)
+    endforeach ()
+    # create a static library with generated source files
+    add_library(pf_meta_${_args_TARGET}_generated_sources STATIC ${GENERATED_SOURCES})
+    target_include_directories(pf_meta_${_args_TARGET}_generated_sources PRIVATE $<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>)
+    target_compile_options(pf_meta_${_args_TARGET}_generated_sources PRIVATE ${flags})
+    # generated source files need to wait for being generated
+    add_dependencies(pf_meta_${_args_TARGET}_generated_sources ${_args_TARGET}_generate_meta)
+
+    add_dependencies(${_args_TARGET} pf_meta_${_args_TARGET}_generated_sources)
+    target_link_libraries(${_args_TARGET} PRIVATE pf_meta_${_args_TARGET}_generated_sources)
 endfunction()
 
 # Register target for meta generation
@@ -101,5 +119,9 @@ function(pf_meta_register)
         set(forceArg --force)
     endif()
 
-    pf_meta_run_gen(TARGET ${_args_TARGET} ${formatArg} ${forceArg})
+    pf_meta_run_gen(
+            TARGET ${_args_TARGET}
+            ${formatArg}
+            ${forceArg}
+            HEADERS ${_args_HEADERS})
 endfunction()

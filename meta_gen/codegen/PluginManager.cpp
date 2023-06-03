@@ -13,6 +13,10 @@ namespace pf::meta_gen {
 #endif
         spdlog::info("Loading plugins");
 
+        if (!std::filesystem::exists(pluginFolder) || !std::filesystem::is_directory(pluginFolder)) {
+            spdlog::info("Plugin folder is not present");
+            return;
+        }
         for (const auto &entry: std::filesystem::directory_iterator{pluginFolder}) {
             if (entry.path().has_extension() && entry.path().extension() == DLL_EXTENSION) {
 #ifdef _WIN32
