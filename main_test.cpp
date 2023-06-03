@@ -185,5 +185,7 @@ int main() {
     int v = accessor;
     std::cout << v << std::endl;
 
+    std::cout << "Generated fnc " << s.demo() << std::endl;
+
     return 0;
 }

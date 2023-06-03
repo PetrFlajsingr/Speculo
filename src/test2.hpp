@@ -18,11 +18,13 @@ struct SimpleStruct {
     unsigned int b5 : 5;
 
     struct NestedPublic {
+        PF_META_GENERATED();
         int a;
     };
 
 private:
     struct NestedPrivate {
+        PF_META_GENERATED();
         int a;
     };
     void footadlo() {}
