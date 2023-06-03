@@ -27,3 +27,5 @@ private:
     };
     void footadlo() {}
 };
+
+PF_META_GENERATED_HEADER();

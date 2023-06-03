@@ -13,14 +13,16 @@
 namespace pf::meta_gen {
 
     struct GenerationResult {
-        std::string hppCode;
-        std::string cppCode;
+        std::string hppCode;       // code inserted into <filename>.generated.hpp
+        std::string cppCode;       // code inserted into <filename>.generated.cpp
+        std::string headerBodyCode;// code inserted into PF_META_GENERATED_HEADER() for current header file
     };
 
     struct RecordGenerationResult {
-        std::string typeBodyCode;
-        std::string hppCode;
-        std::string cppCode;
+        std::string typeBodyCode;  // code inserted into PF_META_GENERATED() for this record
+        std::string headerBodyCode;// code inserted into PF_META_GENERATED_HEADER() for current header file
+        std::string hppCode;       // code inserted into <filename>.generated.hpp
+        std::string cppCode;       // code inserted into <filename>.generated.cpp
     };
 
     class CodeGenerator {

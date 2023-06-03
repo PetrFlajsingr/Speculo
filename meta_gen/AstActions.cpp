@@ -116,18 +116,27 @@ namespace pf::meta_gen {
                            info);
             });
 
+            std::string headerMacroBody{};
+
             auto metaCodeGen = MetaSupportCodeGenerator{};
 
             std::vector<CodeGenerator *> codeGenerators{&metaCodeGen};
             std::ranges::copy(pluginManager.getCodeGenerators(), std::back_inserter(codeGenerators));
             std::ranges::sort(codeGenerators, {}, &CodeGenerator::getPriority);
 
+            outStreamCpp << fmt::format(R"(#include "{}"
+
+)", config->outputCodegenHeader.filename().string());
+
             std::ranges::for_each(codeGenerators, [&](auto codeGenerator) {
                 codeGenerator->initialize(hppFileUUIDstr, cppFileUUIDstr);
 
-                const auto startData = codeGenerator->start();
+                auto startData = codeGenerator->start();
                 outStreamHpp << startData.hppCode;
                 outStreamCpp << startData.cppCode;
+                // add \ to new lines, because it's generated into a macro body
+                replaceAllOccurrences(startData.headerBodyCode, "\n", "\\\n");
+                headerMacroBody.append(startData.headerBodyCode);
 
                 std::ranges::for_each(infos, [&](const auto &info) {
                     std::visit(Visitor{[&](const RecordTypeInfo &info) {
@@ -139,19 +148,34 @@ namespace pf::meta_gen {
                                            }
                                            outStreamHpp << genCode.hppCode;
                                            outStreamCpp << genCode.cppCode;
+                                           // add \ to new lines, because it's generated into a macro body
+                                           replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
+                                           headerMacroBody.append(genCode.headerBodyCode);
                                        },
                                        [&](const EnumTypeInfo &info) {
-                                           const auto genCode = codeGenerator->generate(info);
+                                           auto genCode = codeGenerator->generate(info);
                                            outStreamHpp << genCode.hppCode;
                                            outStreamCpp << genCode.cppCode;
+                                           // add \ to new lines, because it's generated into a macro body
+                                           replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
+                                           headerMacroBody.append(genCode.headerBodyCode);
                                        }},
                                info);
                 });
 
-                const auto endData = codeGenerator->end();
+                auto endData = codeGenerator->end();
                 outStreamHpp << endData.hppCode;
                 outStreamCpp << endData.cppCode;
+                // add \ to new lines, because it's generated into a macro body
+                replaceAllOccurrences(endData.headerBodyCode, "\n", "\\\n");
+                headerMacroBody.append(endData.headerBodyCode);
             });
+
+            outStreamHpp << fmt::format(R"(#undef PF_META_GENERATED_HEADER
+#define PF_META_GENERATED_HEADER() {}
+
+)",
+                                        headerMacroBody);
 
             // write PF_META_GENERATED macro definitions
             std::ranges::for_each(generatedMacros, [&](const auto &m) {
