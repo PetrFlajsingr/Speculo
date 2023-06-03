@@ -30,9 +30,10 @@ namespace pf::meta_gen {
         CodeGenerator() = default;
         virtual ~CodeGenerator() = default;
 
-        void initialize(std::string uuidHeader, std::string uuidCpp) {
+        void initialize(std::string uuidHeader, std::string uuidCpp, std::string originalHeaderRelativePath) {
             headerUUID = std::move(uuidHeader);
             cppUUID = std::move(uuidCpp);
+            relativePathToOriginal = std::move(originalHeaderRelativePath);
         }
 
         [[nodiscard]] virtual GenerationResult start() = 0;
@@ -47,11 +48,13 @@ namespace pf::meta_gen {
 
         [[nodiscard]] std::string_view getHeaderUuid() const { return headerUUID; }
         [[nodiscard]] std::string_view getCppUuid() const { return cppUUID; }
+        [[nodiscard]] std::string_view getRelativePathToOriginal() const { return relativePathToOriginal; }
 
 
     private:
         std::string headerUUID;
         std::string cppUUID;
+        std::string relativePathToOriginal;
     };
 
 }// namespace pf::meta_gen
