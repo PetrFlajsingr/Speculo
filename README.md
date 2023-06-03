@@ -118,3 +118,15 @@ TODO: demo
 #### Destructors
 Address of a destructors is impossible to be taken, so constructors are currently wrapped in a lambda.
 TODO: demo
+
+## Codegen plugins
+Dynamic library plugins can be created and used by placing them in a `plugins` directory next to the created executable. Simple example [https://github.com/PetrFlajsingr/pf_meta_plugin_template](https://github.com/PetrFlajsingr/pf_meta_plugin_template).
+
+The plugin library needs to provide a subclass of `pf::meta_gen::CodeGenerator` and the following interface:
+```cpp
+extern "C" {
+pf::meta_gen::CodeGenerator *create();
+
+void destroy(pf::meta_gen::CodeGenerator *ptr);
+}
+```
