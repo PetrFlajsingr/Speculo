@@ -1,12 +1,11 @@
 
 
-#include "tmp.hpp"
 
 #include "generated/test.hpp"
 
 
 namespace pf {
-    class Hoho : Haha {
+    class Hoho {
         PF_META_GENERATED();
 
     private:
@@ -18,15 +17,20 @@ namespace pf {
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{
             Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 
-    struct [[pf::no_sti]] B1 {};
-    struct B2 {
-        [[test1]] int [[test2]] value [[test3]]{};
-        [[test1]] int [[test2]] value2 [[test3]] = 10;
-        [[test1]] inline static int [[test2]] value3 [[test3]] = 10;
+    struct [[pf::no_sti]] B1 {
+        PF_META_GENERATED();
     };
-    struct [[lala(111), lala(222)]] [[lala(333, 444)]] B3 {};
+    struct B2 {
+        PF_META_GENERATED();
+       int value{};
+       int value2 = 10;
+       inline static int value3 = 10;
+    };
+    struct [[t::lala(111), t::lala(222)]] [[t::lala(333, 444)]] B3 {
+        PF_META_GENERATED();
+    };
 
-    struct [[nodiscard]] [[first]] [[second, third]] A : B1, B2, private B3 {
+    struct [[nodiscard]] [[t::first]] [[t::second, t::third]] A : B1, B2, private B3 {
         PF_META_GENERATED();
 
         constexpr A() : test{0} {}
@@ -42,12 +46,12 @@ namespace pf {
         A &operator=(A &&) = delete;
 
 
-        [[maybe_unused, nodiscard]] consteval int foo([[letadlo(dzea, dzea2)]] int dzea, [[yuh]] [[yuh2]] float A) const [[kjhnn]] {
+        [[maybe_unused, nodiscard]] consteval int foo([[t::letadlo(dzea, dzea2)]] int dzea, [[t::yuh]] [[t::yuh2]] float A) const [[t::kjhnn]] {
             return test + dzea + A;
         }
 
-        [[maybe_unused]] virtual int foo2([[letadlo()]] int dzea2) [[kjhnn]] final {
-            [[yeetus]];
+        [[maybe_unused]] virtual int foo2([[t::letadlo()]] int dzea2) [[t::kjhnn]] final {
+            [[t::yeetus]];
             return 0;
         }
 
@@ -72,6 +76,7 @@ namespace pf {
     };
 
     struct B {
+        PF_META_GENERATED();
         virtual ~B() = default;
 
         virtual void pure_foo(int a) = 0;
@@ -81,6 +86,7 @@ namespace pf {
 
     struct Test : public A, protected B {
         PF_META_GENERATED();
+
     public:
         Test() = default;
 
