@@ -6,6 +6,7 @@
 
 #include "../AttributeParser.hpp"
 #include "../IdGenerator.hpp"
+#include "../ParsedTypesCache.hpp"
 #include "../clang_tooling_wrap.hpp"
 #include "../info_structs.hpp"
 
@@ -16,7 +17,7 @@ namespace pf::meta_gen {
 
     class ASTDeclParser {
     public:
-        ASTDeclParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser);
+        ASTDeclParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser, ParsedTypesCache &cache);
 
         virtual ~ASTDeclParser() = 0;
 
@@ -25,10 +26,12 @@ namespace pf::meta_gen {
     protected:
         [[nodiscard]] IdGenerator &getIdGenerator() { return *idGenerator; }
         [[nodiscard]] AttributeParser &getAttributeParser() { return *attributeParser; }
+        [[nodiscard]] ParsedTypesCache &getTypesCache() { return typesCache; }
 
     private:
         std::shared_ptr<IdGenerator> idGenerator;
         std::shared_ptr<AttributeParser> attributeParser;
+        ParsedTypesCache &typesCache;
     };
 
 }// namespace pf::meta_gen

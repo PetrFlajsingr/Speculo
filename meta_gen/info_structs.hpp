@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -84,6 +85,7 @@ namespace pf::meta_gen {
         std::string typeName;
         std::vector<Attribute> attributes;
         SourceLocationInfo sourceLocation;
+        // TODO: std::variant<std::shared_ptr<struct RecordTypeInfo>, std::shared_ptr<struct TypeInfo>> typeInfo;
     };
 
     struct ConstructorInfo {
@@ -156,6 +158,7 @@ namespace pf::meta_gen {
         std::size_t bitfieldOffset;// only for members
         std::size_t byteOffset;    // only for members
         std::size_t size;          // only for members
+        // TODO: std::variant<std::shared_ptr<struct RecordTypeInfo>, std::shared_ptr<struct TypeInfo *>> typeInfo;
     };
 
     struct BaseClassInfo {
@@ -167,6 +170,7 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
         std::size_t byteOffset;
         std::size_t size;
+        std::shared_ptr<struct RecordTypeInfo> typeInfo;
     };
 
     struct RecordTypeInfo : TypeInfo {
@@ -190,6 +194,6 @@ namespace pf::meta_gen {
         bool hasPfMetaGeneratedMacro;
     };
 
-    using TypeInfoVariant = std::variant<EnumTypeInfo, RecordTypeInfo>;
+    using TypeInfoVariant = std::variant<std::shared_ptr<EnumTypeInfo>, std::shared_ptr<RecordTypeInfo>>;
 
 }// namespace pf::meta_gen

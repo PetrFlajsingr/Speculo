@@ -9,6 +9,7 @@
 
 #include "AttributeParser.hpp"
 #include "IdGenerator.hpp"
+#include "ParsedTypesCache.hpp"
 #include "SourceConfig.hpp"
 #include "clang_tooling_wrap.hpp"
 #include "info_structs.hpp"
@@ -27,6 +28,8 @@ namespace pf::meta_gen {
         const SourceConfig *config;
         std::shared_ptr<IdGenerator> idGenerator;
         std::shared_ptr<AttributeParser> attributeParser;
+
+        ParsedTypesCache typesCache;
     };
 
 }// namespace pf::meta_gen

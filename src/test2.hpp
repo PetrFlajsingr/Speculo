@@ -6,9 +6,12 @@
 
 #pragma once
 
+#include "test_h.hpp"
+#include <meta/macros.hpp>
+
 #include "generated/test2.hpp"
 
-struct SimpleStruct {
+struct SimpleStruct : public DifferentFileBase {
     PF_META_GENERATED();
 
     unsigned int b1 : 1;

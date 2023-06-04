@@ -97,20 +97,20 @@ namespace pf::meta_gen {
             std::unordered_map<const RecordTypeInfo *, std::pair<std::string, std::string>> generatedMacros;
             // prepare generated macro map
             std::ranges::for_each(infos, [&](const auto &info) {
-                std::visit(Visitor{[&](const RecordTypeInfo &info) {
-                                       if (!info.hasPfMetaGeneratedMacro) { return; }
+                std::visit(Visitor{[&](const std::shared_ptr<RecordTypeInfo> &info) {
+                                       if (!info->hasPfMetaGeneratedMacro) { return; }
                                        std::size_t generatedMacroLineOffset{};
-                                       if (const auto pos = info.originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
+                                       if (const auto pos = info->originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
                                            for (auto i = 0; i < pos; ++i) {
-                                               if (info.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
+                                               if (info->originalCode[i] == '\n') { ++generatedMacroLineOffset; }
                                            }
                                        }
-                                       generatedMacroLineOffset += info.sourceLocation.line;
-                                       generatedMacros.emplace(
-                                               &info, std::pair<std::string, std::string>{fmt::format(generatedMacroNameTemplate,
-                                                                                                      "line"_a = generatedMacroLineOffset,
-                                                                                                      "file_id"_a = hppFileUUIDstr),
-                                                                                          ""});
+                                       generatedMacroLineOffset += info->sourceLocation.line;
+                                       generatedMacros.emplace(info.get(), std::pair<std::string, std::string>{
+                                                                                   fmt::format(generatedMacroNameTemplate,
+                                                                                               "line"_a = generatedMacroLineOffset,
+                                                                                               "file_id"_a = hppFileUUIDstr),
+                                                                                   ""});
                                    },
                                    [&](const auto &) {}},
                            info);
@@ -141,9 +141,9 @@ namespace pf::meta_gen {
                 headerMacroBody.append(startData.headerBodyCode);
 
                 std::ranges::for_each(infos, [&](const auto &info) {
-                    std::visit(Visitor{[&](const RecordTypeInfo &info) {
-                                           auto genCode = codeGenerator->generate(info);
-                                           if (const auto iter = generatedMacros.find(&info); iter != generatedMacros.end()) {
+                    std::visit(Visitor{[&](const std::shared_ptr<RecordTypeInfo> &info) {
+                                           auto genCode = codeGenerator->generate(*info);
+                                           if (const auto iter = generatedMacros.find(info.get()); iter != generatedMacros.end()) {
                                                // add \ to new lines, because it's generated into a macro body
                                                replaceAllOccurrences(genCode.typeBodyCode, "\n", "\\\n");
                                                iter->second.second.append(genCode.typeBodyCode);
@@ -154,8 +154,8 @@ namespace pf::meta_gen {
                                            replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                            headerMacroBody.append(genCode.headerBodyCode);
                                        },
-                                       [&](const EnumTypeInfo &info) {
-                                           auto genCode = codeGenerator->generate(info);
+                                       [&](const std::shared_ptr<EnumTypeInfo> &info) {
+                                           auto genCode = codeGenerator->generate(*info);
                                            outStreamHpp << genCode.hppCode;
                                            outStreamCpp << genCode.cppCode;
                                            // add \ to new lines, because it's generated into a macro body
