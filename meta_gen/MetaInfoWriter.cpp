@@ -34,8 +34,8 @@ namespace pf::meta_gen {
     void MetaInfoWriter::write(std::string_view str) { ostream << str; }
 
     void MetaInfoWriter::write(const TypeInfoVariant &typeInfo) {
-        std::visit(Visitor{[&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
-                           [&](const RecordTypeInfo &recordInfo) { writeRecordInfo(recordInfo); },
+        std::visit(Visitor{[&](const std::shared_ptr<EnumTypeInfo> &enumInfo) { writeEnumInfo(*enumInfo); },
+                           [&](const std::shared_ptr<RecordTypeInfo> &recordInfo) { writeRecordInfo(*recordInfo); },
                            [](auto) { spdlog::error("MetaInfoWriter: unimplemented type"); }},
                    typeInfo);
     }

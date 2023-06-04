@@ -26,8 +26,9 @@ namespace pf::meta_gen {
         return Access::Public;
     }
 
-    ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
-        : ASTDeclParser{std::move(idGen), std::move(attribParser)} {}
+    ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
+                                     ParsedTypesCache &cache)
+        : ASTDeclParser{std::move(idGen), std::move(attribParser), cache} {}
 
     // TODO: divide this up into separate functions
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
@@ -70,58 +71,58 @@ namespace pf::meta_gen {
             return std::nullopt;
         }
 
-        RecordTypeInfo result{};
+        auto result = std::make_shared<RecordTypeInfo>();
 
-        result.fullName = GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy());
-        result.name = GetProperName(recordDecl, astContext.getPrintingPolicy());
-        result.id = getIdGenerator().generateId(result.fullName);
-        result.constId = getIdGenerator().generateId("const " + result.fullName);
-        result.lrefId = getIdGenerator().generateId(result.fullName + "&");
-        result.rrefId = getIdGenerator().generateId(result.fullName + "&&");
-        result.constLrefId = getIdGenerator().generateId("const " + result.fullName + "&");
-        result.ptrId = getIdGenerator().generateId(result.fullName + "*");
-        result.constPtrId = getIdGenerator().generateId("const" + result.fullName + "*");
-        result.isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
-        if (result.isNestedType) { result.nestedAccess = clangAccesConv(recordDecl->getAccess()); }
+        result->fullName = GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy());
+        result->name = GetProperName(recordDecl, astContext.getPrintingPolicy());
+        result->id = getIdGenerator().generateId(result->fullName);
+        result->constId = getIdGenerator().generateId("const " + result->fullName);
+        result->lrefId = getIdGenerator().generateId(result->fullName + "&");
+        result->rrefId = getIdGenerator().generateId(result->fullName + "&&");
+        result->constLrefId = getIdGenerator().generateId("const " + result->fullName + "&");
+        result->ptrId = getIdGenerator().generateId(result->fullName + "*");
+        result->constPtrId = getIdGenerator().generateId("const" + result->fullName + "*");
+        result->isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
+        if (result->isNestedType) { result->nestedAccess = clangAccesConv(recordDecl->getAccess()); }
 
-        result.size = astContext.getASTRecordLayout(recordDecl).getSize().getQuantity();
-        result.alignment = astContext.getASTRecordLayout(recordDecl).getAlignment().getQuantity();
+        result->size = astContext.getASTRecordLayout(recordDecl).getSize().getQuantity();
+        result->alignment = astContext.getASTRecordLayout(recordDecl).getAlignment().getQuantity();
 
         auto &sourceManager = astContext.getSourceManager();
         auto &langOpts = astContext.getLangOpts();
         auto printingPolicy = clang::PrintingPolicy{langOpts};
 
-        result.originalCode =
+        result->originalCode =
                 clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(recordDecl->getSourceRange()), sourceManager, langOpts)
                         .str();
 
         // check that there is a semicolon at the end of the macro so we don't miss any functions or ctors
         constexpr std::string_view metaGenMacro = "PF_META_GENERATED()";
         bool pfMetaGeneratedMacroFound = false;
-        if (auto pos = result.originalCode.find(metaGenMacro); pos != std::string::npos) {
+        if (auto pos = result->originalCode.find(metaGenMacro); pos != std::string::npos) {
             pos += metaGenMacro.size();
-            if (result.originalCode[pos] != ';') {
+            if (result->originalCode[pos] != ';') {
                 spdlog::error("Class {} Contains 'PF_META_GENERATED()', but it's missing a semicolon at the end, preventing proper "
                               "parsing, please provide it 'PF_META_GENERATED();'",
-                              result.fullName);
-                spdlog::error("Skipping parsing of {} due to the above provided reason", result.fullName);
+                              result->fullName);
+                spdlog::error("Skipping parsing of {} due to the above provided reason", result->fullName);
                 return std::nullopt;
             }
             pfMetaGeneratedMacroFound = true;
         }
 
-        result.sourceLocation.line = sourceManager.getPresumedLineNumber(recordDecl->getSourceRange().getBegin());
-        result.sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
-        result.sourceLocation.filename = sourceManager.getFilename(recordDecl->getSourceRange().getBegin());
+        result->sourceLocation.line = sourceManager.getPresumedLineNumber(recordDecl->getSourceRange().getBegin());
+        result->sourceLocation.column = sourceManager.getPresumedColumnNumber(recordDecl->getSourceRange().getBegin());
+        result->sourceLocation.filename = sourceManager.getFilename(recordDecl->getSourceRange().getBegin());
 
-        result.attributes = getAttributeParser().parseRecordAttributes(astContext, *recordDecl);
+        result->attributes = getAttributeParser().parseRecordAttributes(astContext, *recordDecl);
 
-        result.isClass = recordDecl->isClass();
-        result.isStruct = recordDecl->isStruct();
-        result.isUnion = recordDecl->isUnion();
-        result.isPolymorphic = recordDecl->isPolymorphic();
-        result.isAbstract = recordDecl->isAbstract();
-        result.isFinal = recordDecl->isEffectivelyFinal();
+        result->isClass = recordDecl->isClass();
+        result->isStruct = recordDecl->isStruct();
+        result->isUnion = recordDecl->isUnion();
+        result->isPolymorphic = recordDecl->isPolymorphic();
+        result->isAbstract = recordDecl->isAbstract();
+        result->isFinal = recordDecl->isEffectivelyFinal();
 
         // TODO: inherited?
         std::size_t previousFieldOffset = 0;
@@ -154,7 +155,7 @@ namespace pf::meta_gen {
             variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
             variableInfo.size = astContext.getTypeSizeInChars(field->getType()).getQuantity();
 
-            result.memberVariables.push_back(variableInfo);
+            result->memberVariables.push_back(variableInfo);
 
             previousFieldOffset = astContext.getFieldOffset(field);
         }
@@ -183,7 +184,7 @@ namespace pf::meta_gen {
                     variableInfo.isConstexpr = var->isConstexpr();
                     variableInfo.isInline = var->isInlineSpecified();
                     variableInfo.isInlineSpecified = var->isInlineSpecified();
-                    result.staticVariables.push_back(variableInfo);
+                    result->staticVariables.push_back(variableInfo);
                 }
             }
         }
@@ -283,10 +284,10 @@ namespace pf::meta_gen {
             functionInfo.id = getIdGenerator().generateId(mangledName);
 
             if (method->isStatic()) {
-                result.staticFunctions.push_back(functionInfo);
+                result->staticFunctions.push_back(functionInfo);
             } else {
                 functionInfo.isFinal = method->hasAttr<clang::FinalAttr>();
-                result.memberFunctions.push_back(functionInfo);
+                result->memberFunctions.push_back(functionInfo);
             }
         }
         // FIXME: can't really get ptrs to generated operators
@@ -364,38 +365,38 @@ namespace pf::meta_gen {
             }
             constructorInfo.id = getIdGenerator().generateId(mangledName);
 
-            result.constructors.push_back(constructorInfo);
+            result->constructors.push_back(constructorInfo);
         }
         if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
-            result.destructor.fullName = destructor->getQualifiedNameAsString();
-            result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
-            result.destructor.access = clangAccesConv(destructor->getAccess());
-            result.destructor.sourceLocation.line = sourceManager.getPresumedLineNumber(destructor->getSourceRange().getBegin());
-            result.destructor.sourceLocation.column = sourceManager.getPresumedColumnNumber(destructor->getSourceRange().getBegin());
-            result.destructor.sourceLocation.filename = sourceManager.getFilename(destructor->getSourceRange().getBegin());
-            result.destructor.attributes = std::move(getAttributeParser().parseDestructorAttributes(astContext, *destructor).attributes);
-            result.destructor.isConstexpr = destructor->isConstexpr();
-            result.destructor.isConsteval = destructor->isConsteval();
-            result.destructor.isVirtual = destructor->isVirtual();
-            result.destructor.isPureVirtual = destructor->isPure();
+            result->destructor.fullName = destructor->getQualifiedNameAsString();
+            result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
+            result->destructor.access = clangAccesConv(destructor->getAccess());
+            result->destructor.sourceLocation.line = sourceManager.getPresumedLineNumber(destructor->getSourceRange().getBegin());
+            result->destructor.sourceLocation.column = sourceManager.getPresumedColumnNumber(destructor->getSourceRange().getBegin());
+            result->destructor.sourceLocation.filename = sourceManager.getFilename(destructor->getSourceRange().getBegin());
+            result->destructor.attributes = std::move(getAttributeParser().parseDestructorAttributes(astContext, *destructor).attributes);
+            result->destructor.isConstexpr = destructor->isConstexpr();
+            result->destructor.isConsteval = destructor->isConsteval();
+            result->destructor.isVirtual = destructor->isVirtual();
+            result->destructor.isPureVirtual = destructor->isPure();
             const auto methodDecl = clang::dyn_cast<clang::CXXMethodDecl>(destructor);
-            result.destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
-            result.destructor.isInline = destructor->hasInlineBody();
-            result.destructor.isInlineSpecified = destructor->isInlineSpecified();
+            result->destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
+            result->destructor.isInline = destructor->hasInlineBody();
+            result->destructor.isInlineSpecified = destructor->isInlineSpecified();
         } else if (recordDecl->hasSimpleDestructor()) {
-            result.destructor.fullName = fmt::format("{}::~{}", result.fullName, result.name);
-            result.destructor.id = getIdGenerator().generateId(result.destructor.fullName);
-            result.destructor.access = Access::Public;
-            result.destructor.sourceLocation.line = 0;
-            result.destructor.sourceLocation.column = 0;
-            result.destructor.sourceLocation.filename = "<generated>";
-            result.destructor.attributes = {};
-            result.destructor.isConstexpr = recordDecl->hasConstexprDestructor();
-            result.destructor.isConsteval = false;
-            result.destructor.isVirtual = false;
-            result.destructor.isPureVirtual = false;
-            result.destructor.isFinal = false;
-            result.destructor.isInline = false;
+            result->destructor.fullName = fmt::format("{}::~{}", result->fullName, result->name);
+            result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
+            result->destructor.access = Access::Public;
+            result->destructor.sourceLocation.line = 0;
+            result->destructor.sourceLocation.column = 0;
+            result->destructor.sourceLocation.filename = "<generated>";
+            result->destructor.attributes = {};
+            result->destructor.isConstexpr = recordDecl->hasConstexprDestructor();
+            result->destructor.isConsteval = false;
+            result->destructor.isVirtual = false;
+            result->destructor.isPureVirtual = false;
+            result->destructor.isFinal = false;
+            result->destructor.isInline = false;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {
@@ -403,7 +404,7 @@ namespace pf::meta_gen {
         };
 
         for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
-            BaseClassInfo baseClassInfo;
+            BaseClassInfo baseClassInfo{};
             const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();
             if (baseRecordDecl == nullptr) {
                 spdlog::error("Base class not recognized as a record");
@@ -411,7 +412,7 @@ namespace pf::meta_gen {
             }
             baseClassInfo.fullName = GetProperQualifiedName(baseRecordDecl, astContext.getPrintingPolicy());
             baseClassInfo.name = GetProperName(baseRecordDecl, astContext.getPrintingPolicy());
-            const auto mangledName = mangleBaseClass(result.fullName, baseClassInfo.fullName);
+            const auto mangledName = mangleBaseClass(result->fullName, baseClassInfo.fullName);
             baseClassInfo.id = getIdGenerator().generateId(mangledName);
             baseClassInfo.isVirtual = base.isVirtual();
             baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
@@ -424,24 +425,36 @@ namespace pf::meta_gen {
                             .getQuantity();
             baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
 
-            result.baseClasses.push_back(baseClassInfo);
+            if (auto cachedBaseInfo = getTypesCache().getRecord(baseClassInfo.fullName); cachedBaseInfo != nullptr) {
+                baseClassInfo.typeInfo = cachedBaseInfo;
+            } else {
+                auto baseTypeInfo = parse(astContext, baseRecordDecl);
+                if (!baseTypeInfo.has_value()) {
+                    spdlog::error("Error during base class parsing '{}'", baseClassInfo.fullName);
+                } else {
+                    auto baseInfo = std::move(std::get<std::shared_ptr<RecordTypeInfo>>(*baseTypeInfo));
+                    getTypesCache().addRecord(baseInfo);
+                    baseClassInfo.typeInfo = std::move(baseInfo);
+                }
+            }
+
+            result->baseClasses.emplace_back(std::move(baseClassInfo));
         }
 
         if (!pfMetaGeneratedMacroFound) {
-            if (std::ranges::any_of(result.constructors, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result.staticFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result.memberFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result.staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result.memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                result.destructor.access != Access::Public) {
+            if (std::ranges::any_of(result->constructors, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result->staticFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result->memberFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result->staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                std::ranges::any_of(result->memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
+                result->destructor.access != Access::Public) {
                 spdlog::warn("Class {} does not contain 'PF_META_GENERATED()', but it contains private or protected constructors, "
                              "destructor, variables or functions - the macro is required to access these",
-                             result.fullName);
-                spdlog::warn("Reflection data for {} will only allow access to public members", result.fullName);
+                             result->fullName);
+                spdlog::warn("Reflection data for {} will only allow access to public members", result->fullName);
             }
         }
-        result.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
-
+        result->hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
         return result;
     }
 

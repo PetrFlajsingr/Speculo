@@ -27,8 +27,9 @@ namespace pf::meta_gen {
             auto &sourceManager = astContext.getSourceManager();
             if (config->ignoreIncludes && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
-            if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser); parser != nullptr) {
+            if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser, typesCache); parser != nullptr) {
                 if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
+                    typesCache.add(*parseResult);
                     result.emplace_back(std::move(*parseResult));
                 }
             }

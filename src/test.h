@@ -1,5 +1,6 @@
 
 
+#include <meta/macros.hpp>
 
 #include "generated/test.hpp"
 
