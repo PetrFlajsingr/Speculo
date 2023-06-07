@@ -5,6 +5,7 @@
 #include "ASTRecordParser.hpp"
 #include "clang/AST/RecordLayout.h"
 #include <clang/Sema/Sema.h>
+#include <clang/AST/QualTypeNames.h>
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -137,7 +138,7 @@ namespace pf::meta_gen {
             if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                 variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
             } else {
-                variableInfo.typeName = field->getType().getAsString(printingPolicy);
+                variableInfo.typeName = clang::TypeName::getFullyQualifiedName(field->getType(), astContext, printingPolicy);
             }
             variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
             variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *field);
@@ -171,7 +172,7 @@ namespace pf::meta_gen {
                     if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
                         variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
                     } else {
-                        variableInfo.typeName = var->getType().getAsString(printingPolicy);
+                        variableInfo.typeName = clang::TypeName::getFullyQualifiedName(var->getType(), astContext, printingPolicy);
                     }
                     variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
                     variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *var);
@@ -245,7 +246,7 @@ namespace pf::meta_gen {
                 if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext.getPrintingPolicy());
                 } else {
-                    argument.typeName = param->getType().getAsString(printingPolicy);
+                    argument.typeName = clang::TypeName::getFullyQualifiedName(param->getType(), astContext, printingPolicy);
                 }
                 argument.typeId = getIdGenerator().generateId(argument.typeName);
                 argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
@@ -332,7 +333,7 @@ namespace pf::meta_gen {
                 if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
                     argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext.getPrintingPolicy());
                 } else {
-                    argument.typeName = param->getType().getAsString(printingPolicy);
+                    argument.typeName = clang::TypeName::getFullyQualifiedName(param->getType(), astContext, printingPolicy);
                 }
                 argument.typeId = getIdGenerator().generateId(argument.typeName);
                 argument.sourceLocation.line = sourceManager.getPresumedLineNumber(param->getSourceRange().getBegin());
