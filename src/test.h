@@ -5,7 +5,7 @@
 #include "generated/test.hpp"
 
 
-namespace pf {
+namespace test {
     class Hoho {
         PF_META_GENERATED();
 

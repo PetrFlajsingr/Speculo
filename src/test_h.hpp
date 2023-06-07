@@ -8,6 +8,8 @@
 
 #include <meta/macros.hpp>
 
-struct DifferentFileBase {
-    int a;
-};
+namespace test2 {
+    struct DifferentFileBase {
+        int a;
+    };
+}

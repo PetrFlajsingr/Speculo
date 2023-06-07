@@ -11,10 +11,16 @@
 
 #include "generated/test2.hpp"
 
-struct SimpleStruct : public DifferentFileBase {
-    PF_META_GENERATED();
+namespace test {
+    using namespace test2;
+    struct SimpleStruct : public test2::DifferentFileBase {
+        PF_META_GENERATED();
 
-    unsigned int b1 : 1;
+        SimpleStruct(DifferentFileBase ) {}
+
+        void foo(DifferentFileBase &) {}
+
+        /* unsigned int b1 : 1;
     unsigned int b2 : 2;
     unsigned int b3 : 3;
     unsigned int b4 : 4;
@@ -30,7 +36,7 @@ private:
         PF_META_GENERATED();
         int a;
     };
-    void footadlo() {}
-};
-
+    void footadlo() {}*/
+    };
+}
 PF_META_GENERATED_HEADER();
