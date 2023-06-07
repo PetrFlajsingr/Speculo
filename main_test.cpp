@@ -16,17 +16,17 @@
 
 template<pf::meta::Info Type>
 [[nodiscard]] constexpr std::optional<pf::meta::Info> functionByName(std::string_view name) {
-    using aImpl = pf::meta::details::StaticInfo<Type.implId>;
+    using aImpl = pf::meta::details::StaticInfo<Type.id>;
     return pf::meta::template_for_r<aImpl::MemberFunctions>([&]<auto Fnc>() -> std::optional<pf::meta::Info> {
-        using fImpl = pf::meta::details::StaticInfo<Fnc.implId>;
-        if (fImpl::Name.compare(name) == 0) { return pf::meta::Info{Fnc.implId}; }
+        using fImpl = pf::meta::details::StaticInfo<Fnc.id>;
+        if (fImpl::Name.compare(name) == 0) { return pf::meta::Info{Fnc.id}; }
         return std::nullopt;
     });
 }
 
 template<pf::meta::Info Fnc, typename... Args>
 [[nodiscard]] constexpr auto invoke(Args &&...args) {
-    using aImpl = pf::meta::details::StaticInfo<Fnc.implId>;
+    using aImpl = pf::meta::details::StaticInfo<Fnc.id>;
     // only member fnc now
     constexpr auto f = aImpl::MemberPtr;
     static_assert(std::invocable<decltype(f), Args...>);
@@ -38,13 +38,13 @@ template<pf::meta::Info Fnc, typename... Args>
 }
 template<pf::meta::Info I>
 [[nodiscard]] constexpr std::string_view getFullName() {
-    using aImpl = pf::meta::details::StaticInfo<I.implId>;
+    using aImpl = pf::meta::details::StaticInfo<I.id>;
     return static_cast<std::string_view>(aImpl::FullName);
 }
 
 template<pf::meta::Info I>
 [[nodiscard]] consteval pf::meta::details::RangeOf<pf::meta::Info> auto getConstructors() {
-    using aImpl = pf::meta::details::StaticInfo<I.implId>;
+    using aImpl = pf::meta::details::StaticInfo<I.id>;
     return aImpl::Constructors;
 }
 
@@ -68,10 +68,10 @@ int main() {
 
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
-        std::cout << std::hex << A::TypeID.id[0] << std::endl;
-        std::cout << std::hex << A::TypeID.id[1] << std::endl;
+        std::cout << std::hex << A::Id.id[0] << std::endl;
+        std::cout << std::hex << A::Id.id[1] << std::endl;
         std::cout << std::dec;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -81,7 +81,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -91,7 +91,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum &);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(A::IsLvalueReference);
@@ -101,7 +101,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum &&);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -111,7 +111,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum &);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(A::IsLvalueReference);
@@ -121,7 +121,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum *);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -131,7 +131,7 @@ int main() {
     }
     {
         constexpr pf::meta::Info enumInfo = PF_REFLECT(const pf::SomeEnum *);
-        using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+        using A = pf::meta::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
@@ -140,7 +140,7 @@ int main() {
         static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
     }
     constexpr pf::meta::Info enumInfo = PF_REFLECT(pf::SomeEnum *);
-    using A = pf::meta::details::StaticInfo<enumInfo.implId>;
+    using A = pf::meta::details::StaticInfo<enumInfo.id>;
 
     for (const auto &attr: pf::meta::attributes_of<enumInfo>()) {
         std::cout << attr.name << std::endl;
@@ -159,7 +159,7 @@ int main() {
 
     constexpr auto AINFO = PF_REFLECT(pf::A);
     constexpr pf::A cA = pf::A();
-    using ImplFoo = pf::meta::details::StaticInfo<pf::meta::details::ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}>;
+    using ImplFoo = pf::meta::details::StaticInfo<pf::meta::ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}>;
 
 
     constexpr auto ctors = getConstructors<AINFO>();
@@ -185,7 +185,7 @@ int main() {
     int v = accessor;
     std::cout << v << std::endl;
 
-    std::cout << "Generated fnc " << s.demo() << std::endl;
+   // std::cout << "Generated fnc " << s.demo() << std::endl;
 
     return 0;
 }

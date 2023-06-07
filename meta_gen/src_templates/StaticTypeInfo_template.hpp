@@ -11,7 +11,7 @@ template<>
 struct StaticInfo<{type_id}> {{
     {details}
     using Type = {type};
-    constexpr static ID TypeID = {type_id};
+    constexpr static ID Id = {type_id};
 
     constexpr static auto SourceFile = R"path({source_file})path";
     constexpr static std::uint64_t SourceLine = {source_line};
@@ -30,7 +30,7 @@ struct StaticInfo<{type_id}> {{
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
 
     using UnderlyingType = {underlying_type};
-    constexpr static bool IsScoped = std::is_scoped_enum_v<Type>;
+    constexpr static bool IsScoped = {is_scoped};
     constexpr static std::size_t Size = {size};
     constexpr static std::size_t Alignment = {alignment};
     constexpr static RangeOf<Info> auto EnumValues = pf::meta::details::make_array<Info>({enum_value_ids});
@@ -67,7 +67,7 @@ template<>
 struct StaticInfo<{type_id}> {{
     {details}
     using Type = {type};
-    constexpr static ID TypeID = {type_id};
+    constexpr static ID Id = {type_id};
 
     constexpr static auto SourceFile = R"path({source_file})path";
     constexpr static std::uint64_t SourceLine = {source_line};

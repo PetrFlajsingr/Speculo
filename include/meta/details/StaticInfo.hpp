@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <meta/details/ID.hpp>
+#include <meta/ID.hpp>
 #include <meta/details/StringLiteral.hpp>
 #include <meta/details/meta_helpers.hpp>
 

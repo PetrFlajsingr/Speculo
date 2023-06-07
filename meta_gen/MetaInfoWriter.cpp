@@ -22,7 +22,7 @@
 #include "src_templates/StaticValueInfo_template.hpp"
 
 namespace pf::meta_gen {
-    [[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+    [[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
     [[nodiscard]] std::string createDetailsStruct(std::string_view contents) {
         if (contents.empty()) { return ""; }
@@ -114,7 +114,7 @@ namespace pf::meta_gen {
                           "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
                           "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
                           "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "size"_a = enumInfo.size,
-                          "alignment"_a = enumInfo.alignment));
+                          "alignment"_a = enumInfo.alignment, "is_scoped"_a = enumInfo.isScoped));
 
         write(fmt::format(R"fmt(// Enum {} static info getters
 )fmt",
@@ -151,7 +151,7 @@ namespace pf::meta_gen {
 
         const auto idsToStringMakeArray = [](std::ranges::range auto &&range) {
             static_assert(requires(std::ranges::range_value_t<decltype(range)> v) {
-                { v.id } -> std::convertible_to<meta::details::ID>;
+                { v.id } -> std::convertible_to<meta::ID>;
             });
             std::string result;
             for (const auto &val: range) {

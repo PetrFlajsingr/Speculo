@@ -15,7 +15,7 @@ namespace pf::meta_gen {
 #include <type_traits>
 #include <meta/details/StaticInfo.hpp>
 #include <meta/details/StaticInfo_Wrappers.hpp>
-#include <meta/details/ID.hpp>
+#include <meta/ID.hpp>
 #include <meta/Attribute.hpp>
 #include <meta/Info.hpp>
 

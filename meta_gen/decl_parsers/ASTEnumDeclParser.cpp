@@ -47,6 +47,7 @@ namespace pf::meta_gen {
         result->underlyingType = enumDecl->getIntegerType().getAsString(printingPolicy);
         result->size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
         result->alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
+        result->isScoped = enumDecl->isScoped();
 
         for (const auto &enumerator: enumDecl->enumerators()) {
             std::variant<bool, std::uint64_t, std::int64_t> value;
@@ -63,7 +64,7 @@ namespace pf::meta_gen {
             const auto line = sourceManager.getPresumedLineNumber(enumerator->getSourceRange().getBegin());
             const auto column = sourceManager.getPresumedColumnNumber(enumerator->getSourceRange().getBegin());
             result->values.emplace(enumerator->getNameAsString(),
-                                   EnumTypeInfo::ValueInfo{pf::meta::details::ID::Invalid(), "", value, {}, {line, column}});
+                                   EnumTypeInfo::ValueInfo{pf::meta::ID::ID(), "", value, {}, {line, column}});
         }
 
         {

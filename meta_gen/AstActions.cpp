@@ -5,7 +5,6 @@
 #include "AstActions.hpp"
 #include "ASTParser.hpp"
 #include "StringReplace.hpp"
-#include "Visitor.hpp"
 #include "codegen/PluginManager.hpp"
 #include "src_templates/MetaFilePrologueEpilogue.hpp"
 #include <fmt/format.h>
@@ -131,7 +130,7 @@ namespace pf::meta_gen {
 
             std::ranges::for_each(codeGenerators, [&](auto codeGenerator) {
                 codeGenerator->initialize(hppFileUUIDstr, cppFileUUIDstr,
-                                          fmt::format("../{}", config->inputProjectPath.filename().string()));
+                                          fmt::format("../{}", config->inputProjectPath.filename().string()), spdlog::default_logger());
 
                 auto startData = codeGenerator->start();
                 outStreamHpp << startData.hppCode;

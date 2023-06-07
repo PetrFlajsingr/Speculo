@@ -8,6 +8,7 @@
 
 #include "../info_structs.hpp"
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 
 namespace pf::meta_gen {
@@ -30,10 +31,12 @@ namespace pf::meta_gen {
         CodeGenerator() = default;
         virtual ~CodeGenerator() = default;
 
-        void initialize(std::string uuidHeader, std::string uuidCpp, std::string originalHeaderRelativePath) {
+        void initialize(std::string uuidHeader, std::string uuidCpp, std::string originalHeaderRelativePath,
+                        std::shared_ptr<spdlog::logger> log) {
             headerUUID = std::move(uuidHeader);
             cppUUID = std::move(uuidCpp);
             relativePathToOriginal = std::move(originalHeaderRelativePath);
+            logger = std::move(log);
         }
 
         [[nodiscard]] virtual GenerationResult start() = 0;
@@ -49,12 +52,14 @@ namespace pf::meta_gen {
         [[nodiscard]] std::string_view getHeaderUuid() const { return headerUUID; }
         [[nodiscard]] std::string_view getCppUuid() const { return cppUUID; }
         [[nodiscard]] std::string_view getRelativePathToOriginal() const { return relativePathToOriginal; }
+        [[nodiscard]] spdlog::logger &getLogger() const { return *logger; }
 
 
     private:
         std::string headerUUID;
         std::string cppUUID;
         std::string relativePathToOriginal;
+        std::shared_ptr<spdlog::logger> logger;
     };
 
 }// namespace pf::meta_gen

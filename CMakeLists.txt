@@ -5,11 +5,7 @@ include(CMakePackageConfigHelpers)
 
 option(PF_META_ENABLE_TEST_EXE "Enable test exe target" OFF)
 
-if (MSVC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.29.30129 AND CMAKE_VERSION VERSION_GREATER 3.20.3)
-    set(CMAKE_CXX_STANDARD 23)
-else ()
-    set(CMAKE_CXX_STANDARD 20)
-endif ()
+set(CMAKE_CXX_STANDARD 20)
 
 # Set PF_META_GEN_EXE_PATH to current binary output if not provided
 # global variables
@@ -24,8 +20,8 @@ if (NOT DEFINED PF_META_GEN_SCRIPTS_PATH)
 endif ()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    list(APPEND flags "/std:c++latest" "/W4" "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030")
-    list(APPEND test_flags "/std:c++latest" "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030" "/wd5222")
+    list(APPEND flags "/W4" "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030")
+    list(APPEND test_flags "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030" "/wd5222")
 else ()
     list(APPEND flags "-fconcepts" "-fconcepts-diagnostics-depth=10" "-Werror=return-type" "-fcoroutines"
             "-Wall" "-Wextra" "-Werror" "-Wpedantic" "-Wno-unknown-pragmas" "-Wno-unused-function"
@@ -65,15 +61,16 @@ add_executable(pf_meta_gen main.cpp
         meta_gen/decl_parsers/factory.cpp
         meta_gen/codegen/MetaSupportCodeGenerator.cpp
         meta_gen/codegen/PluginManager.cpp
+        meta_gen/IncludeCollector.cpp
 )
 target_include_directories(pf_meta_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(pf_meta_generate_fundamental_types main_generate_fundamental_types.cpp)
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
-target_compile_definitions(pf_meta_gen PRIVATE ${LLVM_DEFINITIONS_LIST})
+target_compile_definitions(pf_meta_gen PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
 target_include_directories(pf_meta_gen PRIVATE ${LLVM_INCLUDE_DIRS})
-target_compile_definitions(pf_meta_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST})
+target_compile_definitions(pf_meta_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
 target_include_directories(pf_meta_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
 
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
@@ -175,5 +172,4 @@ if (${PF_META_ENABLE_TEST_EXE})
             FORMAT
             #FORCE_REGEN
     )
-    add_dependencies(meta_test_generate_meta pf_meta_gen)
 endif ()

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <meta/details/ID.hpp>
+#include <meta/ID.hpp>
 #include <meta/details/StaticInfo.hpp>
 
 namespace pf::meta::details {
