@@ -11,7 +11,7 @@ template<>
 struct StaticInfo<{value_id}> {{
     {details}
     constexpr static ID ValueID = {value_id};
-    constexpr static ID TypeID = {type_id};
+    constexpr static ID Id = {type_id};
     using Type = {type};
 
     constexpr static auto SourceFile = R"path({source_file})path";

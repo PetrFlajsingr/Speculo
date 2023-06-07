@@ -206,7 +206,7 @@ namespace pf::meta_gen {
             tokensRange = TokensRange{iter, tokensRange->end()};
 
             const auto spelling = iter->text(sourceManager);
-            std::pair<std::string, std::vector<Attribute>> valueAttributes{spelling, {}};
+            std::pair<std::string, std::vector<Attribute>> valueAttributes{spelling, std::vector<Attribute>{}};
 
             bool foundAttributes;
             do {

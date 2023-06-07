@@ -5,6 +5,7 @@
 
 #include "meta_gen/AttributeParser.hpp"
 #include "meta_gen/IdGenerator.hpp"
+#include "meta_gen/IncludeCollector.hpp"
 #include "meta_gen/clang_tooling_compilationdatabase_wrap.hpp"
 #include "meta_gen/info_structs.hpp"
 
@@ -19,6 +20,8 @@
 #include "meta_gen/SourceConfig.hpp"
 #include "meta_gen/ThreadPool.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "clang/Lex/PreprocessorOptions.h"
+
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
                                             llvm::cl::value_desc("filename"));
@@ -33,22 +36,47 @@ static llvm::cl::opt<bool> RunSequential("sequential", llvm::cl::desc("Run every
                                          llvm::cl::value_desc("bool"), llvm::cl::init(false));
 
 
-namespace nlohmann {
-    template<typename Clock, typename Duration>
-    struct adl_serializer<std::chrono::time_point<Clock, Duration>> {
-        static void to_json(json &j, const std::chrono::time_point<Clock, Duration> &tp) {
-            j["since_epoch"] = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch()).count();
-            j["unit"] = "microseconds";
-        }
-        static void from_json(const json &j, std::chrono::time_point<Clock, Duration> &p) {
-            const auto time_since_epoch = static_cast<unsigned long long>(j["since_epoch"]);
-            p = std::chrono::time_point<Clock, Duration>{std::chrono::microseconds{time_since_epoch}};
-        }
-    };
-}// namespace nlohmann
+template<typename Clock, typename Duration>
+struct nlohmann::adl_serializer<std::chrono::time_point<Clock, Duration>> {
+    static void to_json(json &j, const std::chrono::time_point<Clock, Duration> &tp) {
+        j["since_epoch"] = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch()).count();
+        j["unit"] = "microseconds";
+    }
+    static void from_json(const json &j, std::chrono::time_point<Clock, Duration> &p) {
+        const auto time_since_epoch = static_cast<unsigned long long>(j["since_epoch"]);
+        p = std::chrono::time_point<Clock, Duration>{std::chrono::microseconds{time_since_epoch}};
+    }
+};
+
+struct FileTimestamps {
+    std::chrono::time_point<std::chrono::file_clock> lastChange;
+    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> includeChanges;
+};
+
+
+template<>
+struct nlohmann::adl_serializer<FileTimestamps> {
+    static void to_json(json &j, const FileTimestamps &tp) {
+        j["timestamp"] = tp.lastChange;
+        auto includes = json::array();
+        std::ranges::for_each(tp.includeChanges, [&](const auto &r) {
+            const auto &includePath = r.first;
+            const auto &includeStamp = r.second;
+            auto &newR = includes.emplace_back();
+            newR["path"] = includePath;
+            newR["timestamp"] = includeStamp;
+        });
+        j["includes"] = std::move(includes);
+    }
+    static void from_json(const json &j, FileTimestamps &p) {
+        p.lastChange = j["timestamp"];
+        json::array_t includes = j["includes"];
+        std::ranges::for_each(includes, [&](const auto &include) { p.includeChanges[include["path"]] = include["timestamp"]; });
+    }
+};
 
 struct ProjectDatabase {
-    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> fileTimestamps;
+    std::unordered_map<std::string, FileTimestamps> fileTimestamps;
     std::vector<std::string> compilerFlags;
 };
 
@@ -67,9 +95,7 @@ struct ProjectDatabase {
     auto data = nlohmann::json::parse(istream);
     istream.close();
     ProjectDatabase result{};
-    for (const auto &rec: data["files"]) {
-        result.fileTimestamps[rec["file"]] = std::chrono::time_point<std::chrono::file_clock>{rec["timestamp"]};
-    }
+    for (const auto &rec: data["files"]) { result.fileTimestamps[rec["file"]] = static_cast<FileTimestamps>(rec["timestamps"]); }
     for (const auto &flag: data["compiler_flags"]) { result.compilerFlags.push_back(flag); }
     return result;
 }
@@ -83,8 +109,8 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
     auto &filesData = data["files"];
     filesData.clear();
-    for (const auto &[file, stamp]: db.fileTimestamps) {
-        nlohmann::json fileData{{"file", file}, {"timestamp", stamp}};
+    for (const auto &[file, stamps]: db.fileTimestamps) {
+        nlohmann::json fileData{{"file", file}, {"timestamps", stamps}};
         filesData.push_back(fileData);
     }
     auto &flagsData = data["compiler_flags"];
@@ -188,13 +214,12 @@ int main(int argc, const char **argv) {
 
     auto timestampDB = loadProjectDatabase(configs.name);
 
-    const auto threadCount = static_cast<bool>(RunSequential) ? 1 : std::thread::hardware_concurrency();
-    pf::meta_gen::ThreadPool threadPool{threadCount};
 
     struct ParseResult {
         std::filesystem::path inPath;
         std::filesystem::path outPath;
         std::chrono::time_point<std::chrono::file_clock> stamp;
+        std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> includeStamps;
     };
     struct ParseFailure {
         std::filesystem::path inPath;
@@ -210,15 +235,40 @@ int main(int argc, const char **argv) {
             spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
             return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
         }
+
         const auto lastWriteTime = std::filesystem::last_write_time(config.inputSource);
+        auto includeStampsCollected = false;
+        std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> includeStamps;
         // if regeneration is forced or if compiler flags changed we need to regenerate
         if (!static_cast<bool>(ForceRegen) && !compilerFlagsChanged) {
             if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
-                if (lastWriteTime < iter->second) {
+                const auto wasFileChanged = lastWriteTime > iter->second.lastChange;
+
+                const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+                bool anyIncludeChanged = std::ranges::any_of(currentIncludes, [&](const auto &path) {
+                    return iter->second.includeChanges.find(path.string()) == iter->second.includeChanges.end();
+                });
+
+                for (const auto &path: currentIncludes) {
+                    const auto currentLast = std::filesystem::last_write_time(path);
+                    if (const auto i = iter->second.includeChanges.find(path.string()); i != iter->second.includeChanges.end()) {
+                        anyIncludeChanged = anyIncludeChanged || (i->second < currentLast);
+                    }
+                    includeStamps[path.string()] = std::chrono::file_clock::now();
+                }
+                includeStampsCollected = true;
+
+                if (!wasFileChanged && !anyIncludeChanged) {
+
                     spdlog::info("File '{}' was not changed", config.inputSource.string());
-                    return ParseResult{config.inputSource, config.outputMetaHeader, iter->second};
+                    return ParseResult{config.inputSource, config.outputMetaHeader, iter->second.lastChange, includeStamps};
                 }
             }
+        }
+
+        if (!includeStampsCollected) {
+            const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+            for (const auto &path: currentIncludes) { includeStamps[path.string()] = std::filesystem::last_write_time(path); }
         }
 
         std::vector<std::string> sources{config.inputSource.string()};
@@ -231,27 +281,46 @@ int main(int argc, const char **argv) {
         pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
         if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
-        if (FormatOutput) { format(std::string{config.outputMetaHeader.string()}); }
-        return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now()};
+        if (FormatOutput) { ::format(std::string{config.outputMetaHeader.string()}); }
+        return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now(), includeStamps};
     };
 
+    std::unordered_map<std::string, FileTimestamps> newTimestamps;
 
-    std::vector<std::future<tl::expected<ParseResult, ParseFailure>>> results;
-    std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) {
-        results.emplace_back(threadPool.enqueue([=] { return generateMetaForSource(config); }));
-    });
+    if (static_cast<bool>(RunSequential)) {
+        std::vector<tl::expected<ParseResult, ParseFailure>> results;
+        std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) { results.emplace_back(generateMetaForSource(config)); });
 
-    threadPool.finishAndStop();
+        std::ranges::for_each(results, [&](auto &v) {
+            if (!v.has_value()) {
+                spdlog::error("File '{}' failed", v.error().inPath.string());
+            } else {
+                newTimestamps[v->inPath.string()].lastChange = v->stamp;
+                newTimestamps[v->inPath.string()].includeChanges = v->includeStamps;
+            }
+        });
 
-    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> newTimestamps;
-    std::ranges::for_each(results, [&](auto &r) {
-        const auto v = r.get();
-        if (!v.has_value()) {
-            spdlog::error("File '{}' failed", v.error().inPath.string());
-        } else {
-            newTimestamps[v->inPath.string()] = v->stamp;
-        }
-    });
+    } else {
+        const auto threadCount = std::thread::hardware_concurrency();
+        pf::meta_gen::ThreadPool threadPool{threadCount};
+
+        std::vector<std::future<tl::expected<ParseResult, ParseFailure>>> results;
+        std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) {
+            results.emplace_back(threadPool.enqueue([=] { return generateMetaForSource(config); }));
+        });
+
+        threadPool.finishAndStop();
+
+        std::ranges::for_each(results, [&](auto &r) {
+            const auto v = r.get();
+            if (!v.has_value()) {
+                spdlog::error("File '{}' failed", v.error().inPath.string());
+            } else {
+                newTimestamps[v->inPath.string()].lastChange = v->stamp;
+                newTimestamps[v->inPath.string()].includeChanges = v->includeStamps;
+            }
+        });
+    }
 
     timestampDB.fileTimestamps = std::move(newTimestamps);
     if (!configs.sourceConfigs.empty()) { timestampDB.compilerFlags = configs.sourceConfigs.front().compilerFlags; }

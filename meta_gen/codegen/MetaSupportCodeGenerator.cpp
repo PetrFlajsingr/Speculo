@@ -9,7 +9,7 @@
 
 namespace pf::meta_gen {
 
-    [[nodiscard]] std::string idToStringTEMP(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+    [[nodiscard]] std::string idToStringTEMP(pf::meta::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
 
     GenerationResult MetaSupportCodeGenerator::start() {
@@ -27,9 +27,9 @@ namespace pf::meta_gen {
         RecordGenerationResult result{};
 
         std::string friendDeclarations;
-        const auto appendFriend = [&](meta::details::ID id) {
+        const auto appendFriend = [&](meta::ID id) {
             friendDeclarations.append(
-                    fmt::format("friend struct ::pf::meta::details::StaticInfo<::pf::meta::details::{}>;\n", idToStringTEMP(id)));
+                    fmt::format("friend struct ::pf::meta::details::StaticInfo<::pf::meta::{}>;\n", idToStringTEMP(id)));
         };
         for (const auto &m: typeInfo.memberFunctions) {
             if (m.access != Access::Public) { appendFriend(m.id); }

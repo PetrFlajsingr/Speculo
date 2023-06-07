@@ -10,7 +10,7 @@
 #include <variant>
 #include <vector>
 
-#include <meta/details/ID.hpp>
+#include <meta/ID.hpp>
 
 namespace pf::meta_gen {
     enum class Access { Private, Protected, Public };
@@ -44,13 +44,13 @@ namespace pf::meta_gen {
     };
 
     struct TypeInfo {
-        meta::details::ID id;
-        meta::details::ID constId;
-        meta::details::ID lrefId;
-        meta::details::ID rrefId;
-        meta::details::ID constLrefId;
-        meta::details::ID ptrId;
-        meta::details::ID constPtrId;
+        meta::ID id;
+        meta::ID constId;
+        meta::ID lrefId;
+        meta::ID rrefId;
+        meta::ID constLrefId;
+        meta::ID ptrId;
+        meta::ID constPtrId;
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;
@@ -65,7 +65,7 @@ namespace pf::meta_gen {
 
     struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
-            meta::details::ID id;
+            meta::ID id;
             std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
@@ -74,12 +74,13 @@ namespace pf::meta_gen {
 
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, ValueInfo> values;
+        bool isScoped;
         std::string underlyingType;
     };
 
     struct FunctionArgument {
-        meta::details::ID id;
-        meta::details::ID typeId;
+        meta::ID id;
+        meta::ID typeId;
         std::string name;
         std::string fullName;
         std::string typeName;
@@ -89,7 +90,7 @@ namespace pf::meta_gen {
     };
 
     struct ConstructorInfo {
-        meta::details::ID id;
+        meta::ID id;
         std::string fullName;
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
@@ -105,7 +106,7 @@ namespace pf::meta_gen {
     };
 
     struct DestructorInfo {
-        meta::details::ID id;
+        meta::ID id;
         std::string fullName;
         Access access;
         std::vector<Attribute> attributes;
@@ -121,12 +122,12 @@ namespace pf::meta_gen {
 
     // TODO: operators separately?
     struct FunctionInfo {
-        meta::details::ID id;
+        meta::ID id;
         std::string name;
         std::string fullName;
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
-        meta::details::ID returnTypeId;
+        meta::ID returnTypeId;
         std::string returnTypeName;
         Access access;
         bool isConstexpr;
@@ -141,10 +142,10 @@ namespace pf::meta_gen {
     };
 
     struct VariableInfo {
-        meta::details::ID id;
+        meta::ID id;
         std::string name;
         std::string fullName;
-        meta::details::ID typeId;
+        meta::ID typeId;
         std::string typeName;
         std::vector<Attribute> attributes;
         Access access;
@@ -162,7 +163,7 @@ namespace pf::meta_gen {
     };
 
     struct BaseClassInfo {
-        meta::details::ID id;
+        meta::ID id;
         std::string name;
         std::string fullName;
         bool isVirtual;

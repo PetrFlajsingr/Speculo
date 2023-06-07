@@ -5,7 +5,6 @@
 #include "AstActions.hpp"
 #include "ASTParser.hpp"
 #include "StringReplace.hpp"
-#include "Visitor.hpp"
 #include "codegen/PluginManager.hpp"
 #include "src_templates/MetaFilePrologueEpilogue.hpp"
 #include <fmt/format.h>

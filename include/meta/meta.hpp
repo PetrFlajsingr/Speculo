@@ -15,32 +15,32 @@
 
 namespace pf::meta {
     template<Info I>
-    concept Enum = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::EnumType;
+    concept Enum = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::EnumType;
     template<Info I>
-    concept Enumerator = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::EnumValue;
+    concept Enumerator = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::EnumValue;
     template<Info I>
-    concept Record = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::RecordType;
+    concept Record = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::RecordType;
     template<Info I>
-    concept Base = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::Base;
+    concept Base = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::Base;
     template<Info I>
-    concept Constructor = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::Constructor;
+    concept Constructor = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::Constructor;
     template<Info I>
-    concept Destructor = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::Destructor;
+    concept Destructor = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::Destructor;
     template<Info I>
-    concept MemberFunction = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::MemberFunction;
+    concept MemberFunction = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::MemberFunction;
     template<Info I>
-    concept MemberVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::MemberVariable;
+    concept MemberVariable = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::MemberVariable;
     template<Info I>
-    concept BitFieldMemberVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::MemberVariable &&
-                                     details::StaticInfo<I.implId>::IsBitfield;
+    concept BitFieldMemberVariable = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::MemberVariable &&
+                                     details::StaticInfo<I.id>::IsBitfield;
     template<Info I>
-    concept StaticFunction = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::StaticFunction;
+    concept StaticFunction = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::StaticFunction;
     template<Info I>
-    concept StaticVariable = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::StaticVariable;
+    concept StaticVariable = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::StaticVariable;
     template<Info I>
-    concept Argument = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::Argument;
+    concept Argument = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::Argument;
     template<Info I>
-    concept FundamentalType = details::StaticInfo<I.implId>::StaticInfoObjectType == details::StaticInfoType::FundamentalType;
+    concept FundamentalType = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::FundamentalType;
     template<Info I>
     concept Member = MemberFunction<I> || MemberVariable<I> || StaticFunction<I> || StaticVariable<I> || Constructor<I> || Destructor<I>;
     template<Info I>
@@ -52,7 +52,7 @@ namespace pf::meta {
 
     template<Info I>
     [[nodiscard]] consteval bool is_invalid() {
-        return !I.implId.isValid();
+        return !I.id.isValid();
     }
     // is_local
     template<Info I>
@@ -76,7 +76,7 @@ namespace pf::meta {
     template<Info I>
         requires Record<I>
     [[nodiscard]] consteval details::RangeOf<Info> auto members_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         std::array<Info, Impl::MemberFunctions.size() + Impl::MemberVariables.size()> result;
         std::size_t i{};
         for (; i < Impl::MemberFunctions.size(); ++i) { result[i] = Impl::MemberFunctions[i]; }
@@ -88,19 +88,19 @@ namespace pf::meta {
     template<Info I>
         requires Enum<I>
     [[nodiscard]] consteval details::RangeOf<Info> auto members_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::EnumValues;
     }
     template<Info I>
         requires Record<I>
     [[nodiscard]] consteval details::RangeOf<Info> auto bases_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Bases;
     }
     template<Info I>
     [[nodiscard]] consteval bool is_class() {
         if constexpr (Record<I>) {
-            return !details::StaticInfo<I.implId>::IsUnion;
+            return !details::StaticInfo<I.id>::IsUnion;
         } else {
             return false;
         }
@@ -108,7 +108,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_union() {
         if constexpr (Record<I>) {
-            return details::StaticInfo<I.implId>::IsUnion;
+            return details::StaticInfo<I.id>::IsUnion;
         } else {
             return false;
         }
@@ -116,20 +116,20 @@ namespace pf::meta {
     template<Info I>
         requires Record<I>
     [[nodiscard]] consteval bool has_virtual_destructor() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         using DtorImpl = details::StaticInfo<Impl::Destructor>;
         return DtorImpl::IsVirtual;
     }
     template<Info I>
         requires Record<I>
     [[nodiscard]] consteval bool is_declared_class() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsClass;
     }
     template<Info I>
         requires Record<I>
     [[nodiscard]] consteval bool is_declared_struct() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsStruct;
     }
 
@@ -148,13 +148,13 @@ namespace pf::meta {
     template<Info I>
         requires MemberVariable<I>
     [[nodiscard]] consteval bool is_bit_field() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsBitfield;
     }
     template<Info I>
         requires MemberVariable<I>
     [[nodiscard]] consteval bool is_mutable() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsMutable;
     }
     template<Info I>
@@ -177,13 +177,13 @@ namespace pf::meta {
     template<Info I>
         requires MemberFunction<I>
     [[nodiscard]] consteval bool is_virtual() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsVirtual;
     }
     template<Info I>
         requires MemberFunction<I>
     [[nodiscard]] consteval bool is_pure_virtual() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsPureVirtual;
     }
     template<Info I>
@@ -194,7 +194,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_copy_constructor() {
         if constexpr (Constructor<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsCopy;
         }
         return false;
@@ -202,7 +202,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_move_constructor() {
         if constexpr (Constructor<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsMove;
         }
         return false;
@@ -221,19 +221,19 @@ namespace pf::meta {
     template<Info I>
         requires(Member<I> || Base<I>)
     [[nodiscard]] consteval bool is_public() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsPublic;
     }
     template<Info I>
         requires(Member<I> || Base<I>)
     [[nodiscard]] consteval bool is_protected() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsProtected;
     }
     template<Info I>
         requires(Member<I> || Base<I>)
     [[nodiscard]] consteval bool is_private() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsPrivate;
     }
     // TODO has_default_access
@@ -244,31 +244,31 @@ namespace pf::meta {
     template<Info I>
         requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I>
     [[nodiscard]] consteval bool is_inline() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsInline;
     }
     template<Info I>
         requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I>
     [[nodiscard]] consteval bool is_inline_specified() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsInlineSpecified;
     }
     template<Info I>
         requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I> || MemberVariable<I>
     [[nodiscard]] consteval bool is_constexpr() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsConstexpr;
     }
     template<Info I>
         requires MemberFunction<I> || Constructor<I> || Destructor<I> || StaticFunction<I> || StaticVariable<I> || MemberVariable<I>
     [[nodiscard]] consteval bool is_consteval() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsConsteval;
     }
     template<Info I>
         requires MemberFunction<I> || Destructor<I> || Record<I>
     [[nodiscard]] consteval bool is_final() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsFinal;
     }
     // TODO is_defined - unsupported
@@ -281,7 +281,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_unscoped_enum() {
         if constexpr (Enum<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return !Impl::IsScoped;
         }
         return false;
@@ -289,7 +289,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_scoped_enum() {
         if constexpr (Enum<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsScoped;
         }
         return false;
@@ -323,7 +323,7 @@ namespace pf::meta {
     template<Info I>
     [[nodiscard]] consteval bool is_virtual_base_class() {
         if constexpr (Base<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsVirtual;
         }
         return false;
@@ -340,7 +340,7 @@ namespace pf::meta {
     template<Info I>
         requires Function<I>
     [[nodiscard]] consteval details::RangeOf<Info> auto is_function_parameter() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Arguments;
     }
     template<Info I>
@@ -365,7 +365,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval bool is_class_type() {
         if constexpr (Record<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return !Impl::IsUnion;
         }
         return false;
@@ -374,7 +374,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval bool is_union_type() {
         if constexpr (Record<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsUnion;
         }
         return false;
@@ -388,7 +388,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval bool is_unscoped_enum_type() {
         if constexpr (Enum<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return !Impl::IsScoped;
         }
         return false;
@@ -397,7 +397,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval bool is_scoped_enum_type() {
         if constexpr (Enum<I>) {
-            using Impl = details::StaticInfo<I.implId>;
+            using Impl = details::StaticInfo<I.id>;
             return Impl::IsScoped;
         }
         return false;
@@ -405,38 +405,38 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_void_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::same_as<typename Impl::Type, void>;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_null_pointer_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::same_as<typename Impl::Type, std::nullptr_t>;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_integral_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::is_integral_v<typename Impl::Type>;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_floating_point_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::is_floating_point_v<typename Impl::Type>;
     }
     // TODO is_array_type
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_pointer_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::is_pointer_v<typename Impl::Type>;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_reference_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return std::is_reference_v<typename Impl::Type>;
     }
     // TODO is_lvalue_reference_type
@@ -448,7 +448,7 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_const_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsConst;
     }
     // TODO is_volatile_type
@@ -461,19 +461,19 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_polymorphic_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsPolymorphic;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_abstract_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsAbstract;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_final_type() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::IsFinal;
     }
     // TODO is_aggregate_type
@@ -483,38 +483,38 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval std::size_t size_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Size;
     }
     template<Info I>
         requires MemberVariable<I> || Base<I>
     [[nodiscard]] consteval std::size_t byte_size_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Size;
     }
     template<Info I>
         requires BitFieldMemberVariable<I>
     [[nodiscard]] consteval std::size_t bit_size_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::BitfieldSize;
     }
     template<Info I>
         requires MemberVariable<I> || Base<I>
     [[nodiscard]] consteval std::size_t byte_offset_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Offset;
     }
     // FIXME: this one is likely returning wrong values
     template<Info I>
         requires BitFieldMemberVariable<I>
     [[nodiscard]] consteval std::size_t bit_offset_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::BitfieldOffset;
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval std::size_t alignment_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return Impl::Alignment;
     }
     // TODO rank
@@ -550,21 +550,21 @@ namespace pf::meta {
     // captures are not supported
     template<Info I1, Info I2>
     [[nodiscard]] consteval bool is_same() {
-        return I1.implId == I2.implId;
+        return I1.id == I2.id;
     }
 
     template<Info Base, Info Derived>
         requires Record<Base> && Record<Derived>
     [[nodiscard]] consteval bool is_base_of() {
-        using ImplBase = details::StaticInfo<Base.implId>;
-        using ImplDerived = details::StaticInfo<Derived.implId>;
+        using ImplBase = details::StaticInfo<Base.id>;
+        using ImplDerived = details::StaticInfo<Derived.id>;
         return std::derived_from<typename ImplDerived::Type, typename ImplBase::Type>;
     }
     template<Info From, Info To>
         requires Type<From> && Type<To>
     [[nodiscard]] consteval bool is_convertible() {
-        using ImplFrom = details::StaticInfo<From.implId>;
-        using ImplTo = details::StaticInfo<To.implId>;
+        using ImplFrom = details::StaticInfo<From.id>;
+        using ImplTo = details::StaticInfo<To.id>;
         return std::convertible_to<typename ImplFrom::Type, typename ImplTo::Type>;
     }
     // TODO is_nothrow_convertible
@@ -575,7 +575,7 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info remove_const() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::remove_const_t<typename Impl::Type>>();
     }
     // TODO remove_volatile
@@ -583,7 +583,7 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_const() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::add_const_t<typename Impl::Type>>();
     }
     // TODO add_volatile
@@ -591,38 +591,38 @@ namespace pf::meta {
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info remove_reference() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::remove_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_lvalue_reference() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::add_lvalue_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_rvalue_reference() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::add_rvalue_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info remove_pointer() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::remove_pointer_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_pointer() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::add_pointer_t<typename Impl::Type>>();
     }
     // TODO remove_cvref
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info decay() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return getTypeId<std::decay_t<typename Impl::Type>>();
     }
     // TODO make_signed
@@ -630,14 +630,14 @@ namespace pf::meta {
     template<Info I>
         requires MemberFunction<I>
     consteval Info this_ref_type_of() {
-        using Impl = details::StaticInfo<I.implId>;
-        return Impl::TypeID;
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::Id;
     }
     // TODO common_type
     template<Info I>
         requires Enum<I>
     consteval Info underlying_type_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return details::getTypeId<Impl::UnderlyingType>();
     }
     // TODO invoke_result
@@ -648,13 +648,13 @@ namespace pf::meta {
     template<Info I>
         requires Named<I>// TODO: decide which name to actually return here
     [[nodiscard]] consteval std::string_view name_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return static_cast<std::string_view>(Impl::Name);
     }
     template<Info I>
         requires Named<I>// TODO: decide which name to actually return here
     [[nodiscard]] consteval std::string_view display_name_of() {
-        using Impl = details::StaticInfo<I.implId>;
+        using Impl = details::StaticInfo<I.id>;
         return static_cast<std::string_view>(Impl::FullName);
     }
     // expressions not supported
@@ -663,7 +663,7 @@ namespace pf::meta {
     /**************** EXTENSIONS *******************/
     template<Info I>
     [[nodiscard]] consteval std::span<const Attribute> attributes_of() {
-        using impl = details::StaticInfo<I.implId>;
+        using impl = details::StaticInfo<I.id>;
         if constexpr (requires {
                           { impl::Attributes } -> details::RangeOf<Attribute>;
                       }) {
@@ -675,7 +675,7 @@ namespace pf::meta {
     template<Info I>
         requires(is_bit_field<I>())
     [[nodiscard]] constexpr auto create_bit_field_accessor(auto parentPtr) {
-        using impl = details::StaticInfo<I.implId>;
+        using impl = details::StaticInfo<I.id>;
         return impl::CreateBitfieldAccessor(parentPtr);
     }
 

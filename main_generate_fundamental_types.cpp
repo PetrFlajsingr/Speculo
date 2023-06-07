@@ -54,7 +54,7 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
 }
 
 // TODO: deduplicate
-[[nodiscard]] std::string idToString(pf::meta::details::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
+[[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
 
 std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
                                               std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
@@ -138,7 +138,7 @@ namespace pf::meta::details {
     template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
     struct FundamentalStaticTypeInfo {
         using Type = T;
-        constexpr static ID TypeID = TID;
+        constexpr static ID Id = TID;
 
         // FIXME: RangeOf msvc failure here
         constexpr static /*RangeOf<pf::meta::Attribute>*/ auto Attributes = pf::meta::details::make_array<pf::meta::Attribute>();

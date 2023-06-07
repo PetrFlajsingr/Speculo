@@ -9,7 +9,7 @@ template<>
 struct StaticInfo<{id}> {{
     {details}
     constexpr static ID ConstructorID = {id};
-    constexpr static ID TypeID = {type_id};
+    constexpr static ID Id = {type_id};
 
     constexpr static auto SourceFile = R"path({source_file})path";
     constexpr static std::uint64_t SourceLine = {source_line};

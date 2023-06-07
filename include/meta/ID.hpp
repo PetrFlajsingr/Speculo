@@ -7,7 +7,7 @@
 #include <array>
 #include <meta/details/meta_helpers.hpp>
 
-namespace pf::meta::details {
+namespace pf::meta {
 
     struct ID {
         constexpr ID() : ID{0x0u, 0x0u} {}
@@ -25,16 +25,17 @@ namespace pf::meta::details {
         std::array<std::uint64_t, 2> id;
     };
 
-    template<typename T>
-    [[nodiscard]] consteval ID getTypeId() {
-        static_assert(AlwaysFalseT<T>, "Static reflection not generated for type");
-        return {};
-    }
+    namespace details {
+        template<typename T>
+        [[nodiscard]] consteval ID getTypeId() {
+            static_assert(details::AlwaysFalseT<T>, "Static reflection not generated for type or an include missing");
+            return {};
+        }
 
-    template<auto V>
-    [[nodiscard]] consteval ID getConstantId() {
-        static_assert(AlwaysFalseV<V>, "Static reflection not generated for value");
-        return {};
+        template<auto V>
+        [[nodiscard]] consteval ID getConstantId() {
+            static_assert(details::AlwaysFalseV<V>, "Static reflection not generated for value or an include missing");
+            return {};
+        }
     }
-
 }// namespace pf::meta::details

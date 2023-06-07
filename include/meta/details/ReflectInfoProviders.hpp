@@ -6,8 +6,8 @@
 
 #pragma once
 
+#include <meta/ID.hpp>
 #include <meta/Info.hpp>
-#include <meta/details/ID.hpp>
 #include <meta/details/StaticInfo.hpp>
 
 #define PF_REFLECT_TYPE(X)                                                                                                                 \
