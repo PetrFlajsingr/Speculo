@@ -5,6 +5,7 @@
 #include "../AttributeParser.hpp"
 #include "ASTEnumParser.hpp"
 
+#include <clang/AST/QualTypeNames.h>
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -44,7 +45,7 @@ namespace pf::meta_gen {
         result->sourceLocation.column = sourceManager.getPresumedColumnNumber(enumDecl->getSourceRange().getBegin());
         result->sourceLocation.filename = sourceManager.getFilename(enumDecl->getSourceRange().getBegin());
 
-        result->underlyingType = enumDecl->getIntegerType().getAsString(printingPolicy);
+        result->underlyingType = clang::TypeName::getFullyQualifiedName(enumDecl->getIntegerType(), astContext, printingPolicy);
         result->size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
         result->alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
         result->isScoped = enumDecl->isScoped();
@@ -64,7 +65,7 @@ namespace pf::meta_gen {
             const auto line = sourceManager.getPresumedLineNumber(enumerator->getSourceRange().getBegin());
             const auto column = sourceManager.getPresumedColumnNumber(enumerator->getSourceRange().getBegin());
             result->values.emplace(enumerator->getNameAsString(),
-                                   EnumTypeInfo::ValueInfo{pf::meta::ID::ID(), "", value, {}, {line, column}});
+                                   EnumTypeInfo::ValueInfo{pf::meta::ID{}, "", value, {}, {line, column}});
         }
 
         {
@@ -76,11 +77,18 @@ namespace pf::meta_gen {
 
         result->id = getIdGenerator().generateId(result->fullName);
         result->constId = getIdGenerator().generateId("const " + result->fullName);
-        result->lrefId = getIdGenerator().generateId(result->fullName + "&");
-        result->rrefId = getIdGenerator().generateId(result->fullName + "&&");
-        result->constLrefId = getIdGenerator().generateId("const " + result->fullName + "&");
-        result->ptrId = getIdGenerator().generateId(result->fullName + "*");
-        result->constPtrId = getIdGenerator().generateId("const" + result->fullName + "*");
+        result->lrefId = getIdGenerator().generateId(result->fullName + " &");
+        result->rrefId = getIdGenerator().generateId(result->fullName + " &&");
+        result->constLrefId = getIdGenerator().generateId("const " + result->fullName + " &");
+        result->ptrId = getIdGenerator().generateId(result->fullName + " *");
+        result->constPtrId = getIdGenerator().generateId("const" + result->fullName + " *");
+        result->volatileId = getIdGenerator().generateId("volatile " + result->fullName);
+        result->volatileConstId = getIdGenerator().generateId("volatile const " + result->fullName);
+        result->volatileLrefId = getIdGenerator().generateId("volatile " + result->fullName + " &");
+        result->volatileRrefId = getIdGenerator().generateId("volatile " + result->fullName + " &&");
+        result->volatileConstLrefId = getIdGenerator().generateId("volatile const " + result->fullName + " &");
+        result->volatilePtrId = getIdGenerator().generateId("volatile " + result->fullName + " *");
+        result->volatileConstPtrId = getIdGenerator().generateId("volatile const" + result->fullName + " *");
 
         for (auto &[name, info]: result->values) {
             info.fullName = fmt::format("{}::{}", result->fullName, name);

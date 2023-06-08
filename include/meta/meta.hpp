@@ -217,7 +217,7 @@ namespace pf::meta {
     }
     // TODO is_defaulted
     // TODO is_explicit
-    // TODO has_access - probably unsupported
+    // TODO has_access - unsupported
     template<Info I>
         requires(Member<I> || Base<I>)
     [[nodiscard]] consteval bool is_public() {
@@ -273,7 +273,7 @@ namespace pf::meta {
     }
     // TODO is_defined - unsupported
     // TODO is_complete - unsupported
-    // TODO is_namespace - probably unsupported
+    // TODO is_namespace - unsupported
     template<Info I>
     [[nodiscard]] consteval bool is_enum() {
         return Enum<I>;
@@ -437,10 +437,20 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval bool is_reference_type() {
         using Impl = details::StaticInfo<I.id>;
-        return std::is_reference_v<typename Impl::Type>;
+        return Impl::IsLvalueReference || Impl::IsRvalueReference;
     }
-    // TODO is_lvalue_reference_type
-    // TODO is_rvalue_reference_type
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_lvalue_reference_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsLvalueReference;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_rvalue_reference_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsRvalueReference;
+    }
     // TODO is_member_pointer_type
     // TODO is_member_object_pointer_type
     // TODO is_member_function_pointer_type
@@ -451,7 +461,12 @@ namespace pf::meta {
         using Impl = details::StaticInfo<I.id>;
         return Impl::IsConst;
     }
-    // TODO is_volatile_type
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_volatile_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsVolatile;
+    }
     // TODO is_trivial_type
     // TODO is_trivially_copyable_type
     // TODO is_standard_layout_type
