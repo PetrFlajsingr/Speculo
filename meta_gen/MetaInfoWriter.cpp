@@ -113,7 +113,13 @@ namespace pf::meta_gen {
                           "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = idToString(enumInfo.constId),
                           "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
                           "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
-                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "size"_a = enumInfo.size,
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "volatile_type_id"_a = idToString(enumInfo.volatileId),
+                          "volatile_const_type_id"_a = idToString(enumInfo.volatileConstId),
+                          "volatile_lref_type_id"_a = idToString(enumInfo.volatileLrefId),
+                          "volatile_rref_type_id"_a = idToString(enumInfo.volatileRrefId),
+                          "volatile_const_lref_type_id"_a = idToString(enumInfo.volatileConstLrefId),
+                          "volatile_ptr_type_id"_a = idToString(enumInfo.volatilePtrId),
+                          "volatile_const_ptr_type_id"_a = idToString(enumInfo.volatileConstPtrId), "size"_a = enumInfo.size,
                           "alignment"_a = enumInfo.alignment, "is_scoped"_a = enumInfo.isScoped));
 
         write(fmt::format(R"fmt(// Enum {} static info getters
@@ -124,7 +130,13 @@ namespace pf::meta_gen {
                           "type_id"_a = idToString(enumInfo.id), "const_type_id"_a = idToString(enumInfo.constId),
                           "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
                           "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
-                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId)));
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "volatile_type_id"_a = idToString(enumInfo.volatileId),
+                          "volatile_const_type_id"_a = idToString(enumInfo.volatileConstId),
+                          "volatile_lref_type_id"_a = idToString(enumInfo.volatileLrefId),
+                          "volatile_rref_type_id"_a = idToString(enumInfo.volatileRrefId),
+                          "volatile_const_lref_type_id"_a = idToString(enumInfo.volatileConstLrefId),
+                          "volatile_ptr_type_id"_a = idToString(enumInfo.volatilePtrId),
+                          "volatile_const_ptr_type_id"_a = idToString(enumInfo.volatileConstPtrId)));
 
         write(fmt::format(R"fmt(// Enumerators of {} static info getters
 )fmt",
@@ -179,23 +191,29 @@ namespace pf::meta_gen {
             }
             const auto attributesStr = StringifyAttributes(recordInfo.attributes, argsArrayNames);
 
-            write(fmt::format(StaticTypeInfoTemplate_Record, "type_id"_a = idToString(recordInfo.id), "full_name"_a = recordInfo.fullName,
-                              "details"_a = createDetailsStruct(detailsContents), "type"_a = recordInfo.fullName,
-                              "source_file"_a = recordInfo.sourceLocation.filename, "source_line"_a = recordInfo.sourceLocation.line,
-                              "source_column"_a = recordInfo.sourceLocation.column, "attributes"_a = attributesStr,
-                              "name"_a = recordInfo.name, "full_name"_a = recordInfo.fullName, "is_union"_a = recordInfo.isUnion,
-                              "is_class"_a = recordInfo.isClass, "is_struct"_a = recordInfo.isStruct,
-                              "is_poly"_a = recordInfo.isPolymorphic, "is_abstract"_a = recordInfo.isAbstract,
-                              "is_final"_a = recordInfo.isFinal, "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
-                              "ctors"_a = idsToStringMakeArray(recordInfo.constructors), "dtor"_a = idToString(recordInfo.destructor.id),
-                              "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
-                              "static_fncs"_a = idsToStringMakeArray(recordInfo.staticFunctions),
-                              "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
-                              "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables),
-                              "const_type_id"_a = idToString(recordInfo.constId), "lref_type_id"_a = idToString(recordInfo.lrefId),
-                              "const_lref_type_id"_a = idToString(recordInfo.constLrefId), "rref_type_id"_a = idToString(recordInfo.rrefId),
-                              "ptr_type_id"_a = idToString(recordInfo.ptrId), "const_ptr_type_id"_a = idToString(recordInfo.constPtrId),
-                              "size"_a = recordInfo.size, "alignment"_a = recordInfo.alignment));
+            write(fmt::format(
+                    StaticTypeInfoTemplate_Record, "type_id"_a = idToString(recordInfo.id), "full_name"_a = recordInfo.fullName,
+                    "details"_a = createDetailsStruct(detailsContents), "type"_a = recordInfo.fullName,
+                    "source_file"_a = recordInfo.sourceLocation.filename, "source_line"_a = recordInfo.sourceLocation.line,
+                    "source_column"_a = recordInfo.sourceLocation.column, "attributes"_a = attributesStr, "name"_a = recordInfo.name,
+                    "full_name"_a = recordInfo.fullName, "is_union"_a = recordInfo.isUnion, "is_class"_a = recordInfo.isClass,
+                    "is_struct"_a = recordInfo.isStruct, "is_poly"_a = recordInfo.isPolymorphic, "is_abstract"_a = recordInfo.isAbstract,
+                    "is_final"_a = recordInfo.isFinal, "bases"_a = idsToStringMakeArray(recordInfo.baseClasses),
+                    "ctors"_a = idsToStringMakeArray(recordInfo.constructors), "dtor"_a = idToString(recordInfo.destructor.id),
+                    "member_fncs"_a = idsToStringMakeArray(recordInfo.memberFunctions),
+                    "static_fncs"_a = idsToStringMakeArray(recordInfo.staticFunctions),
+                    "member_vars"_a = idsToStringMakeArray(recordInfo.memberVariables),
+                    "static_vars"_a = idsToStringMakeArray(recordInfo.staticVariables), "const_type_id"_a = idToString(recordInfo.constId),
+                    "lref_type_id"_a = idToString(recordInfo.lrefId), "const_lref_type_id"_a = idToString(recordInfo.constLrefId),
+                    "rref_type_id"_a = idToString(recordInfo.rrefId), "ptr_type_id"_a = idToString(recordInfo.ptrId),
+                    "const_ptr_type_id"_a = idToString(recordInfo.constPtrId), "volatile_type_id"_a = idToString(recordInfo.volatileId),
+                    "volatile_const_type_id"_a = idToString(recordInfo.volatileConstId),
+                    "volatile_lref_type_id"_a = idToString(recordInfo.volatileLrefId),
+                    "volatile_rref_type_id"_a = idToString(recordInfo.volatileRrefId),
+                    "volatile_const_lref_type_id"_a = idToString(recordInfo.volatileConstLrefId),
+                    "volatile_ptr_type_id"_a = idToString(recordInfo.volatilePtrId),
+                    "volatile_const_ptr_type_id"_a = idToString(recordInfo.volatileConstPtrId), "size"_a = recordInfo.size,
+                    "alignment"_a = recordInfo.alignment));
 
 
             write(fmt::format(R"fmt(// Record {} static info getters
@@ -206,7 +224,14 @@ namespace pf::meta_gen {
                               "type_id"_a = idToString(recordInfo.id), "const_type_id"_a = idToString(recordInfo.constId),
                               "lref_type_id"_a = idToString(recordInfo.lrefId), "const_lref_type_id"_a = idToString(recordInfo.constLrefId),
                               "rref_type_id"_a = idToString(recordInfo.rrefId), "ptr_type_id"_a = idToString(recordInfo.ptrId),
-                              "const_ptr_type_id"_a = idToString(recordInfo.constPtrId)));
+                              "const_ptr_type_id"_a = idToString(recordInfo.constPtrId),
+                              "volatile_type_id"_a = idToString(recordInfo.volatileId),
+                              "volatile_const_type_id"_a = idToString(recordInfo.volatileConstId),
+                              "volatile_lref_type_id"_a = idToString(recordInfo.volatileLrefId),
+                              "volatile_rref_type_id"_a = idToString(recordInfo.volatileRrefId),
+                              "volatile_const_lref_type_id"_a = idToString(recordInfo.volatileConstLrefId),
+                              "volatile_ptr_type_id"_a = idToString(recordInfo.volatilePtrId),
+                              "volatile_const_ptr_type_id"_a = idToString(recordInfo.volatileConstPtrId)));
         }
 
         for (const auto &baseInfo: recordInfo.baseClasses) {

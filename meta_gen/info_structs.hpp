@@ -51,6 +51,13 @@ namespace pf::meta_gen {
         meta::ID constLrefId;
         meta::ID ptrId;
         meta::ID constPtrId;
+        meta::ID volatileId;
+        meta::ID volatileConstId;
+        meta::ID volatileLrefId;
+        meta::ID volatileRrefId;
+        meta::ID volatileConstLrefId;
+        meta::ID volatilePtrId;
+        meta::ID volatileConstPtrId;
         std::string fullName;
         std::string name;
         SourceLocationInfo sourceLocation;

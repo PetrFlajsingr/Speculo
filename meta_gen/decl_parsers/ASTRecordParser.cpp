@@ -50,12 +50,12 @@ namespace pf::meta_gen {
             return std::nullopt;
         }
 
-        spdlog::trace("ASTRecordParser: parsing {}", GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
+        spdlog::trace("ASTRecordParser: parsing {}", GetProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
 
         const auto isTemplateSpecialization = recordDecl->getTemplateSpecializationKind() != clang::TSK_Undeclared;
         if (isTemplateSpecialization) {
             spdlog::trace("ASTRecordParser: {} is a template specialization",
-                          GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
+                          GetProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
             if (recordDecl->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
                 spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
                 return std::nullopt;
@@ -75,15 +75,23 @@ namespace pf::meta_gen {
 
         auto result = std::make_shared<RecordTypeInfo>();
 
-        result->fullName = GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy());
-        result->name = GetProperName(recordDecl, astContext.getPrintingPolicy());
+        result->fullName = GetProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy());
+        result->name = GetProperName(recordDecl, astContext, astContext.getPrintingPolicy());
         result->id = getIdGenerator().generateId(result->fullName);
         result->constId = getIdGenerator().generateId("const " + result->fullName);
-        result->lrefId = getIdGenerator().generateId(result->fullName + "&");
-        result->rrefId = getIdGenerator().generateId(result->fullName + "&&");
-        result->constLrefId = getIdGenerator().generateId("const " + result->fullName + "&");
-        result->ptrId = getIdGenerator().generateId(result->fullName + "*");
-        result->constPtrId = getIdGenerator().generateId("const" + result->fullName + "*");
+        result->lrefId = getIdGenerator().generateId(result->fullName + " &");
+        result->rrefId = getIdGenerator().generateId(result->fullName + " &&");
+        result->constLrefId = getIdGenerator().generateId("const " + result->fullName + " &");
+        result->ptrId = getIdGenerator().generateId(result->fullName + " *");
+        result->constPtrId = getIdGenerator().generateId("const" + result->fullName + " *");
+        result->volatileId = getIdGenerator().generateId("volatile " + result->fullName);
+        result->volatileConstId = getIdGenerator().generateId("volatile const " + result->fullName);
+        result->volatileLrefId = getIdGenerator().generateId("volatile " + result->fullName + " &");
+        result->volatileRrefId = getIdGenerator().generateId("volatile " + result->fullName + " &&");
+        result->volatileConstLrefId = getIdGenerator().generateId("volatile const " + result->fullName + " &");
+        result->volatilePtrId = getIdGenerator().generateId("volatile " + result->fullName + " *");
+        result->volatileConstPtrId = getIdGenerator().generateId("volatile const" + result->fullName + " *");
+
         result->isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
         if (result->isNestedType) { result->nestedAccess = clangAccesConv(recordDecl->getAccess()); }
 
@@ -137,7 +145,7 @@ namespace pf::meta_gen {
             if (variableInfo.name.starts_with("PF_META_GENERATED_")) { continue; }
             variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
             if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
-                variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
+                variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext, astContext.getPrintingPolicy());
             } else {
                 variableInfo.typeName = clang::TypeName::getFullyQualifiedName(field->getType(), astContext, printingPolicy);
             }
@@ -171,7 +179,7 @@ namespace pf::meta_gen {
                     variableInfo.fullName = var->getQualifiedNameAsString();
                     variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
                     if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
-                        variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext.getPrintingPolicy());
+                        variableInfo.typeName = GetProperQualifiedName(typeRecordDecl, astContext, astContext.getPrintingPolicy());
                     } else {
                         variableInfo.typeName = clang::TypeName::getFullyQualifiedName(var->getType(), astContext, printingPolicy);
                     }
@@ -211,7 +219,7 @@ namespace pf::meta_gen {
             // TODO: template specializations should actually be stored
             if (method->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
                 spdlog::trace("ASTRecordParser: {} is a template specialization",
-                              GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
+                              GetProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
                 // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
                 // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
                 continue;
@@ -219,8 +227,8 @@ namespace pf::meta_gen {
             }
 
             FunctionInfo functionInfo;
-            functionInfo.name = GetProperName(method, printingPolicy);
-            functionInfo.fullName = GetProperQualifiedName(method, printingPolicy);
+            functionInfo.name = GetProperName(method, astContext, printingPolicy);
+            functionInfo.fullName = GetProperQualifiedName(method, astContext, printingPolicy);
             functionInfo.isInline = method->hasInlineBody();
             functionInfo.isInlineSpecified = method->isInlineSpecified();
 
@@ -255,7 +263,7 @@ namespace pf::meta_gen {
                 argument.name = param->getNameAsString();
                 argument.fullName = param->getQualifiedNameAsString();
                 if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
-                    argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext.getPrintingPolicy());
+                    argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext, astContext.getPrintingPolicy());
                 } else {
                     argument.typeName = clang::TypeName::getFullyQualifiedName(param->getType(), astContext, printingPolicy);
                 }
@@ -268,9 +276,9 @@ namespace pf::meta_gen {
             }
             functionInfo.attributes = std::move(att.attributes);
             if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); returnTypeRecordDecl != nullptr) {
-                functionInfo.returnTypeName = GetProperQualifiedName(returnTypeRecordDecl, astContext.getPrintingPolicy());
+                functionInfo.returnTypeName = GetProperQualifiedName(returnTypeRecordDecl, astContext, astContext.getPrintingPolicy());
             } else {
-                functionInfo.returnTypeName = method->getReturnType().getAsString(printingPolicy);
+                functionInfo.returnTypeName = clang::TypeName::getFullyQualifiedName(method->getReturnType(), astContext, printingPolicy);
             }
             functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
             functionInfo.access = clangAccesConv(method->getAccess());
@@ -310,7 +318,7 @@ namespace pf::meta_gen {
             // TODO: template specializations should actually be stored
             if (ctor->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
                 spdlog::trace("ASTRecordParser: {} is a template specialization",
-                              GetProperQualifiedName(ctor, astContext.getPrintingPolicy()));
+                              GetProperQualifiedName(ctor, astContext, astContext.getPrintingPolicy()));
                 // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
                 // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
                 continue;
@@ -353,7 +361,7 @@ namespace pf::meta_gen {
                 argument.fullName = param->getQualifiedNameAsString();
 
                 if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
-                    argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext.getPrintingPolicy());
+                    argument.typeName = GetProperQualifiedName(paramTypeRecordDecl, astContext, astContext.getPrintingPolicy());
                 } else {
                     argument.typeName = clang::TypeName::getFullyQualifiedName(param->getType(), astContext, printingPolicy);
                 }
@@ -433,8 +441,8 @@ namespace pf::meta_gen {
                 spdlog::error("Base class not recognized as a record");
                 continue;
             }
-            baseClassInfo.fullName = GetProperQualifiedName(baseRecordDecl, astContext.getPrintingPolicy());
-            baseClassInfo.name = GetProperName(baseRecordDecl, astContext.getPrintingPolicy());
+            baseClassInfo.fullName = GetProperQualifiedName(baseRecordDecl, astContext, astContext.getPrintingPolicy());
+            baseClassInfo.name = GetProperName(baseRecordDecl, astContext, astContext.getPrintingPolicy());
             const auto mangledName = mangleBaseClass(result->fullName, baseClassInfo.fullName);
             baseClassInfo.id = getIdGenerator().generateId(mangledName);
             baseClassInfo.isVirtual = base.isVirtual();
@@ -481,13 +489,14 @@ namespace pf::meta_gen {
         return result;
     }
 
-    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::ASTContext &astContext,
+                                                        const clang::PrintingPolicy &printingPolicy) {
         std::string qualName = decl->getQualifiedNameAsString();
         if (auto specDecl = clang::dyn_cast<clang::ClassTemplateSpecializationDecl>(decl); specDecl != nullptr) {
             std::string argList{};
             for (const auto &templArg: specDecl->getTemplateArgs().asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
-                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                    const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
                     argList.append(argType).append(",");
                 }
             }
@@ -497,13 +506,14 @@ namespace pf::meta_gen {
         return qualName;
     }
 
-    std::string ASTRecordParser::GetProperName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+    std::string ASTRecordParser::GetProperName(const clang::CXXRecordDecl *decl, const clang::ASTContext &astContext,
+                                               const clang::PrintingPolicy &printingPolicy) {
         std::string qualName = decl->getNameAsString();
         if (auto specDecl = clang::dyn_cast<clang::ClassTemplateSpecializationDecl>(decl); specDecl != nullptr) {
             std::string argList{};
             for (const auto &templArg: specDecl->getTemplateArgs().asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
-                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                    const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
                     argList.append(argType).append(",");
                 }
             }
@@ -513,54 +523,14 @@ namespace pf::meta_gen {
         return qualName;
     }
 
-    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy) {
-        std::string result = decl->getQualifiedNameAsString();
-        std::string argList{};
-        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
-            for (const auto &templArg: args->asArray()) {
-                if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
-                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
-                    argList.append(argType).append(",");
-                }
-                // TODO: value args support
-            }
-            if (!argList.empty()) {
-                argList = argList.substr(0, argList.length() - 1);
-                result.append(fmt::format("<{}>", argList));
-            }
-        }
-        return result;
-    }
-    std::string ASTRecordParser::GetProperName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy) {
-        std::string result = decl->getNameAsString();
-        std::string argList{};
-        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
-            for (const auto &templArg: args->asArray()) {
-                switch (templArg.getKind()) {
-                    case clang::TemplateArgument::Type: {
-                        const auto argType = templArg.getAsType().getAsString(printingPolicy);
-                        argList.append(argType).append(",");
-                    } break;
-                    default: break;
-                }
-                // TODO: value args support
-            }
-            if (!argList.empty()) {
-                argList = argList.substr(0, argList.length() - 1);
-                result.append(fmt::format("<{}>", argList));
-            }
-        }
-
-        return result;
-    }
-    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXConstructorDecl *decl,
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXMethodDecl *decl, const clang::ASTContext &astContext,
                                                         const clang::PrintingPolicy &printingPolicy) {
         std::string result = decl->getQualifiedNameAsString();
         std::string argList{};
         if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
             for (const auto &templArg: args->asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
-                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                    const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
                     argList.append(argType).append(",");
                 }
                 // TODO: value args support
@@ -572,17 +542,62 @@ namespace pf::meta_gen {
         }
         return result;
     }
-    std::string ASTRecordParser::GetProperName(const clang::CXXConstructorDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+    std::string ASTRecordParser::GetProperName(const clang::CXXMethodDecl *decl, const clang::ASTContext &astContext,
+                                               const clang::PrintingPolicy &printingPolicy) {
         std::string result = decl->getNameAsString();
         std::string argList{};
         if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
             for (const auto &templArg: args->asArray()) {
                 switch (templArg.getKind()) {
                     case clang::TemplateArgument::Type: {
-                        const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                        const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
                         argList.append(argType).append(",");
                     } break;
-                    default: break;
+                    default:
+                        break;
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+
+        return result;
+    }
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXConstructorDecl *decl, const clang::ASTContext &astContext,
+                                                        const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getQualifiedNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
+                    const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
+                    argList.append(argType).append(",");
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+        return result;
+    }
+    std::string ASTRecordParser::GetProperName(const clang::CXXConstructorDecl *decl, const clang::ASTContext &astContext,
+                                               const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                switch (templArg.getKind()) {
+                    case clang::TemplateArgument::Type: {
+                        const auto argType = clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, printingPolicy);
+                        argList.append(argType).append(",");
+                    } break;
+                    default:
+                        break;
                 }
                 // TODO: value args support
             }

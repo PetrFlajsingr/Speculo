@@ -25,6 +25,7 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsRvalueReference = false;
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
+    constexpr static bool IsVolatile = false;
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -60,6 +61,34 @@ struct StaticInfo<{ptr_type_id}>
 template<>
 struct StaticInfo<{const_ptr_type_id}>
     : StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
+// volatile
+template<>
+struct StaticInfo<{volatile_type_id}>
+    : StaticInfo_VolatileConstPtrWrap<{volatile_type_id}, {type_id}> {{}};
+// const volatile
+template<>
+struct StaticInfo<{volatile_const_type_id}>
+    : StaticInfo_VolatileConstWrap<{volatile_const_type_id}, {type_id}> {{}};
+// volatile &
+template<>
+struct StaticInfo<{volatile_lref_type_id}>
+    : StaticInfo_VolatileLRefWrap<{volatile_lref_type_id}, {type_id}> {{}};
+// volatile &&
+template<>
+struct StaticInfo<{volatile_rref_type_id}>
+    : StaticInfo_VolatileRRefWrap<{volatile_rref_type_id}, {type_id}> {{}};
+// volatile const &
+template<>
+struct StaticInfo<{volatile_const_lref_type_id}>
+    : StaticInfo_VolatileConstLRefWrap<{volatile_const_lref_type_id}, {type_id}> {{}};
+// volatile *
+template<>
+struct StaticInfo<{volatile_ptr_type_id}>
+    : StaticInfo_VolatilePtrWrap<{volatile_ptr_type_id}, {type_id}> {{}};
+// volatile const *
+template<>
+struct StaticInfo<{volatile_const_ptr_type_id}>
+    : StaticInfo_VolatileConstPtrWrap<{volatile_const_ptr_type_id}, {type_id}> {{}};
 )fmt";
 
     constexpr auto StaticTypeInfoTemplate_Record = R"fmt(
@@ -81,6 +110,7 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsRvalueReference = false;
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
+    constexpr static bool IsVolatile = false;
     constexpr static std::size_t Size = {size};
     constexpr static std::size_t Alignment = {alignment};
 
@@ -126,6 +156,34 @@ struct StaticInfo<{ptr_type_id}>
 template<>
 struct StaticInfo<{const_ptr_type_id}>
     : StaticInfo_ConstPtrWrap<{const_ptr_type_id}, {type_id}> {{}};
+// volatile
+template<>
+struct StaticInfo<{volatile_type_id}>
+    : StaticInfo_VolatileConstPtrWrap<{volatile_type_id}, {type_id}> {{}};
+// const volatile
+template<>
+struct StaticInfo<{volatile_const_type_id}>
+    : StaticInfo_VolatileConstWrap<{volatile_const_type_id}, {type_id}> {{}};
+// volatile &
+template<>
+struct StaticInfo<{volatile_lref_type_id}>
+    : StaticInfo_VolatileLRefWrap<{volatile_lref_type_id}, {type_id}> {{}};
+// volatile &&
+template<>
+struct StaticInfo<{volatile_rref_type_id}>
+    : StaticInfo_VolatileRRefWrap<{volatile_rref_type_id}, {type_id}> {{}};
+// volatile const &
+template<>
+struct StaticInfo<{volatile_const_lref_type_id}>
+    : StaticInfo_VolatileConstLRefWrap<{volatile_const_lref_type_id}, {type_id}> {{}};
+// volatile *
+template<>
+struct StaticInfo<{volatile_ptr_type_id}>
+    : StaticInfo_VolatilePtrWrap<{volatile_ptr_type_id}, {type_id}> {{}};
+// volatile const *
+template<>
+struct StaticInfo<{volatile_const_ptr_type_id}>
+    : StaticInfo_VolatileConstPtrWrap<{volatile_const_ptr_type_id}, {type_id}> {{}};
 )fmt";
 
 }// namespace pf::meta_gen
