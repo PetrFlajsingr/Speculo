@@ -19,8 +19,14 @@ namespace pf::meta_gen {
         /**
          * Create qualified name properly, including template arguments.
          */
-        [[nodiscard]] static std::string GetProperQualifiedName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
-        [[nodiscard]] static std::string GetProperName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        [[nodiscard]] static std::string GetProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        [[nodiscard]] static std::string GetProperName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        /// Create qualified named properly, including template arguments
+        [[nodiscard]] static std::string GetProperQualifiedName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        [[nodiscard]] static std::string GetProperName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        /// Create qualified named properly, including template arguments
+        [[nodiscard]] static std::string GetProperQualifiedName(const clang::CXXConstructorDecl *decl, const clang::PrintingPolicy &printingPolicy);
+        [[nodiscard]] static std::string GetProperName(const clang::CXXConstructorDecl *decl, const clang::PrintingPolicy &printingPolicy);
     };
 
 }// namespace pf::meta_gen

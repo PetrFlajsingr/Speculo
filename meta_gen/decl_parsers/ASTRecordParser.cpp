@@ -4,8 +4,8 @@
 
 #include "ASTRecordParser.hpp"
 #include "clang/AST/RecordLayout.h"
-#include <clang/Sema/Sema.h>
 #include <clang/AST/QualTypeNames.h>
+#include <clang/Sema/Sema.h>
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -58,6 +58,7 @@ namespace pf::meta_gen {
                           GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
             if (recordDecl->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
                 spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                return std::nullopt;
             }
         }
 
@@ -207,9 +208,19 @@ namespace pf::meta_gen {
             if (clang::dyn_cast<clang::CXXConstructorDecl>(method) != nullptr) { continue; }
             if (clang::dyn_cast<clang::CXXDestructorDecl>(method) != nullptr) { continue; }
 
+            // TODO: template specializations should actually be stored
+            if (method->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+                spdlog::trace("ASTRecordParser: {} is a template specialization",
+                              GetProperQualifiedName(recordDecl, astContext.getPrintingPolicy()));
+                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
+                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                continue;
+                //}
+            }
+
             FunctionInfo functionInfo;
-            functionInfo.name = method->getNameAsString();
-            functionInfo.fullName = method->getQualifiedNameAsString();
+            functionInfo.name = GetProperName(method, printingPolicy);
+            functionInfo.fullName = GetProperQualifiedName(method, printingPolicy);
             functionInfo.isInline = method->hasInlineBody();
             functionInfo.isInlineSpecified = method->isInlineSpecified();
 
@@ -295,6 +306,17 @@ namespace pf::meta_gen {
 
         for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
             if (ctor->isDeleted()) { continue; }
+
+            // TODO: template specializations should actually be stored
+            if (ctor->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+                spdlog::trace("ASTRecordParser: {} is a template specialization",
+                              GetProperQualifiedName(ctor, astContext.getPrintingPolicy()));
+                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
+                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                continue;
+                //}
+            }
+
             if (ctor->isCopyConstructor() && ctor->isImplicit()) {
                 // Class has user declared move ctor or assign.
                 if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
@@ -459,7 +481,7 @@ namespace pf::meta_gen {
         return result;
     }
 
-    std::string ASTRecordParser::GetProperQualifiedName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
         std::string qualName = decl->getQualifiedNameAsString();
         if (auto specDecl = clang::dyn_cast<clang::ClassTemplateSpecializationDecl>(decl); specDecl != nullptr) {
             std::string argList{};
@@ -475,7 +497,7 @@ namespace pf::meta_gen {
         return qualName;
     }
 
-    std::string ASTRecordParser::GetProperName(clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+    std::string ASTRecordParser::GetProperName(const clang::CXXRecordDecl *decl, const clang::PrintingPolicy &printingPolicy) {
         std::string qualName = decl->getNameAsString();
         if (auto specDecl = clang::dyn_cast<clang::ClassTemplateSpecializationDecl>(decl); specDecl != nullptr) {
             std::string argList{};
@@ -489,6 +511,87 @@ namespace pf::meta_gen {
             qualName.append(fmt::format("<{}>", argList));
         }
         return qualName;
+    }
+
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getQualifiedNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
+                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                    argList.append(argType).append(",");
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+        return result;
+    }
+    std::string ASTRecordParser::GetProperName(const clang::CXXMethodDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                switch (templArg.getKind()) {
+                    case clang::TemplateArgument::Type: {
+                        const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                        argList.append(argType).append(",");
+                    } break;
+                    default: break;
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+
+        return result;
+    }
+    std::string ASTRecordParser::GetProperQualifiedName(const clang::CXXConstructorDecl *decl,
+                                                        const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getQualifiedNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
+                    const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                    argList.append(argType).append(",");
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+        return result;
+    }
+    std::string ASTRecordParser::GetProperName(const clang::CXXConstructorDecl *decl, const clang::PrintingPolicy &printingPolicy) {
+        std::string result = decl->getNameAsString();
+        std::string argList{};
+        if (const auto args = decl->getTemplateSpecializationArgs(); args != nullptr) {
+            for (const auto &templArg: args->asArray()) {
+                switch (templArg.getKind()) {
+                    case clang::TemplateArgument::Type: {
+                        const auto argType = templArg.getAsType().getAsString(printingPolicy);
+                        argList.append(argType).append(",");
+                    } break;
+                    default: break;
+                }
+                // TODO: value args support
+            }
+            if (!argList.empty()) {
+                argList = argList.substr(0, argList.length() - 1);
+                result.append(fmt::format("<{}>", argList));
+            }
+        }
+        return result;
     }
 
 }// namespace pf::meta_gen
