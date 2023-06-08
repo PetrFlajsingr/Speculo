@@ -12,13 +12,17 @@
 #include "generated/test2.hpp"
 
 namespace test {
+    struct C {
+        constexpr C(int) {}
+    };
     using namespace test2;
     struct SimpleStruct : public test2::DifferentFileBase {
         PF_META_GENERATED();
 
-        SimpleStruct(DifferentFileBase ) {}
-
-        void foo(DifferentFileBase &) {}
+        template<C T>
+        void templ() {}
+        template<>
+        void templ<C{10}>() {}
 
         /* unsigned int b1 : 1;
     unsigned int b2 : 2;
@@ -38,5 +42,5 @@ private:
     };
     void footadlo() {}*/
     };
-}
+}// namespace test
 PF_META_GENERATED_HEADER();
