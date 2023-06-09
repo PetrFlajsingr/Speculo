@@ -175,9 +175,9 @@ int main() {
     dfsds.test = 100;
     std::cout << "Member ptr '" << getFullName<*mbrInfo>() << "' call: " << invoke<*mbrInfo>(&dfsds) << std::endl;
 
-    constexpr auto b1 = pf::meta::members_of<PF_REFLECT(SimpleStruct)>()[1];
+    constexpr auto b1 = pf::meta::members_of<PF_REFLECT(test::SimpleStruct)>()[1];
     std::cout << pf::meta::display_name_of<b1>() << std::endl;
-    SimpleStruct s{};
+    test::SimpleStruct s{};
     auto accessor = pf::meta::create_bit_field_accessor<b1>(&s);
     std::cout << s.b1 << std::endl;
     accessor = 1;
