@@ -5,7 +5,7 @@
 #include "generated/test.hpp"
 
 
-namespace test {
+namespace pf {
     class Hoho {
         PF_META_GENERATED();
 
@@ -23,9 +23,9 @@ namespace test {
     };
     struct B2 {
         PF_META_GENERATED();
-       int value{};
-       int value2 = 10;
-       inline static int value3 = 10;
+        int value{};
+        int value2 = 10;
+        inline static int value3 = 10;
     };
     struct [[t::lala(111), t::lala(222)]] [[t::lala(333, 444)]] B3 {
         PF_META_GENERATED();
@@ -47,7 +47,8 @@ namespace test {
         A &operator=(A &&) = delete;
 
 
-        [[maybe_unused, nodiscard]] consteval int foo([[t::letadlo(dzea, dzea2)]] int dzea, [[t::yuh]] [[t::yuh2]] float A) const [[t::kjhnn]] {
+        [[maybe_unused, nodiscard]] consteval int foo([[t::letadlo(dzea, dzea2)]] int dzea, [[t::yuh]] [[t::yuh2]] float A) const
+                [[t::kjhnn]] {
             return test + dzea + A;
         }
 
@@ -139,6 +140,6 @@ namespace test {
     enum class E8 { A, B, C, D, E };
     enum class E9 { A, B, C, D, E };
 
-}// namespace pf
+}// namespace test
 
 PF_META_GENERATED_HEADER();

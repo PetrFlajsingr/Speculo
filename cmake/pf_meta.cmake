@@ -61,9 +61,9 @@ function(pf_meta_run_gen)
         set(forceArg --force)
     endif()
 
-   #pf_meta_check_fnc_arg_provided("TARGET")
-   #pf_meta_check_fnc_arg_provided("HEADERS")
-   #pf_meta_check_fnc_arg_provided("FLAGS")
+    #pf_meta_check_fnc_arg_provided("TARGET")
+    #pf_meta_check_fnc_arg_provided("HEADERS")
+    #pf_meta_check_fnc_arg_provided("FLAGS")
 
     # create a target for invoking codegen tool
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
@@ -86,14 +86,22 @@ function(pf_meta_run_gen)
         list(APPEND GENERATED_SOURCES ${GENERATED_SOURCE})
     endforeach ()
     # create a static library with generated source files
-    add_library(pf_meta_${_args_TARGET}_generated_sources STATIC ${GENERATED_SOURCES})
-    target_include_directories(pf_meta_${_args_TARGET}_generated_sources PRIVATE $<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>)
-    target_compile_options(pf_meta_${_args_TARGET}_generated_sources PRIVATE ${flags})
-    # generated source files need to wait for being generated
-    add_dependencies(pf_meta_${_args_TARGET}_generated_sources ${_args_TARGET}_generate_meta)
+    list(LENGTH GENERATED_SOURCES GEN_SOURCES_COUNT)
+    if (NOT ${GEN_SOURCES_COUNT} EQUAL 0)
+        add_library(pf_meta_${_args_TARGET}_generated_sources STATIC ${GENERATED_SOURCES})
+        target_include_directories(pf_meta_${_args_TARGET}_generated_sources PRIVATE $<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>)
+        target_compile_options(pf_meta_${_args_TARGET}_generated_sources PRIVATE ${flags})
+        # generated source files need to wait for being generated
+        add_dependencies(pf_meta_${_args_TARGET}_generated_sources ${_args_TARGET}_generate_meta)
 
-    add_dependencies(${_args_TARGET} pf_meta_${_args_TARGET}_generated_sources)
-    target_link_libraries(${_args_TARGET} PRIVATE pf_meta_${_args_TARGET}_generated_sources)
+        add_dependencies(${_args_TARGET} pf_meta_${_args_TARGET}_generated_sources)
+        get_target_property(TARGET_TYPE ${_args_TARGET} TYPE)
+        if (TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+            target_link_libraries(${_args_TARGET} INTERFACE pf_meta_${_args_TARGET}_generated_sources)
+        else()
+            target_link_libraries(${_args_TARGET} PRIVATE pf_meta_${_args_TARGET}_generated_sources)
+        endif()
+    endif ()
 endfunction()
 
 # Register target for meta generation

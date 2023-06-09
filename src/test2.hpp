@@ -19,12 +19,7 @@ namespace test {
     struct SimpleStruct : public test2::DifferentFileBase {
         PF_META_GENERATED();
 
-        template<C T>
-        void templ() {}
-        template<>
-        void templ<C{10}>() {}
-
-        /* unsigned int b1 : 1;
+         unsigned int b1 : 1;
     unsigned int b2 : 2;
     unsigned int b3 : 3;
     unsigned int b4 : 4;
@@ -40,7 +35,7 @@ private:
         PF_META_GENERATED();
         int a;
     };
-    void footadlo() {}*/
+    void footadlo() {}
     };
 }// namespace test
 PF_META_GENERATED_HEADER();
