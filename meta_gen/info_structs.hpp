@@ -178,7 +178,7 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
         std::size_t byteOffset;
         std::size_t size;
-        std::shared_ptr<struct RecordTypeInfo> typeInfo;
+        std::shared_ptr<struct RecordTypeInfo> typeInfo; // may be nullptr when the type can't be parsed for some reason
     };
 
     struct RecordTypeInfo : TypeInfo {

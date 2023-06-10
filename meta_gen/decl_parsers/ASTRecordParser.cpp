@@ -20,7 +20,6 @@ namespace pf::meta_gen {
             case clang::AS_private:
                 return Private;
             case clang::AS_none:
-                // FIXME: what to do here?
                 return Public;
         }
         assert(false && "Can't happen");
@@ -42,6 +41,10 @@ namespace pf::meta_gen {
         // not supporting templates for now
         if (recordDecl->isTemplateDecl()) {
             spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
+            return std::nullopt;
+        }
+        if (recordDecl->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+            spdlog::warn("Skipping template specialization record {}", recordDecl->getQualifiedNameAsString());
             return std::nullopt;
         }
 
@@ -461,7 +464,7 @@ namespace pf::meta_gen {
             } else {
                 auto baseTypeInfo = parse(astContext, baseRecordDecl);
                 if (!baseTypeInfo.has_value()) {
-                    spdlog::error("Error during base class parsing '{}'", baseClassInfo.fullName);
+                    spdlog::warn("Error during base class parsing '{}'", baseClassInfo.fullName);
                 } else {
                     auto baseInfo = std::move(std::get<std::shared_ptr<RecordTypeInfo>>(*baseTypeInfo));
                     getTypesCache().addRecord(baseInfo);
