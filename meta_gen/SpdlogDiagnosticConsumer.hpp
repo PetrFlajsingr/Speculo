@@ -15,10 +15,13 @@ namespace pf::meta_gen {
             if (diagLevel == clang::DiagnosticsEngine::Error || diagLevel == clang::DiagnosticsEngine::Warning) {
                 clang::SmallVector<char, 200> data;
                 info.FormatDiagnostic(data);
-                const auto file =
-                        info.getSourceManager().getFileEntryForID(info.getSourceManager().getFileID(info.getLocation()))->getName().str();
+                std::string fileName{};
+                if (const auto file = info.getSourceManager().getFileEntryForID(info.getSourceManager().getFileID(info.getLocation()));
+                    file != nullptr) {
+                    fileName = file->getName().str();
+                }
                 const auto line = info.getSourceManager().getSpellingLineNumber(info.getLocation());
-                spdlog::error("[{}:{}] {}", file, line, std::string_view{data.begin(), data.end()});
+                spdlog::error("[{}:{}] {}", fileName, line, std::string_view{data.begin(), data.end()});
             }
         }
     };
