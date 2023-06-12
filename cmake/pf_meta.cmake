@@ -73,11 +73,13 @@ function(pf_meta_run_gen)
     # tool invocation needs to wait for config creation
     add_dependencies(${_args_TARGET}_generate_meta pf_meta_generate_${_args_TARGET}_config)
 
+    get_target_property(TARGET_SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
+
     # get list of all generated cpp files
     foreach (HEADER ${_args_HEADERS})
         get_filename_component(HEADER_FILENAME ${HEADER} NAME_WLE)
         get_filename_component(HEADER_DIR ${HEADER} DIRECTORY)
-        set(GENERATED_SOURCE ${HEADER_DIR}/generated/${HEADER_FILENAME}.cpp)
+        set(GENERATED_SOURCE ${TARGET_SOURCE_DIR}/${HEADER_DIR}/generated/${HEADER_FILENAME}.cpp)
         # the file needs to be created if it does not exist
         if (NOT EXISTS ${GENERATED_SOURCE})
             file(MAKE_DIRECTORY ${HEADER_DIR}/generated)
