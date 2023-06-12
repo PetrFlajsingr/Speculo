@@ -198,6 +198,13 @@ namespace pf::meta_gen {
         bool isPolymorphic;
         bool isAbstract;
         bool isFinal;
+        bool isLiteral;
+        bool isPOD;
+        bool isStandardLayout;
+        bool isTriviallyCopyable;
+        bool isTrivial;
+        bool isEmpty;
+        bool isAggregate;
 
         bool hasPfMetaGeneratedMacro;
     };

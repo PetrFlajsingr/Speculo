@@ -265,6 +265,7 @@ int main(int argc, const char **argv) {
                 }
             }
         }
+        spdlog::info("Parsing file '{}'", config.inputSource.string());
 
         if (!includeStampsCollected) {
             const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);

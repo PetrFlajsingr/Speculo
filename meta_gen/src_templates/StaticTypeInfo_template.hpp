@@ -26,6 +26,13 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsConst = false;
     constexpr static bool IsPtr = false;
     constexpr static bool IsVolatile = false;
+    constexpr static bool IsLiteral = true;
+    constexpr static bool IsPOD = true;
+    constexpr static bool IsStandardLayout = true;
+    constexpr static bool IsTriviallyCopyable = true;
+    constexpr static bool IsTrivial = true;
+    constexpr static bool IsEmpty = false;
+    constexpr static bool IsAggregate = false;
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -123,6 +130,14 @@ struct StaticInfo<{type_id}> {{
     constexpr static bool IsPolymorphic = {is_poly};
     constexpr static bool IsAbstract = {is_abstract};
     constexpr static bool IsFinal = {is_final};
+    constexpr static bool IsLiteral = {is_literal};
+    constexpr static bool IsPOD = {is_pod};
+    constexpr static bool IsStandardLayout = {is_standard_layout};
+    constexpr static bool IsTriviallyCopyable = {is_trivially_copyable};
+    constexpr static bool IsTrivial = {is_trivial};
+    constexpr static bool IsEmpty = {is_empty};
+    constexpr static bool IsAggregate = {is_aggregate};
+
     constexpr static RangeOf<Info> auto Bases = pf::meta::details::make_array<Info>({bases});
     constexpr static RangeOf<Info> auto Constructors = pf::meta::details::make_array<Info>({ctors});
     constexpr static Info Destructor = {dtor};
