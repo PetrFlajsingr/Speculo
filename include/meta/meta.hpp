@@ -467,12 +467,42 @@ namespace pf::meta {
         using Impl = details::StaticInfo<I.id>;
         return Impl::IsVolatile;
     }
-    // TODO is_trivial_type
-    // TODO is_trivially_copyable_type
-    // TODO is_standard_layout_type
-    // TODO is_pod_type
-    // TODO is_literal_type
-    // TODO is_empty_type
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_trivial_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsTrivial;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_trivially_copyable_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsTriviallyCopyable;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_standard_layout_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsStandardLayout;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_pod_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsPOD;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_literal_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsLiteral;
+    }
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_empty_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsEmpty;
+    }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval bool is_polymorphic_type() {
@@ -491,7 +521,12 @@ namespace pf::meta {
         using Impl = details::StaticInfo<I.id>;
         return Impl::IsFinal;
     }
-    // TODO is_aggregate_type
+    template<Info I>
+        requires Type<I>
+    [[nodiscard]] consteval bool is_aggregate_type() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsAggregate;
+    }
     // TODO is_signed_type
     // TODO is_unsigned_type
     // TODO has_unique_object_representations

@@ -9,6 +9,8 @@ namespace pf {
     class Hoho {
         PF_META_GENERATED();
 
+        Hoho() {}
+
     private:
         int stan;
     };

@@ -150,6 +150,14 @@ namespace pf::meta::details {
         constexpr static bool IsRvalueReference = false;
         constexpr static bool IsConst = false;
         constexpr static bool IsPtr = false;
+        constexpr static bool IsVolatile = false;
+        constexpr static bool IsLiteral = true;
+        constexpr static bool IsPOD = true;
+        constexpr static bool IsStandardLayout = true;
+        constexpr static bool IsTriviallyCopyable = true;
+        constexpr static bool IsTrivial = true;
+        constexpr static bool IsEmpty = false;
+        constexpr static bool IsAggregate = false;
 
         constexpr static auto Name = TypeName;
         constexpr static auto FullName = FullTypeName;

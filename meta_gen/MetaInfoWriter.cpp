@@ -213,7 +213,9 @@ namespace pf::meta_gen {
                     "volatile_const_lref_type_id"_a = idToString(recordInfo.volatileConstLrefId),
                     "volatile_ptr_type_id"_a = idToString(recordInfo.volatilePtrId),
                     "volatile_const_ptr_type_id"_a = idToString(recordInfo.volatileConstPtrId), "size"_a = recordInfo.size,
-                    "alignment"_a = recordInfo.alignment));
+                    "alignment"_a = recordInfo.alignment, "is_literal"_a = recordInfo.isLiteral, "is_pod"_a = recordInfo.isPOD,
+                    "is_standard_layout"_a = recordInfo.isStandardLayout, "is_trivially_copyable"_a = recordInfo.isTriviallyCopyable,
+                    "is_trivial"_a = recordInfo.isTrivial, "is_empty"_a = recordInfo.isEmpty, "is_aggregate"_a = recordInfo.isAggregate));
 
 
             write(fmt::format(R"fmt(// Record {} static info getters
@@ -501,20 +503,20 @@ namespace pf::meta_gen {
                 const auto mbrFncType =
                         fmt::format("{return_type}({type}::*MemberPtr)({arguments})", "return_type"_a = mbrFncInfo.returnTypeName,
                                     "type"_a = recordInfo.fullName, "arguments"_a = arguments);
-                write(fmt::format(StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName,
-                                  "id"_a = idToString(mbrFncInfo.id), "details"_a = createDetailsStruct(detailsContents),
-                                  "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrFncInfo.sourceLocation.filename,
-                                  "source_line"_a = mbrFncInfo.sourceLocation.line, "source_column"_a = mbrFncInfo.sourceLocation.column,
-                                  "attributes"_a = attributesStr, "is_public"_a = mbrFncInfo.access == Access::Public,
-                                  "is_protected"_a = mbrFncInfo.access == Access::Protected,
-                                  "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
-                                  "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
-                                  "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
-                                  "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
-                                  "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
-                                  "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
-                                  "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
-                                  "is_inline_specified"_a = mbrFncInfo.isInlineSpecified));
+                write(fmt::format(
+                        StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName, "id"_a = idToString(mbrFncInfo.id),
+                        "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
+                        "source_file"_a = mbrFncInfo.sourceLocation.filename, "source_line"_a = mbrFncInfo.sourceLocation.line,
+                        "source_column"_a = mbrFncInfo.sourceLocation.column, "attributes"_a = attributesStr,
+                        "is_public"_a = mbrFncInfo.access == Access::Public, "is_protected"_a = mbrFncInfo.access == Access::Protected,
+                        "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
+                        "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
+                        "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
+                        "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
+                        "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
+                        "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
+                        "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
+                        "is_inline_specified"_a = mbrFncInfo.isInlineSpecified, "const_qualifier"_a = (mbrFncInfo.isConst ? "const" : "")));
             }
         }
 

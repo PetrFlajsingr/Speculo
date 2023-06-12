@@ -136,6 +136,13 @@ namespace pf::meta_gen {
         result->isPolymorphic = recordDecl->isPolymorphic();
         result->isAbstract = recordDecl->isAbstract();
         result->isFinal = recordDecl->isEffectivelyFinal();
+        result->isLiteral = recordDecl->isLiteral();
+        result->isPOD = recordDecl->isPOD();
+        result->isStandardLayout = recordDecl->isStandardLayout();
+        result->isTriviallyCopyable = recordDecl->isTriviallyCopyable();
+        result->isTrivial = recordDecl->isTrivial();
+        result->isEmpty = recordDecl->isEmpty();
+        result->isAggregate = recordDecl->isAggregate();
 
         // TODO: inherited?
         std::size_t previousFieldOffset = 0;
@@ -375,8 +382,8 @@ namespace pf::meta_gen {
                 argument.attributes = std::move(att.argumentAttributes[argument.name]);
                 constructorInfo.arguments.push_back(argument);
             }
-            constructorInfo.isConstexpr = ctor->isConstexpr();
-            constructorInfo.isConsteval = ctor->isConsteval();
+            constructorInfo.isConstexpr = ctor->isConstexpr() && result->isLiteral;
+            constructorInfo.isConsteval = ctor->isConsteval() && result->isLiteral;
             constructorInfo.isExplicit = ctor->isExplicit();
             constructorInfo.access = clangAccesConv(ctor->getAccess());
             constructorInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(ctor->getSourceRange().getBegin());

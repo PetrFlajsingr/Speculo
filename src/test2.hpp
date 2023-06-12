@@ -12,7 +12,25 @@
 #include "generated/test2.hpp"
 
 namespace test {
-    struct C {
+    class HashName {
+        PF_META_GENERATED();
+
+    public:
+        explicit HashName(std::string_view str) {}
+        HashName(const HashName &other) = default;
+        HashName &operator=(const HashName &other) = default;
+        HashName(HashName &&other) = default;
+        HashName &operator=(HashName &&other) = default;
+
+        [[nodiscard]] std::string_view getName() const { return {}; }
+        [[nodiscard]] int getHash() const { return hash; }
+
+        [[nodiscard]] bool operator==(const HashName &other) const { return hash == other.hash; }
+
+    private:
+        int hash;
+    };
+      struct C {
         constexpr C(int) {}
     };
     using namespace test2;
