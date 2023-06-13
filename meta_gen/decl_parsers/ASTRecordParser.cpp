@@ -297,6 +297,7 @@ namespace pf::meta_gen {
             functionInfo.isConst = method->isConst();
             functionInfo.isVirtual = method->isVirtual();
             functionInfo.isPureVirtual = method->isPure();
+            functionInfo.isNothrow = method->hasAttr<clang::NoThrowAttr>();
             functionInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(method->getSourceRange().getBegin());
             functionInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(method->getSourceRange().getBegin());
             functionInfo.sourceLocation.filename = sourceManager.getFilename(method->getSourceRange().getBegin());
@@ -394,6 +395,7 @@ namespace pf::meta_gen {
             constructorInfo.attributes = std::move(att.attributes);
             constructorInfo.isInline = ctor->hasInlineBody();
             constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
+            constructorInfo.isNothrow = ctor->hasAttr<clang::NoThrowAttr>();
 
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
@@ -424,6 +426,7 @@ namespace pf::meta_gen {
             result->destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
             result->destructor.isInline = destructor->hasInlineBody();
             result->destructor.isInlineSpecified = destructor->isInlineSpecified();
+            result->destructor.isNothrow = destructor->hasAttr<clang::NoThrowAttr>();
         } else if (recordDecl->hasSimpleDestructor()) {
             result->destructor.fullName = fmt::format("{}::~{}", result->fullName, result->name);
             result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
@@ -438,6 +441,7 @@ namespace pf::meta_gen {
             result->destructor.isPureVirtual = false;
             result->destructor.isFinal = false;
             result->destructor.isInline = false;
+            result->destructor.isNothrow = true;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {

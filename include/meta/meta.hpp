@@ -72,6 +72,12 @@ namespace pf::meta {
         return Function<I>;
     }
     // is_nothrow
+    template<Info I>
+        requires Function<I> || Constructor<I> || Destructor<I>
+    [[nodiscard]] consteval bool is_nothrow() {
+        using Impl = details::StaticInfo<I.id>;
+        return Impl::IsNothrow;
+    }
     // has_ellipsis
     template<Info I>
         requires Record<I>

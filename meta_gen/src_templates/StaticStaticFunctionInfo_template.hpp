@@ -26,6 +26,7 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsConsteval = {is_consteval};
     constexpr static bool IsInline = {is_inline};
     constexpr static bool IsInlineSpecified = {is_inline_specified};
+    constexpr static bool IsNothrow = {is_nothrow};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};
@@ -58,6 +59,7 @@ struct StaticInfo<{id}> {{
     constexpr static bool IsConsteval = {is_consteval};
     constexpr static bool IsInline = true;
     constexpr static bool IsInlineSpecified = {is_inline_specified};
+    constexpr static bool IsNothrow = {is_nothrow};
 
     constexpr static auto Name = StringLiteral{{"{name}"}};
     constexpr static auto FullName = StringLiteral{{"{full_name}"}};

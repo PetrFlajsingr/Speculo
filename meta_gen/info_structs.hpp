@@ -110,6 +110,7 @@ namespace pf::meta_gen {
         bool isMove;
         bool isInline;
         bool isInlineSpecified;
+        bool isNothrow;
     };
 
     struct DestructorInfo {
@@ -125,6 +126,7 @@ namespace pf::meta_gen {
         bool isFinal;
         bool isInline;
         bool isInlineSpecified;
+        bool isNothrow;
     };
 
     // TODO: operators separately?
@@ -146,6 +148,7 @@ namespace pf::meta_gen {
         SourceLocationInfo sourceLocation;
         bool isInline;
         bool isInlineSpecified;
+        bool isNothrow;
     };
 
     struct VariableInfo {
