@@ -71,7 +71,6 @@ namespace pf::meta {
     [[nodiscard]] consteval bool is_function() {
         return Function<I>;
     }
-    // is_nothrow
     template<Info I>
         requires Function<I> || Constructor<I> || Destructor<I>
     [[nodiscard]] consteval bool is_nothrow() {
@@ -313,7 +312,7 @@ namespace pf::meta {
     // TODO is_nonstatic_member_function_template
     // TODO is_constructor_template
     // TODO is_destructor_template
-    // TODO is_concept - almost surely unsupported
+    // TODO is_concept - unsupported
     // TODO is_specialization
     // TODO is_partial_specialization
     // TODO is_explicit_specialization
