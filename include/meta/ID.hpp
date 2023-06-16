@@ -5,6 +5,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <meta/details/meta_helpers.hpp>
 
 namespace pf::meta {
