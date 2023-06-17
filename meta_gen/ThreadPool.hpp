@@ -26,7 +26,7 @@ namespace pf::meta_gen {
 
         template<typename T>
         struct PTask : public Task {
-            explicit PTask(std::packaged_task<T()> &&task) : task(std::move(task)) {}
+            explicit PTask(std::packaged_task<T()> &&pTask) : task(std::move(pTask)) {}
             void execute() override { task(); }
             std::packaged_task<T()> task;
         };

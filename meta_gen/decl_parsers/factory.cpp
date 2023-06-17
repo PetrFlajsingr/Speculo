@@ -3,7 +3,7 @@
 //
 
 #include "factory.hpp"
-#include <clang/AST/DeclCXX.h>
+#include "../wrap/clang_ast_declcxx.hpp"
 
 #include "ASTEnumParser.hpp"
 #include "ASTRecordParser.hpp"

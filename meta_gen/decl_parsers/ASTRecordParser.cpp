@@ -3,9 +3,9 @@
 //
 
 #include "ASTRecordParser.hpp"
-#include "clang/AST/RecordLayout.h"
-#include <clang/AST/QualTypeNames.h>
-#include <clang/Sema/Sema.h>
+#include "../wrap/clang_ast_recordlayout.hpp"
+#include "../wrap/clang_ast_qualtypenames.hpp"
+#include "../wrap/clang_sema_sema.hpp"
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -212,11 +212,11 @@ namespace pf::meta_gen {
         const auto mangleFunction = [](std::string_view fullName,
                                        meta::details::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames,
                                        bool isConst) {
-            std::string result{fullName};
+            std::string mangledName{fullName};
             for (const auto &[type, name]: argumentTypesAndNames) {
-                result.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
+                mangledName.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
             }
-            return result;
+            return mangledName;
         };
 
         // TODO: this does not enumerate templated, investigate

@@ -7,7 +7,7 @@
 #include "IdGenerator.hpp"
 
 #include "decl_parsers/factory.hpp"
-#include <clang/Frontend/CompilerInstance.h>
+#include "wrap/clang_frontend_compilerinstance.hpp"
 
 namespace pf::meta_gen {
 

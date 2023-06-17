@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include <llvm/Support/raw_ostream.h>
-
 #include "IdGenerator.hpp"
 #include "info_structs.hpp"
 #include <meta/details/RangeOf.hpp>
+#include <algorithm>
 
 
 namespace pf::meta_gen {

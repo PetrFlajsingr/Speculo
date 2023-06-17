@@ -11,7 +11,7 @@
 #include "IdGenerator.hpp"
 #include "ParsedTypesCache.hpp"
 #include "SourceConfig.hpp"
-#include "clang_tooling_wrap.hpp"
+#include "wrap/clang_tooling.hpp"
 #include "info_structs.hpp"
 
 namespace pf::meta_gen {
