@@ -29,7 +29,8 @@ else ()
     list(APPEND flags "-fconcepts" "-fconcepts-diagnostics-depth=10" "-Werror=return-type" "-fcoroutines"
             "-Wall" "-Wextra" "-Werror" "-Wpedantic" "-Wno-unknown-pragmas" "-Wno-unused-function" "-fno-rtti"
             "-Wpointer-arith" "-Wno-cast-qual" "-Wno-type-limits" "-fno-strict-aliasing" "-Wno-format-security"
-            "-Wshadow" "-Wno-attributes")
+            "-Wshadow" "-Wno-attributes"
+            "-fuse-ld=mold")
     list(APPEND test_flags "-fconcepts" "-fconcepts-diagnostics-depth=10" "-Wno-attributes")
 endif ()
 

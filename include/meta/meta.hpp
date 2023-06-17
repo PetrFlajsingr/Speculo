@@ -631,7 +631,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval Info remove_const() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::remove_const_t<typename Impl::Type>>();
+        return details::getTypeId<std::remove_const_t<typename Impl::Type>>();
     }
     // TODO remove_volatile
     // TODO remove_cv
@@ -639,7 +639,7 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval Info add_const() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::add_const_t<typename Impl::Type>>();
+        return details::getTypeId<std::add_const_t<typename Impl::Type>>();
     }
     // TODO add_volatile
     // TODO add_cv
@@ -647,38 +647,38 @@ namespace pf::meta {
         requires Type<I>
     [[nodiscard]] consteval Info remove_reference() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::remove_reference_t<typename Impl::Type>>();
+        return details::getTypeId<std::remove_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_lvalue_reference() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::add_lvalue_reference_t<typename Impl::Type>>();
+        return details::getTypeId<std::add_lvalue_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_rvalue_reference() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::add_rvalue_reference_t<typename Impl::Type>>();
+        return details::getTypeId<std::add_rvalue_reference_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info remove_pointer() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::remove_pointer_t<typename Impl::Type>>();
+        return details::getTypeId<std::remove_pointer_t<typename Impl::Type>>();
     }
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info add_pointer() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::add_pointer_t<typename Impl::Type>>();
+        return details::getTypeId<std::add_pointer_t<typename Impl::Type>>();
     }
     // TODO remove_cvref
     template<Info I>
         requires Type<I>
     [[nodiscard]] consteval Info decay() {
         using Impl = details::StaticInfo<I.id>;
-        return getTypeId<std::decay_t<typename Impl::Type>>();
+        return details::getTypeId<std::decay_t<typename Impl::Type>>();
     }
     // TODO make_signed
     // TODO make_unsigned
