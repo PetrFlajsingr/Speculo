@@ -16,7 +16,7 @@ namespace pf {
     };
 
     enum class [[pf::no_sti]] Hihi {};
-    enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a', [][][] :: : 3214234... [][][][]),
+    enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a'),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{
             Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 

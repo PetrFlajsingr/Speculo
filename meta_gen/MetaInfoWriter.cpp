@@ -354,7 +354,8 @@ namespace pf::meta_gen {
                               "is_copy"_a = ctorInfo.isCopy, "is_move"_a = ctorInfo.isMove, "name"_a = recordInfo.name,
                               "is_constexpr"_a = ctorInfo.isConstexpr, "is_consteval"_a = ctorInfo.isConsteval,
                               "arguments"_a = idsToStringMakeArray(ctorInfo.arguments), "ctor_wraps"_a = lambdaWraps,
-                              "is_inline"_a = ctorInfo.isInline, "is_inline_specified"_a = ctorInfo.isInlineSpecified));
+                              "is_inline"_a = ctorInfo.isInline, "is_inline_specified"_a = ctorInfo.isInlineSpecified,
+                              "is_nothrow"_a = ctorInfo.isNothrow));
         }
 
         {
@@ -399,7 +400,8 @@ namespace pf::meta_gen {
                                   "is_consteval"_a = destructor.isConsteval, "is_virtual"_a = destructor.isVirtual,
                                   "is_pure_virtual"_a = destructor.isPureVirtual, "is_final"_a = destructor.isFinal,
                                   "name"_a = fmt::format("~{}", recordInfo.name), "is_inline"_a = destructor.isInline,
-                                  "is_inline_specified"_a = destructor.isInlineSpecified, "dtor_wrap_lambda"_a = wrapLambdaStr));
+                                  "is_inline_specified"_a = destructor.isInlineSpecified, "dtor_wrap_lambda"_a = wrapLambdaStr,
+                                  "is_nothrow"_a = destructor.isNothrow));
             }
         }
 
@@ -498,25 +500,27 @@ namespace pf::meta_gen {
                                   "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
                                   "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "consteval_wrap"_a = constevalWrapStr,
-                                  "member"_a = mbrFncInfo.fullName, "is_inline_specified"_a = mbrFncInfo.isInlineSpecified));
+                                  "member"_a = mbrFncInfo.fullName, "is_inline_specified"_a = mbrFncInfo.isInlineSpecified,
+                                  "is_nothrow"_a = mbrFncInfo.isNothrow));
             } else {
                 const auto mbrFncType =
                         fmt::format("{return_type}({type}::*MemberPtr)({arguments})", "return_type"_a = mbrFncInfo.returnTypeName,
                                     "type"_a = recordInfo.fullName, "arguments"_a = arguments);
-                write(fmt::format(
-                        StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName, "id"_a = idToString(mbrFncInfo.id),
-                        "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(recordInfo.id),
-                        "source_file"_a = mbrFncInfo.sourceLocation.filename, "source_line"_a = mbrFncInfo.sourceLocation.line,
-                        "source_column"_a = mbrFncInfo.sourceLocation.column, "attributes"_a = attributesStr,
-                        "is_public"_a = mbrFncInfo.access == Access::Public, "is_protected"_a = mbrFncInfo.access == Access::Protected,
-                        "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
-                        "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
-                        "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
-                        "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
-                        "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
-                        "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
-                        "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
-                        "is_inline_specified"_a = mbrFncInfo.isInlineSpecified, "const_qualifier"_a = (mbrFncInfo.isConst ? "const" : "")));
+                write(fmt::format(StaticTypeInfoTemplate_MemberFunction, "full_name"_a = mbrFncInfo.fullName,
+                                  "id"_a = idToString(mbrFncInfo.id), "details"_a = createDetailsStruct(detailsContents),
+                                  "type_id"_a = idToString(recordInfo.id), "source_file"_a = mbrFncInfo.sourceLocation.filename,
+                                  "source_line"_a = mbrFncInfo.sourceLocation.line, "source_column"_a = mbrFncInfo.sourceLocation.column,
+                                  "attributes"_a = attributesStr, "is_public"_a = mbrFncInfo.access == Access::Public,
+                                  "is_protected"_a = mbrFncInfo.access == Access::Protected,
+                                  "is_private"_a = mbrFncInfo.access == Access::Private, "name"_a = mbrFncInfo.name,
+                                  "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
+                                  "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
+                                  "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
+                                  "return_type_id"_a = idToString(mbrFncInfo.returnTypeId),
+                                  "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
+                                  "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
+                                  "is_inline_specified"_a = mbrFncInfo.isInlineSpecified,
+                                  "const_qualifier"_a = (mbrFncInfo.isConst ? "const" : ""), "is_nothrow"_a = mbrFncInfo.isNothrow));
             }
         }
 
@@ -659,7 +663,7 @@ namespace pf::meta_gen {
                                   "return_type_id"_a = idToString(statFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
                                   "member"_a = statFncInfo.fullName, "consteval_wrap"_a = constevalWrapStr,
-                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified));
+                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified, "is_nothrow"_a = statFncInfo.isNothrow));
             } else {
                 write(fmt::format(StaticTypeInfoTemplate_StaticFunction, "full_name"_a = statFncInfo.fullName,
                                   "id"_a = idToString(statFncInfo.id), "details"_a = createDetailsStruct(detailsContents),
@@ -672,7 +676,7 @@ namespace pf::meta_gen {
                                   "return_type_id"_a = idToString(statFncInfo.returnTypeId),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
                                   "member"_a = statFncInfo.fullName, "is_inline"_a = statFncInfo.isInline,
-                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified));
+                                  "is_inline_specified"_a = statFncInfo.isInlineSpecified, "is_nothrow"_a = statFncInfo.isNothrow));
             }
         }
 

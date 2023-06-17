@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "clang/Basic/Diagnostic.h"
+#include "wrap/clang_basic_diagnostic.hpp"
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {

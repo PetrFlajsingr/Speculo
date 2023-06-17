@@ -6,12 +6,12 @@
 #include "meta_gen/AttributeParser.hpp"
 #include "meta_gen/IdGenerator.hpp"
 #include "meta_gen/IncludeCollector.hpp"
-#include "meta_gen/clang_tooling_compilationdatabase_wrap.hpp"
+#include "meta_gen/wrap/clang_tooling_compilationdatabase.hpp"
 #include "meta_gen/info_structs.hpp"
 
 #include "format.hpp"
 #include "meta_gen/AstActions.hpp"
-#include <clang/Tooling/CommonOptionsParser.h>
+#include "meta_gen/wrap/clang_tooling_commonoptionsparser.hpp"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -20,7 +20,7 @@
 #include "meta_gen/SourceConfig.hpp"
 #include "meta_gen/ThreadPool.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
-#include "clang/Lex/PreprocessorOptions.h"
+#include "meta_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),

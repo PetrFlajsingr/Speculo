@@ -3,9 +3,9 @@
 //
 
 #include "ASTRecordParser.hpp"
-#include "clang/AST/RecordLayout.h"
-#include <clang/AST/QualTypeNames.h>
-#include <clang/Sema/Sema.h>
+#include "../wrap/clang_ast_recordlayout.hpp"
+#include "../wrap/clang_ast_qualtypenames.hpp"
+#include "../wrap/clang_sema_sema.hpp"
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {
@@ -212,11 +212,11 @@ namespace pf::meta_gen {
         const auto mangleFunction = [](std::string_view fullName,
                                        meta::details::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames,
                                        bool isConst) {
-            std::string result{fullName};
+            std::string mangledName{fullName};
             for (const auto &[type, name]: argumentTypesAndNames) {
-                result.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
+                mangledName.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
             }
-            return result;
+            return mangledName;
         };
 
         // TODO: this does not enumerate templated, investigate
@@ -297,6 +297,7 @@ namespace pf::meta_gen {
             functionInfo.isConst = method->isConst();
             functionInfo.isVirtual = method->isVirtual();
             functionInfo.isPureVirtual = method->isPure();
+            functionInfo.isNothrow = method->hasAttr<clang::NoThrowAttr>();
             functionInfo.sourceLocation.line = sourceManager.getPresumedLineNumber(method->getSourceRange().getBegin());
             functionInfo.sourceLocation.column = sourceManager.getPresumedColumnNumber(method->getSourceRange().getBegin());
             functionInfo.sourceLocation.filename = sourceManager.getFilename(method->getSourceRange().getBegin());
@@ -394,6 +395,7 @@ namespace pf::meta_gen {
             constructorInfo.attributes = std::move(att.attributes);
             constructorInfo.isInline = ctor->hasInlineBody();
             constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
+            constructorInfo.isNothrow = ctor->hasAttr<clang::NoThrowAttr>();
 
             const auto mangledName = mangleFunction(constructorInfo.fullName,
                                                     constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
@@ -424,6 +426,7 @@ namespace pf::meta_gen {
             result->destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
             result->destructor.isInline = destructor->hasInlineBody();
             result->destructor.isInlineSpecified = destructor->isInlineSpecified();
+            result->destructor.isNothrow = destructor->hasAttr<clang::NoThrowAttr>();
         } else if (recordDecl->hasSimpleDestructor()) {
             result->destructor.fullName = fmt::format("{}::~{}", result->fullName, result->name);
             result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
@@ -438,6 +441,7 @@ namespace pf::meta_gen {
             result->destructor.isPureVirtual = false;
             result->destructor.isFinal = false;
             result->destructor.isInline = false;
+            result->destructor.isNothrow = true;
         }
 
         const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {

@@ -8,6 +8,7 @@
 #include "src/meta/test2.hpp"
 #include <optional>
 #include <vector>
+#include <functional>
 
 #include "meta/enums.hpp"
 #include "meta/reflect.hpp"

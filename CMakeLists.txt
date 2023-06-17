@@ -11,8 +11,11 @@ set(CMAKE_CXX_STANDARD 20)
 # global variables
 # allows for using the project as subdirectory
 if (NOT DEFINED PF_META_GEN_EXE_PATH)
-    # FIXME: windows exe only for now
-    set(PF_META_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_EXE_PATH")
+    if (WIN32)
+        set(PF_META_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen.exe CACHE INTERNAL "PF_META_GEN_EXE_PATH")
+    else()
+        set(PF_META_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/pf_meta_gen CACHE INTERNAL "PF_META_GEN_EXE_PATH")
+    endif ()
 endif ()
 
 if (NOT DEFINED PF_META_GEN_SCRIPTS_PATH)
@@ -24,9 +27,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND test_flags "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030" "/wd5222")
 else ()
     list(APPEND flags "-fconcepts" "-fconcepts-diagnostics-depth=10" "-Werror=return-type" "-fcoroutines"
-            "-Wall" "-Wextra" "-Werror" "-Wpedantic" "-Wno-unknown-pragmas" "-Wno-unused-function"
-            "-Wpointer-arith" "-Wno-cast-qual" "-Wno-type-limits" "-fno-strict-aliasing" "-Wno-format-security" "-Wshadow")
-    list(APPEND test_flags "-fconcepts" "-fconcepts-diagnostics-depth=10")
+            "-Wall" "-Wextra" "-Werror" "-Wpedantic" "-Wno-unknown-pragmas" "-Wno-unused-function" "-fno-rtti"
+            "-Wpointer-arith" "-Wno-cast-qual" "-Wno-type-limits" "-fno-strict-aliasing" "-Wno-format-security"
+            "-Wshadow" "-Wno-attributes"
+            "-fuse-ld=mold")
+    list(APPEND test_flags "-fconcepts" "-fconcepts-diagnostics-depth=10" "-Wno-attributes")
 endif ()
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -83,8 +88,9 @@ include(AddLLVM)
 target_include_directories(pf_meta_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_link_libraries(pf_meta_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
 target_link_libraries(pf_meta_gen PRIVATE stduuid pf_meta::pf_meta)
-# FIXME: only on win
+if (WIN32)
 target_link_libraries(pf_meta_gen PRIVATE synchronization.lib)
+endif()
 target_compile_options(pf_meta_gen PRIVATE ${flags})
 
 

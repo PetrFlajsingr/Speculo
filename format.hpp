@@ -5,12 +5,8 @@
 #ifndef PF_META_FORMAT_H
 #define PF_META_FORMAT_H
 
-#include <boost/config.hpp>
+#include "meta_gen/wrap/SilenceWarningsStart.hpp"
 
-#if defined(BOOST_GCC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-#endif
 #include <clang/Basic/Diagnostic.h>
 #include <clang/Basic/DiagnosticOptions.h>
 #include <clang/Basic/FileManager.h>
@@ -24,9 +20,7 @@
 #include <llvm/Support/InitLLVM.h>
 #include <llvm/Support/Process.h>
 
-#if defined(BOOST_GCC)
-#pragma GCC diagnostic pop
-#endif
+#include "meta_gen/wrap/SilenceWarningsEnd.hpp"
 
 inline const char *getInValidBOM(llvm::StringRef BufStr) {
     // Check to see if the buffer has a UTF Byte Order Mark (BOM).

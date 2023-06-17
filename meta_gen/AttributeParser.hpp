@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "clang_tooling_wrap.hpp"
+#include "wrap/clang_tooling.hpp"
 
 #include "info_structs.hpp"
-#include <clang/Frontend/CompilerInstance.h>
-#include <clang/Tooling/Syntax/Tokens.h>
+#include "wrap/clang_frontend_compilerinstance.hpp"
+#include "wrap/clang_tooling_syntax_tokens.hpp"
 #include <flat/flat_map.hpp>
 
 #include <meta/details/RangeOf.hpp>

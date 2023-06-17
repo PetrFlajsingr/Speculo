@@ -5,7 +5,7 @@
 #include "../AttributeParser.hpp"
 #include "ASTEnumParser.hpp"
 
-#include <clang/AST/QualTypeNames.h>
+#include "../wrap/clang_ast_qualtypenames.hpp"
 #include <spdlog/spdlog.h>
 
 namespace pf::meta_gen {

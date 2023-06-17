@@ -10,12 +10,12 @@
 #include "IdGenerator.hpp"
 #include "MetaInfoWriter.hpp"
 #include "SourceConfig.hpp"
-#include "clang_tooling_wrap.hpp"
+#include "wrap/clang_tooling.hpp"
 #include "codegen/MetaSupportCodeGenerator.hpp"
 #include "info_structs.hpp"
 
-#include <clang/Frontend/CompilerInstance.h>
-#include <clang/Tooling/Syntax/Tokens.h>
+#include "wrap/clang_frontend_compilerinstance.hpp"
+#include "wrap/clang_tooling_syntax_tokens.hpp"
 #include "SpdlogDiagnosticConsumer.hpp"
 
 namespace pf::meta_gen {

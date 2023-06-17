@@ -8,8 +8,8 @@
 #include <spdlog/spdlog.h>
 
 #include "clang_utils.hpp"
-#include "clang/AST/RecursiveASTVisitor.h"
-#include "clang/Lex/PreprocessorOptions.h"
+#include "wrap/clang_ast_recursiveASTVisitor.hpp"
+#include "wrap/clang_lex_PreprocessorOptions.hpp"
 #include <flat/flat_map.hpp>
 
 #include "Contains.hpp"
@@ -646,9 +646,9 @@ namespace pf::meta_gen {
         std::vector<Attribute> result{};
         result.reserve(duplicates.size());
         std::ranges::transform(duplicates, std::back_inserter(result), [&](const auto &v) {
-            const auto &attrs = v.second;
-            auto minAttr = *attrs.front();
-            std::ranges::for_each(attrs.begin() + 1, attrs.end(),
+            const auto &attributes = v.second;
+            auto minAttr = *attributes.front();
+            std::ranges::for_each(attributes.begin() + 1, attributes.end(),
                                   [&](const auto attr) { std::ranges::move(attr->arguments, std::back_inserter(minAttr.arguments)); });
             std::ranges::sort(minAttr.arguments);
             const auto uniqueRes = std::ranges::unique(minAttr.arguments);

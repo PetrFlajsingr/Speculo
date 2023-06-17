@@ -2,10 +2,10 @@
 #include "IncludeCollector.hpp"
 #include "fmt/format.h"
 
-#include <clang/Frontend/CompilerInstance.h>
-#include <clang/Frontend/FrontendActions.h>
-#include <clang/Tooling/CompilationDatabase.h>
-#include <clang/Tooling/Tooling.h>
+#include "wrap/clang_frontend_compilerinstance.hpp"
+#include "wrap/clang_frontend_frontendactions.hpp"
+#include "wrap/clang_tooling_compilationdatabase.hpp"
+#include "wrap/clang_tooling.hpp"
 
 namespace pf::meta_gen {
     class IgnoreDiagnosticConsumer : public clang::DiagnosticConsumer {
@@ -15,8 +15,9 @@ namespace pf::meta_gen {
 
     class IncludeSearchCallback : public clang::PPCallbacks {
     public:
-        IncludeSearchCallback(const std::vector<std::filesystem::path> &ignoredPaths, std::vector<std::filesystem::path> &o)
-            : ignoredPaths{ignoredPaths}, output{o} {}
+
+        IncludeSearchCallback(const std::vector<std::filesystem::path> &pathsToIgnore, std::vector<std::filesystem::path> &o)
+            : ignoredPaths{pathsToIgnore}, output{o} {}
 
         void InclusionDirective(clang::SourceLocation HashLoc, const clang::Token &IncludeTok, clang::StringRef FileName, bool IsAngled,
                                 clang::CharSourceRange FilenameRange, clang::OptionalFileEntryRef File, clang::StringRef SearchPath,
@@ -59,7 +60,7 @@ namespace pf::meta_gen {
 
     class IncludeSearchActionFactory : public clang::tooling::FrontendActionFactory {
     public:
-        explicit IncludeSearchActionFactory(const std::vector<std::filesystem::path> &ignoredPaths) : ignoredPaths(ignoredPaths) {}
+        explicit IncludeSearchActionFactory(const std::vector<std::filesystem::path> &pathsToIgnore) : ignoredPaths(pathsToIgnore) {}
         std::unique_ptr<clang::FrontendAction> create() override { return std::make_unique<IncludeSearchAction>(ignoredPaths, output); }
 
         std::vector<std::filesystem::path> ignoredPaths;
