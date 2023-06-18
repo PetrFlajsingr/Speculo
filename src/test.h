@@ -7,7 +7,7 @@
 
 namespace pf {
     class Hoho {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
 
         Hoho() {}
 
@@ -21,20 +21,20 @@ namespace pf {
             Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 
     struct [[pf::no_sti]] B1 {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
     };
     struct B2 {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
         int value{};
         int value2 = 10;
         inline static int value3 = 10;
     };
     struct [[t::lala(111), t::lala(222)]] [[t::lala(333, 444)]] B3 {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
     };
 
     struct [[nodiscard]] [[t::first]] [[t::second, t::third]] A : B1, B2, private B3 {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
 
         constexpr A() : test{0} {}
 
@@ -80,7 +80,7 @@ namespace pf {
     };
 
     struct B {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
         virtual ~B() = default;
 
         virtual void pure_foo(int a) = 0;
@@ -89,7 +89,7 @@ namespace pf {
     };
 
     struct Test : public A, protected B {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
 
     public:
         Test() = default;
@@ -144,4 +144,4 @@ namespace pf {
 
 }// namespace test
 
-PF_META_GENERATED_HEADER();
+PF_META_GENERATED_HEADER()
