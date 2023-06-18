@@ -144,4 +144,4 @@ namespace pf {
 
 }// namespace test
 
-PF_META_GENERATED_HEADER();
+PF_META_GENERATED_HEADER()
