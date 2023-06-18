@@ -3,14 +3,25 @@ from argparse import ArgumentParser
 import json
 from pathlib import Path
 
+
+def flatten_list(lst) -> list:
+    result = []
+    for item in lst:
+        if isinstance(item, list):
+            result.extend(flatten_list(item))
+        else:
+            result.append(item)
+    return result
+
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-p', '--projectname', required=True)
     parser.add_argument('-r', '--projectroot', required=True)
     parser.add_argument('-o', '--outputdir', required=True)
-    parser.add_argument('-I', '--includepaths', nargs='*', default=[])
-    parser.add_argument('-H', '--headerfiles', nargs='*', default=[])
-    parser.add_argument('-D', '--defines', nargs='*', default=[])
+    parser.add_argument('-I', '--includepaths', action='append', nargs='*', default=[])
+    parser.add_argument('-H', '--headerfiles', action='append', nargs='*', default=[])
+    parser.add_argument('-D', '--defines', action='append', nargs='*', default=[])
     parser.add_argument('-f', '--compilerflags', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -21,10 +32,10 @@ if __name__ == '__main__':
     if args.compilerflags is None:
         args.compilerflags = []
 
-    include_paths = list(set(args.includepaths))
+    include_paths = list(set(flatten_list(args.includepaths)))
+    defines = list(set(flatten_list(args.defines)))
+    header_paths = list(set(flatten_list(args.headerfiles)))
     compiler_flags = list(set(args.compilerflags))
-    defines = list(set(args.defines))
-    header_paths = list(set(args.headerfiles))
 
     include_paths.sort()
     compiler_flags.sort()
