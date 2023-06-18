@@ -114,13 +114,6 @@ namespace pf::meta_gen {
         bool pfMetaGeneratedMacroFound = false;
         if (auto pos = result->originalCode.find(metaGenMacro); pos != std::string::npos) {
             pos += metaGenMacro.size();
-            if (result->originalCode[pos] != ';') {
-                spdlog::error("Class {} Contains 'PF_META_GENERATED()', but it's missing a semicolon at the end, preventing proper "
-                              "parsing, please provide it 'PF_META_GENERATED();'",
-                              result->fullName);
-                spdlog::error("Skipping parsing of {} due to the above provided reason", result->fullName);
-                return std::nullopt;
-            }
             pfMetaGeneratedMacroFound = true;
         }
 

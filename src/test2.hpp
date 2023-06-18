@@ -13,7 +13,7 @@
 
 namespace test {
     class HashName {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
 
     public:
         explicit HashName(std::string_view str) {}
@@ -35,7 +35,7 @@ namespace test {
     };
     using namespace test2;
     struct SimpleStruct : public test2::DifferentFileBase {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
 
          unsigned int b1 : 1;
     unsigned int b2 : 2;
@@ -44,16 +44,16 @@ namespace test {
     unsigned int b5 : 5;
 
     struct NestedPublic {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
         int a;
     };
 
 private:
     struct NestedPrivate {
-        PF_META_GENERATED();
+        PF_META_GENERATED()
         int a;
     };
     void footadlo() {}
     };
 }// namespace test
-PF_META_GENERATED_HEADER();
+PF_META_GENERATED_HEADER()
