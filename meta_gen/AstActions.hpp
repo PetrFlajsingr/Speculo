@@ -38,7 +38,7 @@ namespace pf::meta_gen {
         explicit ASTAction(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen) : config{c}, idGenerator(std::move(idGen)) {}
 
         std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
-            Compiler.getDiagnostics().setClient(new SpdlogDiagnosticConsumer{});
+           // Compiler.getDiagnostics().setClient(new SpdlogDiagnosticConsumer{});
             return std::make_unique<ASTConsumer>(config, idGenerator, this);
         };
 

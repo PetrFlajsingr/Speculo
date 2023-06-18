@@ -33,6 +33,7 @@ function(pf_meta_create_config)
             -p ${_args_TARGET}
             -r ${SOURCE_DIR}
             -o ${BINARY_DIR}
+            -I ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}
             -I "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>,$<SEMICOLON>>"
             -H ${_args_HEADERS}
             -D "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},COMPILE_DEFINITIONS>,$<SEMICOLON>>"
