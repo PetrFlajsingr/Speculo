@@ -82,7 +82,7 @@ function(pf_meta_run_gen)
         set(GENERATED_SOURCE ${TARGET_SOURCE_DIR}/${HEADER_DIR}/generated/${HEADER_FILENAME}.cpp)
         # the file needs to be created if it does not exist
         if (NOT EXISTS ${GENERATED_SOURCE})
-            file(MAKE_DIRECTORY ${HEADER_DIR}/generated)
+            file(MAKE_DIRECTORY ${TARGET_SOURCE_DIR}/${HEADER_DIR}/generated)
             file(TOUCH ${GENERATED_SOURCE})
         endif ()
         list(APPEND GENERATED_SOURCES ${GENERATED_SOURCE})
