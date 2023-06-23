@@ -19,29 +19,10 @@ namespace pf::meta_gen {
 
         ASTParser astParser{config, idGenerator,
                             std::make_shared<AttributeParser>(context, std::move(parent->getTokenCollector()).consume())};
-        const auto infos = astParser.parse(context);
+        auto infos = astParser.parse(context);
 
         {
-            spdlog::trace("Writing meta info to {}", config->outputMetaHeader.string());
-
-            std::ofstream outStream;
-            outStream.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-
-            try {
-                outStream.open(config->outputMetaHeader);
-            } catch (const std::system_error &e) {
-                spdlog::error("Failed to open output file: {}", e.code().message());
-                return;
-            }
-
-            auto metaWriter = MetaInfoWriter{outStream, idGenerator};
-            metaWriter.write(fmt::format(MetaFilePrologue,
-                                         "relative_include_path"_a = fmt::format("../{}", config->inputProjectPath.filename().string())));
-            for (const auto &info: infos) { metaWriter.write(info); }
-            metaWriter.write(MetaFileEpilogue);
-        }
-
-        {
+            std::vector<TypeInfoVariant> generatedTypes;
 
             std::ofstream outStreamHpp;
             outStreamHpp.exceptions(std::ofstream::failbit | std::ofstream::badbit);
@@ -62,13 +43,6 @@ namespace pf::meta_gen {
                 return;
             }
 
-            std::error_code errorCode;
-            auto codeGenOutStream = std::make_shared<llvm::raw_fd_ostream>(config->outputCodegenHeader.string(), errorCode,
-                                                                           llvm::sys::fs::OpenFlags::OF_Text);
-            if (errorCode) {
-                spdlog::error("Failed to open output file: {}", errorCode.message());
-                return;
-            }
             PluginManager pluginManager{std::filesystem::current_path() / "plugins"};
 
             spdlog::trace("Writing generated code to {} and {}", config->outputCodegenHeader.string(),
@@ -99,17 +73,18 @@ namespace pf::meta_gen {
                 std::visit(Visitor{[&](const std::shared_ptr<RecordTypeInfo> &recordInfo) {
                                        if (!recordInfo->hasPfMetaGeneratedMacro) { return; }
                                        std::size_t generatedMacroLineOffset{};
-                                       if (const auto pos = recordInfo->originalCode.find("PF_META_GENERATED()"); pos != std::string::npos) {
+                                       if (const auto pos = recordInfo->originalCode.find("PF_META_GENERATED()");
+                                           pos != std::string::npos) {
                                            for (auto i = 0ull; i < pos; ++i) {
                                                if (recordInfo->originalCode[i] == '\n') { ++generatedMacroLineOffset; }
                                            }
                                        }
                                        generatedMacroLineOffset += recordInfo->sourceLocation.line;
                                        generatedMacros.emplace(recordInfo.get(), std::pair<std::string, std::string>{
-                                                                                   fmt::format(generatedMacroNameTemplate,
-                                                                                               "line"_a = generatedMacroLineOffset,
-                                                                                               "file_id"_a = hppFileUUIDstr),
-                                                                                   ""});
+                                                                                         fmt::format(generatedMacroNameTemplate,
+                                                                                                     "line"_a = generatedMacroLineOffset,
+                                                                                                     "file_id"_a = hppFileUUIDstr),
+                                                                                         ""});
                                    },
                                    [&](const auto &) {}},
                            info);
@@ -152,6 +127,9 @@ namespace pf::meta_gen {
                                            // add \ to new lines, because it's generated into a macro body
                                            replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                            headerMacroBody.append(genCode.headerBodyCode);
+
+                                           generatedTypes.reserve(generatedTypes.size() + genCode.generatedTypes.size());
+                                           std::ranges::move(genCode.generatedTypes, std::back_inserter(generatedTypes));
                                        },
                                        [&](const std::shared_ptr<EnumTypeInfo> &enumInfo) {
                                            auto genCode = codeGenerator->generate(*enumInfo);
@@ -160,6 +138,9 @@ namespace pf::meta_gen {
                                            // add \ to new lines, because it's generated into a macro body
                                            replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                            headerMacroBody.append(genCode.headerBodyCode);
+
+                                           generatedTypes.reserve(generatedTypes.size() + genCode.generatedTypes.size());
+                                           std::ranges::move(genCode.generatedTypes, std::back_inserter(generatedTypes));
                                        }},
                                info);
                 });
@@ -185,6 +166,29 @@ namespace pf::meta_gen {
                 const auto macro = fmt::format(R"(#define {} {})", macroName, macroBody);
                 outStreamHpp << macro << "\n\n";
             });
+
+            // meta/<filename>.hpp
+            {
+                infos.reserve(infos.size() + generatedTypes.size());
+                std::ranges::move(generatedTypes, std::back_inserter(infos));
+                spdlog::trace("Writing meta info to {}", config->outputMetaHeader.string());
+
+                std::ofstream outStream;
+                outStream.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+                try {
+                    outStream.open(config->outputMetaHeader);
+                } catch (const std::system_error &e) {
+                    spdlog::error("Failed to open output file: {}", e.code().message());
+                    return;
+                }
+
+                auto metaWriter = MetaInfoWriter{outStream, idGenerator};
+                metaWriter.write(fmt::format(MetaFilePrologue, "relative_include_path"_a =
+                                                                       fmt::format("../{}", config->inputProjectPath.filename().string())));
+                for (const auto &info: infos) { metaWriter.write(info); }
+                metaWriter.write(MetaFileEpilogue);
+            }
         }
     }
 

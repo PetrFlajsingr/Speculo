@@ -23,7 +23,7 @@ namespace pf::meta_gen {
 
     uint64_t MetaSupportCodeGenerator::getPriority() const { return 1; }
 
-    RecordGenerationResult MetaSupportCodeGenerator::generate(const RecordTypeInfo &typeInfo) {
+    RecordGenerationResult MetaSupportCodeGenerator::generate(RecordTypeInfo &typeInfo) {
         RecordGenerationResult result{};
 
         std::string friendDeclarations;
