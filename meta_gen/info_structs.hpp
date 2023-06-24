@@ -38,8 +38,8 @@ namespace pf::meta_gen {
     };
 
     struct SourceLocationInfo {
-        unsigned int line;
-        unsigned int column;
+        std::uint32_t line;
+        std::uint32_t column;
         std::string filename;
     };
 
@@ -69,6 +69,8 @@ namespace pf::meta_gen {
 
         std::string originalCode;
     };
+
+    struct IncompleteTypeInfo : TypeInfo {};
 
     struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
@@ -212,6 +214,6 @@ namespace pf::meta_gen {
         bool hasPfMetaGeneratedMacro;
     };
 
-    using TypeInfoVariant = std::variant<std::shared_ptr<EnumTypeInfo>, std::shared_ptr<RecordTypeInfo>>;
+    using TypeInfoVariant = std::variant<std::shared_ptr<EnumTypeInfo>, std::shared_ptr<RecordTypeInfo>, std::shared_ptr<IncompleteTypeInfo>>;
 
 }// namespace pf::meta_gen

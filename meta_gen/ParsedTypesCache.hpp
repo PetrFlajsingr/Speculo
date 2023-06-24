@@ -30,7 +30,9 @@ namespace pf::meta_gen {
         void addOther(const std::shared_ptr<TypeInfo> &typeInfo) { otherTypes.emplace(typeInfo->fullName, typeInfo); }
         void add(TypeInfoVariant typeInfo) {
             std::visit(Visitor{[&](const std::shared_ptr<EnumTypeInfo> &enumInfo) { addOther(enumInfo); },
-                               [&](const std::shared_ptr<RecordTypeInfo> &enumInfo) { addRecord(enumInfo); }},
+                               [&](const std::shared_ptr<RecordTypeInfo> &enumInfo) { addRecord(enumInfo); },
+                               // no need to store incomplete types
+                               [&](const std::shared_ptr<IncompleteTypeInfo> &) {}},
                        typeInfo);
         }
 
