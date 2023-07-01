@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <meta/macros.hpp>
+#include <speculo/macros.hpp>
 
 namespace test2 {
     struct DifferentFileBase {

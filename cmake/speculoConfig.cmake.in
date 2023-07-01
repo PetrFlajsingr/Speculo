@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+
+include("${CMAKE_CURRENT_LIST_DIR}/speculoTargets.cmake")
+check_required_components("speculo")
+
+set(SPECULO_GEN_SCRIPTS_PATH @CMAKE_INSTALL_PREFIX@/scripts)
+set(SPECULO_GEN_EXE_PATH @SPECULO_GEN_EXE_PATH_INSTALL@)

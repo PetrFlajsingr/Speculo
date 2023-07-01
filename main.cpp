@@ -1,26 +1,26 @@
-#include "meta/Info.hpp"
+#include "speculo/Info.hpp"
 #include <fmt/core.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>
 
-#include "meta_gen/AttributeParser.hpp"
-#include "meta_gen/IdGenerator.hpp"
-#include "meta_gen/IncludeCollector.hpp"
-#include "meta_gen/wrap/clang_tooling_compilationdatabase.hpp"
-#include "meta_gen/info_structs.hpp"
+#include "speculo_gen/AttributeParser.hpp"
+#include "speculo_gen/IdGenerator.hpp"
+#include "speculo_gen/IncludeCollector.hpp"
+#include "speculo_gen/wrap/clang_tooling_compilationdatabase.hpp"
+#include "speculo_gen/info_structs.hpp"
 
 #include "format.hpp"
-#include "meta_gen/AstActions.hpp"
-#include "meta_gen/wrap/clang_tooling_commonoptionsparser.hpp"
+#include "speculo_gen/AstActions.hpp"
+#include "speculo_gen/wrap/clang_tooling_commonoptionsparser.hpp"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <tl/expected.hpp>
 
-#include "meta_gen/SourceConfig.hpp"
-#include "meta_gen/ThreadPool.hpp"
+#include "speculo_gen/SourceConfig.hpp"
+#include "speculo_gen/ThreadPool.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
-#include "meta_gen/wrap/clang_lex_PreprocessorOptions.hpp"
+#include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
@@ -81,7 +81,7 @@ struct ProjectDatabase {
 };
 
 [[nodiscard]] ProjectDatabase loadProjectDatabase(std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
+    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
     if (!std::filesystem::exists(databasePath)) {
         spdlog::info("Database file not found at '{}'", databasePath.string());
         return {};
@@ -101,7 +101,7 @@ struct ProjectDatabase {
 }
 // only pass those parsed by this process
 void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
+    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
     if (istream.is_open()) { data = nlohmann::json::parse(istream); }
@@ -145,7 +145,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
         auto metaFolder = inputFile;
         metaFolder.remove_filename();
-        metaFolder = projectRoot / metaFolder / "meta";
+        metaFolder = projectRoot / metaFolder / "speculo";
         auto generatedFolder = inputFile;
         generatedFolder.remove_filename();
         generatedFolder = projectRoot / generatedFolder / "generated";
@@ -168,7 +168,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         // TODO: move elsewhere
-        flags.emplace_back("-D PF_META_GENERATOR_RUNNING");
+        flags.emplace_back("-D SPECULO_GENERATOR_RUNNING");
         // FIXME: remove once clang claims consteval support
         flags.emplace_back("-D __cpp_consteval=201811L");
         result.sourceConfigs.push_back({.inputSource = inputFile,

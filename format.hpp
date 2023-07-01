@@ -2,10 +2,10 @@
 // Created by xflajs00 on 14.03.2023.
 //
 
-#ifndef PF_META_FORMAT_H
-#define PF_META_FORMAT_H
+#ifndef SPECULO_FORMAT_H
+#define SPECULO_FORMAT_H
 
-#include "meta_gen/wrap/SilenceWarningsStart.hpp"
+#include "speculo_gen/wrap/SilenceWarningsStart.hpp"
 
 #include <clang/Basic/Diagnostic.h>
 #include <clang/Basic/DiagnosticOptions.h>
@@ -20,7 +20,7 @@
 #include <llvm/Support/InitLLVM.h>
 #include <llvm/Support/Process.h>
 
-#include "meta_gen/wrap/SilenceWarningsEnd.hpp"
+#include "speculo_gen/wrap/SilenceWarningsEnd.hpp"
 
 inline const char *getInValidBOM(llvm::StringRef BufStr) {
     // Check to see if the buffer has a UTF Byte Order Mark (BOM).
@@ -121,4 +121,4 @@ inline bool format(llvm::StringRef FileName) {
     return false;
 }
 
-#endif//PF_META_FORMAT_H
+#endif//SPECULO_FORMAT_H

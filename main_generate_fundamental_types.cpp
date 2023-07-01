@@ -1,7 +1,7 @@
-#include "meta/Info.hpp"
-#include "meta/details/array.hpp"
-#include "meta_gen/IdGenerator.hpp"
 #include "format.hpp"
+#include "speculo/Info.hpp"
+#include "speculo/details/array.hpp"
+#include "speculo_gen/IdGenerator.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 #include <fmt/format.h>
@@ -10,10 +10,10 @@
 #include <llvm/Support/raw_ostream.h>
 #include <string>
 #include <unordered_set>
+#include "speculo_gen/idToString.hpp"
 
-static llvm::cl::opt<std::string> Output(llvm::cl::Required,
-
-                                         "output", llvm::cl::desc("Specify output path"), llvm::cl::value_desc("filename"));
+static llvm::cl::opt<std::string> Output(llvm::cl::Required, "output", llvm::cl::desc("Specify output path"),
+                                         llvm::cl::value_desc("filename"));
 
 enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
 
@@ -53,10 +53,7 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
     throw "can't happen";
 }
 
-// TODO: deduplicate
-[[nodiscard]] std::string idToString(pf::meta::ID id) { return fmt::format("ID{{0x{:x}u, 0x{:x}u}}", id.id[0], id.id[1]); }
-
-std::string generateFundamentalStaticTypeInfo(pf::meta_gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
+std::string generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
                                               std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
                                                                                               InfoType::ConstLvalue, InfoType::Rvalue,
                                                                                               InfoType::Ptr, InfoType::ConstPtr}) {
@@ -83,12 +80,12 @@ template<>
     return {variant_id};
 }}
 )fmt";
-    const auto typeId = idToString(gen.generateId(std::string{fullTypeName}));
+    const auto typeId = speculo::gen::idToString(gen.generateId(std::string{fullTypeName}));
     std::string result{fmt::format(prologue, "full_name"_a = fullTypeName)};
     result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName, "full_type_name"_a = fullTypeName));
     for (const auto &toGen: typesToGenerate) {
         const auto variantTypeName = wrapNameForInfoType(toGen, std::string{fullTypeName});
-        const auto variantId = idToString(gen.generateId(variantTypeName));
+        const auto variantId = speculo::gen::idToString(gen.generateId(variantTypeName));
         result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId, "wrap_struct"_a = wrapStructForInfoType(toGen),
                                   "type_id"_a = typeId, "full_wrap_type_name"_a = variantTypeName));
     }
@@ -102,10 +99,10 @@ int main(int argc, char **argv) {
     spdlog::set_level(spdlog::level::debug);
     spdlog::default_logger()->sinks().clear();
     spdlog::default_logger()->sinks().emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    llvm::cl::ParseCommandLineOptions(argc, argv, "pf_meta generate fundamental type infos");
+    llvm::cl::ParseCommandLineOptions(argc, argv, "speculo generate fundamental type infos");
 
-    pf::meta_gen::IdGenerator gen{};
-    constexpr auto fundamentalTypes = pf::meta::details::make_array<std::string_view>(
+    speculo::gen::IdGenerator gen{};
+    constexpr auto fundamentalTypes = speculo::make_array<std::string_view>(
             "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "short", "unsigned short", "int",
             "unsigned int", "long", "unsigned long", "long long", "unsigned long long", "float", "double", "long double");
     std::string output;
@@ -126,14 +123,14 @@ int main(int argc, char **argv) {
 
     *outStream << R"(#pragma once
 
-#include <meta/Attribute.hpp>
-#include <meta/Info.hpp>
-#include <meta/details/StaticInfo.hpp>
-#include <meta/details/StringLiteral.hpp>
-#include <meta/details/StaticInfo_Wrappers.hpp>
-#include <meta/details/array.hpp>
+#include <speculo/Attribute.hpp>
+#include <speculo/Info.hpp>
+#include <speculo/details/StaticInfo.hpp>
+#include <speculo/details/StringLiteral.hpp>
+#include <speculo/details/StaticInfo_Wrappers.hpp>
+#include <speculo/details/array.hpp>
 
-namespace pf::meta::details {
+namespace speculo::details {
 
     template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
     struct FundamentalStaticTypeInfo {
@@ -141,7 +138,7 @@ namespace pf::meta::details {
         constexpr static ID Id = TID;
 
         // FIXME: RangeOf msvc failure here
-        constexpr static /*RangeOf<pf::meta::Attribute>*/ auto Attributes = pf::meta::details::make_array<pf::meta::Attribute>();
+        constexpr static /*RangeOf<speculo::Attribute>*/ auto Attributes = speculo::make_array<speculo::Attribute>();
 
 
         constexpr static auto StaticInfoObjectType = StaticInfoType::FundamentalType;
