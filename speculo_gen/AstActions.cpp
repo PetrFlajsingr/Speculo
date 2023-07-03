@@ -81,10 +81,10 @@ namespace speculo::gen {
         }
 
         auto metaWriter = MetaInfoWriter{outStream, idGenerator};
-        metaWriter.write(fmt::format(MetaFilePrologue,
+        metaWriter.write(fmt::format(templates::MetaFilePrologue,
                                      "relative_include_path"_a = fmt::format("../{}", config->inputProjectPath.filename().string())));
         for (const auto &info: infos) { metaWriter.write(info); }
-        metaWriter.write(MetaFileEpilogue);
+        metaWriter.write(templates::MetaFileEpilogue);
     }
 
     std::optional<ASTConsumer::OutStreams> ASTConsumer::openOutputs() {

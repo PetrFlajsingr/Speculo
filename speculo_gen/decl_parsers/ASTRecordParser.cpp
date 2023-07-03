@@ -7,43 +7,30 @@
 #include "../wrap/clang_ast_qualtypenames.hpp"
 #include "../wrap/clang_ast_recordlayout.hpp"
 #include "../wrap/clang_sema_sema.hpp"
+#include "ASTEnumParser.hpp"
+#include "details/FundamentalTypeInfos.hpp"
+#include "details/IncompleteTypeInfos.hpp"
 #include <spdlog/spdlog.h>
 
 namespace speculo::gen {
 
     ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
-                                     ParsedTypesCache &cache)
-        : ASTDeclParser{std::move(idGen), std::move(attribParser), cache} {}
+                                     std::shared_ptr<ParsedTypesCache> cache)
+        : ASTDeclParser{std::move(idGen), std::move(attribParser), std::move(cache)}, enumParser{idGenerator, attributeParser, typesCache} {
+    }
 
     // TODO: divide this up into separate functions
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
         const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
 
-        if (recordDecl->isInvalidDecl()) { return std::nullopt; }
+        if (ShouldSkipRecordDecl(recordDecl)) { return std::nullopt; }
 
-        // TODO: verify how this works
-        // not supporting templates for now
-        if (recordDecl->isTemplateDecl()) {
-            spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
-            return std::nullopt;
-        }
-        if (recordDecl->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
-            spdlog::warn("Skipping template specialization record {}", recordDecl->getQualifiedNameAsString());
-            return std::nullopt;
-        }
-
-        if (recordDecl->isLambda()) {
-            spdlog::trace("Skipping lambda record {}", recordDecl->getQualifiedNameAsString());
-            return std::nullopt;
-        }
-
-        spdlog::trace("ASTRecordParser: parsing {}", getProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
+        spdlog::trace("ASTRecordParser: parsing {}", getProperQualifiedName(recordDecl, astContext));
 
         const auto isTemplateSpecialization = recordDecl->getTemplateSpecializationKind() != clang::TSK_Undeclared;
         if (isTemplateSpecialization) {
-            spdlog::trace("ASTRecordParser: {} is a template specialization",
-                          getProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
+            spdlog::trace("ASTRecordParser: {} is a template specialization", getProperQualifiedName(recordDecl, astContext));
             if (recordDecl->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
                 spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
                 return std::nullopt;
@@ -56,371 +43,24 @@ namespace speculo::gen {
             spdlog::trace("ASTRecordParser: skipping, not a definition");
             return std::nullopt;
         }
-        if (recordDecl->isAnonymousStructOrUnion()) {
-            spdlog::trace("ASTRecordParser: skipping, anonymous struct or union");
-            return std::nullopt;
-        }
 
         auto result = std::make_shared<RecordTypeInfo>();
 
-        result->fullName = getProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy());
-        result->name = getProperName(recordDecl, astContext, astContext.getPrintingPolicy());
+        collectBasicRecordInfo(*result, astContext, recordDecl);
 
-        populateIDs(*result, getIdGenerator());
+        collectMemberVariablesInfo(*result, astContext, recordDecl);
 
-        const auto isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
-        if (isNestedType) { result->access = clangAccesConv(recordDecl->getAccess()); }
+        collectStaticVariablesInfo(*result, astContext, recordDecl);
 
-        result->size = astContext.getASTRecordLayout(recordDecl).getSize().getQuantity();
-        result->alignment = astContext.getASTRecordLayout(recordDecl).getAlignment().getQuantity();
+        collectMethodsInfo(*result, astContext, recordDecl);
 
-        auto &sourceManager = astContext.getSourceManager();
-        auto &langOpts = astContext.getLangOpts();
-        auto printingPolicy = clang::PrintingPolicy{langOpts};
+        collectConstructorsInfo(*result, astContext, recordDecl);
 
-        result->originalCode = getSourceText(astContext, *recordDecl);
+        collectDestructorInfo(*result, astContext, recordDecl);
 
-        // check that there is a semicolon at the end of the macro so we don't miss any functions or ctors
-        constexpr std::string_view metaGenMacro = "SPECULO_GENERATED()";
-        bool pfMetaGeneratedMacroFound = false;
-        if (auto pos = result->originalCode.find(metaGenMacro); pos != std::string::npos) {
-            pos += metaGenMacro.size();
-            pfMetaGeneratedMacroFound = true;
-        }
+        collectBaseInfos(*result, astContext, recordDecl);
 
-        result->sourceLocation = getSourceLocationInfo(astContext, *recordDecl);
-
-        result->attributes = getAttributeParser().parseRecordAttributes(astContext, *recordDecl);
-
-        result->isClass = recordDecl->isClass();
-        result->isStruct = recordDecl->isStruct();
-        result->isUnion = recordDecl->isUnion();
-        result->isPolymorphic = recordDecl->isPolymorphic();
-        result->isAbstract = recordDecl->isAbstract();
-        result->isFinal = recordDecl->isEffectivelyFinal();
-        result->isLiteral = recordDecl->isLiteral();
-        result->isPOD = recordDecl->isPOD();
-        result->isStandardLayout = recordDecl->isStandardLayout();
-        result->isTriviallyCopyable = recordDecl->isTriviallyCopyable();
-        result->isTrivial = recordDecl->isTrivial();
-        result->isEmpty = recordDecl->isEmpty();
-        result->isAggregate = recordDecl->isAggregate();
-
-        // TODO: inherited?
-        std::size_t previousFieldOffset = 0;
-        for (const clang::FieldDecl *field: recordDecl->fields()) {
-            VariableInfo variableInfo;
-            variableInfo.name = field->getNameAsString();
-            variableInfo.fullName = field->getQualifiedNameAsString();
-            // FIXME: this is a hack, gotta handle this better
-            // ignoring SPECULO_GENERATED expansion mistakenly parsed as an int member
-            if (variableInfo.name.starts_with("SPECULO_GENERATED_")) { continue; }
-            variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-            if (const auto typeRecordDecl = field->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
-                variableInfo.typeName = getProperQualifiedName(typeRecordDecl, astContext, astContext.getPrintingPolicy());
-            } else {
-                variableInfo.typeName = getProperQualifiedName(field->getType(), astContext);
-            }
-            variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-            variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *field);
-            variableInfo.access = clangAccesConv(field->getAccess());
-            variableInfo.isMutable = field->isMutable();
-            variableInfo.sourceLocation = getSourceLocationInfo(astContext, *field);
-            variableInfo.isBitfield = field->isBitField();
-            variableInfo.bitfieldSize = 0;
-            if (variableInfo.isBitfield) {
-                variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
-                variableInfo.bitfieldOffset = astContext.getFieldOffset(field) - previousFieldOffset;
-            }
-            variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
-            variableInfo.size = astContext.getTypeSizeInChars(field->getType()).getQuantity();
-
-            result->memberVariables.push_back(variableInfo);
-
-            previousFieldOffset = astContext.getFieldOffset(field);
-        }
-        // TODO: inherited?
-        // static variables
-        for (const auto innerDecls: recordDecl->decls()) {
-            if (auto var = clang::dyn_cast<clang::VarDecl>(innerDecls)) {
-                if (var->isStaticDataMember()) {
-                    VariableInfo variableInfo;
-                    variableInfo.name = var->getNameAsString();
-                    variableInfo.fullName = var->getQualifiedNameAsString();
-                    variableInfo.id = getIdGenerator().generateId(variableInfo.fullName);
-                    if (const auto typeRecordDecl = var->getType()->getAsCXXRecordDecl(); typeRecordDecl != nullptr) {
-                        variableInfo.typeName = getProperQualifiedName(typeRecordDecl, astContext, astContext.getPrintingPolicy());
-                    } else {
-                        variableInfo.typeName = getProperQualifiedName(var->getType(), astContext);
-                    }
-                    variableInfo.typeId = getIdGenerator().generateId(variableInfo.typeName);
-                    variableInfo.attributes = getAttributeParser().parseFieldAttributes(astContext, *var);
-                    variableInfo.access = clangAccesConv(var->getAccess());
-
-                    variableInfo.sourceLocation = getSourceLocationInfo(astContext, *var);
-
-                    variableInfo.isConstexpr = var->isConstexpr();
-                    variableInfo.isInline = var->isInlineSpecified();
-                    variableInfo.isInlineSpecified = var->isInlineSpecified();
-                    result->staticVariables.push_back(variableInfo);
-                }
-            }
-        }
-
-        const auto mangleFunction = [](std::string_view fullName,
-                                       speculo::RangeOf<std::pair<std::string_view, std::string_view>> auto &&argumentTypesAndNames,
-                                       bool isConst) {
-            std::string mangledName{fullName};
-            for (const auto &[type, name]: argumentTypesAndNames) {
-                mangledName.append(fmt::format("_{}_{}_{}", isConst ? "const" : "", type, name));
-            }
-            return mangledName;
-        };
-
-        // TODO: this does not enumerate templated, investigate
-        // TODO: inherited (but not overriden) functions?
-        for (const clang::CXXMethodDecl *method: recordDecl->methods()) {
-            // skipping ctors and dtors here
-            if (clang::dyn_cast<clang::CXXConstructorDecl>(method) != nullptr) { continue; }
-            if (clang::dyn_cast<clang::CXXDestructorDecl>(method) != nullptr) { continue; }
-
-            // TODO: template specializations should actually be stored
-            if (method->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
-                spdlog::trace("ASTRecordParser: {} is a template specialization",
-                              getProperQualifiedName(recordDecl, astContext, astContext.getPrintingPolicy()));
-                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
-                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
-                continue;
-                //}
-            }
-
-            FunctionInfo functionInfo;
-            functionInfo.name = getProperName(method, astContext, printingPolicy);
-            functionInfo.fullName = getProperQualifiedName(method, astContext, printingPolicy);
-            functionInfo.isInline = method->hasInlineBody();
-            functionInfo.isInlineSpecified = method->isInlineSpecified();
-
-            if (method->isDeleted() || method->isInvalidDecl()) { continue; }
-            if (method->isCopyAssignmentOperator() && method->isImplicit()) {
-                // Class has user declared move ctor or assign.
-                if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { continue; }
-                // Class has non static const member.
-                // Class has non static reference member.
-                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
-                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
-                    })) {
-                    continue;
-                }
-                // TODO:
-                // Class has non-copyable data member or base class.
-            }
-            if (method->isMoveAssignmentOperator() && method->isImplicit()) {
-                // Class has a data member that is const.
-                // Class has a data member that is a reference.
-                if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
-                        return field->getType().isConstQualified() || field->getType()->isReferenceType();
-                    })) {
-                    continue;
-                }
-                // TODO:
-                // Class has a base class which can't be move assigned.
-            }
-            auto att = getAttributeParser().parseFunctionAttributes(astContext, *method);
-            for (const clang::ParmVarDecl *param: method->parameters()) {
-                FunctionArgument argument;
-                argument.name = param->getNameAsString();
-                argument.fullName = param->getQualifiedNameAsString();
-                if (const auto paramTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
-                    argument.typeName = getProperQualifiedName(paramTypeRecordDecl, astContext, astContext.getPrintingPolicy());
-                } else {
-                    argument.typeName = getProperQualifiedName(param->getType(), astContext);
-                }
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation = getSourceLocationInfo(astContext, *param);
-                argument.attributes = std::move(att.argumentAttributes[argument.name]);
-                functionInfo.arguments.push_back(argument);
-            }
-            functionInfo.attributes = std::move(att.attributes);
-            if (const auto returnTypeRecordDecl = method->getReturnType()->getAsCXXRecordDecl(); returnTypeRecordDecl != nullptr) {
-                functionInfo.returnTypeName = getProperQualifiedName(returnTypeRecordDecl, astContext, astContext.getPrintingPolicy());
-            } else {
-                functionInfo.returnTypeName = getProperQualifiedName(method->getReturnType(), astContext);
-            }
-            functionInfo.returnTypeId = getIdGenerator().generateId(functionInfo.returnTypeName);
-            functionInfo.access = clangAccesConv(method->getAccess());
-            functionInfo.isConstexpr = method->isConstexpr();
-            functionInfo.isConsteval = method->isConsteval();
-            functionInfo.isConst = method->isConst();
-            functionInfo.isVirtual = method->isVirtual();
-            functionInfo.isPureVirtual = method->isPure();
-            functionInfo.isNothrow = method->hasAttr<clang::NoThrowAttr>();
-            functionInfo.sourceLocation = getSourceLocationInfo(astContext, *method)
-
-            const auto mangledName = mangleFunction(functionInfo.fullName,
-                                                    functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                        return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                    }),
-                                                    functionInfo.isConst);
-            // mangling names for argument IDs
-            for (auto &argument: functionInfo.arguments) {
-                argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
-            }
-
-            functionInfo.id = getIdGenerator().generateId(mangledName);
-
-            if (method->isStatic()) {
-                result->staticFunctions.push_back(functionInfo);
-            } else {
-                functionInfo.isFinal = method->hasAttr<clang::FinalAttr>();
-                result->memberFunctions.push_back(functionInfo);
-            }
-        }
-        // FIXME: can't really get ptrs to generated operators
-
-        for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
-            if (ctor->isDeleted()) { continue; }
-
-            // TODO: template specializations should actually be stored
-            if (ctor->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
-                spdlog::trace("ASTRecordParser: {} is a template specialization",
-                              getProperQualifiedName(ctor, astContext, astContext.getPrintingPolicy()));
-                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
-                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
-                continue;
-                //}
-            }
-
-            if (ShouldSkipConstructor(recordDecl, ctor)) { continue; }
-
-            ConstructorInfo constructorInfo;
-            constructorInfo.fullName = ctor->getQualifiedNameAsString();
-            constructorInfo.id = getIdGenerator().generateId(constructorInfo.fullName);
-
-            auto att = getAttributeParser().parseConstructorAttributes(astContext, *ctor);
-            for (const clang::ParmVarDecl *param: ctor->parameters()) {
-                FunctionArgument argument;
-                argument.name = param->getNameAsString();
-                argument.fullName = param->getQualifiedNameAsString();
-
-                if (const auto paramTypeRecordDecl = param->getType()->getAsCXXRecordDecl(); paramTypeRecordDecl != nullptr) {
-                    argument.typeName = getProperQualifiedName(paramTypeRecordDecl, astContext, astContext.getPrintingPolicy());
-                } else {
-                    argument.typeName = getProperQualifiedName(param->getType(), astContext);
-                }
-                argument.typeId = getIdGenerator().generateId(argument.typeName);
-                argument.sourceLocation = getSourceLocationInfo(astContext, *param);
-                argument.attributes = std::move(att.argumentAttributes[argument.name]);
-                constructorInfo.arguments.push_back(argument);
-            }
-            constructorInfo.isConstexpr = ctor->isConstexpr() && result->isLiteral;
-            constructorInfo.isConsteval = ctor->isConsteval() && result->isLiteral;
-            constructorInfo.isExplicit = ctor->isExplicit();
-            constructorInfo.access = clangAccesConv(ctor->getAccess());
-            constructorInfo.sourceLocation = getSourceLocationInfo(astContext, *ctor);
-            constructorInfo.isCopy = ctor->isCopyConstructor();
-            constructorInfo.isMove = ctor->isMoveConstructor();
-            constructorInfo.attributes = std::move(att.attributes);
-            constructorInfo.isInline = ctor->hasInlineBody();
-            constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
-            constructorInfo.isNothrow = ctor->hasAttr<clang::NoThrowAttr>();
-
-            const auto mangledName = mangleFunction(constructorInfo.fullName,
-                                                    constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
-                                                        return std::pair(std::string_view{arg.fullName}, std::string_view{arg.typeName});
-                                                    }),
-                                                    false);
-            // mangling names for argument IDs
-            for (auto &argument: constructorInfo.arguments) {
-                argument.id = getIdGenerator().generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.typeName));
-            }
-            constructorInfo.id = getIdGenerator().generateId(mangledName);
-
-            result->constructors.push_back(constructorInfo);
-        }
-        if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
-            result->destructor.fullName = destructor->getQualifiedNameAsString();
-            result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
-            result->destructor.access = clangAccesConv(destructor->getAccess());
-            result->destructor.sourceLocation = getSourceLocationInfo(astContext, *destructor);
-            result->destructor.attributes = std::move(getAttributeParser().parseDestructorAttributes(astContext, *destructor).attributes);
-            result->destructor.isConstexpr = destructor->isConstexpr();
-            result->destructor.isConsteval = destructor->isConsteval();
-            result->destructor.isVirtual = destructor->isVirtual();
-            result->destructor.isPureVirtual = destructor->isPure();
-            const auto methodDecl = clang::dyn_cast<clang::CXXMethodDecl>(destructor);
-            result->destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
-            result->destructor.isInline = destructor->hasInlineBody();
-            result->destructor.isInlineSpecified = destructor->isInlineSpecified();
-            result->destructor.isNothrow = destructor->hasAttr<clang::NoThrowAttr>();
-        } else if (recordDecl->hasSimpleDestructor()) {
-            result->destructor.fullName = fmt::format("{}::~{}", result->fullName, result->name);
-            result->destructor.id = getIdGenerator().generateId(result->destructor.fullName);
-            result->destructor.access = Access::Public;
-            result->destructor.sourceLocation.emplace(0, 0,  "<generated>");
-            result->destructor.attributes = {};
-            result->destructor.isConstexpr = recordDecl->hasConstexprDestructor();
-            result->destructor.isConsteval = false;
-            result->destructor.isVirtual = false;
-            result->destructor.isPureVirtual = false;
-            result->destructor.isFinal = false;
-            result->destructor.isInline = false;
-            result->destructor.isNothrow = true;
-        }
-
-        const auto mangleBaseClass = [](std::string_view derivedFullName, std::string baseFullName) {
-            return fmt::format("{}__{}", derivedFullName, baseFullName);
-        };
-
-        for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
-            BaseClassInfo baseClassInfo{};
-            const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();
-            if (baseRecordDecl == nullptr) {
-                spdlog::error("Base class not recognized as a record");
-                continue;
-            }
-            baseClassInfo.fullName = getProperQualifiedName(baseRecordDecl, astContext, astContext.getPrintingPolicy());
-            baseClassInfo.name = getProperName(baseRecordDecl, astContext, astContext.getPrintingPolicy());
-            const auto mangledName = mangleBaseClass(result->fullName, baseClassInfo.fullName);
-            baseClassInfo.id = getIdGenerator().generateId(mangledName);
-            baseClassInfo.isVirtual = base.isVirtual();
-            baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
-            baseClassInfo.sourceLocation = getSourceLocationInfo(astContext, base);
-            const auto &layout = astContext.getASTRecordLayout(recordDecl);
-            baseClassInfo.byteOffset =
-                    (baseClassInfo.isVirtual ? layout.getVBaseClassOffset(baseRecordDecl) : layout.getBaseClassOffset(baseRecordDecl))
-                            .getQuantity();
-            baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
-
-            if (auto cachedBaseInfo = getTypesCache().getRecord(baseClassInfo.fullName); cachedBaseInfo != nullptr) {
-                baseClassInfo.typeInfo = cachedBaseInfo;
-            } else {
-                auto baseTypeInfo = parse(astContext, baseRecordDecl);
-                if (!baseTypeInfo.has_value()) {
-                    spdlog::warn("Error during base class parsing '{}'", baseClassInfo.fullName);
-                } else {
-                    auto baseInfo = std::move(std::get<std::shared_ptr<RecordTypeInfo>>(*baseTypeInfo));
-                    getTypesCache().addRecord(baseInfo);
-                    baseClassInfo.typeInfo = std::move(baseInfo);
-                }
-            }
-
-            result->baseClasses.emplace_back(std::move(baseClassInfo));
-        }
-
-        if (!pfMetaGeneratedMacroFound) {
-            if (std::ranges::any_of(result->constructors, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result->staticFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result->memberFunctions, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result->staticVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                std::ranges::any_of(result->memberVariables, [](const auto &ctor) { return ctor.access != Access::Public; }) ||
-                result->destructor.access != Access::Public) {
-                spdlog::warn("Class {} does not contain 'SPECULO_GENERATED()', but it contains private or protected constructors, "
-                             "destructor, variables or functions - the macro is required to access these",
-                             result->fullName);
-                spdlog::warn("Reflection data for {} will only allow access to public members", result->fullName);
-            }
-        }
-        result->hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
+        CheckForGeneratedMacro(*result);
         return result;
     }
 
@@ -446,6 +86,448 @@ namespace speculo::gen {
             return true;
         }
         return false;
+    }
+
+    bool ASTRecordParser::ShouldSkipRecordDecl(const clang::CXXRecordDecl *recordDecl) {
+        if (recordDecl->isInvalidDecl()) { return true; }
+
+        // TODO: verify how this works
+        // not supporting templates for now
+        if (recordDecl->isTemplateDecl()) {
+            spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
+            return true;
+        }
+        if (recordDecl->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+            spdlog::warn("Skipping template specialization record {}", recordDecl->getQualifiedNameAsString());
+            return true;
+        }
+
+        if (recordDecl->isLambda()) {
+            spdlog::trace("Skipping lambda record {}", recordDecl->getQualifiedNameAsString());
+            return true;
+        }
+
+        if (recordDecl->isAnonymousStructOrUnion()) {
+            spdlog::trace("ASTRecordParser: skipping, anonymous struct or union");
+            return true;
+        }
+        return false;
+    }
+
+    bool ASTRecordParser::ShouldSkipMethod(const clang::CXXMethodDecl *methodDecl, const clang::CXXRecordDecl *recordDecl) {
+        if (methodDecl->isDeleted() || methodDecl->isInvalidDecl()) { return true; }
+        if (methodDecl->isCopyAssignmentOperator() && methodDecl->isImplicit()) {
+            // Class has user declared move ctor or assign.
+            if (recordDecl->hasUserDeclaredMoveAssignment() || recordDecl->hasUserDeclaredMoveConstructor()) { return true; }
+            // Class has non-static const member.
+            // Class has non-static reference member.
+            if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                    return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                })) {
+                return true;
+            }
+            // TODO:
+            // Class has non-copyable data member or base class.
+        }
+        if (methodDecl->isMoveAssignmentOperator() && methodDecl->isImplicit()) {
+            // Class has a data member that is const.
+            // Class has a data member that is a reference.
+            if (std::ranges::any_of(recordDecl->fields(), [](const auto &field) {
+                    return field->getType().isConstQualified() || field->getType()->isReferenceType();
+                })) {
+                return true;
+            }
+            // TODO:
+            // Class has a base class which can't be move assigned.
+        }
+        return false;
+    }
+
+    void ASTRecordParser::collectBasicRecordInfo(RecordTypeInfo &info, clang::ASTContext &astContext,
+                                                 const clang::CXXRecordDecl *recordDecl) {
+        info.fullName = getProperQualifiedName(recordDecl, astContext);
+        info.name = getProperName(recordDecl, astContext);
+
+        populateIDs(info, *idGenerator);
+
+        const auto isNestedType = recordDecl->getAccess() != clang::AccessSpecifier::AS_none;
+        if (isNestedType) { info.access = clangAccesConv(recordDecl->getAccess()); }
+
+        info.size = astContext.getASTRecordLayout(recordDecl).getSize().getQuantity();
+        info.alignment = astContext.getASTRecordLayout(recordDecl).getAlignment().getQuantity();
+
+        info.originalCode = getSourceText(astContext, *recordDecl);
+
+        info.sourceLocation = getSourceLocationInfo(astContext, *recordDecl);
+
+        info.attributes = attributeParser->parseRecordAttributes(astContext, *recordDecl);
+
+        info.isClass = recordDecl->isClass();
+        info.isStruct = recordDecl->isStruct();
+        info.isUnion = recordDecl->isUnion();
+        info.isPolymorphic = recordDecl->isPolymorphic();
+        info.isAbstract = recordDecl->isAbstract();
+        info.isFinal = recordDecl->isEffectivelyFinal();
+        info.isLiteral = recordDecl->isLiteral();
+        info.isPOD = recordDecl->isPOD();
+        info.isStandardLayout = recordDecl->isStandardLayout();
+        info.isTriviallyCopyable = recordDecl->isTriviallyCopyable();
+        info.isTrivial = recordDecl->isTrivial();
+        info.isEmpty = recordDecl->isEmpty();
+        info.isAggregate = recordDecl->isAggregate();
+    }
+
+    void ASTRecordParser::collectBaseInfos(RecordTypeInfo &info, clang::ASTContext &astContext, const clang::CXXRecordDecl *recordDecl) {
+        for (const clang::CXXBaseSpecifier &base: recordDecl->bases()) {
+            BaseClassInfo baseClassInfo{};
+            const auto baseRecordDecl = base.getType()->getAsCXXRecordDecl();
+            if (baseRecordDecl == nullptr) {
+                spdlog::error("Base class not recognized as a record");
+                continue;
+            }
+            baseClassInfo.fullName = getProperQualifiedName(baseRecordDecl, astContext);
+            baseClassInfo.name = getProperName(baseRecordDecl, astContext);
+            const auto mangledName = MangleBaseClass(info.fullName, baseClassInfo.fullName);
+            baseClassInfo.id = idGenerator->generateId(mangledName);
+            baseClassInfo.isVirtual = base.isVirtual();
+            baseClassInfo.access = clangAccesConv(base.getAccessSpecifier());
+            baseClassInfo.sourceLocation = getSourceLocationInfo(astContext, base);
+            const auto &layout = astContext.getASTRecordLayout(recordDecl);
+            baseClassInfo.byteOffset =
+                    (baseClassInfo.isVirtual ? layout.getVBaseClassOffset(baseRecordDecl) : layout.getBaseClassOffset(baseRecordDecl))
+                            .getQuantity();
+            baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
+
+            // TODO: getOrCreate
+            if (auto cachedBaseInfo = typesCache->get<RecordTypeInfo>(baseClassInfo.fullName); cachedBaseInfo.has_value()) {
+                baseClassInfo.typeInfo = std::move(*cachedBaseInfo);
+            } else {
+                auto baseTypeInfo = parse(astContext, baseRecordDecl);
+                if (!baseTypeInfo.has_value()) {
+                    spdlog::warn("Error during base class parsing '{}'", baseClassInfo.fullName);
+                } else {
+                    auto baseInfo = std::move(std::get<std::shared_ptr<RecordTypeInfo>>(*baseTypeInfo));
+                    typesCache->add(baseInfo);
+                    baseClassInfo.typeInfo = std::move(baseInfo);
+                }
+            }
+
+            info.baseClasses.emplace_back(std::move(baseClassInfo));
+        }
+    }
+
+    void ASTRecordParser::collectDestructorInfo(RecordTypeInfo &info, clang::ASTContext &astContext,
+                                                const clang::CXXRecordDecl *recordDecl) {
+
+        if (const clang::CXXDestructorDecl *destructor = recordDecl->getDestructor(); destructor != nullptr) {
+            info.destructor.fullName = destructor->getQualifiedNameAsString();
+            info.destructor.id = idGenerator->generateId(info.destructor.fullName);
+            info.destructor.access = clangAccesConv(destructor->getAccess());
+            info.destructor.sourceLocation = getSourceLocationInfo(astContext, *destructor);
+            info.destructor.attributes = std::move(attributeParser->parseDestructorAttributes(astContext, *destructor).attributes);
+            info.destructor.isConstexpr = destructor->isConstexpr();
+            info.destructor.isConsteval = destructor->isConsteval();
+            info.destructor.isVirtual = destructor->isVirtual();
+            info.destructor.isPureVirtual = destructor->isPure();
+            const auto methodDecl = clang::dyn_cast<clang::CXXMethodDecl>(destructor);
+            info.destructor.isFinal = methodDecl->hasAttr<clang::FinalAttr>();
+            info.destructor.isInline = destructor->hasInlineBody();
+            info.destructor.isInlineSpecified = destructor->isInlineSpecified();
+            info.destructor.isNothrow = destructor->hasAttr<clang::NoThrowAttr>();
+        } else if (recordDecl->hasSimpleDestructor()) {
+            info.destructor.fullName = fmt::format("{}::~{}", info.fullName, info.name);
+            info.destructor.id = idGenerator->generateId(info.destructor.fullName);
+            info.destructor.access = Access::Public;
+            info.destructor.sourceLocation.emplace(0, 0, "<generated>");
+            info.destructor.attributes = {};
+            info.destructor.isConstexpr = recordDecl->hasConstexprDestructor();
+            info.destructor.isConsteval = false;
+            info.destructor.isVirtual = false;
+            info.destructor.isPureVirtual = false;
+            info.destructor.isFinal = false;
+            info.destructor.isInline = false;
+            info.destructor.isNothrow = true;
+        }
+    }
+
+    void ASTRecordParser::collectConstructorsInfo(RecordTypeInfo &info, clang::ASTContext &astContext,
+                                                  const clang::CXXRecordDecl *recordDecl) {
+        for (const clang::CXXConstructorDecl *ctor: recordDecl->ctors()) {
+            if (ctor->isDeleted()) { continue; }
+
+            // TODO: template specializations should actually be stored
+            if (ctor->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+                spdlog::trace("ASTRecordParser: {} is a template specialization", getProperQualifiedName(ctor, astContext));
+                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
+                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                continue;
+                //}
+            }
+
+            if (ShouldSkipConstructor(recordDecl, ctor)) { continue; }
+
+            ConstructorInfo constructorInfo;
+            constructorInfo.fullName = ctor->getQualifiedNameAsString();
+            constructorInfo.id = idGenerator->generateId(constructorInfo.fullName);
+
+            auto att = attributeParser->parseConstructorAttributes(astContext, *ctor);
+            for (const clang::ParmVarDecl *param: ctor->parameters()) {
+                FunctionArgument argument;
+                argument.name = param->getNameAsString();
+                argument.fullName = param->getQualifiedNameAsString();
+                argument.type = CreateTypeUsage(param->getType(), astContext, *typesCache, *idGenerator, enumParser, *this);
+                argument.sourceLocation = getSourceLocationInfo(astContext, *param);
+                argument.attributes = std::move(att.argumentAttributes[argument.name]);
+                constructorInfo.arguments.push_back(argument);
+            }
+            constructorInfo.isConstexpr = ctor->isConstexpr() && info.isLiteral;
+            constructorInfo.isConsteval = ctor->isConsteval() && info.isLiteral;
+            constructorInfo.isExplicit = ctor->isExplicit();
+            constructorInfo.access = clangAccesConv(ctor->getAccess());
+            constructorInfo.sourceLocation = getSourceLocationInfo(astContext, *ctor);
+            constructorInfo.isCopy = ctor->isCopyConstructor();
+            constructorInfo.isMove = ctor->isMoveConstructor();
+            constructorInfo.attributes = std::move(att.attributes);
+            constructorInfo.isInline = ctor->hasInlineBody();
+            constructorInfo.isInlineSpecified = ctor->isInlineSpecified();
+            constructorInfo.isNothrow = ctor->hasAttr<clang::NoThrowAttr>();
+
+            const auto mangledName = MangleFunction(
+                    constructorInfo.fullName, constructorInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                                  return std::pair(std::string_view{arg.fullName}, std::string_view{arg.type.fullName});
+                                              }),
+                    false);
+            // mangling names for argument IDs
+            for (auto &argument: constructorInfo.arguments) {
+                argument.id = idGenerator->generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.type.fullName));
+            }
+            constructorInfo.id = idGenerator->generateId(mangledName);
+
+            info.constructors.push_back(constructorInfo);
+        }
+    }
+
+    void ASTRecordParser::collectMethodsInfo(RecordTypeInfo &info, clang::ASTContext &astContext, const clang::CXXRecordDecl *recordDecl) {
+        // TODO: this does not enumerate templated, investigate
+        // TODO: inherited (but not overriden) functions?
+        for (const clang::CXXMethodDecl *method: recordDecl->methods()) {
+            // skipping ctors and dtors here
+            if (clang::dyn_cast<clang::CXXConstructorDecl>(method) != nullptr) { continue; }
+            if (clang::dyn_cast<clang::CXXDestructorDecl>(method) != nullptr) { continue; }
+
+            // TODO: template specializations should actually be stored
+            if (method->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
+                spdlog::trace("ASTRecordParser: {} is a template specialization", getProperQualifiedName(recordDecl, astContext));
+                // FIXME: don't skip explicit specializations if (method->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
+                // spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                continue;
+                //}
+            }
+
+            FunctionInfo functionInfo;
+            functionInfo.name = getProperName(method, astContext);
+            functionInfo.fullName = getProperQualifiedName(method, astContext);
+            functionInfo.isInline = method->hasInlineBody();
+            functionInfo.isInlineSpecified = method->isInlineSpecified();
+
+            if (ShouldSkipMethod(method, recordDecl)) { continue; }
+
+            auto att = attributeParser->parseFunctionAttributes(astContext, *method);
+            for (const clang::ParmVarDecl *param: method->parameters()) {
+                FunctionArgument argument;
+                argument.name = param->getNameAsString();
+                argument.fullName = param->getQualifiedNameAsString();
+                argument.type = CreateTypeUsage(param->getType(), astContext, *typesCache, *idGenerator, enumParser, *this);
+                argument.sourceLocation = getSourceLocationInfo(astContext, *param);
+                argument.attributes = std::move(att.argumentAttributes[argument.name]);
+                functionInfo.arguments.push_back(argument);
+            }
+            functionInfo.attributes = std::move(att.attributes);
+            functionInfo.returnType = CreateTypeUsage(method->getReturnType(), astContext, *typesCache, *idGenerator, enumParser, *this);
+            functionInfo.access = clangAccesConv(method->getAccess());
+            functionInfo.isConstexpr = method->isConstexpr();
+            functionInfo.isConsteval = method->isConsteval();
+            functionInfo.isConst = method->isConst();
+            functionInfo.isVirtual = method->isVirtual();
+            functionInfo.isPureVirtual = method->isPure();
+            functionInfo.isNothrow = method->hasAttr<clang::NoThrowAttr>();
+            functionInfo.sourceLocation = getSourceLocationInfo(astContext, *method);
+
+            const auto mangledName = MangleFunction(
+                    functionInfo.fullName, functionInfo.arguments | std::views::transform([](const FunctionArgument &arg) {
+                                               return std::pair(std::string_view{arg.fullName}, std::string_view{arg.type.fullName});
+                                           }),
+                    functionInfo.isConst);
+            // mangling names for argument IDs
+            for (auto &argument: functionInfo.arguments) {
+                argument.id = idGenerator->generateId(fmt::format("{}_{}_{}", mangledName, argument.fullName, argument.type.fullName));
+            }
+
+            functionInfo.id = idGenerator->generateId(mangledName);
+
+            if (method->isStatic()) {
+                info.staticFunctions.push_back(functionInfo);
+            } else {
+                functionInfo.isFinal = method->hasAttr<clang::FinalAttr>();
+                info.memberFunctions.push_back(functionInfo);
+            }
+        }
+        // FIXME: can't really get ptrs to generated operators
+    }
+
+    void ASTRecordParser::collectStaticVariablesInfo(RecordTypeInfo &info, clang::ASTContext &astContext,
+                                                     const clang::CXXRecordDecl *recordDecl) {
+        // TODO: inherited?
+        for (const auto innerDecls: recordDecl->decls()) {
+            if (auto var = clang::dyn_cast<clang::VarDecl>(innerDecls)) {
+                if (var->isStaticDataMember()) {
+                    VariableInfo variableInfo;
+                    variableInfo.name = var->getNameAsString();
+                    variableInfo.fullName = var->getQualifiedNameAsString();
+                    variableInfo.id = idGenerator->generateId(variableInfo.fullName);
+                    variableInfo.type = CreateTypeUsage(var->getType(), astContext, *typesCache, *idGenerator, enumParser, *this);
+                    variableInfo.attributes = attributeParser->parseFieldAttributes(astContext, *var);
+                    variableInfo.access = clangAccesConv(var->getAccess());
+                    variableInfo.sourceLocation = getSourceLocationInfo(astContext, *var);
+                    variableInfo.isConstexpr = var->isConstexpr();
+                    variableInfo.isInline = var->isInlineSpecified();
+                    variableInfo.isInlineSpecified = var->isInlineSpecified();
+                    info.staticVariables.push_back(variableInfo);
+                }
+            }
+        }
+    }
+
+    void ASTRecordParser::collectMemberVariablesInfo(RecordTypeInfo &info, clang::ASTContext &astContext,
+                                                     const clang::CXXRecordDecl *recordDecl) {
+        // TODO: inherited?
+        std::size_t previousFieldOffset = 0;
+        for (const clang::FieldDecl *field: recordDecl->fields()) {
+            VariableInfo variableInfo;
+            variableInfo.name = field->getNameAsString();
+            variableInfo.fullName = field->getQualifiedNameAsString();
+            // FIXME: this is a hack, gotta handle this better
+            // ignoring SPECULO_GENERATED expansion mistakenly parsed as an int member
+            if (variableInfo.name.starts_with("SPECULO_GENERATED_")) { continue; }
+            variableInfo.id = idGenerator->generateId(variableInfo.fullName);
+            variableInfo.type = CreateTypeUsage(field->getType(), astContext, *typesCache, *idGenerator, enumParser, *this);
+            variableInfo.attributes = attributeParser->parseFieldAttributes(astContext, *field);
+            variableInfo.access = clangAccesConv(field->getAccess());
+            variableInfo.isMutable = field->isMutable();
+            variableInfo.sourceLocation = getSourceLocationInfo(astContext, *field);
+            variableInfo.isBitfield = field->isBitField();
+            variableInfo.bitfieldSize = 0;
+            if (variableInfo.isBitfield) {
+                variableInfo.bitfieldSize = field->getBitWidthValue(astContext);
+                variableInfo.bitfieldOffset = astContext.getFieldOffset(field) - previousFieldOffset;
+            }
+            variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
+            variableInfo.size = astContext.getTypeSizeInChars(field->getType()).getQuantity();
+
+            info.memberVariables.push_back(variableInfo);
+
+            previousFieldOffset = astContext.getFieldOffset(field);
+        }
+    }
+
+    void ASTRecordParser::CheckForGeneratedMacro(RecordTypeInfo &info) {
+        const auto pfMetaGeneratedMacroFound = info.originalCode.find(metaGenMacro) != std::string::npos;
+
+        if (!pfMetaGeneratedMacroFound) {
+            const auto isNotPublic = [](const auto &v) { return v.access != Access::Public; };
+            if (std::ranges::any_of(info.constructors, isNotPublic) || std::ranges::any_of(info.staticFunctions, isNotPublic) ||
+                std::ranges::any_of(info.memberFunctions, isNotPublic) || std::ranges::any_of(info.staticVariables, isNotPublic) ||
+                std::ranges::any_of(info.memberVariables, isNotPublic) || isNotPublic(info.destructor)) {
+                spdlog::warn("Class {} does not contain 'SPECULO_GENERATED()', but it contains private or protected constructors, "
+                             "destructor, variables or functions - the macro is required to access these",
+                             info.fullName);
+                spdlog::warn("Reflection data for {} will only allow access to public members", info.fullName);
+            }
+        }
+        info.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
+    }
+
+    std::shared_ptr<FundamentalTypeInfo> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type,
+                                                                                    const std::string &typeName, IdGenerator &idGenerator,
+                                                                                    ParsedTypesCache &typesCache,
+                                                                                    clang::ASTContext &astContext) {
+        return typesCache.getOrAdd<FundamentalTypeInfo>(
+                typeName, [&] { return std::make_shared<FundamentalTypeInfo>(getFundamentalTypeInfo(typeName, idGenerator)); });
+    }
+
+    std::shared_ptr<IncompleteTypeInfo> ASTRecordParser::CreateIncompleteTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                                  IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                                  clang::ASTContext &astContext) {
+        return typesCache.getOrAdd<IncompleteTypeInfo>(typeName, [&] {
+            return std::make_shared<IncompleteTypeInfo>(getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator));
+        });
+    }
+
+    TypeInfoVariant ASTRecordParser::CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName, IdGenerator &idGenerator,
+                                                        ParsedTypesCache &typesCache, clang::ASTContext &astContext,
+                                                        ASTEnumParser &enumParser) {
+        return typesCache.getOrAdd(typeName, [&]() -> TypeInfoVariant {
+            if (const auto enumType = llvm::dyn_cast<clang::EnumType>(type)) {
+                const auto enumDecl = enumType->getDecl();
+                if (auto parseResult = enumParser.parse(astContext, enumDecl); parseResult.has_value()) {
+                    auto parsedEnumType = std::get<std::shared_ptr<EnumTypeInfo>>(*parseResult);
+                    return parsedEnumType;
+                } else {
+                    // this shouldn't happen
+                    spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0xDA6A94AC);
+                    return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                }
+            } else {
+                // this shouldn't happen
+                spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x979B1762);
+                return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+            }
+        });
+    }
+
+    TypeInfoVariant ASTRecordParser::CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                          IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                          clang::ASTContext &astContext, ASTRecordParser &recordParser) {
+        return typesCache.getOrAdd(typeName, [&]() -> TypeInfoVariant {
+            if (const auto recDecl = type->getAsCXXRecordDecl()) {
+                if (auto parseResult = recordParser.parse(astContext, recDecl); parseResult.has_value()) {
+                    auto parsedRecordType = std::get<std::shared_ptr<RecordTypeInfo>>(*parseResult);
+                    return parsedRecordType;
+                } else {
+                    // this shouldn't happen
+                    spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x6D7DE8E7);
+                    return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                }
+            } else {
+                // this shouldn't happen
+                spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x2742E4E7);
+                return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+            }
+        });
+    }
+
+    TypeUsage ASTRecordParser::CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext, ParsedTypesCache &typesCache,
+                                               IdGenerator &idGenerator, ASTEnumParser &enumParser, ASTRecordParser &recordParser) {
+        TypeUsage result;
+        result.fullName = getProperQualifiedName(type, astContext);
+        result.form = getTypeForm(type);
+        const auto strippedType = stripQualifiersAndPtrRef(type);
+        const auto strippedName = getProperQualifiedName(strippedType, astContext);
+        // Fundamental types
+        if (strippedType->isFundamentalType()) {
+            result.type = CreateFundamentalTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext);
+        } else if (strippedType->isIncompleteType()) {
+            result.type = CreateIncompleteTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext);
+        } else if (strippedType->isEnumeralType()) {
+            result.type = CreateEnumTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext, enumParser);
+        } else if (strippedType->isRecordType()) {
+            result.type = CreateRecordTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext, recordParser);
+        } else {
+            // this shouldn't happen
+            spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x05CDE92E);
+            result.type = CreateIncompleteTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext);
+        }
+        return result;
     }
 
 }// namespace speculo::gen

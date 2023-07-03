@@ -353,7 +353,7 @@ namespace speculo {
     }// namespace details
 
 // Can't do deduction guides for templated aliases, so it has to be done this way
-#define PF_STRINGLITERAL_SPECIALIZATION(name, char_type)                                                                                   \
+#define SPECULO_STRINGLITERAL_SPECIALIZATION(name, char_type)                                                                              \
     template<std::size_t N>                                                                                                                \
     struct name : BasicStringLiteral<char_type, N> {                                                                                       \
         using BasicStringLiteral<char_type, N>::BasicStringLiteral;                                                                        \
@@ -361,11 +361,11 @@ namespace speculo {
     template<std::size_t N>                                                                                                                \
     name(const char_type(&)[N]) -> name<N - 1>;
 
-    PF_STRINGLITERAL_SPECIALIZATION(StringLiteral, char)
-    PF_STRINGLITERAL_SPECIALIZATION(U8StringLiteral, char8_t)
-    PF_STRINGLITERAL_SPECIALIZATION(U16StringLiteral, char16_t)
-    PF_STRINGLITERAL_SPECIALIZATION(U32StringLiteral, char32_t)
-    PF_STRINGLITERAL_SPECIALIZATION(WStringLiteral, wchar_t)
+    SPECULO_STRINGLITERAL_SPECIALIZATION(StringLiteral, char)
+    SPECULO_STRINGLITERAL_SPECIALIZATION(U8StringLiteral, char8_t)
+    SPECULO_STRINGLITERAL_SPECIALIZATION(U16StringLiteral, char16_t)
+    SPECULO_STRINGLITERAL_SPECIALIZATION(U32StringLiteral, char32_t)
+    SPECULO_STRINGLITERAL_SPECIALIZATION(WStringLiteral, wchar_t)
 
     namespace string_literals {
         template<details::BasicFixedStringUDLBuffer Buffer>
@@ -374,13 +374,13 @@ namespace speculo {
         }
     }// namespace string_literals
 
-#undef PF_STRINGLITERAL_SPECIALIZATION
+#undef SPECULO_STRINGLITERAL_SPECIALIZATION
 
 }// namespace speculo
 
-#define PF_STRINGLITERAL_HASH(name)                                                                                                        \
+#define SPECULO_STRINGLITERAL_HASH(name)                                                                                                   \
     template<std::size_t N>                                                                                                                \
-    struct hash<pf::name<N>> {                                                                                                             \
+    struct hash<speculo::name<N>> {                                                                                                        \
         constexpr hash() = default;                                                                                                        \
         constexpr ~hash() = default;                                                                                                       \
         constexpr hash(const hash &) = default;                                                                                            \
@@ -388,18 +388,18 @@ namespace speculo {
         constexpr hash &operator=(const hash &) = default;                                                                                 \
         constexpr hash &operator=(hash &&) = default;                                                                                      \
                                                                                                                                            \
-        [[nodiscard]] constexpr std::uint64_t operator()(const pf::name<N> &str) const noexcept {                                          \
-            using string_view_type = typename pf::name<N>::string_view_type;                                                               \
+        [[nodiscard]] constexpr std::uint64_t operator()(const speculo::name<N> &str) const noexcept {                                     \
+            using string_view_type = typename speculo::name<N>::string_view_type;                                                          \
             return std::hash<string_view_type>{}(static_cast<string_view_type>(str));                                                      \
         }                                                                                                                                  \
     }
 
 namespace std {
-    PF_STRINGLITERAL_HASH(StringLiteral);
-    PF_STRINGLITERAL_HASH(U8StringLiteral);
-    PF_STRINGLITERAL_HASH(U16StringLiteral);
-    PF_STRINGLITERAL_HASH(U32StringLiteral);
-    PF_STRINGLITERAL_HASH(WStringLiteral);
+    SPECULO_STRINGLITERAL_HASH(StringLiteral);
+    SPECULO_STRINGLITERAL_HASH(U8StringLiteral);
+    SPECULO_STRINGLITERAL_HASH(U16StringLiteral);
+    SPECULO_STRINGLITERAL_HASH(U32StringLiteral);
+    SPECULO_STRINGLITERAL_HASH(WStringLiteral);
 }// namespace std
 
-#undef PF_STRINGLITERAL_HASH
+#undef SPECULO_STRINGLITERAL_HASH

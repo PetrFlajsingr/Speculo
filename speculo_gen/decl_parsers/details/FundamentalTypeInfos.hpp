@@ -17,51 +17,52 @@ namespace speculo::gen {
                         long, unsigned long, long long, unsigned long long, float, double, long double, void, std::nullptr_t>;
 
     template<FundamentalType T>
-    [[nodiscard]] FundamentalTypeInfo getFundamentalTypeInfo();
+    [[nodiscard]] FundamentalTypeInfo getFundamentalTypeInfo(IdGenerator &idGenerator);
 
-    inline FundamentalTypeInfo getFundamentalTypeInfo(std::string_view fullTypeName) {
+    inline FundamentalTypeInfo getFundamentalTypeInfo(std::string_view fullTypeName, IdGenerator &idGenerator) {
         if (fullTypeName == "bool") {
-            return getFundamentalTypeInfo<bool>();
+            return getFundamentalTypeInfo<bool>(idGenerator);
         } else if (fullTypeName == "char") {
-            return getFundamentalTypeInfo<char>();
+            return getFundamentalTypeInfo<char>(idGenerator);
         } else if (fullTypeName == "signed char") {
-            return getFundamentalTypeInfo<signed char>();
+            return getFundamentalTypeInfo<signed char>(idGenerator);
         } else if (fullTypeName == "unsigned char") {
-            return getFundamentalTypeInfo<unsigned char>();
+            return getFundamentalTypeInfo<unsigned char>(idGenerator);
         } else if (fullTypeName == "char8_t") {
-            return getFundamentalTypeInfo<char8_t>();
+            return getFundamentalTypeInfo<char8_t>(idGenerator);
         } else if (fullTypeName == "char16_t") {
-            return getFundamentalTypeInfo<char16_t>();
+            return getFundamentalTypeInfo<char16_t>(idGenerator);
         } else if (fullTypeName == "char32_t") {
-            return getFundamentalTypeInfo<char32_t>();
+            return getFundamentalTypeInfo<char32_t>(idGenerator);
         } else if (fullTypeName == "short") {
-            return getFundamentalTypeInfo<short>();
+            return getFundamentalTypeInfo<short>(idGenerator);
         } else if (fullTypeName == "unsigned short") {
-            return getFundamentalTypeInfo<unsigned short>();
+            return getFundamentalTypeInfo<unsigned short>(idGenerator);
         } else if (fullTypeName == "int") {
-            return getFundamentalTypeInfo<int>();
+            return getFundamentalTypeInfo<int>(idGenerator);
         } else if (fullTypeName == "unsigned int") {
-            return getFundamentalTypeInfo<unsigned int>();
+            return getFundamentalTypeInfo<unsigned int>(idGenerator);
         } else if (fullTypeName == "long") {
-            return getFundamentalTypeInfo<long>();
+            return getFundamentalTypeInfo<long>(idGenerator);
         } else if (fullTypeName == "unsigned long") {
-            return getFundamentalTypeInfo<unsigned long>();
+            return getFundamentalTypeInfo<unsigned long>(idGenerator);
         } else if (fullTypeName == "long long") {
-            return getFundamentalTypeInfo<long long>();
+            return getFundamentalTypeInfo<long long>(idGenerator);
         } else if (fullTypeName == "unsigned long long") {
-            return getFundamentalTypeInfo<unsigned long long>();
+            return getFundamentalTypeInfo<unsigned long long>(idGenerator);
         } else if (fullTypeName == "float") {
-            return getFundamentalTypeInfo<float>();
+            return getFundamentalTypeInfo<float>(idGenerator);
         } else if (fullTypeName == "double") {
-            return getFundamentalTypeInfo<double>();
+            return getFundamentalTypeInfo<double>(idGenerator);
         } else if (fullTypeName == "long double") {
-            return getFundamentalTypeInfo<long double>();
+            return getFundamentalTypeInfo<long double>(idGenerator);
         } else if (fullTypeName == "void") {
-            return getFundamentalTypeInfo<void>();
+            return getFundamentalTypeInfo<void>(idGenerator);
         } else if (fullTypeName == "std::nullptr_t") {
-            return getFundamentalTypeInfo<std::nullptr_t>();
+            return getFundamentalTypeInfo<std::nullptr_t>(idGenerator);
         } else {
             assert(false && "Invalid fundamental type name provided");
+            return {};
         }
     }
 

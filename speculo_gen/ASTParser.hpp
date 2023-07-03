@@ -28,8 +28,7 @@ namespace speculo::gen {
         const SourceConfig *config;
         std::shared_ptr<IdGenerator> idGenerator;
         std::shared_ptr<AttributeParser> attributeParser;
-
-        ParsedTypesCache typesCache;
+        std::shared_ptr<ParsedTypesCache> typesCache;
     };
 
 }// namespace speculo::gen

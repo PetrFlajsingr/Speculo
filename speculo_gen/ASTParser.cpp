@@ -12,7 +12,8 @@
 namespace speculo::gen {
 
     ASTParser::ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
-        : config{c}, idGenerator{std::move(idGen)}, attributeParser{std::move(attribParser)} {}
+        : config{c}, idGenerator{std::move(idGen)}, attributeParser{std::move(attribParser)},
+          typesCache{std::make_shared<ParsedTypesCache>()} {}
 
     std::vector<TypeInfoVariant> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();
@@ -29,7 +30,7 @@ namespace speculo::gen {
 
             if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser, typesCache); parser != nullptr) {
                 if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
-                    typesCache.add(*parseResult);
+                    typesCache->add(*parseResult);
                     result.emplace_back(std::move(*parseResult));
                 }
             }

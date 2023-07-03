@@ -10,7 +10,8 @@ namespace speculo::gen {
 
     class ASTEnumParser final : public ASTDeclParser {
     public:
-        ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser, ParsedTypesCache &cache);
+        ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
+                      std::shared_ptr<ParsedTypesCache> cache);
 
         ~ASTEnumParser() override = default;
 
@@ -26,7 +27,6 @@ namespace speculo::gen {
         [[nodiscard]] std::shared_ptr<EnumTypeInfo> createEnumTypeInfo(clang::ASTContext &astContext, clang::EnumDecl *enumDecl);
         void fillAttributes(EnumTypeInfo &info, clang::ASTContext &astContext, clang::EnumDecl *enumDecl);
 
-        [[nodiscard]] std::shared_ptr<FundamentalTypeInfo> getUnderlyingType(const std::string &underlyingTypeName);
 
         [[nodiscard]] static EnumValueCategory GetEnumValueCategory(const clang::EnumDecl *decl);
     };

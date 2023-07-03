@@ -2,8 +2,8 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
-#include "../AttributeParser.hpp"
 #include "ASTEnumParser.hpp"
+#include "../AttributeParser.hpp"
 
 #include "../clang_utils.hpp"
 #include "../wrap/clang_ast_qualtypenames.hpp"
@@ -12,8 +12,9 @@
 #include "details/FundamentalTypeInfos.hpp"
 
 namespace speculo::gen {
-    ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser, ParsedTypesCache &cache)
-        : ASTDeclParser{std::move(idGen), std::move(attribParser), cache} {
+    ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
+                                 std::shared_ptr<ParsedTypesCache> cache)
+        : ASTDeclParser{std::move(idGen), std::move(attribParser), std::move(cache)} {
         spdlog::trace("Creating ASTEnumDeclParser");
     }
 
@@ -37,7 +38,7 @@ namespace speculo::gen {
 
         fillAttributes(*result, astContext, enumDecl);
 
-        populateIDs(*result, getIdGenerator());
+        populateIDs(*result, *idGenerator);
 
         fillValueInfos(result->values, *result);
 
@@ -85,7 +86,7 @@ namespace speculo::gen {
     void ASTEnumParser::fillValueInfos(std::unordered_map<std::string, EnumTypeInfo::ValueInfo> &valueInfos, const EnumTypeInfo &type) {
         for (auto &[name, info]: valueInfos) {
             info.fullName = fmt::format("{}::{}", type.fullName, name);
-            const auto valueId = getIdGenerator().generateId(info.fullName);
+            const auto valueId = idGenerator->generateId(info.fullName);
             info.id = valueId;
             info.sourceLocation.filename = type.sourceLocation->filename;
         }
@@ -103,7 +104,10 @@ namespace speculo::gen {
 
         const auto underlyingTypeName = getProperQualifiedName(enumDecl->getIntegerType(), astContext);
 
-        result->underlyingType = {getUnderlyingType(underlyingTypeName), TypeForm::Normal, underlyingTypeName};
+        result->underlyingType = typesCache->getOrAdd<FundamentalTypeInfo>(underlyingTypeName, [&] {
+            return std::make_shared<FundamentalTypeInfo>(getFundamentalTypeInfo(underlyingTypeName, *idGenerator));
+        });
+
         result->size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
         result->alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
         result->isScoped = enumDecl->isScoped();
@@ -111,20 +115,11 @@ namespace speculo::gen {
     }
 
     void ASTEnumParser::fillAttributes(EnumTypeInfo &info, clang::ASTContext &astContext, clang::EnumDecl *enumDecl) {
-        auto enumAttributes = getAttributeParser().parseEnumAttributes(astContext, *enumDecl);
+        auto enumAttributes = attributeParser->parseEnumAttributes(astContext, *enumDecl);
         info.attributes = std::move(enumAttributes.attributes);
 
         for (auto [name, attributes]: enumAttributes.valueAttributes) { info.values[name].attributes = std::move(attributes); }
     }
 
-    std::shared_ptr<FundamentalTypeInfo> ASTEnumParser::getUnderlyingType(const std::string &underlyingTypeName) {
-        std::shared_ptr<FundamentalTypeInfo> underlyingType;
-        if (auto type = getTypesCache().get<FundamentalTypeInfo>(underlyingTypeName); type.has_value()) {
-            underlyingType = std::move(*type);
-        } else {
-            underlyingType = std::make_shared<FundamentalTypeInfo>(getFundamentalTypeInfo(underlyingTypeName));
-            getTypesCache().add(underlyingType);
-        }
-        return underlyingType;
-    }
+
 }// namespace speculo::gen

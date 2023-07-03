@@ -40,7 +40,7 @@ template<typename E>
   * Destructors behave the same way.
 
 Built-in attributes:
-* `pf::no_sti` - disables STI generation for type
+* `speculo::no_sti` - disables STI generation for type
 
 ## Usage
 1. Copy `script` folder to the root of your project.
@@ -122,12 +122,12 @@ TODO: demo
 ## Codegen plugins
 Dynamic library plugins can be created and used by placing them in a `plugins` directory next to the created executable. Simple example [https://github.com/PetrFlajsingr/speculo_plugin_template](https://github.com/PetrFlajsingr/speculo_plugin_template).
 
-The plugin library needs to provide a subclass of `pf::meta_gen::CodeGenerator` and the following interface:
+The plugin library needs to provide a subclass of `speculo::gen::CodeGenerator` and the following interface:
 ```cpp
 extern "C" {
-pf::meta_gen::CodeGenerator *create();
+speculo::gen::CodeGenerator *create();
 
-void destroy(pf::meta_gen::CodeGenerator *ptr);
+void destroy(speculo::gen::CodeGenerator *ptr);
 }
 ```
 

@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <variant>
 #include <vector>
+#include <cassert>
 
 #include <speculo/ID.hpp>
 #include <speculo/details/OneOf.hpp>
@@ -49,20 +50,20 @@ namespace speculo::gen {
     };
 
     struct TypeInfo {
-        speculo::ID id;
-        speculo::ID constId;
-        speculo::ID lrefId;
-        speculo::ID rrefId;
-        speculo::ID constLrefId;
-        speculo::ID ptrId;
-        speculo::ID constPtrId;
-        speculo::ID volatileId;
-        speculo::ID volatileConstId;
-        speculo::ID volatileLrefId;
-        speculo::ID volatileRrefId;
-        speculo::ID volatileConstLrefId;
-        speculo::ID volatilePtrId;
-        speculo::ID volatileConstPtrId;
+        ID id;
+        ID constId;
+        ID lrefId;
+        ID rrefId;
+        ID constLrefId;
+        ID ptrId;
+        ID constPtrId;
+        ID volatileId;
+        ID volatileConstId;
+        ID volatileLrefId;
+        ID volatileRrefId;
+        ID volatileConstLrefId;
+        ID volatilePtrId;
+        ID volatileConstPtrId;
 
         std::string fullName;
         std::string name;
@@ -96,12 +97,16 @@ namespace speculo::gen {
     struct TypeUsage {
         TypeInfoVariant type;
         TypeForm form;
+        // TODO: verify this is set properly everywhere
         std::string fullName;
+
+        /// Get ID of the used type. May return nullopt when the type is not of supported form.
+        [[nodiscard]] std::optional<ID> getID() const;
     };
 
     struct EnumTypeInfo : TypeInfo {
         struct ValueInfo {
-            speculo::ID id;
+            ID id;
             std::string fullName;
             std::variant<bool, std::uint64_t, std::int64_t> value;
             std::vector<Attribute> attributes;
@@ -111,11 +116,11 @@ namespace speculo::gen {
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, ValueInfo> values;
         bool isScoped;
-        TypeUsage underlyingType;
+        std::shared_ptr<FundamentalTypeInfo> underlyingType;
     };
 
     struct FunctionArgument {
-        speculo::ID id;
+        ID id;
         std::string name;
         std::string fullName;
 
@@ -126,7 +131,7 @@ namespace speculo::gen {
     };
 
     struct ConstructorInfo {
-        speculo::ID id;
+        ID id;
         std::string fullName;
         std::vector<FunctionArgument> arguments;
         std::vector<Attribute> attributes;
@@ -143,7 +148,7 @@ namespace speculo::gen {
     };
 
     struct DestructorInfo {
-        speculo::ID id;
+        ID id;
         std::string fullName;
         Access access;
         std::vector<Attribute> attributes;
@@ -159,7 +164,7 @@ namespace speculo::gen {
     };
 
     struct FunctionInfo {
-        speculo::ID id;
+        ID id;
         std::string name;
         std::string fullName;
         std::vector<FunctionArgument> arguments;
@@ -181,7 +186,7 @@ namespace speculo::gen {
     };
 
     struct VariableInfo {
-        speculo::ID id;
+        ID id;
         std::string name;
         std::string fullName;
 
@@ -202,7 +207,7 @@ namespace speculo::gen {
     };
 
     struct BaseClassInfo {
-        speculo::ID id;
+        ID id;
         std::string name;
         std::string fullName;
         bool isVirtual;
@@ -241,4 +246,29 @@ namespace speculo::gen {
         bool hasPfMetaGeneratedMacro;
     };
 
-}// namespace speculo::gen
+
+
+    inline std::optional<ID> TypeUsage::getID() const {
+        switch (form) {
+            case TypeForm::Normal:
+                return std::visit([](const auto &t) { return t->id; }, type);
+            case TypeForm::Const:
+                return std::visit([](const auto &t) { return t->constId; }, type);
+            case TypeForm::LRef:
+                return std::visit([](const auto &t) { return t->lrefId; }, type);
+            case TypeForm::ConstLRef:
+                return std::visit([](const auto &t) { return t->constLrefId; }, type);
+            case TypeForm::RRef:
+                return std::visit([](const auto &t) { return t->rrefId; }, type);
+            case TypeForm::Ptr:
+                return std::visit([](const auto &t) { return t->ptrId; }, type);
+            case TypeForm::ConstPtr:
+                return std::visit([](const auto &t) { return t->constPtrId; }, type);
+            case TypeForm::Other:
+                return std::nullopt;
+            default:
+                assert(false && "Invalid value");
+        }
+        return std::nullopt;
+    }
+}// namespace gen

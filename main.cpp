@@ -125,13 +125,13 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 }
 
 
-[[nodiscard]] std::optional<pf::meta_gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
+[[nodiscard]] std::optional<speculo::gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
     std::ifstream configFile{configPath};
     if (!configFile.is_open()) {
         spdlog::error("Can't open file '{}'", configPath.string());
         return std::nullopt;
     }
-    pf::meta_gen::ProjectConfig result{};
+    speculo::gen::ProjectConfig result{};
     auto data = nlohmann::json::parse(configFile);
 
     result.name = data["project"];
@@ -145,7 +145,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 
         auto metaFolder = inputFile;
         metaFolder.remove_filename();
-        metaFolder = projectRoot / metaFolder / "speculo";
+        metaFolder = projectRoot / metaFolder / "meta";
         auto generatedFolder = inputFile;
         generatedFolder.remove_filename();
         generatedFolder = projectRoot / generatedFolder / "generated";
@@ -230,7 +230,7 @@ int main(int argc, const char **argv) {
     if (!configs.sourceConfigs.empty()) { compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags; }
 
     const auto generateMetaForSource =
-            [&timestampDB, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
+            [&timestampDB, compilerFlagsChanged](speculo::gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
         if (!std::filesystem::exists(config.inputSource)) {
             spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
             return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
@@ -244,7 +244,7 @@ int main(int argc, const char **argv) {
             if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
                 const auto wasFileChanged = lastWriteTime > iter->second.lastChange;
 
-                const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+                const auto currentIncludes = speculo::gen::IncludeCollector{config}.collectIncludes(true);
                 bool anyIncludeChanged = std::ranges::any_of(currentIncludes, [&](const auto &path) {
                     return iter->second.includeChanges.find(path.string()) == iter->second.includeChanges.end();
                 });
@@ -268,7 +268,7 @@ int main(int argc, const char **argv) {
         spdlog::info("Parsing file '{}'", config.inputSource.string());
 
         if (!includeStampsCollected) {
-            const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+            const auto currentIncludes = speculo::gen::IncludeCollector{config}.collectIncludes(true);
             for (const auto &path: currentIncludes) { includeStamps[path.string()] = std::filesystem::last_write_time(path); }
         }
 
@@ -278,8 +278,8 @@ int main(int argc, const char **argv) {
 
         clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-        auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-        pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
+        auto idGenerator = std::make_shared<speculo::gen::IdGenerator>();
+        speculo::gen::ActionFactory factory{config, std::move(idGenerator)};
         if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
         if (FormatOutput) { ::format(std::string{config.outputMetaHeader.string()}); }
@@ -303,7 +303,7 @@ int main(int argc, const char **argv) {
 
     } else {
         const auto threadCount = std::thread::hardware_concurrency();
-        pf::meta_gen::ThreadPool threadPool{threadCount};
+        speculo::gen::ThreadPool threadPool{threadCount};
 
         std::vector<std::future<tl::expected<ParseResult, ParseFailure>>> results;
         std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) {

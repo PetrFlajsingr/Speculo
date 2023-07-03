@@ -22,9 +22,9 @@
 #include "src_templates/StaticValueInfo.hpp"
 
 #include "algorithms/contains.hpp"
-#include "speculo/details/array.hpp"
-#include "optional_utils.hpp"
 #include "idToString.hpp"
+#include "optional_utils.hpp"
+#include "speculo/details/array.hpp"
 
 namespace speculo::gen {
     [[nodiscard]] std::string createDetailsStruct(std::string_view contents) {
@@ -49,9 +49,7 @@ namespace speculo::gen {
             return;
         }
 
-        if (enumInfo.sourceLocation.has_value()) {
-            writeEnumInfoSourceLocation(enumInfo);
-        }
+        if (enumInfo.sourceLocation.has_value()) { writeEnumInfoSourceLocation(enumInfo); }
 
         using namespace fmt::literals;
         std::unordered_map<std::string, std::string> valueIds{};
@@ -90,8 +88,9 @@ namespace speculo::gen {
                               "source_file"_a = projectOr(enumInfo.sourceLocation, &SourceLocationInfo::filename, "<unknown>"),
                               "source_line"_a = info.sourceLocation.line, "source_column"_a = info.sourceLocation.column,
                               "type_id"_a = idToString(info.id), "attributes"_a = attributesStr, "name"_a = name,
-                              "full_name"_a = info.fullName, "underlying_type"_a = enumInfo.underlyingType, "underlying_value"_a = valueStr,
-                              "value"_a = info.fullName));
+                              "full_name"_a = info.fullName,
+                              "underlying_type"_a = enumInfo.underlyingType->fullName,
+                              "underlying_value"_a = valueStr, "value"_a = info.fullName));
         }
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
 
@@ -114,11 +113,11 @@ namespace speculo::gen {
                           "source_line"_a = projectOr(enumInfo.sourceLocation, &SourceLocationInfo::line, 0),
                           "source_column"_a = projectOr(enumInfo.sourceLocation, &SourceLocationInfo::column, 0),
                           "attributes"_a = attributesStr, "name"_a = enumInfo.name, "full_name"_a = enumInfo.fullName,
-                          "underlying_type"_a = enumInfo.underlyingType, "enum_value_ids"_a = valueIdsStr,
-                          "const_type_id"_a = idToString(enumInfo.constId), "lref_type_id"_a = idToString(enumInfo.lrefId),
-                          "const_lref_type_id"_a = idToString(enumInfo.constLrefId), "rref_type_id"_a = idToString(enumInfo.rrefId),
-                          "ptr_type_id"_a = idToString(enumInfo.ptrId), "const_ptr_type_id"_a = idToString(enumInfo.constPtrId),
-                          "volatile_type_id"_a = idToString(enumInfo.volatileId),
+                          "underlying_type"_a = enumInfo.underlyingType->fullName,
+                          "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = idToString(enumInfo.constId),
+                          "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
+                          "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
+                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "volatile_type_id"_a = idToString(enumInfo.volatileId),
                           "volatile_const_type_id"_a = idToString(enumInfo.volatileConstId),
                           "volatile_lref_type_id"_a = idToString(enumInfo.volatileLrefId),
                           "volatile_rref_type_id"_a = idToString(enumInfo.volatileRrefId),
@@ -283,7 +282,8 @@ namespace speculo::gen {
                                   recordInfo.fullName, ctorInfo.fullName, argInfo.fullName));
 
                 write(fmt::format(templates::StaticTypeInfo_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
-                                  "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(argInfo.type.id),
+                                  "details"_a = createDetailsStruct(detailsContents),
+                                  "type_id"_a = idToString(argInfo.type.getID().value_or(ID::Invalid())),
                                   "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
                                   "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
                                   "name"_a = argInfo.name));
@@ -441,7 +441,8 @@ namespace speculo::gen {
                                   recordInfo.fullName, mbrFncInfo.fullName, argInfo.fullName));
 
                 write(fmt::format(templates::StaticTypeInfo_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
-                                  "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(argInfo.type.id),
+                                  "details"_a = createDetailsStruct(detailsContents),
+                                  "type_id"_a = idToString(argInfo.type.getID().value_or(ID::Invalid())),
                                   "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
                                   "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
                                   "name"_a = argInfo.name));
@@ -508,7 +509,7 @@ namespace speculo::gen {
                                   "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
                                   "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
                                   "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
-                                  "return_type_id"_a = idToString(mbrFncInfo.returnType.id),
+                                  "return_type_id"_a = idToString(mbrFncInfo.returnType.getID().value_or(ID::Invalid())),
                                   "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "consteval_wrap"_a = constevalWrapStr,
                                   "member"_a = mbrFncInfo.fullName, "is_inline_specified"_a = mbrFncInfo.isInlineSpecified,
                                   "is_nothrow"_a = mbrFncInfo.isNothrow));
@@ -526,7 +527,7 @@ namespace speculo::gen {
                                   "is_constexpr"_a = mbrFncInfo.isConstexpr, "is_consteval"_a = mbrFncInfo.isConsteval,
                                   "is_const"_a = mbrFncInfo.isConst, "is_virtual"_a = mbrFncInfo.isVirtual,
                                   "is_pure_virtual"_a = mbrFncInfo.isPureVirtual, "is_final"_a = mbrFncInfo.isFinal,
-                                  "return_type_id"_a = idToString(mbrFncInfo.returnType.id),
+                                  "return_type_id"_a = idToString(mbrFncInfo.returnType.getID().value_or(ID::Invalid())),
                                   "arguments"_a = idsToStringMakeArray(mbrFncInfo.arguments), "member_type"_a = mbrFncType,
                                   "member"_a = mbrFncInfo.fullName, "is_inline"_a = mbrFncInfo.isInline,
                                   "is_inline_specified"_a = mbrFncInfo.isInlineSpecified,
@@ -554,8 +555,8 @@ namespace speculo::gen {
             }
             const auto attributesStr = StringifyAttributes(mbrVarInfo.attributes, argsArrayNames);
 
-            const auto mbrVarType =
-                    fmt::format("{return_type} {type}::* MemberPtr", "return_type"_a = mbrVarInfo.type.fullName, "type"_a = recordInfo.fullName);
+            const auto mbrVarType = fmt::format("{return_type} {type}::* MemberPtr", "return_type"_a = mbrVarInfo.type.fullName,
+                                                "type"_a = recordInfo.fullName);
 
             std::string bitfieldBlock{};
             std::string memberPtrBlock{};
@@ -612,7 +613,8 @@ namespace speculo::gen {
                                   recordInfo.fullName, statFncInfo.fullName, argInfo.fullName));
 
                 write(fmt::format(templates::StaticTypeInfo_Argument, "full_name"_a = argInfo.fullName, "id"_a = idToString(argInfo.id),
-                                  "details"_a = createDetailsStruct(detailsContents), "type_id"_a = idToString(argInfo.type.id),
+                                  "details"_a = createDetailsStruct(detailsContents),
+                                  "type_id"_a = idToString(argInfo.type.getID().value_or(ID::Invalid())),
                                   "source_file"_a = argInfo.sourceLocation.filename, "source_line"_a = argInfo.sourceLocation.line,
                                   "source_column"_a = argInfo.sourceLocation.column, "attributes"_a = attributesStr,
                                   "name"_a = argInfo.name));
@@ -633,8 +635,8 @@ namespace speculo::gen {
             std::string arguments;
             for (const auto &a: statFncInfo.arguments) { arguments.append(fmt::format("{}, ", a.type.fullName)); }
             if (!arguments.empty()) { arguments = arguments.substr(0, arguments.size() - 2); }
-            const auto statFncType = fmt::format("{return_type}(*MemberPtr)({arguments})", "return_type"_a = statFncInfo.returnType.fullName,
-                                                 "arguments"_a = arguments);
+            const auto statFncType = fmt::format("{return_type}(*MemberPtr)({arguments})",
+                                                 "return_type"_a = statFncInfo.returnType.fullName, "arguments"_a = arguments);
 
             write(fmt::format(R"fmt(// Record {} static function {}
 )fmt",
@@ -658,8 +660,8 @@ namespace speculo::gen {
                 const std::string constevalWrapStr =
                         fmt::format(R"([]({args}) {modifier} -> {result_type} {{ {return} self->{fnc}({arg_names}); }})",
                                     "args"_a = argsWithNames, "arg_names"_a = argNames, "type"_a = recordInfo.fullName,
-                                    "modifier"_a = "consteval", "result_type"_a = statFncInfo.returnType.fullName, "fnc"_a = statFncInfo.name,
-                                    "return"_a = statFncInfo.returnType.fullName == "void" ? "" : "return");
+                                    "modifier"_a = "consteval", "result_type"_a = statFncInfo.returnType.fullName,
+                                    "fnc"_a = statFncInfo.name, "return"_a = statFncInfo.returnType.fullName == "void" ? "" : "return");
 
 
                 write(fmt::format(templates::StaticTypeInfo_ConstevalStaticFunction, "full_name"_a = statFncInfo.fullName,
@@ -670,7 +672,7 @@ namespace speculo::gen {
                                   "is_protected"_a = statFncInfo.access == Access::Protected,
                                   "is_private"_a = statFncInfo.access == Access::Private, "name"_a = statFncInfo.name,
                                   "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
-                                  "return_type_id"_a = idToString(statFncInfo.returnType.id),
+                                  "return_type_id"_a = idToString(statFncInfo.returnType.getID().value_or(ID::Invalid())),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
                                   "member"_a = statFncInfo.fullName, "consteval_wrap"_a = constevalWrapStr,
                                   "is_inline_specified"_a = statFncInfo.isInlineSpecified, "is_nothrow"_a = statFncInfo.isNothrow));
@@ -683,7 +685,7 @@ namespace speculo::gen {
                                   "is_protected"_a = statFncInfo.access == Access::Protected,
                                   "is_private"_a = statFncInfo.access == Access::Private, "name"_a = statFncInfo.name,
                                   "is_constexpr"_a = statFncInfo.isConstexpr, "is_consteval"_a = statFncInfo.isConsteval,
-                                  "return_type_id"_a = idToString(statFncInfo.returnType.id),
+                                  "return_type_id"_a = idToString(statFncInfo.returnType.getID().value_or(ID::Invalid())),
                                   "arguments"_a = idsToStringMakeArray(statFncInfo.arguments), "member_type"_a = statFncType,
                                   "member"_a = statFncInfo.fullName, "is_inline"_a = statFncInfo.isInline,
                                   "is_inline_specified"_a = statFncInfo.isInlineSpecified, "is_nothrow"_a = statFncInfo.isNothrow));
@@ -752,12 +754,10 @@ namespace speculo::gen {
     }
 
     void MetaInfoWriter::writeEnumInfoSourceLocation(const EnumTypeInfo &enumInfo) {
-        write(fmt::format(R"fmt(// Enum {}, location {}:{}:{} with {} enumerators\n)fmt",
-                          enumInfo.fullName,
+        write(fmt::format(R"fmt(// Enum {}, location {}:{}:{} with {} enumerators\n)fmt", enumInfo.fullName,
                           projectOr(enumInfo.sourceLocation, &SourceLocationInfo::filename, "<unknown>"),
                           projectOr(enumInfo.sourceLocation, &SourceLocationInfo::line, 0),
-                          projectOr(enumInfo.sourceLocation, &SourceLocationInfo::column, 0),
-                          enumInfo.values.size()));
+                          projectOr(enumInfo.sourceLocation, &SourceLocationInfo::column, 0), enumInfo.values.size()));
     }
 
 }// namespace speculo::gen

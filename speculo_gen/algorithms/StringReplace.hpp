@@ -13,8 +13,10 @@ namespace speculo::gen {
     void replaceAllOccurrences(std::basic_string<CharT, CharTraits> &str,
                                speculo::OneOf<std::basic_string_view<CharT, CharTraits>, const CharT *> auto search,
                                speculo::OneOf<std::basic_string_view<CharT, CharTraits>, const CharT *> auto replace) {
-        for (auto pos = 0ull; (pos = str.find(search, pos)) != std::string::npos; pos += replace.length()) {
-            str.replace(pos, search.length(), replace);
+        std::basic_string_view<CharT, CharTraits> replaceS{replace};
+        std::basic_string_view<CharT, CharTraits> searchS{search};
+        for (auto pos = 0ull; (pos = str.find(searchS, pos)) != std::string::npos; pos += replaceS.length()) {
+            str.replace(pos, searchS.length(), replaceS);
         }
     }
 }// namespace speculo::gen

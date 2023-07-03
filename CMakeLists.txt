@@ -61,7 +61,7 @@ add_executable(speculo_gen main.cpp
         speculo_gen/ASTParser.cpp
         speculo_gen/MetaInfoWriter.cpp
         speculo_gen/decl_parsers/ASTDeclParser.cpp
-        speculo_gen/decl_parsers/ASTEnumDeclParser.cpp
+        speculo_gen/decl_parsers/ASTEnumParser.cpp
         speculo_gen/decl_parsers/ASTRecordParser.cpp
         speculo_gen/decl_parsers/factory.cpp
         speculo_gen/codegen/MetaSupportCodeGenerator.cpp
