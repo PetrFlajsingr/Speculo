@@ -6,8 +6,8 @@
 
 #include "IdGenerator.hpp"
 #include "info_structs.hpp"
-#include <speculo/details/RangeOf.hpp>
 #include <algorithm>
+#include <speculo/details/RangeOf.hpp>
 
 
 namespace speculo::gen {
@@ -37,7 +37,7 @@ namespace speculo::gen {
         [[nodiscard]] static std::string CreateAttributeArgArray(std::string_view name, const Attribute &attr);
 
         [[nodiscard]] static bool ContainsNoSTIAttribute(const std::vector<Attribute> &attrs) {
-            return std::ranges::any_of(attrs, [](const auto &attr) { return attr.nnamespace == "pf" && attr.name == "no_sti"; });
+            return std::ranges::any_of(attrs, [](const auto &attr) { return attr.nnamespace == "speculo" && attr.name == "no_sti"; });
         }
 
         std::shared_ptr<IdGenerator> idGenerator;
