@@ -15,12 +15,12 @@ namespace speculo {
         int stan;
     };
 
-    enum class [[pf::no_sti]] Hihi {};
+    enum class [[speculo::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a'),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{
             Value1 [[pf::test, pf::test2]] [[pf::test3]], Value2};
 
-    struct [[pf::no_sti]] B1 {
+    struct [[speculo::no_sti]] B1 {
         SPECULO_GENERATED()
     };
     struct B2 {
