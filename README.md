@@ -1,4 +1,4 @@
-# speculo_gen
+# Speculo
 
 Static type info generation system.
 
