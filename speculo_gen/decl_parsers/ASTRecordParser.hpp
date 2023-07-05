@@ -18,7 +18,8 @@ namespace speculo::gen {
 
         ~ASTRecordParser() override = default;
 
-        std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
+        [[nodiscard]] std::optional<std::string> getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) override;
+        [[nodiscard]] std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
 
     private:
         [[nodiscard]] static bool ShouldSkipConstructor(const clang::CXXRecordDecl *recordDecl, const clang::CXXConstructorDecl *ctor);
@@ -47,21 +48,23 @@ namespace speculo::gen {
         void collectMemberVariablesInfo(RecordTypeInfo &info, clang::ASTContext &astContext, const clang::CXXRecordDecl *recordDecl);
 
         // TODO: these should be elsewhere
-        [[nodiscard]] static std::shared_ptr<FundamentalTypeInfo>
+        [[nodiscard]] static std::shared_ptr<TypeInfoVariant>
         CreateFundamentalTypeInfo(const clang::QualType &type, const std::string &typeName, IdGenerator &idGenerator,
                                   ParsedTypesCache &typesCache, clang::ASTContext &astContext);
         ;
-        [[nodiscard]] static std::shared_ptr<IncompleteTypeInfo>
+        [[nodiscard]] static std::shared_ptr<TypeInfoVariant>
         CreateIncompleteTypeInfo(const clang::QualType &type, const std::string &typeName, IdGenerator &idGenerator,
                                  ParsedTypesCache &typesCache, clang::ASTContext &astContext);
-        [[nodiscard]] static TypeInfoVariant CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                IdGenerator &idGenerator, ParsedTypesCache &typesCache,
-                                                                clang::ASTContext &astContext, ASTEnumParser &enumParser);
-        [[nodiscard]] static TypeInfoVariant CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                  IdGenerator &idGenerator, ParsedTypesCache &typesCache,
-                                                                  clang::ASTContext &astContext, ASTRecordParser &recordParser);
-        [[nodiscard]] static TypeUsage CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext, ParsedTypesCache &typesCache,
-                                                       IdGenerator &idGenerator, ASTEnumParser &enumParser, ASTRecordParser &recordParser);
+        [[nodiscard]] static std::shared_ptr<TypeInfoVariant> CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                                 IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                                 clang::ASTContext &astContext, ASTEnumParser &enumParser);
+        [[nodiscard]] static std::shared_ptr<TypeInfoVariant> CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                                   IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                                   clang::ASTContext &astContext,
+                                                                                   ASTRecordParser &recordParser);
+        [[nodiscard]] static TypeUsage CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext,
+                                                       ParsedTypesCache &typesCache, IdGenerator &idGenerator, ASTEnumParser &enumParser,
+                                                       ASTRecordParser &recordParser);
 
         static void CheckForGeneratedMacro(RecordTypeInfo &info);
 

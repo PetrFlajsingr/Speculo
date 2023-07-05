@@ -34,13 +34,13 @@ namespace speculo::gen {
 
         auto result = createEnumTypeInfo(astContext, enumDecl);
 
-        result->values = ParseEnumerators(enumDecl->enumerators(), GetEnumValueCategory(enumDecl), astContext.getSourceManager());
+        result.values = ParseEnumerators(enumDecl->enumerators(), GetEnumValueCategory(enumDecl), astContext.getSourceManager());
 
-        fillAttributes(*result, astContext, enumDecl);
+        fillAttributes(result, astContext, enumDecl);
 
-        populateIDs(*result, *idGenerator);
+        populateIDs(result, *idGenerator);
 
-        fillValueInfos(result->values, *result);
+        fillValueInfos(result);
 
         return result;
     }
@@ -83,8 +83,8 @@ namespace speculo::gen {
         return {};
     }
 
-    void ASTEnumParser::fillValueInfos(std::unordered_map<std::string, EnumTypeInfo::ValueInfo> &valueInfos, const EnumTypeInfo &type) {
-        for (auto &[name, info]: valueInfos) {
+    void ASTEnumParser::fillValueInfos(EnumTypeInfo &type) {
+        for (auto &[name, info]: type.values) {
             info.fullName = fmt::format("{}::{}", type.fullName, name);
             const auto valueId = idGenerator->generateId(info.fullName);
             info.id = valueId;
@@ -93,24 +93,24 @@ namespace speculo::gen {
     }
 
 
-    std::shared_ptr<EnumTypeInfo> ASTEnumParser::createEnumTypeInfo(clang::ASTContext &astContext, clang::EnumDecl *enumDecl) {
-        auto result = std::make_shared<EnumTypeInfo>();
-        result->fullName = enumDecl->getQualifiedNameAsString();
-        result->name = enumDecl->getNameAsString();
+    EnumTypeInfo ASTEnumParser::createEnumTypeInfo(clang::ASTContext &astContext, clang::EnumDecl *enumDecl) {
+        EnumTypeInfo result{};
+        result.fullName = enumDecl->getQualifiedNameAsString();
+        result.name = enumDecl->getNameAsString();
 
-        result->originalCode = getSourceText(astContext, *enumDecl);
+        result.originalCode = getSourceText(astContext, *enumDecl);
 
-        result->sourceLocation.emplace(getSourceLocationInfo(astContext, *enumDecl));
+        result.sourceLocation.emplace(getSourceLocationInfo(astContext, *enumDecl));
 
         const auto underlyingTypeName = getProperQualifiedName(enumDecl->getIntegerType(), astContext);
 
-        result->underlyingType = typesCache->getOrAdd<FundamentalTypeInfo>(underlyingTypeName, [&] {
-            return std::make_shared<FundamentalTypeInfo>(getFundamentalTypeInfo(underlyingTypeName, *idGenerator));
+        result.underlyingType = typesCache->getOrAdd(underlyingTypeName, [&](TypeInfoVariant &result) {
+            result = getFundamentalTypeInfo(underlyingTypeName, *idGenerator);
         });
 
-        result->size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
-        result->alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
-        result->isScoped = enumDecl->isScoped();
+        result.size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
+        result.alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
+        result.isScoped = enumDecl->isScoped();
         return result;
     }
 
@@ -119,6 +119,23 @@ namespace speculo::gen {
         info.attributes = std::move(enumAttributes.attributes);
 
         for (auto [name, attributes]: enumAttributes.valueAttributes) { info.values[name].attributes = std::move(attributes); }
+    }
+
+    std::optional<std::string> ASTEnumParser::getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) {
+        assert(clang::dyn_cast<clang::EnumDecl>(decl) != nullptr);
+
+        const auto enumDecl = clang::cast<clang::EnumDecl>(decl);
+
+        spdlog::trace("ASTEnumDeclParser: getting name of {}", enumDecl->getQualifiedNameAsString());
+
+        // Skip if found decl is not definition
+        const auto definition = enumDecl->getDefinition();
+        if (definition != decl) {
+            spdlog::trace("ASTEnumDeclParser: skipping, not a definition");
+            return std::nullopt;
+        }
+
+        return enumDecl->getQualifiedNameAsString();
     }
 
 

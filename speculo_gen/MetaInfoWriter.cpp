@@ -37,8 +37,8 @@ namespace speculo::gen {
     void MetaInfoWriter::write(std::string_view str) { ostream << str; }
 
     void MetaInfoWriter::write(const TypeInfoVariant &typeInfo) {
-        std::visit(Visitor{[&](const std::shared_ptr<EnumTypeInfo> &enumInfo) { writeEnumInfo(*enumInfo); },
-                           [&](const std::shared_ptr<RecordTypeInfo> &recordInfo) { writeRecordInfo(*recordInfo); },
+        std::visit(Visitor{[&](const EnumTypeInfo &enumInfo) { writeEnumInfo(enumInfo); },
+                           [&](const RecordTypeInfo &recordInfo) { writeRecordInfo(recordInfo); },
                            [](auto) { spdlog::error("MetaInfoWriter: unimplemented type"); }},
                    typeInfo);
     }
@@ -59,6 +59,12 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", info.fullName);
                 continue;
             }
+
+            assert(enumInfo.underlyingType != nullptr);
+            if (!std::holds_alternative<FundamentalTypeInfo>(*enumInfo.underlyingType)) {
+                spdlog::error("Unexpected code path triggered in MetaInfo writer {}", 0x192B9F71);
+            }
+
             const auto valueIdStr = idToString(info.id);
             valueIds.emplace(info.fullName, valueIdStr);
             valueIdsStr.append(valueIdStr);
@@ -89,7 +95,7 @@ namespace speculo::gen {
                               "source_line"_a = info.sourceLocation.line, "source_column"_a = info.sourceLocation.column,
                               "type_id"_a = idToString(info.id), "attributes"_a = attributesStr, "name"_a = name,
                               "full_name"_a = info.fullName,
-                              "underlying_type"_a = enumInfo.underlyingType->fullName,
+                              "underlying_type"_a = std::visit([](const auto &t) { return t.fullName; }, *enumInfo.underlyingType),
                               "underlying_value"_a = valueStr, "value"_a = info.fullName));
         }
         if (!valueIdsStr.empty()) { valueIdsStr = valueIdsStr.substr(0, valueIdsStr.length() - 2); }
@@ -113,11 +119,11 @@ namespace speculo::gen {
                           "source_line"_a = projectOr(enumInfo.sourceLocation, &SourceLocationInfo::line, 0),
                           "source_column"_a = projectOr(enumInfo.sourceLocation, &SourceLocationInfo::column, 0),
                           "attributes"_a = attributesStr, "name"_a = enumInfo.name, "full_name"_a = enumInfo.fullName,
-                          "underlying_type"_a = enumInfo.underlyingType->fullName,
-                          "enum_value_ids"_a = valueIdsStr, "const_type_id"_a = idToString(enumInfo.constId),
-                          "lref_type_id"_a = idToString(enumInfo.lrefId), "const_lref_type_id"_a = idToString(enumInfo.constLrefId),
-                          "rref_type_id"_a = idToString(enumInfo.rrefId), "ptr_type_id"_a = idToString(enumInfo.ptrId),
-                          "const_ptr_type_id"_a = idToString(enumInfo.constPtrId), "volatile_type_id"_a = idToString(enumInfo.volatileId),
+                          "underlying_type"_a = std::visit([](const auto &t) { return t.fullName; }, *enumInfo.underlyingType), "enum_value_ids"_a = valueIdsStr,
+                          "const_type_id"_a = idToString(enumInfo.constId), "lref_type_id"_a = idToString(enumInfo.lrefId),
+                          "const_lref_type_id"_a = idToString(enumInfo.constLrefId), "rref_type_id"_a = idToString(enumInfo.rrefId),
+                          "ptr_type_id"_a = idToString(enumInfo.ptrId), "const_ptr_type_id"_a = idToString(enumInfo.constPtrId),
+                          "volatile_type_id"_a = idToString(enumInfo.volatileId),
                           "volatile_const_type_id"_a = idToString(enumInfo.volatileConstId),
                           "volatile_lref_type_id"_a = idToString(enumInfo.volatileLrefId),
                           "volatile_rref_type_id"_a = idToString(enumInfo.volatileRrefId),
@@ -754,7 +760,7 @@ namespace speculo::gen {
     }
 
     void MetaInfoWriter::writeEnumInfoSourceLocation(const EnumTypeInfo &enumInfo) {
-        write(fmt::format(R"fmt(// Enum {}, location {}:{}:{} with {} enumerators\n)fmt", enumInfo.fullName,
+        write(fmt::format("// Enum {}, location {}:{}:{} with {} enumerators\n", enumInfo.fullName,
                           projectOr(enumInfo.sourceLocation, &SourceLocationInfo::filename, "<unknown>"),
                           projectOr(enumInfo.sourceLocation, &SourceLocationInfo::line, 0),
                           projectOr(enumInfo.sourceLocation, &SourceLocationInfo::column, 0), enumInfo.values.size()));

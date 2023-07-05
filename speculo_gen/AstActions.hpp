@@ -58,6 +58,8 @@ namespace speculo::gen {
         std::shared_ptr<IdGenerator> idGenerator;
         class ASTAction *parent;
 
+        MetaSupportCodeGenerator metaSupportCodeGenerator;
+
         constexpr static auto FileUUIDSeed = "471F3823-2574-4bfd-b411-99ed177d3e43";
     };
 

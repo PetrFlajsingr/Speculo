@@ -53,22 +53,22 @@ template<speculo::Info I>
 
 
 int main() {
-    std::cout << speculo::to_string(pf::SomeEnum{0}) << std::endl;
-    std::cout << speculo::to_string(pf::SomeEnum::Value1) << std::endl;
-    std::cout << speculo::to_string(pf::SomeEnum::Value2) << std::endl;
+    std::cout << speculo::to_string(speculo::SomeEnum{0}) << std::endl;
+    std::cout << speculo::to_string(speculo::SomeEnum::Value1) << std::endl;
+    std::cout << speculo::to_string(speculo::SomeEnum::Value2) << std::endl;
 
-    constexpr auto a = speculo::from_string<pf::SomeEnum>("Value1");
+    constexpr auto a = speculo::from_string<speculo::SomeEnum>("Value1");
     static_assert(a.has_value());
-    constexpr auto b = speculo::from_string<pf::SomeEnum>("Value2");
+    constexpr auto b = speculo::from_string<speculo::SomeEnum>("Value2");
     static_assert(b.has_value());
-    constexpr auto c = speculo::from_string<pf::SomeEnum>("Value3");
+    constexpr auto c = speculo::from_string<speculo::SomeEnum>("Value3");
     static_assert(!c.has_value());
 
     std::cout << speculo::to_string(*a) << std::endl;
     std::cout << speculo::to_string(*b) << std::endl;
 
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(pf::SomeEnum);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(speculo::SomeEnum);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         std::cout << std::hex << A::Id.id[0] << std::endl;
@@ -78,69 +78,69 @@ int main() {
         static_assert(!A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
-        static_assert(std::same_as<A::Type, pf::SomeEnum>);
+        static_assert(std::same_as<A::Type, speculo::SomeEnum>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const pf::SomeEnum);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const speculo::SomeEnum);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
-        static_assert(std::same_as<A::Type, const pf::SomeEnum>);
+        static_assert(std::same_as<A::Type, const speculo::SomeEnum>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(pf::SomeEnum &);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(speculo::SomeEnum &);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
-        static_assert(std::same_as<A::Type, pf::SomeEnum &>);
+        static_assert(std::same_as<A::Type, speculo::SomeEnum &>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(pf::SomeEnum &&);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(speculo::SomeEnum &&);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
         static_assert(A::IsRvalueReference);
         static_assert(!A::IsPtr);
-        static_assert(std::same_as<A::Type, pf::SomeEnum &&>);
+        static_assert(std::same_as<A::Type, speculo::SomeEnum &&>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const pf::SomeEnum &);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const speculo::SomeEnum &);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(!A::IsPtr);
-        static_assert(std::same_as<A::Type, const pf::SomeEnum &>);
+        static_assert(std::same_as<A::Type, const speculo::SomeEnum &>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(pf::SomeEnum *);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(speculo::SomeEnum *);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(!A::IsConst);
         static_assert(!A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(A::IsPtr);
-        static_assert(std::same_as<A::Type, pf::SomeEnum *>);
+        static_assert(std::same_as<A::Type, speculo::SomeEnum *>);
     }
     {
-        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const pf::SomeEnum *);
+        constexpr speculo::Info enumInfo = SPECULO_REFLECT(const speculo::SomeEnum *);
         using A = speculo::details::StaticInfo<enumInfo.id>;
         std::cout << A::FullName << std::endl;
         static_assert(A::IsConst);
         static_assert(!A::IsLvalueReference);
         static_assert(!A::IsRvalueReference);
         static_assert(A::IsPtr);
-        static_assert(std::same_as<A::Type, const pf::SomeEnum *>);
+        static_assert(std::same_as<A::Type, const speculo::SomeEnum *>);
     }
-    constexpr speculo::Info enumInfo = SPECULO_REFLECT(pf::SomeEnum *);
+    constexpr speculo::Info enumInfo = SPECULO_REFLECT(speculo::SomeEnum *);
     using A = speculo::details::StaticInfo<enumInfo.id>;
 
     for (const auto &attr: speculo::attributes_of<enumInfo>()) {
@@ -154,12 +154,12 @@ int main() {
 
     speculo::template_for<speculo::members_of<enumInfo>()>(
             []<auto VI>() { std::cout << speculo::name_of<VI>() << "=" << static_cast<int>(SPECULO_SPLICE(VI)) << std::endl; });
-    for (const auto v: speculo::enumerator_values<pf::SomeEnum>()) {
+    for (const auto v: speculo::enumerator_values<speculo::SomeEnum>()) {
         std::cout << speculo::to_string(v) << "=" << static_cast<int>(v) << std::endl;
     }
 
-    constexpr auto AINFO = SPECULO_REFLECT(pf::A);
-    constexpr pf::A cA = pf::A();
+    constexpr auto AINFO = SPECULO_REFLECT(speculo::A);
+    constexpr speculo::A cA = SPECULO_SPLICE(AINFO)();
     using ImplFoo = speculo::details::StaticInfo<speculo::ID{0x575fdd108108c3d9u, 0xf4b82162dd7fc096u}>;
 
 

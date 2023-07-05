@@ -128,20 +128,20 @@ namespace speculo::gen {
         std::unordered_map<const RecordTypeInfo *, RecordGenMacro> generatedMacros;
         // prepare generated macro map
         std::ranges::for_each(infos, [&](const auto &info) {
-            std::visit(Visitor{[&](const std::shared_ptr<RecordTypeInfo> &recordInfo) {
-                                   if (!recordInfo->hasPfMetaGeneratedMacro) { return; }
+            std::visit(Visitor{[&](const RecordTypeInfo &recordInfo) {
+                                   if (!recordInfo.hasPfMetaGeneratedMacro) { return; }
                                    std::size_t generatedMacroLineOffset{};
-                                   if (const auto pos = recordInfo->originalCode.find("SPECULO_GENERATED()"); pos != std::string::npos) {
+                                   if (const auto pos = recordInfo.originalCode.find("SPECULO_GENERATED()"); pos != std::string::npos) {
                                        for (auto i = 0ull; i < pos; ++i) {
-                                           if (recordInfo->originalCode[i] == '\n') { ++generatedMacroLineOffset; }
+                                           if (recordInfo.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
                                        }
                                    }
-                                   assert(recordInfo->sourceLocation.has_value());
-                                   generatedMacroLineOffset += recordInfo->sourceLocation->line;
-                                   generatedMacros.emplace(recordInfo.get(), RecordGenMacro{fmt::format(generatedMacroNameTemplate,
-                                                                                                        "line"_a = generatedMacroLineOffset,
-                                                                                                        "file_id"_a = hppUUID),
-                                                                                            ""});
+                                   assert(recordInfo.sourceLocation.has_value());
+                                   generatedMacroLineOffset += recordInfo.sourceLocation->line;
+                                   generatedMacros.emplace(&recordInfo, RecordGenMacro{fmt::format(generatedMacroNameTemplate,
+                                                                                                   "line"_a = generatedMacroLineOffset,
+                                                                                                   "file_id"_a = hppUUID),
+                                                                                       ""});
                                },
                                [&](const auto &) {}},
                        info);
@@ -150,9 +150,7 @@ namespace speculo::gen {
     }
 
     std::vector<CodeGenerator *> ASTConsumer::createCodeGenerators(PluginManager &pluginManager) {
-        auto metaCodeGen = MetaSupportCodeGenerator{};
-
-        std::vector<CodeGenerator *> codeGenerators{&metaCodeGen};
+        std::vector<CodeGenerator *> codeGenerators{&metaSupportCodeGenerator};
         std::ranges::copy(pluginManager.getCodeGenerators(), std::back_inserter(codeGenerators));
         std::ranges::sort(codeGenerators, {}, &CodeGenerator::getPriority);
         return codeGenerators;
@@ -173,11 +171,11 @@ namespace speculo::gen {
         result.headerMacro.append(startData.headerBodyCode);
 
         std::ranges::for_each(infos, [&](const auto &info) {
-            std::visit(Visitor{[&](const std::shared_ptr<RecordTypeInfo> &recordInfo) {
-                                   auto genCode = generator.generate(*recordInfo);
+            std::visit(Visitor{[&](const RecordTypeInfo &recordInfo) {
+                                   auto genCode = generator.generate(recordInfo);
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.typeBodyCode, "\n", "\\\n");
-                                   result.recordMacro.emplace(recordInfo.get(), genCode.typeBodyCode);
+                                   result.recordMacro.emplace(&recordInfo, genCode.typeBodyCode);
 
                                    outputs.hpp << genCode.hppCode;
                                    outputs.cpp << genCode.cppCode;
@@ -185,8 +183,8 @@ namespace speculo::gen {
                                    replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                    result.headerMacro.append(genCode.headerBodyCode);
                                },
-                               [&](const std::shared_ptr<EnumTypeInfo> &enumInfo) {
-                                   auto genCode = generator.generate(*enumInfo);
+                               [&](const EnumTypeInfo &enumInfo) {
+                                   auto genCode = generator.generate(enumInfo);
                                    outputs.hpp << genCode.hppCode;
                                    outputs.cpp << genCode.cppCode;
                                    // add \ to new lines, because it's generated into a macro body
@@ -194,9 +192,9 @@ namespace speculo::gen {
                                    result.headerMacro.append(genCode.headerBodyCode);
                                },
                                // no action for incomplete types
-                               [](const std::shared_ptr<IncompleteTypeInfo> &) {},
+                               [](const IncompleteTypeInfo &) {},
                                // no action for fundamental types
-                               [](const std::shared_ptr<FundamentalTypeInfo> &) {}},
+                               [](const FundamentalTypeInfo &) {}},
                        info);
         });
 

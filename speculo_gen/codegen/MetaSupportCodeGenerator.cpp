@@ -28,10 +28,8 @@ namespace speculo::gen {
             friendDeclarations.push_back(fmt::format("friend struct ::speculo::details::StaticInfo<::speculo::{}>;", idToString(id)));
         };
         const auto appendNonPublicFriends = [&](const std::ranges::range auto &infoCollection) {
-            for (const auto &info : infoCollection) {
-                if (info.access == Access::Public) {
-                    appendFriendDeclaration(info.id);
-                }
+            for (const auto &info: infoCollection) {
+                if (info.access != Access::Public) { appendFriendDeclaration(info.id); }
             }
         };
         appendNonPublicFriends(typeInfo.memberFunctions);

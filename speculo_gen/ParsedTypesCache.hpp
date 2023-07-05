@@ -12,54 +12,55 @@
 
 #include "Visitor.hpp"
 #include "info_structs.hpp"
+#include "spdlog/spdlog.h"
 
 namespace speculo::gen {
 
     class ParsedTypesCache {
     public:
-        [[nodiscard]] std::optional<TypeInfoVariant> get(const std::string &fullName) {
+        [[nodiscard]] std::optional<std::shared_ptr<TypeInfoVariant>> get(const std::string &fullName) {
             if (const auto iter = typesCache.find(fullName); iter != typesCache.end()) { return iter->second; }
             return std::nullopt;
         }
 
         template<OneOf<EnumTypeInfo, RecordTypeInfo, IncompleteTypeInfo, FundamentalTypeInfo> T>
-        [[nodiscard]] std::optional<std::shared_ptr<T>> get(const std::string &fullName) {
+        [[nodiscard]] std::optional<std::reference_wrapper<T>> get(const std::string &fullName) {
             if (const auto iter = typesCache.find(fullName); iter != typesCache.end()) {
-                if (!std::holds_alternative<std::shared_ptr<T>>(iter->second)) { return std::nullopt; }
-                return std::get<std::shared_ptr<T>>(iter->second);
+                if (!std::holds_alternative<T>(*iter->second)) { return std::nullopt; }
+                return std::ref(std::get<T>(*iter->second));
             }
             return std::nullopt;
         }
 
-        void add(TypeInfoVariant typeInfo) {
-            std::visit(Visitor{[&](const auto &info) { addToCache(info); }}, typeInfo);
+        std::shared_ptr<TypeInfoVariant> add(std::shared_ptr<TypeInfoVariant> typeInfo) {
+            const auto typeName = std::visit(Visitor{[&](const auto &info) { return info.fullName; }}, *typeInfo);
+            return add(typeName, std::move(typeInfo));
+        }
+        std::shared_ptr<TypeInfoVariant> add(const TypeInfoVariant &typeInfo) {
+            const auto typeName = std::visit(Visitor{[&](const auto &info) { return info.fullName; }}, typeInfo);
+            return add(typeName, std::make_shared<TypeInfoVariant>(typeInfo));
+        }
+        const std::shared_ptr<TypeInfoVariant> &add(const std::string &typeName, std::shared_ptr<TypeInfoVariant> typeInfo) {
+            if (typesCache.find(typeName) != typesCache.end()) {
+                spdlog::error("Adding already existing type to ParsedTypesCache '{}'", typeName);
+            }
+            return typesCache.emplace(typeName, std::move(typeInfo)).first->second;
         }
 
-        template<std::invocable Getter>
-            requires requires(Getter getter) {
-                { getter() } -> std::same_as<TypeInfoVariant>;
+        template<typename Creator>
+            requires requires(Creator creator, TypeInfoVariant &result) {
+                { creator(result) };
             }
-        [[nodiscard]] TypeInfoVariant getOrAdd(const std::string &fullName, Getter getter) {
+        [[nodiscard]] std::shared_ptr<TypeInfoVariant> getOrAdd(const std::string &fullName, Creator creator) {
             if (auto getResult = get(fullName); getResult.has_value()) { return *getResult; }
-            TypeInfoVariant newInfo = getter();
-            add(newInfo);
-            return newInfo;
-        }
-        template<OneOf<EnumTypeInfo, RecordTypeInfo, IncompleteTypeInfo, FundamentalTypeInfo> T, std::invocable Getter>
-            requires requires(Getter getter) {
-                { getter() } -> std::same_as<std::shared_ptr<T>>;
-            }
-        [[nodiscard]] std::shared_ptr<T> getOrAdd(const std::string &fullName, Getter getter) {
-            if (auto getResult = get<T>(fullName); getResult.has_value()) { return *getResult; }
-            auto newInfo = getter();
-            add(newInfo);
+            auto newInfo = std::make_shared<TypeInfoVariant>();
+            add(fullName, newInfo);
+            creator(*newInfo);
             return newInfo;
         }
 
     private:
-        void addToCache(const auto &info) { typesCache.try_emplace(info->fullName, info); }
-
-        std::unordered_map<std::string, TypeInfoVariant> typesCache;
+        std::unordered_map<std::string, std::shared_ptr<TypeInfoVariant>> typesCache;
     };
 
 }// namespace speculo::gen

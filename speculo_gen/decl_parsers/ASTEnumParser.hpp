@@ -15,7 +15,8 @@ namespace speculo::gen {
 
         ~ASTEnumParser() override = default;
 
-        std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
+        [[nodiscard]] std::optional<std::string> getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) override;
+        [[nodiscard]] std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) override;
 
     private:
         enum class EnumValueCategory { Bool, Signed, Unsigned };
@@ -23,8 +24,8 @@ namespace speculo::gen {
         [[nodiscard]] static std::unordered_map<std::string, EnumTypeInfo::ValueInfo>
         ParseEnumerators(const clang::EnumDecl::enumerator_range &src, EnumValueCategory valueCategory,
                          clang::SourceManager &sourceManager);
-        void fillValueInfos(std::unordered_map<std::string, EnumTypeInfo::ValueInfo> &valueInfos, const EnumTypeInfo &type);
-        [[nodiscard]] std::shared_ptr<EnumTypeInfo> createEnumTypeInfo(clang::ASTContext &astContext, clang::EnumDecl *enumDecl);
+        void fillValueInfos(EnumTypeInfo &type);
+        [[nodiscard]] EnumTypeInfo createEnumTypeInfo(clang::ASTContext &astContext, clang::EnumDecl *enumDecl);
         void fillAttributes(EnumTypeInfo &info, clang::ASTContext &astContext, clang::EnumDecl *enumDecl);
 
 

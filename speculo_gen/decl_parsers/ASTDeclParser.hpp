@@ -22,6 +22,7 @@ namespace speculo::gen {
 
         virtual ~ASTDeclParser() = 0;
 
+        [[nodiscard]] virtual std::optional<std::string> getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) = 0;
         [[nodiscard]] virtual std::optional<TypeInfoVariant> parse(clang::ASTContext &astContext, clang::Decl *decl) = 0;
 
     protected:

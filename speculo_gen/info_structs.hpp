@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <cassert>
 #include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <variant>
 #include <vector>
-#include <cassert>
 
 #include <speculo/ID.hpp>
 #include <speculo/details/OneOf.hpp>
@@ -34,8 +34,7 @@ namespace speculo::gen {
         // std::unreachable
     }
 
-    using TypeInfoVariant = std::variant<std::shared_ptr<struct EnumTypeInfo>, std::shared_ptr<struct RecordTypeInfo>,
-                                         std::shared_ptr<struct IncompleteTypeInfo>, std::shared_ptr<struct FundamentalTypeInfo>>;
+    using TypeInfoVariant = std::variant<struct EnumTypeInfo, struct RecordTypeInfo, struct IncompleteTypeInfo, struct FundamentalTypeInfo>;
 
     struct Attribute {
         std::string nnamespace;
@@ -95,7 +94,7 @@ namespace speculo::gen {
         Other     // anything else
     };
     struct TypeUsage {
-        TypeInfoVariant type;
+        std::shared_ptr<TypeInfoVariant> type;
         TypeForm form;
         // TODO: verify this is set properly everywhere
         std::string fullName;
@@ -116,7 +115,7 @@ namespace speculo::gen {
         std::vector<Attribute> attributes;
         std::unordered_map<std::string, ValueInfo> values;
         bool isScoped;
-        std::shared_ptr<FundamentalTypeInfo> underlyingType;
+        std::shared_ptr<TypeInfoVariant> underlyingType;// basically guaranteed to be FundamentalTypeInfo, but check to be safe
     };
 
     struct FunctionArgument {
@@ -215,7 +214,8 @@ namespace speculo::gen {
         SourceLocationInfo sourceLocation;
         std::size_t byteOffset;
         std::size_t size;
-        std::shared_ptr<struct RecordTypeInfo> typeInfo;// may be nullptr when the type can't be parsed for some reason
+        std::shared_ptr<TypeInfoVariant>
+                typeInfo;// may be nullptr when the type can't be parsed for some reason, basically guaranteed to be RecordTypeInfo if not nullptr, better check tho
     };
 
     struct RecordTypeInfo : TypeInfo {
@@ -247,28 +247,28 @@ namespace speculo::gen {
     };
 
 
-
     inline std::optional<ID> TypeUsage::getID() const {
         switch (form) {
             case TypeForm::Normal:
-                return std::visit([](const auto &t) { return t->id; }, type);
+                return std::visit([](const auto &t) { return t.id; }, *type);
             case TypeForm::Const:
-                return std::visit([](const auto &t) { return t->constId; }, type);
+                return std::visit([](const auto &t) { return t.constId; }, *type);
             case TypeForm::LRef:
-                return std::visit([](const auto &t) { return t->lrefId; }, type);
+                return std::visit([](const auto &t) { return t.lrefId; }, *type);
             case TypeForm::ConstLRef:
-                return std::visit([](const auto &t) { return t->constLrefId; }, type);
+                return std::visit([](const auto &t) { return t.constLrefId; }, *type);
             case TypeForm::RRef:
-                return std::visit([](const auto &t) { return t->rrefId; }, type);
+                return std::visit([](const auto &t) { return t.rrefId; }, *type);
             case TypeForm::Ptr:
-                return std::visit([](const auto &t) { return t->ptrId; }, type);
+                return std::visit([](const auto &t) { return t.ptrId; }, *type);
             case TypeForm::ConstPtr:
-                return std::visit([](const auto &t) { return t->constPtrId; }, type);
+                return std::visit([](const auto &t) { return t.constPtrId; }, *type);
             case TypeForm::Other:
                 return std::nullopt;
             default:
                 assert(false && "Invalid value");
+                return std::nullopt;
         }
         return std::nullopt;
     }
-}// namespace gen
+}// namespace speculo::gen

@@ -6,7 +6,9 @@
 #include "AttributeParser.hpp"
 #include "IdGenerator.hpp"
 
+#include "decl_parsers/details/IncompleteTypeInfos.hpp"
 #include "decl_parsers/factory.hpp"
+#include "spdlog/spdlog.h"
 #include "wrap/clang_frontend_compilerinstance.hpp"
 
 namespace speculo::gen {
@@ -22,16 +24,24 @@ namespace speculo::gen {
 
     std::vector<TypeInfoVariant> ASTParser::walk(clang::ASTContext &astContext, const clang::DeclContext &context) {
         std::vector<TypeInfoVariant> result{};
-        for (auto it = context.decls_begin(); it != context.decls_end(); ++it) {
-            clang::Decl *decl = *it;
+        for (const auto decl: context.decls()) {
             //if (decl->isInvalidDecl()) { continue; }
             auto &sourceManager = astContext.getSourceManager();
             if (config->ignoreIncludes && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
+            // TODO: getOrCreate?
             if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser, typesCache); parser != nullptr) {
-                if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
-                    typesCache->add(*parseResult);
-                    result.emplace_back(std::move(*parseResult));
+                if (auto fullTypeName = parser->getFullTypeName(astContext, decl); fullTypeName.has_value()) {
+                    auto cacheType = std::make_shared<TypeInfoVariant>();
+                    typesCache->add(*fullTypeName, cacheType);
+
+                    if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
+                        *cacheType = std::move(*parseResult);
+                    } else {
+                        spdlog::error("Unexpected code path triggered in ASTParser {}", 0x9EFB2820);
+                        *cacheType = getIncompleteTypeInfo(*fullTypeName, *idGenerator);
+                    }
+                    result.emplace_back(*cacheType);
                 }
             }
 

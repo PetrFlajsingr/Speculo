@@ -13,7 +13,7 @@ Static type info generation system.
  template<typename E>
 [[nodiscard]] constexpr std::string_view to_string(E value) {
     constexpr auto enumInfo = SPECULO_REFLECT(E); // create an object for accessing static type info
-    // wanna-be template for for statically iterating over constexpr containers - this version has an early exit
+    // wanna-be 'template for' for statically iterating over constexpr containers - this version has an early exit
     const auto result =
             speculo::template_for_r<speculo::members_of<enumInfo>()>([&]<speculo::Info valueInfo>() -> std::optional<std::string_view> {
                 if (SPECULO_SPLICE(valueInfo) == value) { return std::optional{speculo::name_of<valueInfo>()}; }

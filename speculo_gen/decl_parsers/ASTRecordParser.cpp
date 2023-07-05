@@ -44,23 +44,23 @@ namespace speculo::gen {
             return std::nullopt;
         }
 
-        auto result = std::make_shared<RecordTypeInfo>();
+        RecordTypeInfo result{};
 
-        collectBasicRecordInfo(*result, astContext, recordDecl);
+        collectBasicRecordInfo(result, astContext, recordDecl);
 
-        collectMemberVariablesInfo(*result, astContext, recordDecl);
+        collectMemberVariablesInfo(result, astContext, recordDecl);
 
-        collectStaticVariablesInfo(*result, astContext, recordDecl);
+        collectStaticVariablesInfo(result, astContext, recordDecl);
 
-        collectMethodsInfo(*result, astContext, recordDecl);
+        collectMethodsInfo(result, astContext, recordDecl);
 
-        collectConstructorsInfo(*result, astContext, recordDecl);
+        collectConstructorsInfo(result, astContext, recordDecl);
 
-        collectDestructorInfo(*result, astContext, recordDecl);
+        collectDestructorInfo(result, astContext, recordDecl);
 
-        collectBaseInfos(*result, astContext, recordDecl);
+        collectBaseInfos(result, astContext, recordDecl);
 
-        CheckForGeneratedMacro(*result);
+        CheckForGeneratedMacro(result);
         return result;
     }
 
@@ -198,18 +198,16 @@ namespace speculo::gen {
                             .getQuantity();
             baseClassInfo.size = astContext.getASTRecordLayout(baseRecordDecl).getSize().getQuantity();
 
-            // TODO: getOrCreate
-            if (auto cachedBaseInfo = typesCache->get<RecordTypeInfo>(baseClassInfo.fullName); cachedBaseInfo.has_value()) {
-                baseClassInfo.typeInfo = std::move(*cachedBaseInfo);
-            } else {
-                auto baseTypeInfo = parse(astContext, baseRecordDecl);
-                if (!baseTypeInfo.has_value()) {
-                    spdlog::warn("Error during base class parsing '{}'", baseClassInfo.fullName);
-                } else {
-                    auto baseInfo = std::move(std::get<std::shared_ptr<RecordTypeInfo>>(*baseTypeInfo));
-                    typesCache->add(baseInfo);
-                    baseClassInfo.typeInfo = std::move(baseInfo);
-                }
+
+            if (auto fullTypeName = getFullTypeName(astContext, baseRecordDecl); fullTypeName.has_value()) {
+                baseClassInfo.typeInfo = typesCache->getOrAdd(*fullTypeName, [&](TypeInfoVariant &result) {
+                    if (auto parseResult = parse(astContext, baseRecordDecl); parseResult.has_value()) {
+                        result = std::move(*parseResult);
+                    } else {
+                        spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x8CB9274E);
+                        result = getIncompleteTypeInfo(*fullTypeName, *idGenerator);
+                    }
+                });
             }
 
             info.baseClasses.emplace_back(std::move(baseClassInfo));
@@ -268,7 +266,6 @@ namespace speculo::gen {
 
             ConstructorInfo constructorInfo;
             constructorInfo.fullName = ctor->getQualifiedNameAsString();
-            constructorInfo.id = idGenerator->generateId(constructorInfo.fullName);
 
             auto att = attributeParser->parseConstructorAttributes(astContext, *ctor);
             for (const clang::ParmVarDecl *param: ctor->parameters()) {
@@ -447,61 +444,57 @@ namespace speculo::gen {
         info.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
     }
 
-    std::shared_ptr<FundamentalTypeInfo> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type,
-                                                                                    const std::string &typeName, IdGenerator &idGenerator,
-                                                                                    ParsedTypesCache &typesCache,
-                                                                                    clang::ASTContext &astContext) {
-        return typesCache.getOrAdd<FundamentalTypeInfo>(
-                typeName, [&] { return std::make_shared<FundamentalTypeInfo>(getFundamentalTypeInfo(typeName, idGenerator)); });
+    std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                                IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                                clang::ASTContext &astContext) {
+        return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) { result = getFundamentalTypeInfo(typeName, idGenerator); });
     }
 
-    std::shared_ptr<IncompleteTypeInfo> ASTRecordParser::CreateIncompleteTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                                  IdGenerator &idGenerator, ParsedTypesCache &typesCache,
-                                                                                  clang::ASTContext &astContext) {
-        return typesCache.getOrAdd<IncompleteTypeInfo>(typeName, [&] {
-            return std::make_shared<IncompleteTypeInfo>(getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator));
+    std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateIncompleteTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                               IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                               clang::ASTContext &astContext) {
+        return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
+            result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
         });
     }
 
-    TypeInfoVariant ASTRecordParser::CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName, IdGenerator &idGenerator,
-                                                        ParsedTypesCache &typesCache, clang::ASTContext &astContext,
-                                                        ASTEnumParser &enumParser) {
-        return typesCache.getOrAdd(typeName, [&]() -> TypeInfoVariant {
+    std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                         IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                         clang::ASTContext &astContext, ASTEnumParser &enumParser) {
+        return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
             if (const auto enumType = llvm::dyn_cast<clang::EnumType>(type)) {
                 const auto enumDecl = enumType->getDecl();
                 if (auto parseResult = enumParser.parse(astContext, enumDecl); parseResult.has_value()) {
-                    auto parsedEnumType = std::get<std::shared_ptr<EnumTypeInfo>>(*parseResult);
-                    return parsedEnumType;
+                    result = std::move(*parseResult);
                 } else {
                     // this shouldn't happen
                     spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0xDA6A94AC);
-                    return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                    result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
                 }
             } else {
                 // this shouldn't happen
                 spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x979B1762);
-                return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
             }
         });
     }
 
-    TypeInfoVariant ASTRecordParser::CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                          IdGenerator &idGenerator, ParsedTypesCache &typesCache,
-                                                          clang::ASTContext &astContext, ASTRecordParser &recordParser) {
-        return typesCache.getOrAdd(typeName, [&]() -> TypeInfoVariant {
+    std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
+                                                                           IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                           clang::ASTContext &astContext, ASTRecordParser &recordParser) {
+        return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
             if (const auto recDecl = type->getAsCXXRecordDecl()) {
                 if (auto parseResult = recordParser.parse(astContext, recDecl); parseResult.has_value()) {
-                    auto parsedRecordType = std::get<std::shared_ptr<RecordTypeInfo>>(*parseResult);
-                    return parsedRecordType;
+                    result = std::move(*parseResult);
                 } else {
                     // this shouldn't happen
                     spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x6D7DE8E7);
-                    return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                    result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
                 }
             } else {
                 // this shouldn't happen
                 spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x2742E4E7);
-                return CreateIncompleteTypeInfo(type, typeName, idGenerator, typesCache, astContext);
+                result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
             }
         });
     }
@@ -528,6 +521,33 @@ namespace speculo::gen {
             result.type = CreateIncompleteTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext);
         }
         return result;
+    }
+
+    std::optional<std::string> ASTRecordParser::getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) {
+        assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
+        const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
+
+        if (ShouldSkipRecordDecl(recordDecl)) { return std::nullopt; }
+
+        spdlog::trace("ASTRecordParser: getting name of {}", getProperQualifiedName(recordDecl, astContext));
+
+        const auto isTemplateSpecialization = recordDecl->getTemplateSpecializationKind() != clang::TSK_Undeclared;
+        if (isTemplateSpecialization) {
+            spdlog::trace("ASTRecordParser: {} is a template specialization", getProperQualifiedName(recordDecl, astContext));
+            if (recordDecl->getTemplateSpecializationKind() != clang::TSK_ExplicitSpecialization) {
+                spdlog::trace("ASTRecordParser: skipping a non explicit template specialization");
+                return std::nullopt;
+            }
+        }
+
+        // Skip if found decl is not definition
+        const auto definition = recordDecl->getDefinition();
+        if (definition != decl) {
+            spdlog::trace("ASTRecordParser: skipping, not a definition");
+            return std::nullopt;
+        }
+
+        return getProperQualifiedName(recordDecl, astContext);
     }
 
 }// namespace speculo::gen
