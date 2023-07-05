@@ -1,26 +1,26 @@
-#include "meta/Info.hpp"
+#include "speculo/Info.hpp"
 #include <fmt/core.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>
 
-#include "meta_gen/AttributeParser.hpp"
-#include "meta_gen/IdGenerator.hpp"
-#include "meta_gen/IncludeCollector.hpp"
-#include "meta_gen/wrap/clang_tooling_compilationdatabase.hpp"
-#include "meta_gen/info_structs.hpp"
+#include "speculo_gen/AttributeParser.hpp"
+#include "speculo_gen/IdGenerator.hpp"
+#include "speculo_gen/IncludeCollector.hpp"
+#include "speculo_gen/wrap/clang_tooling_compilationdatabase.hpp"
+#include "speculo_gen/info_structs.hpp"
 
 #include "format.hpp"
-#include "meta_gen/AstActions.hpp"
-#include "meta_gen/wrap/clang_tooling_commonoptionsparser.hpp"
+#include "speculo_gen/AstActions.hpp"
+#include "speculo_gen/wrap/clang_tooling_commonoptionsparser.hpp"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <tl/expected.hpp>
 
-#include "meta_gen/SourceConfig.hpp"
-#include "meta_gen/ThreadPool.hpp"
+#include "speculo_gen/SourceConfig.hpp"
+#include "speculo_gen/ThreadPool.hpp"
 #include "spdlog/sinks/stdout_color_sinks.h"
-#include "meta_gen/wrap/clang_lex_PreprocessorOptions.hpp"
+#include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
@@ -81,7 +81,7 @@ struct ProjectDatabase {
 };
 
 [[nodiscard]] ProjectDatabase loadProjectDatabase(std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
+    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
     if (!std::filesystem::exists(databasePath)) {
         spdlog::info("Database file not found at '{}'", databasePath.string());
         return {};
@@ -101,7 +101,7 @@ struct ProjectDatabase {
 }
 // only pass those parsed by this process
 void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("pf_meta_{}_database.json", projectName);
+    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
     auto istream = std::ifstream{databasePath};
     nlohmann::json data;
     if (istream.is_open()) { data = nlohmann::json::parse(istream); }
@@ -125,13 +125,13 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
 }
 
 
-[[nodiscard]] std::optional<pf::meta_gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
+[[nodiscard]] std::optional<speculo::gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
     std::ifstream configFile{configPath};
     if (!configFile.is_open()) {
         spdlog::error("Can't open file '{}'", configPath.string());
         return std::nullopt;
     }
-    pf::meta_gen::ProjectConfig result{};
+    speculo::gen::ProjectConfig result{};
     auto data = nlohmann::json::parse(configFile);
 
     result.name = data["project"];
@@ -168,7 +168,7 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
         // TODO: move elsewhere
-        flags.emplace_back("-D PF_META_GENERATOR_RUNNING");
+        flags.emplace_back("-D SPECULO_GENERATOR_RUNNING");
         // FIXME: remove once clang claims consteval support
         flags.emplace_back("-D __cpp_consteval=201811L");
         result.sourceConfigs.push_back({.inputSource = inputFile,
@@ -230,7 +230,7 @@ int main(int argc, const char **argv) {
     if (!configs.sourceConfigs.empty()) { compilerFlagsChanged = configs.sourceConfigs.front().compilerFlags != timestampDB.compilerFlags; }
 
     const auto generateMetaForSource =
-            [&timestampDB, compilerFlagsChanged](pf::meta_gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
+            [&timestampDB, compilerFlagsChanged](speculo::gen::SourceConfig config) -> tl::expected<ParseResult, ParseFailure> {
         if (!std::filesystem::exists(config.inputSource)) {
             spdlog::error("Provided file does not exist: '{}'", config.inputSource.string());
             return tl::make_unexpected(ParseFailure{config.inputSource, config.outputMetaHeader});
@@ -244,7 +244,7 @@ int main(int argc, const char **argv) {
             if (const auto iter = timestampDB.fileTimestamps.find(config.inputSource.string()); iter != timestampDB.fileTimestamps.end()) {
                 const auto wasFileChanged = lastWriteTime > iter->second.lastChange;
 
-                const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+                const auto currentIncludes = speculo::gen::IncludeCollector{config}.collectIncludes(true);
                 bool anyIncludeChanged = std::ranges::any_of(currentIncludes, [&](const auto &path) {
                     return iter->second.includeChanges.find(path.string()) == iter->second.includeChanges.end();
                 });
@@ -268,7 +268,7 @@ int main(int argc, const char **argv) {
         spdlog::info("Parsing file '{}'", config.inputSource.string());
 
         if (!includeStampsCollected) {
-            const auto currentIncludes = pf::meta_gen::IncludeCollector{config}.collectIncludes(true);
+            const auto currentIncludes = speculo::gen::IncludeCollector{config}.collectIncludes(true);
             for (const auto &path: currentIncludes) { includeStamps[path.string()] = std::filesystem::last_write_time(path); }
         }
 
@@ -278,8 +278,8 @@ int main(int argc, const char **argv) {
 
         clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
 
-        auto idGenerator = std::make_shared<pf::meta_gen::IdGenerator>();
-        pf::meta_gen::ActionFactory factory{config, std::move(idGenerator)};
+        auto idGenerator = std::make_shared<speculo::gen::IdGenerator>();
+        speculo::gen::ActionFactory factory{config, std::move(idGenerator)};
         if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
 
         if (FormatOutput) { ::format(std::string{config.outputMetaHeader.string()}); }
@@ -303,7 +303,7 @@ int main(int argc, const char **argv) {
 
     } else {
         const auto threadCount = std::thread::hardware_concurrency();
-        pf::meta_gen::ThreadPool threadPool{threadCount};
+        speculo::gen::ThreadPool threadPool{threadCount};
 
         std::vector<std::future<tl::expected<ParseResult, ParseFailure>>> results;
         std::ranges::for_each(configs.sourceConfigs, [&](const auto &config) {
