@@ -30,30 +30,31 @@ namespace test {
     private:
         int hash;
     };
-      struct C {
+    struct C {
+        SPECULO_GENERATED()
         constexpr C(int) {}
     };
     using namespace test2;
     struct SimpleStruct : public test2::DifferentFileBase {
         SPECULO_GENERATED()
 
-         unsigned int b1 : 1;
-    unsigned int b2 : 2;
-    unsigned int b3 : 3;
-    unsigned int b4 : 4;
-    unsigned int b5 : 5;
+        unsigned int b1 : 1;
+        unsigned int b2 : 2;
+        unsigned int b3 : 3;
+        unsigned int b4 : 4;
+        unsigned int b5 : 5;
 
-    struct NestedPublic {
-        SPECULO_GENERATED()
-        int a;
-    };
+        struct NestedPublic {
+            SPECULO_GENERATED()
+            int a;
+        };
 
-private:
-    struct NestedPrivate {
-        SPECULO_GENERATED()
-        int a;
-    };
-    void footadlo() {}
+    private:
+        struct NestedPrivate {
+            SPECULO_GENERATED()
+            int a;
+        };
+        void footadlo() {}
     };
 }// namespace test
 SPECULO_GENERATED_HEADER()
