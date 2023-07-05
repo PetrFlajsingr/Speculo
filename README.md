@@ -120,7 +120,7 @@ Address of a destructors is impossible to be taken, so constructors are currentl
 TODO: demo
 
 ## Codegen plugins
-Dynamic library plugins can be created and used by placing them in a `plugins` directory next to the created executable. Simple example [https://github.com/PetrFlajsingr/speculo_plugin_template](https://github.com/PetrFlajsingr/speculo_plugin_template).
+Dynamic library plugins can be created and used by placing them in a `plugins` directory next to the created executable. Simple example [https://github.com/PetrFlajsingr/Speculo-plugin_template](https://github.com/PetrFlajsingr/Speculo-plugin_template).
 
 The plugin library needs to provide a subclass of `speculo::gen::CodeGenerator` and the following interface:
 ```cpp
