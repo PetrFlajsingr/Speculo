@@ -487,7 +487,7 @@ namespace speculo::gen {
                 if (auto parseResult = recordParser.parse(astContext, recDecl); parseResult.has_value()) {
                     result = std::move(*parseResult);
                 } else {
-                    // this shouldn't happen
+                    // this shouldn't happen - TODO: currently happens with templated types
                     spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x6D7DE8E7);
                     result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
                 }

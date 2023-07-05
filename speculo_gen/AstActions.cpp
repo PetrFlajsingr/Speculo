@@ -19,10 +19,9 @@ namespace speculo::gen {
 
         ASTParser astParser{config, idGenerator,
                             std::make_shared<AttributeParser>(context, std::move(parent->getTokenCollector()).consume())};
-        const auto infos = astParser.parse(context);
+        auto infos = astParser.parse(context);
 
-        writeMetaInfo(infos);
-
+        std::vector<TypeInfoVariant> generatedTypes;
         {
             auto outputsOpt = openOutputs();
             if (!outputsOpt.has_value()) { return; }
@@ -45,13 +44,15 @@ namespace speculo::gen {
             outputs.cpp << fmt::format("#include \"{}\"\n", config->outputCodegenHeader.filename().string());
 
             for (auto &codeGenerator: codeGenerators) {
-                const auto additional = runCodeGenerator(*codeGenerator, outputs, infos);
+                auto additional = runCodeGenerator(*codeGenerator, outputs, infos);
                 headerMacroBody.append(additional.headerMacro);
                 for (const auto &[rec, contents]: additional.recordMacro) {
                     if (const auto iter = generatedMacros.find(rec); iter != generatedMacros.end()) {
                         iter->second.contents.append(contents);
                     }
                 }
+                infos.reserve(infos.size() + additional.types.size());
+                std::ranges::move(additional.types, std::back_inserter(infos));
             }
 
 
@@ -64,6 +65,8 @@ namespace speculo::gen {
                 outputs.hpp << macro << "\n\n";
             });
         }
+
+        writeMetaInfo(infos);
     }
 
     void ASTConsumer::writeMetaInfo(const std::vector<TypeInfoVariant> &infos) {
@@ -157,7 +160,7 @@ namespace speculo::gen {
     }
 
     ASTConsumer::AdditionalCodeGenCode ASTConsumer::runCodeGenerator(CodeGenerator &generator, OutStreams &outputs,
-                                                                     const std::vector<TypeInfoVariant> &infos) {
+                                                                     std::vector<TypeInfoVariant> &infos) {
         AdditionalCodeGenCode result;
 
         generator.initialize(outputs.hppUUID, outputs.cppUUID, fmt::format("../{}", config->inputProjectPath.filename().string()),
@@ -170,8 +173,8 @@ namespace speculo::gen {
         replaceAllOccurrences(startData.headerBodyCode, "\n", "\\\n");
         result.headerMacro.append(startData.headerBodyCode);
 
-        std::ranges::for_each(infos, [&](const auto &info) {
-            std::visit(Visitor{[&](const RecordTypeInfo &recordInfo) {
+        std::ranges::for_each(infos, [&](auto &info) {
+            std::visit(Visitor{[&](RecordTypeInfo &recordInfo) {
                                    auto genCode = generator.generate(recordInfo);
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.typeBodyCode, "\n", "\\\n");
@@ -182,6 +185,9 @@ namespace speculo::gen {
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                    result.headerMacro.append(genCode.headerBodyCode);
+
+                                   result.types.reserve(result.types.size() + genCode.generatedTypes.size());
+                                   std::ranges::move(result.types, std::back_inserter(genCode.generatedTypes));
                                },
                                [&](const EnumTypeInfo &enumInfo) {
                                    auto genCode = generator.generate(enumInfo);
@@ -190,6 +196,9 @@ namespace speculo::gen {
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                    result.headerMacro.append(genCode.headerBodyCode);
+
+                                   result.types.reserve(result.types.size() + genCode.generatedTypes.size());
+                                   std::ranges::move(result.types, std::back_inserter(genCode.generatedTypes));
                                },
                                // no action for incomplete types
                                [](const IncompleteTypeInfo &) {},
