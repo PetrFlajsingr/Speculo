@@ -1,21 +1,34 @@
 #include "format.hpp"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
 #include "speculo/Info.hpp"
 #include "speculo/details/array.hpp"
 #include "speculo_gen/IdGenerator.hpp"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+#include "speculo_gen/idToString.hpp"
 #include <fmt/format.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/raw_ostream.h>
 #include <string>
 #include <unordered_set>
-#include "speculo_gen/idToString.hpp"
 
 static llvm::cl::opt<std::string> Output(llvm::cl::Required, "output", llvm::cl::desc("Specify output path"),
                                          llvm::cl::value_desc("filename"));
 
-enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
+enum class InfoType {
+    Const,
+    Lvalue,
+    ConstLvalue,
+    Rvalue,
+    Ptr,
+    ConstPtr,
+    VolatileConst,
+    VolatileLvalue,
+    VolatileConstLvalue,
+    VolatileRvalue,
+    VolatilePtr,
+    VolatileConstPtr
+};
 
 [[nodiscard]] constexpr std::string wrapStructForInfoType(InfoType infoType) {
     switch (infoType) {
@@ -31,11 +44,24 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
             return "StaticInfo_PtrWrap";
         case InfoType::ConstPtr:
             return "StaticInfo_ConstPtrWrap";
+        case InfoType::VolatileConst:
+            return "StaticInfo_VolatileConstWrap";
+        case InfoType::VolatileLvalue:
+            return "StaticInfo_VolatileLRefWrap";
+        case InfoType::VolatileConstLvalue:
+            return "StaticInfo_VolatileConstLRefWrap";
+        case InfoType::VolatileRvalue:
+            return "StaticInfo_VolatileRRefWrap";
+        case InfoType::VolatilePtr:
+            return "StaticInfo_VolatilePtrWrap";
+        case InfoType::VolatileConstPtr:
+            return "StaticInfo_VolatileConstPtrWrap";
     }
     throw "can't happen";
 }
 
 [[nodiscard]] constexpr std::string wrapNameForInfoType(InfoType infoType, const std::string &fullTypeName) {
+    using namespace std::string_literals;
     switch (infoType) {
         case InfoType::Const:
             return "const " + fullTypeName;
@@ -49,14 +75,28 @@ enum class InfoType { Const, Lvalue, ConstLvalue, Rvalue, Ptr, ConstPtr };
             return fullTypeName + " *";
         case InfoType::ConstPtr:
             return "const " + fullTypeName + " *";
+        case InfoType::VolatileConst:
+            return "volatile "s + "const " + fullTypeName;
+        case InfoType::VolatileLvalue:
+            return "volatile "s + fullTypeName + " &";
+        case InfoType::VolatileConstLvalue:
+            return "volatile "s + "const " + fullTypeName + " &";
+        case InfoType::VolatileRvalue:
+            return "volatile "s + fullTypeName + " &&";
+        case InfoType::VolatilePtr:
+            return "volatile "s + fullTypeName + " *";
+        case InfoType::VolatileConstPtr:
+            return "volatile "s + "const " + fullTypeName + " *";
     }
     throw "can't happen";
 }
 
 std::string generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {InfoType::Const, InfoType::Lvalue,
-                                                                                              InfoType::ConstLvalue, InfoType::Rvalue,
-                                                                                              InfoType::Ptr, InfoType::ConstPtr}) {
+                                              std::unordered_set<InfoType> typesToGenerate = {
+                                                      InfoType::Const, InfoType::Lvalue, InfoType::ConstLvalue, InfoType::Rvalue,
+                                                      InfoType::Ptr, InfoType::ConstPtr, InfoType::VolatileConst, InfoType::VolatileLvalue,
+                                                      InfoType::VolatileConstLvalue, InfoType::VolatileRvalue, InfoType::VolatilePtr,
+                                                      InfoType::VolatileConstPtr}) {
     using namespace fmt::literals;
     constexpr auto prologue = R"fmt(
 /****************************** {full_name} START ******************************/

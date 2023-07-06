@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <speculo/details/StaticInfo.hpp>
 #include <speculo/Info.hpp>
 #include <speculo/details/RangeOf.hpp>
 #include <speculo/template_for.hpp>
