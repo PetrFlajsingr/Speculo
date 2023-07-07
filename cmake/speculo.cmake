@@ -66,11 +66,14 @@ function(speculo_run_gen)
     #speculo_check_fnc_arg_provided("HEADERS")
     #speculo_check_fnc_arg_provided("FLAGS")
 
+    get_filename_component(SPECULO_GEN_EXE_DIR ${SPECULO_GEN_EXE_PATH} DIRECTORY)
     # create a target for invoking codegen tool
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
     add_custom_target(${_args_TARGET}_generate_meta COMMAND
             ${SPECULO_GEN_EXE_PATH} --config "${BINARY_DIR}/speculo_${_args_TARGET}_config.json"
-            --ignore-includes ${formatArg} ${forceArg})
+            --ignore-includes ${formatArg} ${forceArg}
+            WORKING_DIRECTORY ${SPECULO_GEN_EXE_DIR}
+    )
     # tool invocation needs to wait for config creation
     add_dependencies(${_args_TARGET}_generate_meta speculo_generate_${_args_TARGET}_config)
 
