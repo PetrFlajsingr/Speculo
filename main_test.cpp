@@ -53,6 +53,7 @@ template<speculo::Info I>
 
 
 int main() {
+    std::cout << speculo::to_string(*speculo::from_underlying<speculo::SomeEnum>(0)) << std::endl;
     std::cout << speculo::to_string(speculo::SomeEnum{0}) << std::endl;
     std::cout << speculo::to_string(speculo::SomeEnum::Value1) << std::endl;
     std::cout << speculo::to_string(speculo::SomeEnum::Value2) << std::endl;
