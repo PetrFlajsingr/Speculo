@@ -37,6 +37,15 @@ namespace speculo {
     }
 
     template<EnumType E>
+    [[nodiscard]] constexpr std::optional<E> from_underlying(std::underlying_type_t<E> value) {
+        constexpr Info enumInfo = SPECULO_REFLECT(E);
+        return template_for_r<members_of<enumInfo>()>([&]<Info valueInfo>() -> std::optional<E> {
+            if (static_cast<std::underlying_type_t<E>>(SPECULO_SPLICE(valueInfo)) == value) { return SPECULO_SPLICE(valueInfo); }
+            return std::nullopt;
+        });
+    }
+
+    template<EnumType E>
     [[nodiscard]] constexpr RangeOf<E> auto enumerator_values() {
         constexpr Info enumInfo = SPECULO_REFLECT(E);
         constexpr auto enumerators = members_of<enumInfo>();

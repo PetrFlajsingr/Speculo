@@ -74,7 +74,7 @@ namespace test {
         V1 = 0x01,
         V2 = 0x02,
         V3 = 0x04,
-        A [[nihil::flag_combination]] = V1 | V2 | V3 | 43534,
+        A [[nihil::flag_combination]] = V1 | V2 | V3,
         V12 [[nihil::flag_combination]] = V1 | V2 // allowed even when not single bit due to the attribute, checked
     };
 
