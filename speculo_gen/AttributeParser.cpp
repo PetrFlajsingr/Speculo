@@ -292,14 +292,12 @@ namespace speculo::gen {
             const auto &token = *iter;
             switch (state) {
                 case State::Start: {
-                    if (token.kind() == clang::tok::raw_identifier || token.kind() == clang::tok::identifier) {
+                    if (token.kind() == clang::tok::kw_using) {
+                        state = State::Using;
+                    } else if (token.kind() == clang::tok::raw_identifier || token.kind() == clang::tok::identifier) {
                         const auto spelling = token.text(sourceManager);
-                        if (spelling == "using") {
-                            state = State::Using;
-                        } else {
-                            state = State::Name;
-                            attributeName = spelling;
-                        }
+                        state = State::Name;
+                        attributeName = spelling;
                     }
                 } break;
                 case State::None: {

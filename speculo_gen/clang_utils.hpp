@@ -28,7 +28,7 @@ namespace speculo::gen {
 
     [[nodiscard]] std::string getProperQualifiedName(const clang::QualType &type, const clang::ASTContext &astContext);
 
-    [[nodiscard]] clang::QualType stripQualifiersAndPtrRef(const clang::QualType &type);
+    [[nodiscard]] clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type);
     [[nodiscard]] TypeForm getTypeForm(const clang::QualType &type);
 
 }// namespace speculo::gen
