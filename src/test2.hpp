@@ -9,7 +9,10 @@
 #include "test_h.hpp"
 #include <speculo/macros.hpp>
 
+#include <cstddef>
+
 #include "generated/test2.hpp"
+
 
 namespace test {
     class HashName {
@@ -56,5 +59,25 @@ namespace test {
         };
         void footadlo() {}
     };
+
+    /*
+[[using nihil: bit_flags, bit_ops, arithmetic]] enum class Flags {
+   V1 = 0x01,
+   V2 = 0x02,
+   V3 = 0x04,
+   A = 0x15, // not allowed becase it's not a single bit flag
+   [[nihil::flag_combination]] V12 = 0x03 // allowed even when not single bit due to the attribute, checked
+}
+     */
+
+    enum class [[using nihil: arithmetic, bit_flags]] Flags : std::uint32_t {
+        V1 = 0x01,
+        V2 = 0x02,
+        V3 = 0x04,
+        A [[nihil::flag_combination]] = V1 | V2 | V3 | 43534,
+        V12 [[nihil::flag_combination]] = V1 | V2 // allowed even when not single bit due to the attribute, checked
+    };
+
+
 }// namespace test
 SPECULO_GENERATED_HEADER()

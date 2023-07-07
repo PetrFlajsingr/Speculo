@@ -504,7 +504,7 @@ namespace speculo::gen {
         TypeUsage result;
         result.fullName = getProperQualifiedName(type, astContext);
         result.form = getTypeForm(type);
-        const auto strippedType = stripQualifiersAndPtrRef(type);
+        const auto strippedType = stripQualifiersAndPtrRefAliases(type);
         const auto strippedName = getProperQualifiedName(strippedType, astContext);
         // Fundamental types
         if (strippedType->isFundamentalType()) {

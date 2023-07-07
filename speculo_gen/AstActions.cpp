@@ -56,7 +56,7 @@ namespace speculo::gen {
             }
 
 
-            outputs.hpp << fmt::format("#undef SPECULO_GENERATED_HEADER\n#define SPECULO_GENERATED_HEADER() {}\n\n", headerMacroBody);
+            outputs.hpp << fmt::format("\n#define SPECULO_GENERATED_HEADER_{} {}\n\n", outputs.hppUUID, headerMacroBody);
 
             // write SPECULO_GENERATED macro definitions
             std::ranges::for_each(generatedMacros, [&](const auto &m) {

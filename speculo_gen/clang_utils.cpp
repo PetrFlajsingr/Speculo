@@ -165,17 +165,8 @@ namespace speculo::gen {
         return clang::TypeName::getFullyQualifiedName(type, astContext, astContext.getPrintingPolicy());
     }
 
-    clang::QualType stripQualifiersAndPtrRef(const clang::QualType &type) {
-        clang::QualType result = type;
-        while (result->isPointerType() || result->isReferenceType()) {
-            if (result->isPointerType()) {
-                result = result->getPointeeType();
-            } else if (result->isReferenceType()) {
-                result = result.getNonReferenceType();
-            }
-        }
-
-        return result.getUnqualifiedType();
+    clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type) {
+        return type->getCanonicalTypeUnqualified();
     }
 
     // FIXME: this is really basic

@@ -62,7 +62,7 @@ namespace speculo::gen {
                     spdlog::trace("ASTEnumDeclParser: detected signed int as underlying type");
                 } break;
                 case Unsigned: {
-                    value = enumerator->getInitVal().getExtValue();
+                    value = enumerator->getInitVal().getZExtValue();
                     spdlog::trace("ASTEnumDeclParser: detected unsigned int as underlying type");
                 } break;
             }
@@ -102,11 +102,10 @@ namespace speculo::gen {
 
         result.sourceLocation.emplace(getSourceLocationInfo(astContext, *enumDecl));
 
-        const auto underlyingTypeName = getProperQualifiedName(enumDecl->getIntegerType(), astContext);
+        const auto underlyingTypeName = getProperQualifiedName(stripQualifiersAndPtrRefAliases(enumDecl->getIntegerType()), astContext);
 
-        result.underlyingType = typesCache->getOrAdd(underlyingTypeName, [&](TypeInfoVariant &result) {
-            result = getFundamentalTypeInfo(underlyingTypeName, *idGenerator);
-        });
+        result.underlyingType = typesCache->getOrAdd(
+                underlyingTypeName, [&](TypeInfoVariant &result) { result = getFundamentalTypeInfo(underlyingTypeName, *idGenerator); });
 
         result.size = astContext.getTypeSizeInChars(enumDecl->getIntegerType()).getQuantity();
         result.alignment = astContext.getTypeAlignInChars(enumDecl->getIntegerType()).getQuantity();
