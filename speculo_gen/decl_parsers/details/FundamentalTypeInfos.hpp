@@ -14,7 +14,7 @@ namespace speculo::gen {
     template<typename T>
     concept FundamentalType =
             speculo::OneOf<T, bool, char, signed char, unsigned char, char8_t, char16_t, char32_t, short, unsigned short, int, unsigned int,
-                        long, unsigned long, long long, unsigned long long, float, double, long double, void, std::nullptr_t>;
+                           long, unsigned long, long long, unsigned long long, float, double, long double, void, std::nullptr_t>;
 
     template<FundamentalType T>
     [[nodiscard]] FundamentalTypeInfo getFundamentalTypeInfo(IdGenerator &idGenerator);

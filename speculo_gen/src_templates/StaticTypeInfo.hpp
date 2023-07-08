@@ -201,4 +201,4 @@ struct StaticInfo<{volatile_const_ptr_type_id}>
     : StaticInfo_VolatileConstPtrWrap<{volatile_const_ptr_type_id}, {type_id}> {{}};
 )fmt";
 
-}// namespace speculo::gen
+}// namespace speculo::gen::templates

@@ -11,8 +11,8 @@
 #include "IdGenerator.hpp"
 #include "ParsedTypesCache.hpp"
 #include "SourceConfig.hpp"
-#include "wrap/clang_tooling.hpp"
 #include "info_structs.hpp"
+#include "wrap/clang_tooling.hpp"
 
 namespace speculo::gen {
 

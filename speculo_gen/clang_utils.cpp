@@ -165,9 +165,7 @@ namespace speculo::gen {
         return clang::TypeName::getFullyQualifiedName(type, astContext, astContext.getPrintingPolicy());
     }
 
-    clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type) {
-        return type->getCanonicalTypeUnqualified();
-    }
+    clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type) { return type->getCanonicalTypeUnqualified(); }
 
     // FIXME: this is really basic
     TypeForm getTypeForm(const clang::QualType &type) {

@@ -61,4 +61,4 @@ struct StaticInfo<{id}> {{
         return BitfieldAccessor<true>{{self}};
     }}
 )fmt";
-}// namespace speculo::gen
+}// namespace speculo::gen::templates

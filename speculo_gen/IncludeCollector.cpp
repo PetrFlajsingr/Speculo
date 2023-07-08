@@ -4,8 +4,8 @@
 
 #include "wrap/clang_frontend_compilerinstance.hpp"
 #include "wrap/clang_frontend_frontendactions.hpp"
-#include "wrap/clang_tooling_compilationdatabase.hpp"
 #include "wrap/clang_tooling.hpp"
+#include "wrap/clang_tooling_compilationdatabase.hpp"
 
 namespace speculo::gen {
     class IgnoreDiagnosticConsumer : public clang::DiagnosticConsumer {
@@ -15,7 +15,6 @@ namespace speculo::gen {
 
     class IncludeSearchCallback : public clang::PPCallbacks {
     public:
-
         IncludeSearchCallback(const std::vector<std::filesystem::path> &pathsToIgnore, std::vector<std::filesystem::path> &o)
             : ignoredPaths{pathsToIgnore}, output{o} {}
 

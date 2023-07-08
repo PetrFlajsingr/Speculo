@@ -72,4 +72,4 @@ struct StaticInfo<{id}> {{
     constexpr static auto ConstevalWrap = {consteval_wrap};
     }};
 )fmt";
-}
+}// namespace speculo::gen::templates
