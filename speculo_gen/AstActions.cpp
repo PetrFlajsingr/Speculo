@@ -132,7 +132,7 @@ namespace speculo::gen {
         // prepare generated macro map
         std::ranges::for_each(infos, [&](const auto &info) {
             std::visit(Visitor{[&](const RecordTypeInfo &recordInfo) {
-                                   if (!recordInfo.hasPfMetaGeneratedMacro) { return; }
+                                   if (!recordInfo.hasSpeculoGeneratedMacro) { return; }
                                    std::size_t generatedMacroLineOffset{};
                                    if (const auto pos = recordInfo.originalCode.find("SPECULO_GENERATED()"); pos != std::string::npos) {
                                        for (auto i = 0ull; i < pos; ++i) {

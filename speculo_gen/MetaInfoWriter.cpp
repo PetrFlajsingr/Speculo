@@ -267,7 +267,7 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", ctorInfo.fullName);
                 continue;
             }
-            if (!recordInfo.hasPfMetaGeneratedMacro && ctorInfo.access != Access::Public) { continue; }
+            if (!recordInfo.hasSpeculoGeneratedMacro && ctorInfo.access != Access::Public) { continue; }
 
             for (const auto &argInfo: ctorInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
@@ -378,7 +378,7 @@ namespace speculo::gen {
 
             if (ContainsNoSTIAttribute(destructor.attributes)) {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", destructor.fullName);
-            } else if (!recordInfo.hasPfMetaGeneratedMacro && destructor.access != Access::Public) {
+            } else if (!recordInfo.hasSpeculoGeneratedMacro && destructor.access != Access::Public) {
 
                 std::vector<std::string> argsArrayNames;
                 std::string detailsContents;
@@ -426,7 +426,7 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", mbrFncInfo.fullName);
                 continue;
             }
-            if (!recordInfo.hasPfMetaGeneratedMacro && mbrFncInfo.access != Access::Public) { continue; }
+            if (!recordInfo.hasSpeculoGeneratedMacro && mbrFncInfo.access != Access::Public) { continue; }
 
             for (const auto &argInfo: mbrFncInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
@@ -546,7 +546,7 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", mbrVarInfo.fullName);
                 continue;
             }
-            if (!recordInfo.hasPfMetaGeneratedMacro && mbrVarInfo.access != Access::Public) { continue; }
+            if (!recordInfo.hasSpeculoGeneratedMacro && mbrVarInfo.access != Access::Public) { continue; }
 
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;
@@ -598,7 +598,7 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", statFncInfo.fullName);
                 continue;
             }
-            if (!recordInfo.hasPfMetaGeneratedMacro && statFncInfo.access != Access::Public) { continue; }
+            if (!recordInfo.hasSpeculoGeneratedMacro && statFncInfo.access != Access::Public) { continue; }
 
             for (const auto &argInfo: statFncInfo.arguments) {
                 std::vector<std::string> argsArrayNames;
@@ -703,7 +703,7 @@ namespace speculo::gen {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", statVarInfo.fullName);
                 continue;
             }
-            if (!recordInfo.hasPfMetaGeneratedMacro && statVarInfo.access != Access::Public) { continue; }
+            if (!recordInfo.hasSpeculoGeneratedMacro && statVarInfo.access != Access::Public) { continue; }
 
             std::vector<std::string> argsArrayNames;
             std::string detailsContents;

@@ -441,7 +441,7 @@ namespace speculo::gen {
                 spdlog::warn("Reflection data for {} will only allow access to public members", info.fullName);
             }
         }
-        info.hasPfMetaGeneratedMacro = pfMetaGeneratedMacroFound;
+        info.hasSpeculoGeneratedMacro = pfMetaGeneratedMacroFound;
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type, const std::string &typeName,
