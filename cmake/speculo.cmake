@@ -94,19 +94,8 @@ function(speculo_run_gen)
     # create a static library with generated source files
     list(LENGTH GENERATED_SOURCES GEN_SOURCES_COUNT)
     if (NOT ${GEN_SOURCES_COUNT} EQUAL 0)
-        add_library(speculo_${_args_TARGET}_generated_sources STATIC ${GENERATED_SOURCES})
-        target_include_directories(speculo_${_args_TARGET}_generated_sources PRIVATE $<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>)
-        target_compile_options(speculo_${_args_TARGET}_generated_sources PRIVATE ${flags})
-        # generated source files need to wait for being generated
-        add_dependencies(speculo_${_args_TARGET}_generated_sources ${_args_TARGET}_generate_meta)
-
-        add_dependencies(${_args_TARGET} speculo_${_args_TARGET}_generated_sources)
-        get_target_property(TARGET_TYPE ${_args_TARGET} TYPE)
-        if (TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
-            target_link_libraries(${_args_TARGET} INTERFACE speculo_${_args_TARGET}_generated_sources)
-        else()
-            target_link_libraries(${_args_TARGET} PRIVATE speculo_${_args_TARGET}_generated_sources)
-        endif()
+        add_dependencies(${_args_TARGET} ${_args_TARGET}_generate_meta)
+        target_sources(${_args_TARGET} PRIVATE ${GENERATED_SOURCES})
     endif ()
 endfunction()
 
