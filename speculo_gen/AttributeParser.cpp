@@ -406,7 +406,7 @@ namespace speculo::gen {
         // move as far to the left as possible to collect all attributes
         {
             constexpr auto stopTokens = speculo::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
-                                                                                         clang::tok::colon, clang::tok::semi);
+                                                                                   clang::tok::colon, clang::tok::semi);
             auto beginLocation = srcRange.getBegin().getLocWithOffset(-1);
 
             auto iter = findNearestToken(beginLocation);
@@ -446,7 +446,7 @@ namespace speculo::gen {
         // move as far to the right as possible to collect trailing attributes
         {
             constexpr auto stopTokens = speculo::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
-                                                                                         clang::tok::colon, clang::tok::semi);
+                                                                                   clang::tok::colon, clang::tok::semi);
             auto endLocation = srcRange.getEnd();
 
             auto iter = findNearestToken(endLocation);
@@ -507,7 +507,7 @@ namespace speculo::gen {
         // move as far to the left as possible to collect all attributes
         {
             constexpr auto stopTokens = speculo::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
-                                                                                         clang::tok::colon, clang::tok::semi);
+                                                                                   clang::tok::colon, clang::tok::semi);
             auto beginLocation = srcRange.getBegin();
 
             auto iter = findNearestToken(beginLocation);
@@ -546,7 +546,7 @@ namespace speculo::gen {
         // move as far to the right as possible to collect trailing attributes
         {
             constexpr auto stopTokens = speculo::make_array<clang::tok::TokenKind>(clang::tok::l_brace, clang::tok::r_brace,
-                                                                                         clang::tok::colon, clang::tok::semi);
+                                                                                   clang::tok::colon, clang::tok::semi);
             auto iter = findNearestToken(srcRange.getEnd());
             if (iter == allTokensRange.end()) { return {}; }
 

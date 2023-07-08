@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../info_structs.hpp"
 #include "../../IdGenerator.hpp"
+#include "../../info_structs.hpp"
 
 namespace speculo::gen {
     inline IncompleteTypeInfo getIncompleteTypeInfo(std::string_view typeName, IdGenerator &idGenerator) {
@@ -17,4 +17,4 @@ namespace speculo::gen {
         populateIDs(result, idGenerator);
         return result;
     }
-}
+}// namespace speculo::gen

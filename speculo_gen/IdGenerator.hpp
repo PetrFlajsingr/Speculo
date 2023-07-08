@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <speculo/Info.hpp>
 #include <random>
+#include <speculo/Info.hpp>
 
 #include <stduuid/uuid.h>
 

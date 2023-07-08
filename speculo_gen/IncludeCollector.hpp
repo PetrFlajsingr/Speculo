@@ -8,13 +8,14 @@
 
 namespace speculo::gen {
 
-        class IncludeCollector {
-        public:
-            IncludeCollector(SourceConfig &c);
+    class IncludeCollector {
+    public:
+        IncludeCollector(SourceConfig &c);
 
-            [[nodiscard]] std::vector<std::filesystem::path> collectIncludes(bool skipSTDHeaders);
-        private:
-            const SourceConfig *config;
-        };
+        [[nodiscard]] std::vector<std::filesystem::path> collectIncludes(bool skipSTDHeaders);
 
-}// namespace speculo
+    private:
+        const SourceConfig *config;
+    };
+
+}// namespace speculo::gen

@@ -46,9 +46,9 @@ namespace speculo::gen {
 
         [[nodiscard]] std::optional<T> dequeue() {
             std::unique_lock<std::mutex> lock(queueMutex);
-            conditionVariable.wait(lock, [this]{ return !queue.empty() ||  !keep_running; });
+            conditionVariable.wait(lock, [this] { return !queue.empty() || !keep_running; });
 
-            if(!queue.empty()){
+            if (!queue.empty()) {
                 auto item = std::move(queue.front());
                 queue.pop();
                 return item;

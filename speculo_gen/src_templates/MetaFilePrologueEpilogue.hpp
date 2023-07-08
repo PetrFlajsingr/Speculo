@@ -25,4 +25,4 @@ namespace speculo::details {{
 }
 )fmt";
 
-}// namespace speculo::gen
+}// namespace speculo::gen::templates
