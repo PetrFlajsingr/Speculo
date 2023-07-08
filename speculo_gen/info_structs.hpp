@@ -243,7 +243,7 @@ namespace speculo::gen {
         bool isEmpty;
         bool isAggregate;
 
-        bool hasPfMetaGeneratedMacro;
+        bool hasSpeculoGeneratedMacro;
     };
 
 
