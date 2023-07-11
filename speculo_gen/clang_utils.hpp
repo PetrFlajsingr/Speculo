@@ -15,6 +15,7 @@ namespace speculo::gen {
     [[nodiscard]] SourceLocationInfo getSourceLocationInfo(clang::ASTContext &astContext, const clang::Decl &decl);
     [[nodiscard]] SourceLocationInfo getSourceLocationInfo(clang::ASTContext &astContext, const clang::CXXBaseSpecifier &base);
     [[nodiscard]] std::string getSourceText(clang::ASTContext &astContext, const clang::Decl &decl);
+    [[nodiscard]] std::string removeCommentsAndStrings(std::string_view source, bool keepRemovedNewLines);
 
     /// Create qualified name properly, including template arguments.
     [[nodiscard]] std::string getProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::ASTContext &astContext);

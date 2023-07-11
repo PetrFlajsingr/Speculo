@@ -428,9 +428,10 @@ namespace speculo::gen {
     }
 
     void ASTRecordParser::CheckForGeneratedMacro(RecordTypeInfo &info) {
-        const auto pfMetaGeneratedMacroFound = info.originalCode.find(metaGenMacro) != std::string::npos;
+        const auto codeWithoutCommentsAndStrings = removeCommentsAndStrings(info.originalCode, true);
+        const auto speculoGeneratedMacroFound = codeWithoutCommentsAndStrings.find(metaGenMacro) != std::string::npos;
 
-        if (!pfMetaGeneratedMacroFound) {
+        if (!speculoGeneratedMacroFound) {
             const auto isNotPublic = [](const auto &v) { return v.access != Access::Public; };
             if (std::ranges::any_of(info.constructors, isNotPublic) || std::ranges::any_of(info.staticFunctions, isNotPublic) ||
                 std::ranges::any_of(info.memberFunctions, isNotPublic) || std::ranges::any_of(info.staticVariables, isNotPublic) ||
@@ -441,7 +442,7 @@ namespace speculo::gen {
                 spdlog::warn("Reflection data for {} will only allow access to public members", info.fullName);
             }
         }
-        info.hasSpeculoGeneratedMacro = pfMetaGeneratedMacroFound;
+        info.hasSpeculoGeneratedMacro = speculoGeneratedMacroFound;
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type, const std::string &typeName,
