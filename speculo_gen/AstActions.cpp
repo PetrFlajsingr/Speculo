@@ -54,6 +54,8 @@ namespace speculo::gen {
                 }
                 infos.reserve(infos.size() + additional.types.size());
                 std::ranges::move(additional.types, std::back_inserter(infos));
+                outputs.hpp << additional.hppCode;
+                outputs.cpp << additional.cppCode;
             }
 
 
@@ -169,13 +171,6 @@ namespace speculo::gen {
         generator.initialize(outputs.hppUUID, outputs.cppUUID, fmt::format("../{}", config->inputProjectPath.filename().string()),
                              spdlog::default_logger());
 
-        auto startData = generator.start();
-        outputs.hpp << startData.hppCode;
-        outputs.cpp << startData.cppCode;
-        // add \ to new lines, because it's generated into a macro body
-        replaceAllOccurrences(startData.headerBodyCode, "\n", "\\\n");
-        result.headerMacro.append(startData.headerBodyCode);
-
         std::ranges::for_each(infos, [&](auto &info) {
             std::visit(Visitor{[&](RecordTypeInfo &recordInfo) {
                                    auto genCode = generator.generate(recordInfo);
@@ -183,8 +178,8 @@ namespace speculo::gen {
                                    replaceAllOccurrences(genCode.typeBodyCode, "\n", "\\\n");
                                    result.recordMacro.emplace(&recordInfo, genCode.typeBodyCode);
 
-                                   outputs.hpp << genCode.hppCode;
-                                   outputs.cpp << genCode.cppCode;
+                                   result.hppCode.append(genCode.hppCode);
+                                   result.cppCode.append(genCode.cppCode);
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                    result.headerMacro.append(genCode.headerBodyCode);
@@ -194,8 +189,8 @@ namespace speculo::gen {
                                },
                                [&](const EnumTypeInfo &enumInfo) {
                                    auto genCode = generator.generate(enumInfo);
-                                   outputs.hpp << genCode.hppCode;
-                                   outputs.cpp << genCode.cppCode;
+                                   result.hppCode.append(genCode.hppCode);
+                                   result.cppCode.append(genCode.cppCode);
                                    // add \ to new lines, because it's generated into a macro body
                                    replaceAllOccurrences(genCode.headerBodyCode, "\n", "\\\n");
                                    result.headerMacro.append(genCode.headerBodyCode);
@@ -210,12 +205,13 @@ namespace speculo::gen {
                        info);
         });
 
-        auto endData = generator.end();
-        outputs.hpp << endData.hppCode;
-        outputs.cpp << endData.cppCode;
+        auto prolEpiData = generator.getPrologueEpilogue();
+        result.hppCode = prolEpiData.hppPrologue + result.hppCode + prolEpiData.hppEpilogue;
+        result.cppCode = prolEpiData.cppPrologue + result.cppCode + prolEpiData.cppEpilogue;
         // add \ to new lines, because it's generated into a macro body
-        replaceAllOccurrences(endData.headerBodyCode, "\n", "\\\n");
-        result.headerMacro.append(endData.headerBodyCode);
+        replaceAllOccurrences(prolEpiData.headerBodyPrologue, "\n", "\\\n");
+        replaceAllOccurrences(prolEpiData.headerBodyEpilogue, "\n", "\\\n");
+        result.headerMacro = prolEpiData.headerBodyPrologue + result.headerMacro + prolEpiData.headerBodyEpilogue;
         return result;
     }
 
