@@ -20,10 +20,9 @@ namespace speculo::gen {
     public:
         MetaSupportCodeGenerator() = default;
 
-        [[nodiscard]] GenerationResult start() override;
-        [[nodiscard]] GenerationResult end() override;
         [[nodiscard]] RecordGenerationResult generate(RecordTypeInfo &typeInfo) override;
         [[nodiscard]] GenerationResult generate(const EnumTypeInfo &typeInfo) override;
+        FilePrologueEpilogue getPrologueEpilogue() override;
 
         [[nodiscard]] uint64_t getPriority() const override;
     };

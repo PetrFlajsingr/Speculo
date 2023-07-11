@@ -7,17 +7,6 @@
 
 namespace speculo::gen {
 
-
-    GenerationResult MetaSupportCodeGenerator::start() {
-        constexpr static auto headers = R"(#include <speculo/macros.hpp>
-#include <speculo/details/StaticInfo.hpp>
-)";
-        GenerationResult result{};
-        result.hppCode = headers;
-        return result;
-    }
-    GenerationResult MetaSupportCodeGenerator::end() { return {}; }
-
     uint64_t MetaSupportCodeGenerator::getPriority() const { return 1; }
 
     RecordGenerationResult MetaSupportCodeGenerator::generate(RecordTypeInfo &typeInfo) {
@@ -46,5 +35,11 @@ namespace speculo::gen {
     }
 
     GenerationResult MetaSupportCodeGenerator::generate(const EnumTypeInfo &typeInfo) { return {}; }
+
+    FilePrologueEpilogue MetaSupportCodeGenerator::getPrologueEpilogue() {
+        return {.hppPrologue = R"(#include <speculo/macros.hpp>
+#include <speculo/details/StaticInfo.hpp>
+)"};
+    }
 
 }// namespace speculo::gen

@@ -52,6 +52,8 @@ namespace speculo::gen {
             std::string headerMacro;
             std::unordered_map<const RecordTypeInfo *, std::string> recordMacro;
             std::vector<TypeInfoVariant> types;
+            std::string hppCode;
+            std::string cppCode;
         };
         [[nodiscard]] AdditionalCodeGenCode runCodeGenerator(CodeGenerator &generator, OutStreams &outputs,
                                                              std::vector<TypeInfoVariant> &infos);
