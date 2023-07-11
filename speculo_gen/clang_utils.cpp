@@ -4,6 +4,7 @@
 #include "clang/AST/DeclTemplate.h"
 #include <cassert>
 #include <clang/AST/QualTypeNames.h>
+#include <boost/regex.hpp>
 
 namespace speculo::gen {
 
@@ -39,6 +40,56 @@ namespace speculo::gen {
         return clang::Lexer::getSourceText(clang::CharSourceRange::getTokenRange(decl.getSourceRange()), astContext.getSourceManager(),
                                            astContext.getLangOpts())
                 .str();
+    }
+
+    std::string removeCommentsAndStrings(std::string_view source, bool keepRemovedNewLines) {
+        static const boost::regex re(R"regex(
+        (?(DEFINE)
+          (?<prefix> (?:u8?|U|L) )
+          (?<escape> \\ (?:
+            ['"?\\abfnrtv]         # simple escape
+            | [0-7]{1,3}           # octal escape
+            | x [0-9a-fA-F]{1,2}   # hex escape
+            | u [0-9a-fA-F]{4}     # universal character name
+            | U [0-9a-fA-F]{8}     # universal character name
+          ))
+        )
+
+        # singleline comment
+        // .*
+
+        # multiline comment
+        | /\* (?s: .*? ) \*/
+
+        # standard string
+        | (?&prefix)? " (?> (?&escape) | [^"\\\r\n]+ )* "
+
+        # raw string
+        | (?&prefix)? R " (?<delimiter>[^ ()\\\t\x0B\r\n]*) \( (?s:.*?) \) \k<delimiter> "
+    )regex", boost::regex::perl | boost::regex::no_mod_s | boost::regex::mod_x | boost::regex::optimize);
+
+        std::string result;
+        auto start = source.begin();
+        auto end = source.end();
+        boost::match_results<std::string_view::const_iterator> what;
+        auto flags = boost::match_default;
+
+        while(boost::regex_search(start, end, what, re, flags)) {
+            result.append(start, what[0].first);
+
+            if (keepRemovedNewLines)
+            {
+                const auto newline_count = std::count(what[0].first, what[0].second, '\n');
+                result.append(std::string(newline_count, '\n'));
+            }
+            start = what[0].second;
+
+            flags |= boost::match_prev_avail;
+            flags |= boost::match_not_bob;
+        }
+        result.append(start, end);
+
+        return result;
     }
 
     std::string getProperQualifiedName(const clang::CXXRecordDecl *decl, const clang::ASTContext &astContext) {

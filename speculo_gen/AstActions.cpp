@@ -5,6 +5,7 @@
 #include "AstActions.hpp"
 #include "ASTParser.hpp"
 #include "algorithms/StringReplace.hpp"
+#include "clang_utils.hpp"
 #include "codegen/PluginManager.hpp"
 #include "src_templates/MetaFilePrologueEpilogue.hpp"
 #include <fmt/format.h>
@@ -134,9 +135,11 @@ namespace speculo::gen {
             std::visit(Visitor{[&](const RecordTypeInfo &recordInfo) {
                                    if (!recordInfo.hasSpeculoGeneratedMacro) { return; }
                                    std::size_t generatedMacroLineOffset{};
-                                   if (const auto pos = recordInfo.originalCode.find("SPECULO_GENERATED()"); pos != std::string::npos) {
+                                   const auto codeWithoutCommentsAndStrings = removeCommentsAndStrings(recordInfo.originalCode, true);
+                                   if (const auto pos = codeWithoutCommentsAndStrings.find("SPECULO_GENERATED()");
+                                       pos != std::string::npos) {
                                        for (auto i = 0ull; i < pos; ++i) {
-                                           if (recordInfo.originalCode[i] == '\n') { ++generatedMacroLineOffset; }
+                                           if (codeWithoutCommentsAndStrings[i] == '\n') { ++generatedMacroLineOffset; }
                                        }
                                    }
                                    assert(recordInfo.sourceLocation.has_value());

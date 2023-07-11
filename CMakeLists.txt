@@ -48,6 +48,8 @@ find_package(tl-expected CONFIG REQUIRED)
 find_package(stduuid CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
+set(Boost_NO_WARN_NEW_VERSIONS TRUE)
+find_package(Boost COMPONENTS regex)
 
 add_library(speculo INTERFACE)
 add_library(speculo::speculo ALIAS speculo)
@@ -68,6 +70,7 @@ add_executable(speculo_gen main.cpp
         speculo_gen/codegen/PluginManager.cpp
         speculo_gen/IncludeCollector.cpp
         speculo_gen/clang_utils.cpp
+        speculo_gen/details/boost_throw.cpp
 )
 target_include_directories(speculo_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 add_executable(speculo_generate_fundamental_types main_generate_fundamental_types.cpp)
@@ -88,7 +91,7 @@ include(AddLLVM)
 
 target_include_directories(speculo_gen PRIVATE ${CLANG_INCLUDE_DIRS})
 target_link_libraries(speculo_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(speculo_gen PRIVATE stduuid speculo::speculo)
+target_link_libraries(speculo_gen PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES} )
 if (WIN32)
 target_link_libraries(speculo_gen PRIVATE synchronization.lib)
 endif()
@@ -98,7 +101,7 @@ target_compile_options(speculo_gen PRIVATE ${flags})
 target_include_directories(speculo_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
 target_include_directories(speculo_generate_fundamental_types PRIVATE speculo_gen/include)
 target_link_libraries(speculo_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
-target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo)
+target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
 target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})
 
 

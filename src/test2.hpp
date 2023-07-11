@@ -15,7 +15,7 @@
 
 
 namespace test {
-    class HashName {
+  /*  class HashName {
         SPECULO_GENERATED()
 
     public:
@@ -58,7 +58,7 @@ namespace test {
             int a;
         };
         void footadlo() {}
-    };
+    };*/
 
     /*
 [[using nihil: bit_flags, bit_ops, arithmetic]] enum class Flags {
@@ -69,7 +69,7 @@ namespace test {
    [[nihil::flag_combination]] V12 = 0x03 // allowed even when not single bit due to the attribute, checked
 }
      */
-
+/*
     enum class [[using nihil: arithmetic, bit_flags]] Flags : std::uint32_t {
         V1 = 0x01,
         V2 = 0x02,
@@ -77,7 +77,7 @@ namespace test {
         A [[nihil::flag_combination]] = V1 | V2 | V3,
         V12 [[nihil::flag_combination]] = V1 | V2 // allowed even when not single bit due to the attribute, checked
     };
-
+*/
 
 }// namespace test
 SPECULO_GENERATED_HEADER()
