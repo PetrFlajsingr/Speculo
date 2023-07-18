@@ -4,9 +4,18 @@
 
 #include "generated/test.hpp"
 
+namespace S{
+    constexpr auto Value = 10 * 15;
+}
 
-namespace speculo {
-    class Hoho {
+namespace A {
+    constexpr auto Value = 1;
+}
+namespace S {
+    struct T {
+        const std::array<int, Value * A::Value + 10> yeet;
+    };
+  /*  class Hoho {
         //SPECULO_GENERATED()
         static inline auto hue = "SPECULO_GENERATED()";
         SPECULO_GENERATED()
@@ -142,7 +151,7 @@ namespace speculo {
     enum class E6 { A, B, C, D, E };
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
-    enum class E9 { A, B, C, D, E };
+    enum class E9 { A, B, C, D, E };*/
 
 }// namespace test
 

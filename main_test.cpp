@@ -2,6 +2,23 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
+#include "speculo/enums.hpp"
+#include "speculo/reflect.hpp"
+#include "speculo/template_for.hpp"
+#include "speculo/meta.hpp"
+
+
+#include "src/meta/test.hpp"
+
+int main() {
+    constexpr auto refl = SPECULO_REFLECT(S::T);
+    constexpr auto m = speculo::details::StaticInfo<speculo::members_of<refl>()[0].id>::MemberPtr;
+    S::T t;
+    (t.*m);
+    return 0;
+}
+
+/*
 #include "speculo/fundamental_types.hpp"
 #include "speculo/meta.hpp"
 #include "src/meta/test.hpp"
@@ -10,9 +27,6 @@
 #include <vector>
 #include <functional>
 
-#include "speculo/enums.hpp"
-#include "speculo/reflect.hpp"
-#include "speculo/template_for.hpp"
 
 
 template<speculo::Info Type>
@@ -205,4 +219,4 @@ int main() {
 
 
     return 0;
-}
+}*/
