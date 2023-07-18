@@ -12,6 +12,9 @@ namespace A {
     constexpr auto Value = 1;
 }
 namespace S {
+    enum class E{
+        A = 100, B = 50, C, D
+    };
     struct T {
         const std::array<int, Value * A::Value + 10> yeet;
     };
