@@ -12,6 +12,10 @@
 
 namespace speculo::gen {
 
+    enum class RunType {
+        Codegen, Metagen
+    };
+
     struct SourceConfig {
         std::filesystem::path inputSource;
         std::filesystem::path outputMetaHeader;
@@ -23,6 +27,8 @@ namespace speculo::gen {
         std::vector<std::string> compilerFlags;
 
         std::filesystem::path inputProjectPath;
+
+        RunType runType;
     };
 
     struct ProjectConfig {

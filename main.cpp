@@ -6,8 +6,8 @@
 #include "speculo_gen/AttributeParser.hpp"
 #include "speculo_gen/IdGenerator.hpp"
 #include "speculo_gen/IncludeCollector.hpp"
-#include "speculo_gen/wrap/clang_tooling_compilationdatabase.hpp"
 #include "speculo_gen/info_structs.hpp"
+#include "speculo_gen/wrap/clang_tooling_compilationdatabase.hpp"
 
 #include "format.hpp"
 #include "speculo_gen/AstActions.hpp"
@@ -17,9 +17,9 @@
 #include <nlohmann/json.hpp>
 #include <tl/expected.hpp>
 
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include "speculo_gen/SourceConfig.hpp"
 #include "speculo_gen/ThreadPool.hpp"
-#include "spdlog/sinks/stdout_color_sinks.h"
 #include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
@@ -167,8 +167,6 @@ void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectNa
         for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
         for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
         for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
-        // TODO: move elsewhere
-        flags.emplace_back("-D SPECULO_GENERATOR_RUNNING");
         // FIXME: remove once clang claims consteval support
         flags.emplace_back("-D __cpp_consteval=201811L");
         result.sourceConfigs.push_back({.inputSource = inputFile,
@@ -272,15 +270,33 @@ int main(int argc, const char **argv) {
             for (const auto &path: currentIncludes) { includeStamps[path.string()] = std::filesystem::last_write_time(path); }
         }
 
+        auto idGenerator = std::make_shared<speculo::gen::IdGenerator>();
+
         std::vector<std::string> sources{config.inputSource.string()};
 
-        clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", config.compilerFlags};
 
-        clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
+        // Codegen run
+        {
+            auto compilerFlags = config.compilerFlags;
+            compilerFlags.emplace_back("-D SPECULO_CODE_GENERATOR_RUNNING");
+            clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", compilerFlags};
 
-        auto idGenerator = std::make_shared<speculo::gen::IdGenerator>();
-        speculo::gen::ActionFactory factory{config, std::move(idGenerator)};
-        if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
+            clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
+            config.runType = speculo::gen::RunType::Codegen;
+            speculo::gen::ActionFactory factory{config, idGenerator};
+            if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
+        }
+        // Metagen run
+        {
+            auto compilerFlags = config.compilerFlags;
+            compilerFlags.emplace_back("-D SPECULO_META_GENERATOR_RUNNING");
+            clang::tooling::FixedCompilationDatabase fixedCompilationDatabase{".", compilerFlags};
+
+            clang::tooling::ClangTool tool{fixedCompilationDatabase, sources};
+            config.runType = speculo::gen::RunType::Metagen;
+            speculo::gen::ActionFactory factory{config, idGenerator};
+            if (const auto ret = tool.run(&factory); ret != 0) { spdlog::error("ClangTool run failed with code {}", ret); }
+        }
 
         if (FormatOutput) { ::format(std::string{config.outputMetaHeader.string()}); }
         return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now(), includeStamps};

@@ -2,9 +2,9 @@
 #include "clang_utils.hpp"
 #include "fmt/format.h"
 #include "clang/AST/DeclTemplate.h"
+#include <boost/regex.hpp>
 #include <cassert>
 #include <clang/AST/QualTypeNames.h>
-#include <boost/regex.hpp>
 
 namespace speculo::gen {
 
@@ -66,7 +66,8 @@ namespace speculo::gen {
 
         # raw string
         | (?&prefix)? R " (?<delimiter>[^ ()\\\t\x0B\r\n]*) \( (?s:.*?) \) \k<delimiter> "
-    )regex", boost::regex::perl | boost::regex::no_mod_s | boost::regex::mod_x | boost::regex::optimize);
+    )regex",
+                                     boost::regex::perl | boost::regex::no_mod_s | boost::regex::mod_x | boost::regex::optimize);
 
         std::string result;
         auto start = source.begin();
@@ -74,11 +75,10 @@ namespace speculo::gen {
         boost::match_results<std::string_view::const_iterator> what;
         auto flags = boost::match_default;
 
-        while(boost::regex_search(start, end, what, re, flags)) {
+        while (boost::regex_search(start, end, what, re, flags)) {
             result.append(start, what[0].first);
 
-            if (keepRemovedNewLines)
-            {
+            if (keepRemovedNewLines) {
                 const auto newline_count = std::count(what[0].first, what[0].second, '\n');
                 result.append(std::string(newline_count, '\n'));
             }
@@ -246,5 +246,20 @@ namespace speculo::gen {
             return Other;
         }
         return Other;
+    }
+
+    std::optional<std::string> getTopLevelMacroName(const clang::ASTContext &astContext, clang::SourceLocation sourceLoc) {
+        const auto &sourceManager = astContext.getSourceManager();
+        if (!sourceManager.isMacroBodyExpansion(sourceLoc)) { return std::nullopt; }
+
+        while (sourceManager.isMacroBodyExpansion(sourceLoc) || sourceManager.isMacroArgExpansion(sourceLoc)) {
+            sourceLoc = sourceManager.getImmediateMacroCallerLoc(sourceLoc);
+        }
+
+        const auto spellingLoc = sourceManager.getSpellingLoc(sourceLoc);
+
+        clang::Token t;
+        clang::Lexer::getRawToken(spellingLoc, t, sourceManager, astContext.getLangOpts());
+        return clang::Lexer::getSpelling(t, sourceManager, astContext.getLangOpts());
     }
 }// namespace speculo::gen

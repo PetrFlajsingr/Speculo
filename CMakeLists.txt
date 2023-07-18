@@ -4,6 +4,7 @@ project(speculo VERSION 0.1.0)
 include(CMakePackageConfigHelpers)
 
 option(SPECULO_ENABLE_TEST_EXE "Enable test exe target" OFF)
+option(SPECULO_BUILD_FUNDAMENTAL_GEN_EXE "Enable fundamental info exe target" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -73,14 +74,11 @@ add_executable(speculo_gen main.cpp
         speculo_gen/details/boost_throw.cpp
 )
 target_include_directories(speculo_gen PRIVATE ${FLAT_INCLUDE_DIRS})
-add_executable(speculo_generate_fundamental_types main_generate_fundamental_types.cpp)
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
 target_compile_definitions(speculo_gen PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
 target_include_directories(speculo_gen PRIVATE ${LLVM_INCLUDE_DIRS})
-target_compile_definitions(speculo_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
-target_include_directories(speculo_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
 
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
 set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)
@@ -96,14 +94,6 @@ if (WIN32)
 target_link_libraries(speculo_gen PRIVATE synchronization.lib)
 endif()
 target_compile_options(speculo_gen PRIVATE ${flags})
-
-
-target_include_directories(speculo_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
-target_include_directories(speculo_generate_fundamental_types PRIVATE speculo_gen/include)
-target_link_libraries(speculo_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
-target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
-target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})
-
 
 
 install(TARGETS speculo
@@ -153,14 +143,26 @@ set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 include(CPack)
 
 
-install(TARGETS speculo_gen speculo_generate_fundamental_types
-        CONFIGURATIONS Debug
-        RUNTIME DESTINATION Debug/bin)
-install(TARGETS speculo_gen speculo_generate_fundamental_types
-        CONFIGURATIONS Release
-        RUNTIME DESTINATION Release/bin)
+if (${SPECULO_BUILD_FUNDAMENTAL_GEN_EXE})
+    add_executable(speculo_generate_fundamental_types main_generate_fundamental_types.cpp)
 
+    target_compile_definitions(speculo_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
+    target_include_directories(speculo_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
 
+    target_include_directories(speculo_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
+    target_include_directories(speculo_generate_fundamental_types PRIVATE speculo_gen/include)
+    target_link_libraries(speculo_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
+    target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
+    target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})
+
+    install(TARGETS speculo_gen speculo_generate_fundamental_types
+            CONFIGURATIONS Debug
+            RUNTIME DESTINATION Debug/bin)
+    install(TARGETS speculo_gen speculo_generate_fundamental_types
+            CONFIGURATIONS Release
+            RUNTIME DESTINATION Release/bin)
+
+endif()
 
 
 if (${SPECULO_ENABLE_TEST_EXE})

@@ -22,8 +22,7 @@ namespace speculo::gen {
                             std::make_shared<AttributeParser>(context, std::move(parent->getTokenCollector()).consume())};
         auto infos = astParser.parse(context);
 
-        std::vector<TypeInfoVariant> generatedTypes;
-        {
+        if (config->runType == RunType::Codegen) {
             auto outputsOpt = openOutputs();
             if (!outputsOpt.has_value()) { return; }
             auto outputs = std::move(*outputsOpt);
@@ -67,9 +66,11 @@ namespace speculo::gen {
                 const auto macro = fmt::format(R"(#define {} {})", macroName, macroBody);
                 outputs.hpp << macro << "\n\n";
             });
+        } else if (config->runType == RunType::Metagen) {
+            writeMetaInfo(infos);
+        } else {
+            assert(false);
         }
-
-        writeMetaInfo(infos);
     }
 
     void ASTConsumer::writeMetaInfo(const std::vector<TypeInfoVariant> &infos) {

@@ -16,7 +16,7 @@ namespace speculo {
     private:
         int stan;
     };
-/*
+
     enum class [[speculo::no_sti]] Hihi {};
     enum class [[using pf: operators(()()()((())), [[nodiscard]], 1ll, 1.011, [] {}(), "yeet", 'a'),
                  hihi()]] [[pf::operators2(1ll, 1.011, "yeet"), pf::hihi2]] [[nodiscard]] SomeEnum : int{
@@ -142,7 +142,7 @@ namespace speculo {
     enum class E6 { A, B, C, D, E };
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
-    enum class E9 { A, B, C, D, E };*/
+    enum class E9 { A, B, C, D, E };
 
 }// namespace test
 
