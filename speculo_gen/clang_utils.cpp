@@ -99,7 +99,7 @@ namespace speculo::gen {
             for (const auto &templArg: specDecl->getTemplateArgs().asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
                     const auto argType =
-                            clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                            clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                     argList.append(argType).append(",");
                 }
             }
@@ -116,7 +116,7 @@ namespace speculo::gen {
             for (const auto &templArg: specDecl->getTemplateArgs().asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
                     const auto argType =
-                            clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                            clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                     argList.append(argType).append(",");
                 }
             }
@@ -132,7 +132,7 @@ namespace speculo::gen {
             for (const auto &templArg: args->asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
                     const auto argType =
-                            clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                            clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                     argList.append(argType).append(",");
                 }
                 // TODO: value args support
@@ -152,7 +152,7 @@ namespace speculo::gen {
                 switch (templArg.getKind()) {
                     case clang::TemplateArgument::Type: {
                         const auto argType =
-                                clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                                clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                         argList.append(argType).append(",");
                     } break;
                     default:
@@ -176,7 +176,7 @@ namespace speculo::gen {
             for (const auto &templArg: args->asArray()) {
                 if (templArg.getKind() == clang::TemplateArgument::ArgKind::Type) {
                     const auto argType =
-                            clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                            clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                     argList.append(argType).append(",");
                 }
                 // TODO: value args support
@@ -196,7 +196,7 @@ namespace speculo::gen {
                 switch (templArg.getKind()) {
                     case clang::TemplateArgument::Type: {
                         const auto argType =
-                                clang::TypeName::getFullyQualifiedName(templArg.getAsType(), astContext, astContext.getPrintingPolicy());
+                                clang::TypeName::getFullyQualifiedName(templArg.getAsType().getCanonicalType(), astContext, astContext.getPrintingPolicy());
                         argList.append(argType).append(",");
                     } break;
                     default:
@@ -213,7 +213,7 @@ namespace speculo::gen {
     }
 
     std::string getProperQualifiedName(const clang::QualType &type, const clang::ASTContext &astContext) {
-        return clang::TypeName::getFullyQualifiedName(type, astContext, astContext.getPrintingPolicy());
+        return clang::TypeName::getFullyQualifiedName(type.getCanonicalType(), astContext, astContext.getPrintingPolicy());
     }
 
     clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type) { return type->getCanonicalTypeUnqualified(); }

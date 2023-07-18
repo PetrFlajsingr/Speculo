@@ -22,7 +22,7 @@ namespace speculo::gen {
     // TODO: divide this up into separate functions
     std::optional<TypeInfoVariant> ASTRecordParser::parse(clang::ASTContext &astContext, clang::Decl *decl) {
         assert(clang::dyn_cast<clang::CXXRecordDecl>(decl) != nullptr);
-        const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl);
+        const auto recordDecl = clang::cast<clang::CXXRecordDecl>(decl)->getCanonicalDecl();
 
         if (ShouldSkipRecordDecl(recordDecl)) { return std::nullopt; }
 
@@ -503,7 +503,7 @@ namespace speculo::gen {
     TypeUsage ASTRecordParser::CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext, ParsedTypesCache &typesCache,
                                                IdGenerator &idGenerator, ASTEnumParser &enumParser, ASTRecordParser &recordParser) {
         TypeUsage result;
-        result.fullName = getProperQualifiedName(type, astContext);
+        result.fullName = getProperQualifiedName(type.getCanonicalType(), astContext);
         result.form = getTypeForm(type);
         const auto strippedType = stripQualifiersAndPtrRefAliases(type);
         const auto strippedName = getProperQualifiedName(strippedType, astContext);
