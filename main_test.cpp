@@ -11,10 +11,15 @@
 #include "src/meta/test.hpp"
 
 int main() {
-    constexpr auto refl = SPECULO_REFLECT(S::T);
-    constexpr auto m = speculo::details::StaticInfo<speculo::members_of<refl>()[0].id>::MemberPtr;
-    S::T t;
-    (t.*m);
+    static_assert(speculo::index_of(S::E::A) == 0);
+    static_assert(S::E::A == (speculo::from_underlying<S::E>(static_cast<int>(S::E::A))));
+    static_assert(speculo::index_of(S::E::B) == 1);
+    static_assert(S::E::B == (speculo::from_underlying<S::E>(static_cast<int>(S::E::B))));
+    static_assert(speculo::index_of(S::E::C) == 2);
+    static_assert(S::E::C == (speculo::from_underlying<S::E>(static_cast<int>(S::E::C))));
+    static_assert(speculo::index_of(S::E::D) == 3);
+    static_assert(S::E::D == (speculo::from_underlying<S::E>(static_cast<int>(S::E::D))));
+
     return 0;
 }
 
