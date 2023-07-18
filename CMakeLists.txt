@@ -95,6 +95,13 @@ target_link_libraries(speculo_gen PRIVATE synchronization.lib)
 endif()
 target_compile_options(speculo_gen PRIVATE ${flags})
 
+install(TARGETS speculo_gen
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS speculo_gen
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
+
 
 install(TARGETS speculo
         EXPORT speculo_Targets
@@ -155,10 +162,10 @@ if (${SPECULO_BUILD_FUNDAMENTAL_GEN_EXE})
     target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
     target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})
 
-    install(TARGETS speculo_gen speculo_generate_fundamental_types
+    install(TARGETS speculo_generate_fundamental_types
             CONFIGURATIONS Debug
             RUNTIME DESTINATION Debug/bin)
-    install(TARGETS speculo_gen speculo_generate_fundamental_types
+    install(TARGETS speculo_generate_fundamental_types
             CONFIGURATIONS Release
             RUNTIME DESTINATION Release/bin)
 
