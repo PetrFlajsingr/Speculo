@@ -29,7 +29,6 @@ namespace speculo::gen {
             auto &sourceManager = astContext.getSourceManager();
             if (config->ignoreIncludes && !sourceManager.isInMainFile(decl->getLocation())) { continue; }
 
-            // TODO: getOrCreate?
             if (auto parser = createDeclParser(astContext, decl, idGenerator, attributeParser, typesCache); parser != nullptr) {
                 if (auto fullTypeName = parser->getFullTypeName(astContext, decl); fullTypeName.has_value()) {
                     auto cacheType = std::make_shared<TypeInfoVariant>();
@@ -38,7 +37,7 @@ namespace speculo::gen {
                     if (auto parseResult = parser->parse(astContext, decl); parseResult.has_value()) {
                         *cacheType = std::move(*parseResult);
                     } else {
-                        spdlog::error("Unexpected code path triggered in ASTParser {}", 0x9EFB2820);
+                        spdlog::error("Unexpected code path triggered in ASTParser {0:x}", 0x9EFB2820);
                         *cacheType = getIncompleteTypeInfo(*fullTypeName, *idGenerator);
                     }
                     result.emplace_back(*cacheType);

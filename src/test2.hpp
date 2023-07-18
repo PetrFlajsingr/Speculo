@@ -62,7 +62,7 @@ namespace test {
 
 
 
-    enum class [[using nihil: arithmetic, bit_flags]] Flags : std::uint32_t {
+    enum class [[using nihil: arithmetic, bit_flags]] Flags : unsigned int {
         V1 = 0x01,
         V2 = 0x02,
         V3 = 0x04,

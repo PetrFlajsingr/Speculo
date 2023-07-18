@@ -204,7 +204,7 @@ namespace speculo::gen {
                     if (auto parseResult = parse(astContext, baseRecordDecl); parseResult.has_value()) {
                         result = std::move(*parseResult);
                     } else {
-                        spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x8CB9274E);
+                        spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0x8CB9274E);
                         result = getIncompleteTypeInfo(*fullTypeName, *idGenerator);
                     }
                 });
@@ -469,12 +469,12 @@ namespace speculo::gen {
                     result = std::move(*parseResult);
                 } else {
                     // this shouldn't happen
-                    spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0xDA6A94AC);
+                    spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0xDA6A94AC);
                     result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
                 }
             } else {
                 // this shouldn't happen
-                spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x979B1762);
+                spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0x979B1762);
                 result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
             }
         });
@@ -489,12 +489,12 @@ namespace speculo::gen {
                     result = std::move(*parseResult);
                 } else {
                     // this shouldn't happen - TODO: currently happens with templated types
-                    spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x6D7DE8E7);
+                    spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0x6D7DE8E7);
                     result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
                 }
             } else {
                 // this shouldn't happen
-                spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x2742E4E7);
+                spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0x2742E4E7);
                 result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
             }
         });
@@ -518,7 +518,7 @@ namespace speculo::gen {
             result.type = CreateRecordTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext, recordParser);
         } else {
             // this shouldn't happen
-            spdlog::error("Unexpected code path triggered in ASTRecordParser {}", 0x05CDE92E);
+            spdlog::error("Unexpected code path triggered in ASTRecordParser {0:x}", 0x05CDE92E);
             result.type = CreateIncompleteTypeInfo(strippedType, strippedName, idGenerator, typesCache, astContext);
         }
         return result;

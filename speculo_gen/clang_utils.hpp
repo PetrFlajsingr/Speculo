@@ -32,4 +32,6 @@ namespace speculo::gen {
     [[nodiscard]] clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type);
     [[nodiscard]] TypeForm getTypeForm(const clang::QualType &type);
 
+    [[nodiscard]] std::optional<std::string> getTopLevelMacroName(const clang::ASTContext &astContext, clang::SourceLocation sourceLoc);
+
 }// namespace speculo::gen
