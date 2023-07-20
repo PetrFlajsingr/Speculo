@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
 
     speculo::gen::IdGenerator gen{};
     constexpr auto fundamentalTypes = speculo::make_array<std::string_view>(
-            "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "short", "unsigned short", "int",
+            "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "wchar_t", "short", "unsigned short", "int",
             "unsigned int", "long", "unsigned long", "long long", "unsigned long long", "float", "double", "long double");
     std::string output;
     for (const auto fundamentalType: fundamentalTypes) {
