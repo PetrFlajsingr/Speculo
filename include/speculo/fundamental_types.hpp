@@ -708,6 +708,102 @@ template<>
 /****************************** char32_t END ******************************/
 
 
+/****************************** wchar_t START ******************************/
+
+template<>
+struct StaticInfo<ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> : FundamentalStaticTypeInfo<wchar_t, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}, StringLiteral{"wchar_t"}, StringLiteral{"wchar_t"}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<wchar_t>() {
+    return ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u};
+}
+
+template<>
+struct StaticInfo<ID{0x735256227cbfcb86u, 0x56a67410438e3597u}> : StaticInfo_ConstWrap<ID{0x735256227cbfcb86u, 0x56a67410438e3597u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<const wchar_t>() {
+    return ID{0x735256227cbfcb86u, 0x56a67410438e3597u};
+}
+
+template<>
+struct StaticInfo<ID{0x5758014a26a927d7u, 0x33180942e3bfdaa4u}> : StaticInfo_LRefWrap<ID{0x5758014a26a927d7u, 0x33180942e3bfdaa4u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<wchar_t &>() {
+    return ID{0x5758014a26a927d7u, 0x33180942e3bfdaa4u};
+}
+
+template<>
+struct StaticInfo<ID{0xa951f66ddf10efbeu, 0x7e538facec0e4eafu}> : StaticInfo_ConstLRefWrap<ID{0xa951f66ddf10efbeu, 0x7e538facec0e4eafu}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<const wchar_t &>() {
+    return ID{0xa951f66ddf10efbeu, 0x7e538facec0e4eafu};
+}
+
+template<>
+struct StaticInfo<ID{0x215efe46326691c6u, 0x2c9923efc15c54b8u}> : StaticInfo_RRefWrap<ID{0x215efe46326691c6u, 0x2c9923efc15c54b8u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<wchar_t &&>() {
+    return ID{0x215efe46326691c6u, 0x2c9923efc15c54b8u};
+}
+
+template<>
+struct StaticInfo<ID{0x105fb0681bbf3463u, 0x6d26c9a65c889d96u}> : StaticInfo_PtrWrap<ID{0x105fb0681bbf3463u, 0x6d26c9a65c889d96u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<wchar_t *>() {
+    return ID{0x105fb0681bbf3463u, 0x6d26c9a65c889d96u};
+}
+
+template<>
+struct StaticInfo<ID{0x95576c30f869c3dcu, 0x1cba1385cf7cf0a3u}> : StaticInfo_ConstPtrWrap<ID{0x95576c30f869c3dcu, 0x1cba1385cf7cf0a3u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<const wchar_t *>() {
+    return ID{0x95576c30f869c3dcu, 0x1cba1385cf7cf0a3u};
+}
+
+template<>
+struct StaticInfo<ID{0xb5403edb54ceecbu, 0x9a115ca0eb374cb7u}> : StaticInfo_VolatileConstWrap<ID{0xb5403edb54ceecbu, 0x9a115ca0eb374cb7u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile const wchar_t>() {
+    return ID{0xb5403edb54ceecbu, 0x9a115ca0eb374cb7u};
+}
+
+template<>
+struct StaticInfo<ID{0x2352351787afababu, 0xdb5d05b53f14b5bdu}> : StaticInfo_VolatileLRefWrap<ID{0x2352351787afababu, 0xdb5d05b53f14b5bdu}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile wchar_t &>() {
+    return ID{0x2352351787afababu, 0xdb5d05b53f14b5bdu};
+}
+
+template<>
+struct StaticInfo<ID{0x98506eb5f518291au, 0x6b4e84334ba577acu}> : StaticInfo_VolatileConstLRefWrap<ID{0x98506eb5f518291au, 0x6b4e84334ba577acu}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile const wchar_t &>() {
+    return ID{0x98506eb5f518291au, 0x6b4e84334ba577acu};
+}
+
+template<>
+struct StaticInfo<ID{0x145c73f01dca2af7u, 0xd566e453a9adfbbbu}> : StaticInfo_VolatileRRefWrap<ID{0x145c73f01dca2af7u, 0xd566e453a9adfbbbu}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile wchar_t &&>() {
+    return ID{0x145c73f01dca2af7u, 0xd566e453a9adfbbbu};
+}
+
+template<>
+struct StaticInfo<ID{0xcb572a8038811b87u, 0xd9d22bc620c825a5u}> : StaticInfo_VolatilePtrWrap<ID{0xcb572a8038811b87u, 0xd9d22bc620c825a5u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile wchar_t *>() {
+    return ID{0xcb572a8038811b87u, 0xd9d22bc620c825a5u};
+}
+
+template<>
+struct StaticInfo<ID{0x355b562658bd4024u, 0xb0fcc55fc945f6b8u}> : StaticInfo_VolatileConstPtrWrap<ID{0x355b562658bd4024u, 0xb0fcc55fc945f6b8u}, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> {};
+template<>
+[[nodiscard]] consteval ID getTypeId<volatile const wchar_t *>() {
+    return ID{0x355b562658bd4024u, 0xb0fcc55fc945f6b8u};
+}
+
+/****************************** wchar_t END ******************************/
+
+
 /****************************** short START ******************************/
 
 template<>
