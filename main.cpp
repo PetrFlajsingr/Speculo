@@ -18,8 +18,10 @@
 #include <tl/expected.hpp>
 
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "speculo_gen/ProjectDatabase.hpp"
 #include "speculo_gen/SourceConfig.hpp"
 #include "speculo_gen/ThreadPool.hpp"
+#include "speculo_gen/json_serializers.hpp"
 #include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
@@ -34,153 +36,6 @@ static llvm::cl::opt<bool> VerboseLogging("verbose", llvm::cl::desc("Verbose log
                                           llvm::cl::init(false));
 static llvm::cl::opt<bool> RunSequential("sequential", llvm::cl::desc("Run everything on main thread sequentially"),
                                          llvm::cl::value_desc("bool"), llvm::cl::init(false));
-
-
-template<typename Clock, typename Duration>
-struct nlohmann::adl_serializer<std::chrono::time_point<Clock, Duration>> {
-    static void to_json(json &j, const std::chrono::time_point<Clock, Duration> &tp) {
-        j["since_epoch"] = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch()).count();
-        j["unit"] = "microseconds";
-    }
-    static void from_json(const json &j, std::chrono::time_point<Clock, Duration> &p) {
-        const auto time_since_epoch = static_cast<unsigned long long>(j["since_epoch"]);
-        p = std::chrono::time_point<Clock, Duration>{std::chrono::microseconds{time_since_epoch}};
-    }
-};
-
-struct FileTimestamps {
-    std::chrono::time_point<std::chrono::file_clock> lastChange;
-    std::unordered_map<std::string, std::chrono::time_point<std::chrono::file_clock>> includeChanges;
-};
-
-
-template<>
-struct nlohmann::adl_serializer<FileTimestamps> {
-    static void to_json(json &j, const FileTimestamps &tp) {
-        j["timestamp"] = tp.lastChange;
-        auto includes = json::array();
-        std::ranges::for_each(tp.includeChanges, [&](const auto &r) {
-            const auto &includePath = r.first;
-            const auto &includeStamp = r.second;
-            auto &newR = includes.emplace_back();
-            newR["path"] = includePath;
-            newR["timestamp"] = includeStamp;
-        });
-        j["includes"] = std::move(includes);
-    }
-    static void from_json(const json &j, FileTimestamps &p) {
-        p.lastChange = j["timestamp"];
-        json::array_t includes = j["includes"];
-        std::ranges::for_each(includes, [&](const auto &include) { p.includeChanges[include["path"]] = include["timestamp"]; });
-    }
-};
-
-struct ProjectDatabase {
-    std::unordered_map<std::string, FileTimestamps> fileTimestamps;
-    std::vector<std::string> compilerFlags;
-};
-
-[[nodiscard]] ProjectDatabase loadProjectDatabase(std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
-    if (!std::filesystem::exists(databasePath)) {
-        spdlog::info("Database file not found at '{}'", databasePath.string());
-        return {};
-    }
-
-    auto istream = std::ifstream{databasePath};
-    if (!istream.is_open()) {
-        spdlog::error("Can't open file '{}': {}", databasePath.string(), strerror(errno));
-        return {};
-    }
-    auto data = nlohmann::json::parse(istream);
-    istream.close();
-    ProjectDatabase result{};
-    for (const auto &rec: data["files"]) { result.fileTimestamps[rec["file"]] = static_cast<FileTimestamps>(rec["timestamps"]); }
-    for (const auto &flag: data["compiler_flags"]) { result.compilerFlags.push_back(flag); }
-    return result;
-}
-// only pass those parsed by this process
-void updateProjectDatabase(const ProjectDatabase &db, std::string_view projectName) {
-    const auto databasePath = std::filesystem::current_path() / fmt::format("speculo_{}_database.json", projectName);
-    auto istream = std::ifstream{databasePath};
-    nlohmann::json data;
-    if (istream.is_open()) { data = nlohmann::json::parse(istream); }
-    istream.close();
-
-    auto &filesData = data["files"];
-    filesData.clear();
-    for (const auto &[file, stamps]: db.fileTimestamps) {
-        nlohmann::json fileData{{"file", file}, {"timestamps", stamps}};
-        filesData.push_back(fileData);
-    }
-    auto &flagsData = data["compiler_flags"];
-    flagsData.clear();
-    for (const auto &flag: db.compilerFlags) { flagsData.push_back(flag); }
-    auto ostream = std::ofstream{databasePath};
-    if (!ostream.is_open()) {
-        spdlog::error("Can't open file for write '{}': {}", databasePath.string(), strerror(errno));
-        return;
-    }
-    ostream << data.dump(4);
-}
-
-
-[[nodiscard]] std::optional<speculo::gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath) {
-    std::ifstream configFile{configPath};
-    if (!configFile.is_open()) {
-        spdlog::error("Can't open file '{}'", configPath.string());
-        return std::nullopt;
-    }
-    speculo::gen::ProjectConfig result{};
-    auto data = nlohmann::json::parse(configFile);
-
-    result.name = data["project"];
-    for (const auto &input: data["header_paths"]) {
-        auto inputFile = std::filesystem::path{std::string{input}};
-        const auto inputProjectPath = inputFile;
-        const auto fileName = inputFile.filename();
-
-        const auto projectRoot = std::filesystem::path{std::string{data["project_root"]}};
-        inputFile = projectRoot / inputFile;
-
-        auto metaFolder = inputFile;
-        metaFolder.remove_filename();
-        metaFolder = projectRoot / metaFolder / "meta";
-        auto generatedFolder = inputFile;
-        generatedFolder.remove_filename();
-        generatedFolder = projectRoot / generatedFolder / "generated";
-
-        auto metaHeader = metaFolder / fileName;
-        metaHeader.replace_extension();
-        metaHeader.concat(".hpp");
-        auto generatedHeader = generatedFolder / fileName;
-        generatedHeader.replace_extension();
-        generatedHeader.concat(".hpp");
-        auto generatedSource = generatedFolder / fileName;
-        generatedSource.replace_extension();
-        generatedSource.concat(".cpp");
-
-        if (!std::filesystem::exists(metaFolder)) { std::filesystem::create_directory(metaFolder); }
-        if (!std::filesystem::exists(generatedFolder)) { std::filesystem::create_directory(generatedFolder); }
-
-        std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes", "-Wno-pragma-once-outside-header"};
-        for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
-        for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
-        for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
-        // FIXME: remove once clang claims consteval support
-        flags.emplace_back("-D __cpp_consteval=201811L");
-        result.sourceConfigs.push_back({.inputSource = inputFile,
-                                        .outputMetaHeader = metaHeader,
-                                        .outputCodegenHeader = generatedHeader,
-                                        .outputCodegenSource = generatedSource,
-                                        .projectRootDir = projectRoot,
-                                        .ignoreIncludes = IgnoreIncludes,
-                                        .formatOutput = FormatOutput,
-                                        .compilerFlags = std::move(flags),
-                                        .inputProjectPath = inputProjectPath});
-    }
-    return result;
-}
 
 
 int main(int argc, const char **argv) {
@@ -206,11 +61,11 @@ int main(int argc, const char **argv) {
                 ->set_level(spdlog::level::trace);
     }
 
-    auto configsOpt = createConfigs(std::filesystem::path{std::string{ConfigArg}});
+    auto configsOpt = speculo::gen::createConfigs(std::filesystem::path{std::string{ConfigArg}}, IgnoreIncludes, FormatOutput);
     if (!configsOpt.has_value()) { return 0; }
     const auto configs = std::move(*configsOpt);
 
-    auto timestampDB = loadProjectDatabase(configs.name);
+    auto timestampDB = speculo::gen::loadProjectDatabase(configs.name);
 
 
     struct ParseResult {
@@ -302,7 +157,7 @@ int main(int argc, const char **argv) {
         return ParseResult{config.inputSource, config.outputMetaHeader, std::chrono::file_clock::now(), includeStamps};
     };
 
-    std::unordered_map<std::string, FileTimestamps> newTimestamps;
+    std::unordered_map<std::string, speculo::gen::FileTimestamps> newTimestamps;
 
     if (static_cast<bool>(RunSequential)) {
         std::vector<tl::expected<ParseResult, ParseFailure>> results;
