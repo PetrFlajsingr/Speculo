@@ -44,8 +44,8 @@ namespace speculo::gen {
 
             std::vector<std::string> flags{"-xc++", "-Wno-unknown-attributes", "-Wno-pragma-once-outside-header"};
             for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
-            for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
-            for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
+            for (const auto &define: data["defines"]) { flags.emplace_back(fmt::format("-D {}", std::string{define})); }
+            for (const auto &includePath: data["include_paths"]) { flags.emplace_back(fmt::format("-I{}", std::string{includePath})); }
             // FIXME: remove once clang claims consteval support
             flags.emplace_back("-D __cpp_consteval=201811L");
             result.sourceConfigs.push_back({.inputSource = inputFile,
@@ -55,7 +55,7 @@ namespace speculo::gen {
                                             .projectRootDir = projectRoot,
                                             .ignoreIncludes = ignoreIncludes,
                                             .formatOutput = formatOutput,
-                                            .compilerFlags = std::move(flags),
+                                            .compilerFlags = std::move(flags), //-V1030
                                             .inputProjectPath = inputProjectPath});
         }
         return result;

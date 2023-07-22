@@ -79,7 +79,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -107,7 +107,7 @@ namespace speculo::gen {
                 argsArrayNames.emplace_back("EmptyAttributeArgArray");
             } else {
                 const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                 detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
             }
         }
@@ -197,7 +197,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -277,7 +277,7 @@ namespace speculo::gen {
                         argsArrayNames.emplace_back("EmptyAttributeArgArray");
                     } else {
                         const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                        argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                        argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                         detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                     }
                 }
@@ -302,7 +302,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -378,7 +378,7 @@ namespace speculo::gen {
 
             if (ContainsNoSTIAttribute(destructor.attributes)) {
                 spdlog::trace("MetaInfoWrite: skipping generation for '{}' due to presence of no_sti attribute", destructor.fullName);
-            } else if (!recordInfo.hasSpeculoGeneratedMacro && destructor.access != Access::Public) {
+            } else if (recordInfo.hasSpeculoGeneratedMacro || destructor.access == Access::Public) {
 
                 std::vector<std::string> argsArrayNames;
                 std::string detailsContents;
@@ -387,7 +387,7 @@ namespace speculo::gen {
                         argsArrayNames.emplace_back("EmptyAttributeArgArray");
                     } else {
                         const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                        argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                        argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                         detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                     }
                 }
@@ -436,7 +436,7 @@ namespace speculo::gen {
                         argsArrayNames.emplace_back("EmptyAttributeArgArray");
                     } else {
                         const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                        argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                        argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                         detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                     }
                 }
@@ -461,7 +461,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -555,7 +555,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -608,7 +608,7 @@ namespace speculo::gen {
                         argsArrayNames.emplace_back("EmptyAttributeArgArray");
                     } else {
                         const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                        argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                        argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                         detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                     }
                 }
@@ -633,7 +633,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }
@@ -712,7 +712,7 @@ namespace speculo::gen {
                     argsArrayNames.emplace_back("EmptyAttributeArgArray");
                 } else {
                     const auto argsArrayName = fmt::format("ArgArray_{}", idGenerator->generateRandomInt());
-                    argsArrayNames.push_back(fmt::format("details::{}", argsArrayName));
+                    argsArrayNames.emplace_back(fmt::format("details::{}", argsArrayName));
                     detailsContents.append(CreateAttributeArgArray(argsArrayName, attr)).append("\n");
                 }
             }

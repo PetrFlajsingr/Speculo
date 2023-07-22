@@ -14,7 +14,7 @@ namespace speculo::gen {
 
         std::vector<std::string> friendDeclarations;
         const auto appendFriendDeclaration = [&](speculo::ID id) {
-            friendDeclarations.push_back(fmt::format("friend struct ::speculo::details::StaticInfo<::speculo::{}>;", idToString(id)));
+            friendDeclarations.emplace_back(fmt::format("friend struct ::speculo::details::StaticInfo<::speculo::{}>;", idToString(id)));
         };
         const auto appendNonPublicFriends = [&](const std::ranges::range auto &infoCollection) {
             for (const auto &info: infoCollection) {

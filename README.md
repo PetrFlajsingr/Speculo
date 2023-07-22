@@ -132,3 +132,7 @@ void destroy(speculo::gen::CodeGenerator *ptr);
 ```
 
 The plugin can generate code which will be placed inside `SPECULO_GENERATED()` for given type, `SPECULO_GENERATED_HEADER()` for header sources and in `<filename>.generated.cpp` for implementation.
+
+## SAST Tools
+
+[PVS-Studio](https://pvs-studio.com/en/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C, C++, C#, and Java code.

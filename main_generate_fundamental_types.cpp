@@ -57,7 +57,8 @@ enum class InfoType {
         case InfoType::VolatileConstPtr:
             return "StaticInfo_VolatileConstPtrWrap";
     }
-    throw "can't happen";
+    assert(false && "can't happen");
+    return {};
 }
 
 [[nodiscard]] constexpr std::string wrapNameForInfoType(InfoType infoType, const std::string &fullTypeName) {
@@ -88,11 +89,12 @@ enum class InfoType {
         case InfoType::VolatileConstPtr:
             return "volatile "s + "const " + fullTypeName + " *";
     }
-    throw "can't happen";
+    assert(false && "can't happen");
+    return {};
 }
 
 std::string generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {
+                                              const std::unordered_set<InfoType> &typesToGenerate = {
                                                       InfoType::Const, InfoType::Lvalue, InfoType::ConstLvalue, InfoType::Rvalue,
                                                       InfoType::Ptr, InfoType::ConstPtr, InfoType::VolatileConst, InfoType::VolatileLvalue,
                                                       InfoType::VolatileConstLvalue, InfoType::VolatileRvalue, InfoType::VolatilePtr,
