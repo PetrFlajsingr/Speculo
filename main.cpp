@@ -13,15 +13,12 @@
 #include "speculo_gen/AstActions.hpp"
 #include "speculo_gen/wrap/clang_tooling_commonoptionsparser.hpp"
 
-#include <fstream>
-#include <nlohmann/json.hpp>
 #include <tl/expected.hpp>
 
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "speculo_gen/ProjectDatabase.hpp"
 #include "speculo_gen/SourceConfig.hpp"
 #include "speculo_gen/ThreadPool.hpp"
-#include "speculo_gen/json_serializers.hpp"
 #include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
 
@@ -38,7 +35,16 @@ static llvm::cl::opt<bool> RunSequential("sequential", llvm::cl::desc("Run every
                                          llvm::cl::value_desc("bool"), llvm::cl::init(false));
 
 
+[[nodiscard]] bool IsPauseFilePresent() {
+    const auto pauseFilePath = std::filesystem::current_path() / "pause_speculo";
+    return std::filesystem::exists(pauseFilePath);
+}
+
 int main(int argc, const char **argv) {
+    if (IsPauseFilePresent()) {
+        spdlog::trace("Speculo paused");
+        return 0;
+    }
     llvm::cl::ParseCommandLineOptions(argc, argv, "Test");
 
     spdlog::default_logger()->sinks().clear();

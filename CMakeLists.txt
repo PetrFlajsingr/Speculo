@@ -71,7 +71,9 @@ add_executable(speculo_gen main.cpp
         speculo_gen/codegen/PluginManager.cpp
         speculo_gen/IncludeCollector.cpp
         speculo_gen/clang_utils.cpp
+        speculo_gen/ProjectDatabase.cpp
         speculo_gen/details/boost_throw.cpp
+        speculo_gen/SourceConfig.cpp
 )
 target_include_directories(speculo_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 
