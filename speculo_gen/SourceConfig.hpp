@@ -9,12 +9,13 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 
 namespace speculo::gen {
 
-    enum class RunType {
-        Codegen, Metagen
-    };
+    enum class RunType { Codegen, Metagen };
 
     struct SourceConfig {
         std::filesystem::path inputSource;
@@ -35,4 +36,10 @@ namespace speculo::gen {
         std::string name;
         std::vector<SourceConfig> sourceConfigs;
     };
+
+
+    [[nodiscard]] std::optional<speculo::gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath, bool ignoreIncludes,
+                                                                           bool formatOutput);
+
+
 }// namespace speculo::gen
