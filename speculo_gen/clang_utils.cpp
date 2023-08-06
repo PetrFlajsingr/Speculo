@@ -213,7 +213,12 @@ namespace speculo::gen {
     }
 
     std::string getProperQualifiedName(const clang::QualType &type, const clang::ASTContext &astContext) {
-        return clang::TypeName::getFullyQualifiedName(type.getCanonicalType(), astContext, astContext.getPrintingPolicy());
+        auto pp = astContext.getPrintingPolicy();
+        pp.FullyQualifiedName = 1;
+        pp.SuppressScope = 0;
+        pp.PrintCanonicalTypes = 1;
+        return clang::TypeName::getFullyQualifiedName(type.getCanonicalType(), astContext, pp);
+       // return clang::TypeName::getFullyQualifiedName(type.getCanonicalType(), astContext, astContext.getPrintingPolicy());
     }
 
     clang::QualType stripQualifiersAndPtrRefAliases(const clang::QualType &type) { return type->getCanonicalTypeUnqualified(); }

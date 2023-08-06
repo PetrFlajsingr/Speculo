@@ -1,7 +1,7 @@
 
 
 #include <speculo/macros.hpp>
-
+#include <functional>
 #include "generated/test.hpp"
 
 namespace S{
@@ -12,11 +12,15 @@ namespace A {
     constexpr auto Value = 1;
 }
 namespace S {
-    enum class E{
+    enum class [[speculo::no_sti]]  E{
         A = 100, B = 50, C, D
     };
-    struct T {
+    struct [[speculo::no_sti]]  T {
         const std::array<int, Value * A::Value + 10> yeet;
+    };
+    using namespace std;
+    struct F {
+        function<void(const T&, E&&)> testFnc;
     };
   /*  class Hoho {
         //SPECULO_GENERATED()
