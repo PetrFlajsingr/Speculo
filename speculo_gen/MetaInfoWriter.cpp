@@ -62,7 +62,7 @@ namespace speculo::gen {
 
             assert(enumInfo.underlyingType != nullptr);
             if (!std::holds_alternative<FundamentalTypeInfo>(*enumInfo.underlyingType)) {
-                spdlog::error("Unexpected code path triggered in MetaInfo writer {0:x}", 0x192B9F71);
+                spdlog::debug("Unexpected code path triggered in MetaInfo writer {0:x}", 0x192B9F71);
             }
 
             const auto valueIdStr = idToString(info.id);
