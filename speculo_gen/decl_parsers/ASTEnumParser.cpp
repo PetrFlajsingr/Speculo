@@ -117,7 +117,12 @@ namespace speculo::gen {
         auto enumAttributes = attributeParser->parseEnumAttributes(astContext, *enumDecl);
         info.attributes = std::move(enumAttributes.attributes);
 
-        for (auto [name, attributes]: enumAttributes.valueAttributes) { info.values[name].attributes = std::move(attributes); }
+        for (auto [name, attributes]: enumAttributes.valueAttributes) {
+            // FIXME: this lookup check should be unnecessary, but it is here due to a bug in AttributeParser::parseEnumValueAttributes
+            if (const auto iter = info.values.find(name); iter != info.values.end()) {
+                iter->second.attributes = std::move(attributes);
+            }
+        }
     }
 
     std::optional<std::string> ASTEnumParser::getFullTypeName(clang::ASTContext &astContext, clang::Decl *decl) {
