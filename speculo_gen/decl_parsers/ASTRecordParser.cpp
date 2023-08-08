@@ -94,11 +94,11 @@ namespace speculo::gen {
         // TODO: verify how this works
         // not supporting templates for now
         if (recordDecl->isTemplateDecl()) {
-            spdlog::warn("Skipping template record {}", recordDecl->getQualifiedNameAsString());
+            spdlog::debug("Skipping template record {}", recordDecl->getQualifiedNameAsString());
             return true;
         }
         if (recordDecl->getTemplateSpecializationKind() != clang::TemplateSpecializationKind::TSK_Undeclared) {
-            spdlog::warn("Skipping template specialization record {}", recordDecl->getQualifiedNameAsString());
+            spdlog::debug("Skipping template specialization record {}", recordDecl->getQualifiedNameAsString());
             return true;
         }
 
