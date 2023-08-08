@@ -150,6 +150,7 @@ namespace speculo::gen {
 
     fc::vector_map<std::string, std::vector<Attribute>> AttributeParser::parseEnumValueAttributes(clang::ASTContext &astContext,
                                                                                                   clang::SourceRange srcRange) const {
+        // FIXME: this function parses 'extra' enumerators when there are non trivial initializers for values potentially
         fc::vector_map<std::string, std::vector<Attribute>> result;
 
         auto tokensRange = sourceRangeToTokensRange(srcRange);
