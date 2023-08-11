@@ -561,20 +561,26 @@ namespace speculo::gen {
             }
             const auto attributesStr = StringifyAttributes(mbrVarInfo.attributes, argsArrayNames);
 
+            const auto isReference = mbrVarInfo.type.form == TypeForm::ConstLRef || mbrVarInfo.type.form == TypeForm::LRef ||
+                                     mbrVarInfo.type.form == TypeForm::RRef;
+            if (isReference) { spdlog::debug("{} is a reference member and a pointer to it can not be stored", mbrVarInfo.fullName); }
+
             const auto mbrVarType = fmt::format("{return_type} {type}::* MemberPtr", "return_type"_a = mbrVarInfo.type.fullName,
                                                 "type"_a = recordInfo.fullName);
 
             std::string bitfieldBlock{};
             std::string memberPtrBlock{};
-            if (mbrVarInfo.isBitfield) {
-                bitfieldBlock =
-                        fmt::format("constexpr static std::size_t BitfieldSize = {};\nconstexpr static std::size_t BitfieldOffset = {};\n",
-                                    mbrVarInfo.bitfieldSize, mbrVarInfo.bitfieldOffset);
-                bitfieldBlock.append(fmt::format(templates::StaticTypeInfo_BitfieldAccessor, "parent_type"_a = recordInfo.fullName,
-                                                 "bitfield_name"_a = mbrVarInfo.name));
-            } else {
-                memberPtrBlock = fmt::format("constexpr static {member_type} = &{member};", "member_type"_a = mbrVarType,
-                                             "member"_a = mbrVarInfo.fullName);
+            if (!isReference) {
+                if (mbrVarInfo.isBitfield) {
+                    bitfieldBlock = fmt::format(
+                            "constexpr static std::size_t BitfieldSize = {};\nconstexpr static std::size_t BitfieldOffset = {};\n",
+                            mbrVarInfo.bitfieldSize, mbrVarInfo.bitfieldOffset);
+                    bitfieldBlock.append(fmt::format(templates::StaticTypeInfo_BitfieldAccessor, "parent_type"_a = recordInfo.fullName,
+                                                     "bitfield_name"_a = mbrVarInfo.name));
+                } else {
+                    memberPtrBlock = fmt::format("constexpr static {member_type} = &{member};", "member_type"_a = mbrVarType,
+                                                 "member"_a = mbrVarInfo.fullName);
+                }
             }
 
             write(fmt::format(R"fmt(// Record {} member variable {}

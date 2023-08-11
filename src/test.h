@@ -12,31 +12,11 @@ namespace A {
     constexpr auto Value = 1;
 }*/
 
-namespace nihil {
-
-    using i8 = std::int8_t;
-    using i16 = std::int16_t;
-    using i32 = std::int32_t;
-    using i64 = std::int64_t;
-
-    using u8 = std::uint8_t;
-    using u16 = std::uint16_t;
-    using u32 = std::uint32_t;
-    using u64 = std::uint64_t;
-
-    enum class ResourceType : u32 {
-        Buffer      = 1u << 0,
-        FrameBuffer = 1u << 1,
-        Texture     = 1u << 2,
-
-        Texture1D   = (1u << 29) | static_cast<u32>(Texture),
-        //Texture2D   = (1u << 30) | static_cast<u32>(Texture),
-        //Texture3D   = (1u << 31) | static_cast<u32>(Texture),
-    };
-}
-
 
 namespace S {
+    struct A {
+        int &val;
+    };
    /* enum class [[speculo::no_sti]]  E{
         A = 100, B = 50, C, D
     };
