@@ -17,16 +17,9 @@ namespace S {
     struct A {
         int &val;
     };
-   /* enum class [[speculo::no_sti]]  E{
+    enum class [[nihil::comparable]]  E{
         A = 100, B = 50, C, D
     };
-    struct [[speculo::no_sti]]  T {
-        const std::array<int, Value * A::Value + 10> yeet;
-    };
-    using namespace std;
-    struct F {
-        function<void(const T&, E&&)> testFnc;
-    };*/
   /*  class Hoho {
         //SPECULO_GENERATED()
         static inline auto hue = "SPECULO_GENERATED()";

@@ -12,7 +12,7 @@
 
 #include "Visitor.hpp"
 #include "info_structs.hpp"
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 
 namespace speculo::gen {
 
