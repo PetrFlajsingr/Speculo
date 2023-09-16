@@ -22,11 +22,24 @@ namespace speculo::gen {
        std::string headerBodyCode;
        /// Generated types - have to be contained in hppCode (or in typeBodyCode)
        std::vector<TypeInfoVariant> generatedTypes;
+
+       void merge(const GenerationResult &other) {
+           hppCode.append("\n").append(other.hppCode);
+           cppCode.append("\n").append(other.cppCode);
+           headerBodyCode.append("\n").append(other.headerBodyCode);
+           generatedTypes.reserve(generatedTypes.size() + other.generatedTypes.size());
+           std::ranges::copy(other.generatedTypes, std::back_inserter(generatedTypes));
+       }
    };
 
    struct RecordGenerationResult : GenerationResult {
        /// Code inserted into PF_META_GENERATED() for this record
        std::string typeBodyCode;
+
+       void merge(const RecordGenerationResult &other) {
+           typeBodyCode.append("\n").append(other.typeBodyCode);
+           GenerationResult::merge(other);
+       }
    };
 
    struct FilePrologueEpilogue {
