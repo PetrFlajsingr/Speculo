@@ -32,11 +32,11 @@ namespace speculo::gen {
             return std::nullopt;
         }
 
-        auto result = createEnumTypeInfo(astContext, enumDecl);
+        auto result = createEnumTypeInfo(astContext, definition);
 
-        result.values = ParseEnumerators(enumDecl->enumerators(), GetEnumValueCategory(enumDecl), astContext.getSourceManager());
+        result.values = ParseEnumerators(definition->enumerators(), GetEnumValueCategory(definition), astContext.getSourceManager());
 
-        fillAttributes(result, astContext, enumDecl);
+        fillAttributes(result, astContext, definition);
 
         populateIDs(result, *idGenerator);
 
@@ -119,9 +119,7 @@ namespace speculo::gen {
 
         for (auto [name, attributes]: enumAttributes.valueAttributes) {
             // FIXME: this lookup check should be unnecessary, but it is here due to a bug in AttributeParser::parseEnumValueAttributes
-            if (const auto iter = info.values.find(name); iter != info.values.end()) {
-                iter->second.attributes = std::move(attributes);
-            }
+            if (const auto iter = info.values.find(name); iter != info.values.end()) { iter->second.attributes = std::move(attributes); }
         }
     }
 
@@ -139,7 +137,7 @@ namespace speculo::gen {
             return std::nullopt;
         }
 
-        return enumDecl->getQualifiedNameAsString();
+        return definition->getQualifiedNameAsString();
     }
 
 

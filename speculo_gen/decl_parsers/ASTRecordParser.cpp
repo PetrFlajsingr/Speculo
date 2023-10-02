@@ -46,19 +46,19 @@ namespace speculo::gen {
 
         RecordTypeInfo result{};
 
-        collectBasicRecordInfo(result, astContext, recordDecl);
+        collectBasicRecordInfo(result, astContext, definition);
 
-        collectMemberVariablesInfo(result, astContext, recordDecl);
+        collectMemberVariablesInfo(result, astContext, definition);
 
-        collectStaticVariablesInfo(result, astContext, recordDecl);
+        collectStaticVariablesInfo(result, astContext, definition);
 
-        collectMethodsInfo(result, astContext, recordDecl);
+        collectMethodsInfo(result, astContext, definition);
 
-        collectConstructorsInfo(result, astContext, recordDecl);
+        collectConstructorsInfo(result, astContext, definition);
 
-        collectDestructorInfo(result, astContext, recordDecl);
+        collectDestructorInfo(result, astContext, definition);
 
-        collectBaseInfos(result, astContext, recordDecl);
+        collectBaseInfos(result, astContext, definition);
 
         CheckForGeneratedMacro(result);
         return result;
@@ -421,7 +421,7 @@ namespace speculo::gen {
             variableInfo.byteOffset = astContext.getFieldOffset(field) / 8;
             variableInfo.size = astContext.getTypeSizeInChars(field->getType()).getQuantity();
 
-            info.memberVariables.push_back(variableInfo);
+            info.memberVariables.emplace_back(std::move(variableInfo));
 
             previousFieldOffset = astContext.getFieldOffset(field);
         }
@@ -548,7 +548,7 @@ namespace speculo::gen {
             return std::nullopt;
         }
 
-        return getProperQualifiedName(recordDecl, astContext);
+        return getProperQualifiedName(definition, astContext);
     }
 
 }// namespace speculo::gen
