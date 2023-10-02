@@ -30,7 +30,7 @@ def main():
     args = process_arguments()
 
     def proc_list(lst):
-        return sorted(set(flatten_list(lst)))
+        return list(dict.fromkeys(flatten_list(lst)))
 
     if args.includepaths is None:
         args.includepaths = []
