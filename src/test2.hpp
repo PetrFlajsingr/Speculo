@@ -15,7 +15,7 @@
 
 
 namespace test {
-  /*  class HashName {
+   class HashName {
         SPECULO_GENERATED()
 
     public:
@@ -58,7 +58,7 @@ namespace test {
             int a;
         };
         void footadlo() {}
-    };*/
+    };
 
 
 

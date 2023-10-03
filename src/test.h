@@ -3,24 +3,21 @@
 #include <speculo/macros.hpp>
 
 #include "generated/test.hpp"
-/*
+
 namespace S{
     constexpr auto Value = 10 * 15;
 }
 
 namespace A {
     constexpr auto Value = 1;
-}*/
+}
 
 
-namespace S {
-    struct A {
-        int &val;
-    };
+namespace speculo {
     enum class [[nihil::comparable]]  E{
         A = 100, B = 50, C, D
     };
-  /*  class Hoho {
+    class Hoho {
         //SPECULO_GENERATED()
         static inline auto hue = "SPECULO_GENERATED()";
         SPECULO_GENERATED()
@@ -156,7 +153,7 @@ namespace S {
     enum class E6 { A, B, C, D, E };
     enum class E7 { A, B, C, D, E };
     enum class E8 { A, B, C, D, E };
-    enum class E9 { A, B, C, D, E };*/
+    enum class E9 { A, B, C, D, E };
 
 }// namespace test
 

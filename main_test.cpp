@@ -10,20 +10,8 @@
 
 #include "src/meta/test.hpp"
 
-int main() {
-    static_assert(speculo::index_of(S::E::A) == 0);
-    static_assert(S::E::A == (speculo::from_underlying<S::E>(static_cast<int>(S::E::A))));
-    static_assert(speculo::index_of(S::E::B) == 1);
-    static_assert(S::E::B == (speculo::from_underlying<S::E>(static_cast<int>(S::E::B))));
-    static_assert(speculo::index_of(S::E::C) == 2);
-    static_assert(S::E::C == (speculo::from_underlying<S::E>(static_cast<int>(S::E::C))));
-    static_assert(speculo::index_of(S::E::D) == 3);
-    static_assert(S::E::D == (speculo::from_underlying<S::E>(static_cast<int>(S::E::D))));
 
-    return 0;
-}
 
-/*
 #include "speculo/fundamental_types.hpp"
 #include "speculo/meta.hpp"
 #include "src/meta/test.hpp"
@@ -209,19 +197,7 @@ int main() {
    // std::cout << "Generated fnc " << s.demo() << std::endl;
 
 
-    test::Flags f1 = test::Flags::V1;
-    test::Flags f2 = test::Flags::V2;
-
-    const auto f3 = f1 + f2;
-    ++f1;
-    f1++;
-    const auto f4 = f1 % f2;
-
-
-    const auto f5 = f1 & f2;
-    const auto f6 = f1 ^ f2;
-    f2 ^= test::Flags{1};
 
 
     return 0;
-}*/
+}

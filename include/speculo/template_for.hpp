@@ -4,32 +4,32 @@
 
 #pragma once
 
+#include <optional>
+
+#include <speculo/details/SpecializationOf.hpp>
 #include <speculo/details/template_for.hpp>
 
 namespace speculo {
 
-    template<auto R, typename F>
+    /// Call a templated function for every element in range V.
+    /// @tparam V contiguous range to iterate through
+    /// @tparam F type of a templated callable
+    /// @param f instance of a templated callable
+    template<std::ranges::contiguous_range auto V, typename F>
     constexpr void template_for(F &&f) {
-        details::template_for_impl<R, 0>(std::forward<F>(f));
+        details::template_for_impl<V>(std::forward<F>(f), std::make_index_sequence<V.size()>{});
     }
-
-    template<auto R, typename F>
-    constexpr decltype(auto) template_for_r(F &&f) {
-        return details::template_for_impl_r<R, 0>(std::forward<F>(f));
-    }
-
-
-    // TODO: hack for empty ranges
-    template<auto R, typename F>
-        requires(std::ranges::size(R) == 0)
-    constexpr decltype(auto) template_for_r(F &&f) {
-        using ElementT = std::ranges::range_value_t<decltype(R)>;
-        if constexpr (std::is_default_constructible_v<ElementT>) {
-            using Optional = decltype(f.template operator()<ElementT{}>());
-            return Optional{std::nullopt};
-        } else {
-            return std::optional<bool>{};// FIXME
-        }
+    /// Call a templated function for every element in range V until a non empty optional is returned.
+    /// All possible invocations of the function must return the same type which has to be a specialization of std::optional.
+    /// @tparam V contiguous range to iterate through
+    /// @tparam F type of a templated callable
+    /// @param f instance of a templated callable
+    /// @return an instance of std::optional
+    template<std::ranges::contiguous_range auto V, typename F>
+    constexpr auto template_for_r(F &&f) {
+        using Result = decltype(std::declval<F>().template operator()<std::ranges::range_value_t<decltype(V)>{}>());
+        static_assert(SpecializationOf<Result, std::optional>);
+        return details::template_for_impl_r<V, Result>(std::forward<F>(f), std::make_index_sequence<V.size()>{});
     }
 
 }// namespace speculo
