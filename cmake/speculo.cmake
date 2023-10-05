@@ -25,7 +25,7 @@ function(speculo_create_config)
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
-    file(REMOVE ${_args_TARGET}_config_generated)
+    file(REMOVE ${CMAKE_BINARY_DIR}/speculo/${_args_TARGET}_config_generated)
     add_custom_command(
             OUTPUT speculo/${_args_TARGET}_config_generated
             COMMAND ${CMAKE_COMMAND} -E touch speculo/${_args_TARGET}_config_generated
