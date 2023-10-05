@@ -25,9 +25,10 @@ function(speculo_create_config)
     get_target_property(SOURCE_DIR ${_args_TARGET} SOURCE_DIR)
     get_target_property(BINARY_DIR ${_args_TARGET} BINARY_DIR)
 
-    find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    add_custom_target(speculo_generate_${_args_TARGET}_config
-            ALL
+    file(REMOVE ${_args_TARGET}_config_generated)
+    add_custom_command(
+            OUTPUT speculo/${_args_TARGET}_config_generated
+            COMMAND ${CMAKE_COMMAND} -E touch speculo/${_args_TARGET}_config_generated
             COMMAND ${Python3_EXECUTABLE}
             ${SPECULO_GEN_SCRIPTS_PATH}/speculo_config_create.py
             -p ${_args_TARGET}
@@ -39,6 +40,12 @@ function(speculo_create_config)
             -D "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},COMPILE_DEFINITIONS>,$<SEMICOLON>>"
             -f ${_args_FLAGS}
             COMMAND_EXPAND_LISTS
+    )
+
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    add_custom_target(speculo_generate_${_args_TARGET}_config
+            ALL
+            DEPENDS speculo/${_args_TARGET}_config_generated
     )
 endfunction()
 

@@ -18,7 +18,7 @@ namespace speculo::details {
     template<auto V, typename Result, typename F, std::size_t... Is>
     constexpr auto template_for_impl_r(F &&f, std::index_sequence<Is...>) -> Result {
         Result res;
-        [[maybe_unused]] const auto _ = ((res = f.template operator()<V[Is]>(), res.has_value()) || ...);
+        [[maybe_unused]] const auto _ = (((res = f.template operator()<V[Is]>()).has_value()) || ...);
         return res;
     }
 }// namespace speculo::details
