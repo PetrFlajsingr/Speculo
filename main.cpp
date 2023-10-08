@@ -119,12 +119,12 @@ int main(int argc, const char **argv) {
 
                 if (!wasFileChanged && !anyIncludeChanged) {
 
-                    spdlog::info("File '{}' was not changed", config.inputSource.string());
+                    spdlog::trace("File '{}' was not changed", config.inputSource.string());
                     return ParseResult{config.inputSource, config.outputMetaHeader, iter->second.lastChange, includeStamps};
                 }
             }
         }
-        spdlog::info("Parsing file '{}'", config.inputSource.string());
+        spdlog::trace("Parsing file '{}'", config.inputSource.string());
 
         if (!includeStampsCollected) {
             const auto currentIncludes = speculo::gen::IncludeCollector{config}.collectIncludes(true);
