@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.28)
 project(speculo VERSION 0.1.0)
 
 include(CMakePackageConfigHelpers)
@@ -7,6 +7,7 @@ option(SPECULO_ENABLE_TEST_EXE "Enable test exe target" OFF)
 option(SPECULO_BUILD_FUNDAMENTAL_GEN_EXE "Enable fundamental info exe target" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set SPECULO_GEN_EXE_PATH to current binary output if not provided
 # global variables
@@ -52,9 +53,27 @@ find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 set(Boost_NO_WARN_NEW_VERSIONS TRUE)
 find_package(Boost COMPONENTS regex)
 
-add_library(speculo INTERFACE)
+add_library(speculo STATIC)
+target_compile_features(speculo PUBLIC cxx_std_20)
+target_sources(speculo
+        PUBLIC
+        FILE_SET
+            cxx_modules
+        TYPE
+            CXX_MODULES
+        FILES
+            include/speculo/details.ixx
+            include/speculo/enums.ixx
+            include/speculo/fundamental_types.ixx
+            include/speculo/Info.ixx
+            include/speculo/StringLiteral.ixx
+            include/speculo/speculo.ixx
+            include/speculo/meta_utils.ixx
+            include/speculo/attribute.ixx
+            include/speculo/template_for.ixx
+)
 add_library(speculo::speculo ALIAS speculo)
-target_include_directories(speculo INTERFACE
+target_include_directories(speculo PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
@@ -104,12 +123,12 @@ install(TARGETS speculo_gen
         CONFIGURATIONS Release
         RUNTIME DESTINATION Release/bin)
 
-
-install(TARGETS speculo
-        EXPORT speculo_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+# FIXME
+#install(TARGETS speculo
+#        EXPORT speculo_Targets
+#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 write_basic_package_version_file("speculoConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
@@ -132,11 +151,11 @@ configure_package_config_file(
         "${PROJECT_BINARY_DIR}/speculoConfig.cmake"
         INSTALL_DESTINATION
         ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
-
-install(EXPORT speculo_Targets
-        FILE speculoTargets.cmake
-        NAMESPACE speculo::
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
+#FIXME
+#install(EXPORT speculo_Targets
+#        FILE speculoTargets.cmake
+#        NAMESPACE speculo::
+#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
 
 install(FILES "${PROJECT_BINARY_DIR}/speculoConfig.cmake"
         "${PROJECT_BINARY_DIR}/speculoConfigVersion.cmake"
@@ -159,7 +178,7 @@ if (${SPECULO_BUILD_FUNDAMENTAL_GEN_EXE})
     target_include_directories(speculo_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
 
     target_include_directories(speculo_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
-    target_include_directories(speculo_generate_fundamental_types PRIVATE speculo_gen/include)
+    target_link_libraries(speculo_generate_fundamental_types PRIVATE speculo::speculo)
     target_link_libraries(speculo_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
     target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
     target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})

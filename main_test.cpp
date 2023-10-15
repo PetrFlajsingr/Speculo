@@ -2,23 +2,18 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-#include "speculo/enums.hpp"
-#include "speculo/reflect.hpp"
-#include "speculo/template_for.hpp"
-#include "speculo/meta.hpp"
+import speculo;
 
-
-#include "src/meta/test.hpp"
-
-
-
-#include "speculo/fundamental_types.hpp"
-#include "speculo/meta.hpp"
-#include "src/meta/test.hpp"
-#include "src/meta/test2.hpp"
 #include <optional>
 #include <vector>
 #include <functional>
+#include <string_view>
+#include <iostream>
+#include <concepts>
+
+#include "speculo/reflect.hpp"
+#include "src/meta/test.hpp"
+#include "src/meta/test2.hpp"
 
 
 

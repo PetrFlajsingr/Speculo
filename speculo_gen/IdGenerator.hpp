@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <random>
-#include <speculo/Info.hpp>
+import speculo;
 
+#include <random>
 #include <stduuid/uuid.h>
 
 #include "info_structs.hpp"

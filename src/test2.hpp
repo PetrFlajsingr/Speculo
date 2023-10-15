@@ -7,7 +7,7 @@
 #pragma once
 
 #include "test_h.hpp"
-#include <speculo/macros.hpp>
+#include <speculo/reflect.hpp>
 
 #include <cstddef>
 

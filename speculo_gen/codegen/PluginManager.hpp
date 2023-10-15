@@ -6,10 +6,14 @@
 
 #pragma once
 
+import speculo;
+
 #include "CodeGenerator.hpp"
 #include <filesystem>
 #include <ranges>
-#include <speculo/details/RangeOf.hpp>
+#include <algorithm>
+#include <utility>
+#include <vector>
 
 #ifdef _WIN32
 #include <windows.h>

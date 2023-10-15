@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "speculo/details/RangeOf.hpp"
+import speculo;
+
 #include <algorithm>
 #include <functional>
 #include <numeric>

@@ -2,6 +2,8 @@
 // Created by xflajs00 on 19.03.2023.
 //
 
+import speculo;
+
 #include "MetaInfoWriter.hpp"
 
 #include "Visitor.hpp"
@@ -24,7 +26,6 @@
 #include "algorithms/contains.hpp"
 #include "idToString.hpp"
 #include "optional_utils.hpp"
-#include "speculo/details/array.hpp"
 
 namespace speculo::gen {
     [[nodiscard]] std::string createDetailsStruct(std::string_view contents) {

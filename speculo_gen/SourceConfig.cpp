@@ -46,8 +46,6 @@ namespace speculo::gen {
             for (const auto &flag: data["compiler_flags"]) { flags.push_back(flag); }
             for (const auto &define: data["defines"]) { flags.push_back(fmt::format("-D {}", std::string{define})); }
             for (const auto &includePath: data["include_paths"]) { flags.push_back(fmt::format("-I{}", std::string{includePath})); }
-            // FIXME: remove once clang claims consteval support
-            flags.emplace_back("-D __cpp_consteval=201811L");
             result.sourceConfigs.push_back({.inputSource = inputFile,
                                             .outputMetaHeader = metaHeader,
                                             .outputCodegenHeader = generatedHeader,

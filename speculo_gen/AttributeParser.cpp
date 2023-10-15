@@ -2,6 +2,8 @@
 // Created by xflajs00 on 17.03.2023.
 //
 
+import speculo;
+
 #include "AttributeParser.hpp"
 
 #include <iostream>
@@ -13,7 +15,7 @@
 #include <flat/flat_map.hpp>
 
 #include "algorithms/contains.hpp"
-#include <speculo/details/array.hpp>
+
 // FIXME: deduplicate code
 namespace speculo::gen {
 

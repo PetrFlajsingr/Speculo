@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <speculo/macros.hpp>
+#include <speculo/reflect.hpp>
 
 namespace test2 {
     struct DifferentFileBase {

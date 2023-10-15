@@ -1,14 +1,11 @@
-//
-// Created by xflajs00 on 15.03.2023.
-//
+module;
 
-#pragma once
-
-#include <span>
 #include <string_view>
+#include <span>
 
-namespace speculo {
+export module speculo:attribute;
 
+export namespace speculo {
     struct Attribute {
         constexpr Attribute(std::string_view ns, std::string_view n, std::span<const std::string_view> args)
             : nnamespace{ns}, name{n}, arguments{args} {}
@@ -17,5 +14,4 @@ namespace speculo {
         std::string_view name;
         std::span<const std::string_view> arguments;
     };
-
-}// namespace speculo
+}

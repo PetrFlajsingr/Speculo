@@ -4,6 +4,8 @@
 
 #pragma once
 
+import speculo;
+
 #include "wrap/clang_tooling.hpp"
 
 #include "info_structs.hpp"
@@ -11,7 +13,6 @@
 #include "wrap/clang_tooling_syntax_tokens.hpp"
 #include <flat/flat_map.hpp>
 
-#include <speculo/details/RangeOf.hpp>
 
 namespace speculo::gen {
 

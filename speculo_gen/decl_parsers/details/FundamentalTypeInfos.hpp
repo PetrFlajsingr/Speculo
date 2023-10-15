@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <speculo/details/OneOf.hpp>
+import speculo;
 
 #include "../../IdGenerator.hpp"
 #include "../../info_structs.hpp"

@@ -1,13 +1,18 @@
+import speculo;
 
 #include "MetaSupportCodeGenerator.hpp"
 #include "../algorithms/join.hpp"
 #include "../idToString.hpp"
 
+#include <string>
+#include <vector>
+#include <ranges>
+
 #include <fmt/format.h>
 
 namespace speculo::gen {
 
-    uint64_t MetaSupportCodeGenerator::getPriority() const { return 1; }
+    std::uint64_t MetaSupportCodeGenerator::getPriority() const { return 1; }
 
     RecordGenerationResult MetaSupportCodeGenerator::generate(RecordTypeInfo &typeInfo) {
         RecordGenerationResult result{};
@@ -37,8 +42,9 @@ namespace speculo::gen {
     GenerationResult MetaSupportCodeGenerator::generate(const EnumTypeInfo &typeInfo) { return {}; }
 
     FilePrologueEpilogue MetaSupportCodeGenerator::getPrologueEpilogue() {
-        return {.hppPrologue = R"(#include <speculo/macros.hpp>
-#include <speculo/details/StaticInfo.hpp>
+        return {.hppPrologue = R"(#include <speculo/reflect.hpp>
+import speculo;
+#include <cstddef>
 )"};
     }
 

@@ -1,4 +1,5 @@
-#include "speculo/Info.hpp"
+import speculo;
+
 #include <fmt/core.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>

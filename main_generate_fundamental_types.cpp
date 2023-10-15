@@ -163,12 +163,9 @@ int main(int argc, char **argv) {
 
     *outStream << R"(#pragma once
 
-#include <speculo/Attribute.hpp>
-#include <speculo/Info.hpp>
-#include <speculo/details/StaticInfo.hpp>
-#include <speculo/details/StringLiteral.hpp>
-#include <speculo/details/StaticInfo_Wrappers.hpp>
-#include <speculo/details/array.hpp>
+import speculo;
+
+#include <cstddef>
 
 namespace speculo::details {
 

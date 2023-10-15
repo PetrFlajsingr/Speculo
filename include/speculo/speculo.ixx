@@ -1,21 +1,19 @@
-/**
- * @file meta.hpp
- * @brief 
- * @author PetrFlajsingr
- */
+module;
 
-#pragma once
-
-#include <speculo/details/StaticInfo.hpp>
-#include <speculo/Info.hpp>
-#include <speculo/Attribute.hpp>
-#include <speculo/details/RangeOf.hpp>
-#include <speculo/template_for.hpp>
-
-#include <concepts>
+#include <span>
+#include <string_view>
 #include <optional>
 
-namespace speculo {
+export module speculo;
+export import :details;
+export import :string_literal;
+export import :fundamental_types;
+export import :enums;
+export import :attribute;
+export import :template_for;
+export import :info;
+
+export namespace speculo {
     template<Info I>
     concept Enum = details::StaticInfo<I.id>::StaticInfoObjectType == details::StaticInfoType::EnumType;
     template<Info I>
@@ -735,5 +733,4 @@ namespace speculo {
         using impl = details::StaticInfo<I.id>;
         return impl::CreateBitfieldAccessor(parentPtr);
     }
-
-}// namespace speculo
+}

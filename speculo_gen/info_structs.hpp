@@ -4,6 +4,9 @@
 
 #pragma once
 
+import speculo;
+
+#include <array>
 #include <cassert>
 #include <memory>
 #include <optional>
@@ -12,8 +15,6 @@
 #include <variant>
 #include <vector>
 
-#include <speculo/ID.hpp>
-#include <speculo/details/OneOf.hpp>
 
 namespace speculo::gen {
     enum class Access { Private, Protected, Public };

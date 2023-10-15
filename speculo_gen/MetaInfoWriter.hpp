@@ -4,11 +4,11 @@
 
 #pragma once
 
+import speculo;
+
 #include "IdGenerator.hpp"
 #include "info_structs.hpp"
 #include <algorithm>
-#include <speculo/details/RangeOf.hpp>
-
 
 namespace speculo::gen {
 

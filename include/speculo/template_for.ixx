@@ -1,15 +1,13 @@
-//
-// Created by xflajs00 on 15.03.2023.
-//
+module;
 
-#pragma once
-
+#include <ranges>
+#include <utility>
 #include <optional>
 
-#include <speculo/details/SpecializationOf.hpp>
-#include <speculo/details/template_for.hpp>
+export module speculo:template_for;
+import :details;
 
-namespace speculo {
+export namespace speculo {
 
     /// Call a templated function for every element in range V.
     /// @tparam V contiguous range to iterate through
@@ -32,4 +30,4 @@ namespace speculo {
         return details::template_for_impl_r<V, Result>(std::forward<F>(f), std::make_index_sequence<V.size()>{});
     }
 
-}// namespace speculo
+}

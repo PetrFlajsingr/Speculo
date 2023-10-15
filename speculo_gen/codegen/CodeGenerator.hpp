@@ -8,6 +8,9 @@
 
 #include "../info_structs.hpp"
 #include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
 #include <spdlog/spdlog.h>
 
 

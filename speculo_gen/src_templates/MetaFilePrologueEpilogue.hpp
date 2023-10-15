@@ -10,14 +10,12 @@ namespace speculo::gen::templates {
 #pragma once
 
 #include "{relative_include_path}"
-#include <speculo/details/array.hpp>
-#include <speculo/details/RangeOf.hpp>
-#include <type_traits>
-#include <speculo/details/StaticInfo.hpp>
-#include <speculo/details/StaticInfo_Wrappers.hpp>
-#include <speculo/ID.hpp>
-#include <speculo/Attribute.hpp>
-#include <speculo/Info.hpp>
+import speculo;
+#include <cstdint>
+#include <cstddef>
+#include <string_view>
+#include <span>
+#include <array>
 
 namespace speculo::details {{
 )fmt";

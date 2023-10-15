@@ -1,8 +1,9 @@
 
 
-#include <speculo/macros.hpp>
+#include <speculo/reflect.hpp>
 
 #include "generated/test.hpp"
+#include <array>
 
 namespace S{
     constexpr auto Value = 10 * 15;

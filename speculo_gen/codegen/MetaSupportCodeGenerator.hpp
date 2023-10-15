@@ -6,9 +6,12 @@
 
 #pragma once
 
+import speculo;
+
+#include <cstddef>
+
 #include "../info_structs.hpp"
 #include <fmt/format.h>
-#include <speculo/details/RangeOf.hpp>
 
 #include "CodeGenerator.hpp"
 
@@ -22,9 +25,9 @@ namespace speculo::gen {
 
         [[nodiscard]] RecordGenerationResult generate(RecordTypeInfo &typeInfo) override;
         [[nodiscard]] GenerationResult generate(const EnumTypeInfo &typeInfo) override;
-        FilePrologueEpilogue getPrologueEpilogue() override;
+        [[nodiscard]] FilePrologueEpilogue getPrologueEpilogue() override;
 
-        [[nodiscard]] uint64_t getPriority() const override;
+        [[nodiscard]] std::uint64_t getPriority() const override;
     };
 
 }// namespace speculo::gen

@@ -11,6 +11,7 @@
 #include "details/FundamentalTypeInfos.hpp"
 #include "details/IncompleteTypeInfos.hpp"
 #include <spdlog/spdlog.h>
+#include <ranges>
 
 namespace speculo::gen {
 

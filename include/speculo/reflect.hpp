@@ -4,11 +4,21 @@
 
 #pragma once
 
-#include <speculo/ID.hpp>
-#include <speculo/Info.hpp>
-#include <speculo/details/ReflectInfoProviders.hpp>
-#include <speculo/details/SpliceResultProviders.hpp>
-#include <speculo/details/StaticInfo.hpp>
+
+#define SPECULO_COMBINE_MACRO2_INNER(x, y) x##y
+#define SPECULO_COMBINE_MACRO2(x, y) SPECULO_COMBINE_MACRO2_INNER(x, y)
+#define SPECULO_COMBINE_MACRO4_INNER(x, y, z, w) x##y##z##w
+#define SPECULO_COMBINE_MACRO4(x, y, z, w) SPECULO_COMBINE_MACRO4_INNER(x, y, z, w)
+
+
+#ifdef SPECULO_CODE_GENERATOR_RUNNING
+#define SPECULO_GENERATED()
+#define SPECULO_GENERATED_HEADER()
+#else
+#define SPECULO_GENERATED() SPECULO_COMBINE_MACRO4(SPECULO_GENERATED_, __LINE__, _, SPECULO_GENERATED_FILE_ID)
+#define SPECULO_GENERATED_HEADER() SPECULO_COMBINE_MACRO2(SPECULO_GENERATED_HEADER_, SPECULO_GENERATED_FILE_ID)
+#endif
+
 
 #define SPECULO_REFLECT(X) ::speculo::details::provideReflectInfo<X>().Result
 
