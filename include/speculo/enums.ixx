@@ -8,6 +8,7 @@ module;
 export module speculo:enums;
 import :details;
 import :info;
+import :template_for;
 
 export namespace speculo {
     /// Type which is an enum or an enum class

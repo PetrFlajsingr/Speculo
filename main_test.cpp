@@ -2,7 +2,6 @@
 // Created by xflajs00 on 08.03.2023.
 //
 
-import speculo;
 
 #include <optional>
 #include <vector>
@@ -11,10 +10,14 @@ import speculo;
 #include <iostream>
 #include <concepts>
 
+#include <iostream>
+
+
 #include "speculo/reflect.hpp"
 #include "src/meta/test.hpp"
 #include "src/meta/test2.hpp"
 
+import speculo;
 
 
 template<speculo::Info Type>
@@ -50,8 +53,6 @@ template<speculo::Info I>
     using aImpl = speculo::details::StaticInfo<I.id>;
     return aImpl::Constructors;
 }
-
-#include <iostream>
 
 
 int main() {

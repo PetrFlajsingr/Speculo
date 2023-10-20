@@ -2,6 +2,7 @@ module;
 
 #include <array>
 #include <string_view>
+#include <cstddef>
 
 export module speculo:string_literal;
 

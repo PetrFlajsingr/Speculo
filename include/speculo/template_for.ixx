@@ -26,7 +26,7 @@ export namespace speculo {
     template<std::ranges::contiguous_range auto V, typename F>
     constexpr auto template_for_r(F &&f) {
         using Result = decltype(std::declval<F>().template operator()<std::ranges::range_value_t<decltype(V)>{}>());
-        static_assert(SpecializationOf<Result, std::optional>);
+        static_assert(SpecializationOf<Result, std::optional>, "F has to return an optional");
         return details::template_for_impl_r<V, Result>(std::forward<F>(f), std::make_index_sequence<V.size()>{});
     }
 

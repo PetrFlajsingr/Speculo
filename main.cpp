@@ -1,4 +1,4 @@
-import speculo;
+
 
 #include <fmt/core.h>
 #include <spdlog/sinks/daily_file_sink.h>
@@ -22,6 +22,7 @@ import speculo;
 #include "speculo_gen/ThreadPool.hpp"
 #include "speculo_gen/wrap/clang_lex_PreprocessorOptions.hpp"
 
+import speculo;
 
 static llvm::cl::opt<std::string> ConfigArg(llvm::cl::Required, "config", llvm::cl::desc("Specify input config"),
                                             llvm::cl::value_desc("filename"));

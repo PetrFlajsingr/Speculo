@@ -123,12 +123,14 @@ install(TARGETS speculo_gen
         CONFIGURATIONS Release
         RUNTIME DESTINATION Release/bin)
 
-# FIXME
-#install(TARGETS speculo
-#        EXPORT speculo_Targets
-#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS speculo
+        EXPORT speculo_Targets
+        FILE_SET cxx_modules DESTINATION .# ${CMAKE_INSTALL_LIBDIR}
+        CXX_MODULES_BMI DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 write_basic_package_version_file("speculoConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
@@ -151,18 +153,18 @@ configure_package_config_file(
         "${PROJECT_BINARY_DIR}/speculoConfig.cmake"
         INSTALL_DESTINATION
         ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
-#FIXME
-#install(EXPORT speculo_Targets
-#        FILE speculoTargets.cmake
-#        NAMESPACE speculo::
-#        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
+
+install(EXPORT speculo_Targets
+        FILE speculoTargets.cmake
+        NAMESPACE speculo::
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
 
 install(FILES "${PROJECT_BINARY_DIR}/speculoConfig.cmake"
         "${PROJECT_BINARY_DIR}/speculoConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/speculo/cmake)
 
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/speculo DESTINATION include)
+#install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/speculo DESTINATION include)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION .)
 install(FILES ${PROJECT_SOURCE_DIR}/cmake/speculo.cmake DESTINATION cmake)
 
