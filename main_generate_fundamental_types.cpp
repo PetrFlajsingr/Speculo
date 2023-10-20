@@ -13,6 +13,7 @@ import speculo;
 #include <memory>
 #include <unordered_set>
 #include "speculo_gen/IdGenerator.hpp"
+#include "speculo_gen/idToString.hpp"
 
 static llvm::cl::opt<std::string> Output(llvm::cl::Required, "output", llvm::cl::desc("Specify output path"),
                                          llvm::cl::value_desc("filename"));
@@ -93,12 +94,16 @@ enum class InfoType {
     throw "can't happen";
 }
 
-std::string generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, std::string_view typeName, std::string_view fullTypeName,
-                                              std::unordered_set<InfoType> typesToGenerate = {
-                                                      InfoType::Const, InfoType::Lvalue, InfoType::ConstLvalue, InfoType::Rvalue,
-                                                      InfoType::Ptr, InfoType::ConstPtr, InfoType::VolatileConst, InfoType::VolatileLvalue,
-                                                      InfoType::VolatileConstLvalue, InfoType::VolatileRvalue, InfoType::VolatilePtr,
-                                                      InfoType::VolatileConstPtr}) {
+std::string
+generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, std::size_t size, std::string_view typeName,
+                                  std::string_view fullTypeName,
+                                  std::unordered_set<InfoType> typesToGenerate = {
+                                          InfoType::Const, InfoType::Lvalue, InfoType::ConstLvalue, InfoType::Rvalue,
+                                          InfoType::Ptr, InfoType::ConstPtr, InfoType::VolatileConst,
+                                          InfoType::VolatileLvalue,
+                                          InfoType::VolatileConstLvalue, InfoType::VolatileRvalue,
+                                          InfoType::VolatilePtr,
+                                          InfoType::VolatileConstPtr}) {
     using namespace fmt::literals;
     constexpr auto prologue = R"fmt(
 /****************************** {full_name} START ******************************/
@@ -108,7 +113,7 @@ std::string generateFundamentalStaticTypeInfo(speculo::gen::IdGenerator &gen, st
 )fmt";
     constexpr auto typeTemplate = R"fmt(
 template<>
-struct StaticInfo<{type_id}> : FundamentalStaticTypeInfo<{full_type_name}, {type_id}, StringLiteral{{"{type_name}"}}, StringLiteral{{"{full_type_name}"}}> {{}};
+struct StaticInfo<{type_id}> : FundamentalStaticTypeInfo<{full_type_name}, {size}, {type_id}, StringLiteral{{"{type_name}"}}, StringLiteral{{"{full_type_name}"}}> {{}};
 template<>
 [[nodiscard]] consteval ID getTypeId<{full_type_name}>() {{
     return {type_id};
@@ -124,11 +129,13 @@ template<>
 )fmt";
     const auto typeId = speculo::gen::idToString(gen.generateId(std::string{fullTypeName}));
     std::string result{fmt::format(prologue, "full_name"_a = fullTypeName)};
-    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "type_name"_a = typeName, "full_type_name"_a = fullTypeName));
+    result.append(fmt::format(typeTemplate, "type_id"_a = typeId, "size"_a = size, "type_name"_a = typeName,
+                              "full_type_name"_a = fullTypeName));
     for (const auto &toGen: typesToGenerate) {
         const auto variantTypeName = wrapNameForInfoType(toGen, std::string{fullTypeName});
         const auto variantId = speculo::gen::idToString(gen.generateId(variantTypeName));
-        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId, "wrap_struct"_a = wrapStructForInfoType(toGen),
+        result.append(fmt::format(variantTypeTemplate, "variant_id"_a = variantId,
+                                  "wrap_struct"_a = wrapStructForInfoType(toGen),
                                   "type_id"_a = typeId, "full_wrap_type_name"_a = variantTypeName));
     }
     result.append(fmt::format(epilogue, "full_name"_a = fullTypeName));
@@ -144,20 +151,40 @@ int main(int argc, char **argv) {
     llvm::cl::ParseCommandLineOptions(argc, argv, "speculo generate fundamental type infos");
 
     speculo::gen::IdGenerator gen{};
-    constexpr auto fundamentalTypes = speculo::make_array<std::string_view>(
-            "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", "char32_t", "wchar_t", "short", "unsigned short", "int",
-            "unsigned int", "long", "unsigned long", "long long", "unsigned long long", "float", "double", "long double");
+    constexpr auto fundamentalTypes = speculo::make_array<std::pair<std::string_view, std::size_t>>(
+            std::pair<std::string_view, std::size_t>{"bool", sizeof(bool)},
+            std::pair<std::string_view, std::size_t>{"char", sizeof(char)},
+            std::pair<std::string_view, std::size_t>{"signed char", sizeof(signed char)},
+            std::pair<std::string_view, std::size_t>{"unsigned char", sizeof(unsigned char)},
+            std::pair<std::string_view, std::size_t>{"char8_t", sizeof(char8_t)},
+            std::pair<std::string_view, std::size_t>{"char16_t", sizeof(char16_t)},
+            std::pair<std::string_view, std::size_t>{"char32_t", sizeof(char32_t)},
+            std::pair<std::string_view, std::size_t>{"wchar_t", sizeof(wchar_t)},
+            std::pair<std::string_view, std::size_t>{"short", sizeof(short)},
+            std::pair<std::string_view, std::size_t>{"unsigned short", sizeof(unsigned short)},
+            std::pair<std::string_view, std::size_t>{"int", sizeof(int)},
+            std::pair<std::string_view, std::size_t>{"unsigned int", sizeof(unsigned int)},
+            std::pair<std::string_view, std::size_t>{"long", sizeof(long)},
+            std::pair<std::string_view, std::size_t>{"unsigned long", sizeof(unsigned long)},
+            std::pair<std::string_view, std::size_t>{"long long", sizeof(long long)},
+            std::pair<std::string_view, std::size_t>{"unsigned long long", sizeof(unsigned long long)},
+            std::pair<std::string_view, std::size_t>{"float", sizeof(float)},
+            std::pair<std::string_view, std::size_t>{"double", sizeof(double)},
+            std::pair<std::string_view, std::size_t>{"long double", sizeof(long double)});
     std::string output;
-    for (const auto fundamentalType: fundamentalTypes) {
-        output.append(generateFundamentalStaticTypeInfo(gen, fundamentalType, fundamentalType)).append("\n");
+    for (const auto [name, sz]: fundamentalTypes) {
+        output.append(generateFundamentalStaticTypeInfo(gen, sz, name, name)).append("\n");
     }
-    output.append(generateFundamentalStaticTypeInfo(gen, "void", "void", {InfoType::Ptr, InfoType::ConstPtr})).append("\n");
+    output.append(
+            generateFundamentalStaticTypeInfo(gen, 0, "void", "void", {InfoType::Ptr, InfoType::ConstPtr})).append(
+            "\n");
 
-    output.append(generateFundamentalStaticTypeInfo(gen, "nullptr_t", "std::nullptr_t", {})).append("\n");
+    output.append(generateFundamentalStaticTypeInfo(gen, 0, "nullptr_t", "std::nullptr_t", {})).append("\n");
 
 
     std::error_code errorCode;
-    auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{Output}, errorCode, llvm::sys::fs::OpenFlags::OF_Text);
+    auto outStream = std::make_shared<llvm::raw_fd_ostream>(std::string{Output}, errorCode,
+                                                            llvm::sys::fs::OpenFlags::OF_Text);
     if (errorCode) {
         spdlog::error("Failed to open output file '{}': {}", std::string{Output}, errorCode.message());
         return 0;
@@ -171,7 +198,7 @@ import speculo;
 
 namespace speculo::details {
 
-    template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
+    template<typename T, std::size_t TSize, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
     struct FundamentalStaticTypeInfo {
         using Type = T;
         constexpr static ID Id = TID;
@@ -194,6 +221,8 @@ namespace speculo::details {
         constexpr static bool IsTrivial = true;
         constexpr static bool IsEmpty = false;
         constexpr static bool IsAggregate = false;
+        constexpr static std::size_t Size = TSize;
+        constexpr static std::size_t Alignment = TSize;
 
         constexpr static auto Name = TypeName;
         constexpr static auto FullName = FullTypeName;
