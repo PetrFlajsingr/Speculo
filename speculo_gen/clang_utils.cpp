@@ -1,10 +1,16 @@
+module;
 
-#include "clang_utils.hpp"
-#include "fmt/format.h"
-#include "clang/AST/DeclTemplate.h"
+#include <fmt/format.h>
+#include <clang/AST/DeclTemplate.h>
 #include <boost/regex.hpp>
 #include <cassert>
 #include <clang/AST/QualTypeNames.h>
+#include <clang/Lex/Lexer.h>
+#include <clang/Basic/SourceManager.h>
+
+module speculo.gen;
+import :structs;
+import :clang_utils;
 
 namespace speculo::gen {
 
@@ -30,7 +36,7 @@ namespace speculo::gen {
                 astContext.getSourceManager().getFilename(decl.getSourceRange().getBegin()).str()};
     }
 
-    SourceLocationInfo gen::getSourceLocationInfo(clang::ASTContext &astContext, const clang::CXXBaseSpecifier &base) {
+    SourceLocationInfo getSourceLocationInfo(clang::ASTContext &astContext, const clang::CXXBaseSpecifier &base) {
         return {astContext.getSourceManager().getPresumedLineNumber(base.getSourceRange().getBegin()),
                 astContext.getSourceManager().getPresumedColumnNumber(base.getSourceRange().getBegin()),
                 astContext.getSourceManager().getFilename(base.getSourceRange().getBegin()).str()};

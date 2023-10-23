@@ -1,20 +1,17 @@
-//
-// Created by xflajs00 on 17.03.2023.
-//
-
-import speculo;
-
-#include "AttributeParser.hpp"
+module;
 
 #include <iostream>
 #include <spdlog/spdlog.h>
 
-#include "clang_utils.hpp"
 #include "wrap/clang_ast_recursiveASTVisitor.hpp"
 #include "wrap/clang_lex_PreprocessorOptions.hpp"
 #include <flat/flat_map.hpp>
 
-#include "algorithms/contains.hpp"
+module speculo.gen;
+import speculo;
+import :algorithms;
+import :attribute_parser;
+import :structs;
 
 // FIXME: deduplicate code
 namespace speculo::gen {

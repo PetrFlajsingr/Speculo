@@ -1,7 +1,13 @@
-#include "ProjectDatabase.hpp"
+module;
 
-#include "json_serializers.hpp"
 #include <spdlog/spdlog.h>
+#include <filesystem>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+module speculo.gen;
+import :project_database;
+import :json_serializers;
 
 namespace speculo::gen {
 

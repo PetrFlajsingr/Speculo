@@ -14,7 +14,7 @@ endmacro()
 function(speculo_create_config)
     set(options)
     set(oneValueArgs TARGET)
-    set(multiValueArgs FLAGS HEADERS DEFINES)
+    set(multiValueArgs FLAGS HEADERS DEFINES MODULES)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
@@ -37,6 +37,7 @@ function(speculo_create_config)
             -I ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}
             -I "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},INCLUDE_DIRECTORIES>,$<SEMICOLON>>"
             -H ${_args_HEADERS}
+            -M ${_args_MODULES}
             -D "$<JOIN:$<TARGET_PROPERTY:${_args_TARGET},COMPILE_DEFINITIONS>,$<SEMICOLON>>"
             -f ${_args_FLAGS}
             COMMAND_EXPAND_LISTS
@@ -58,7 +59,7 @@ endfunction()
 function(speculo_run_gen)
     set(options FORMAT FORCE_REGEN)
     set(oneValueArgs TARGET)
-    set(multiValueArgs HEADERS)
+    set(multiValueArgs HEADERS MODULES)
     cmake_parse_arguments(_args "${options}" "${oneValueArgs}"
             "${multiValueArgs}" ${ARGN})
 
@@ -126,6 +127,7 @@ function(speculo_register)
             TARGET ${_args_TARGET}
             FLAGS ${_args_FLAGS}
             HEADERS ${_args_HEADERS}
+            MODULES ${_args_MODULES}
             DEFINES ${_args_DEFINES}
     )
     if (_args_FORMAT)
@@ -139,5 +141,7 @@ function(speculo_register)
             TARGET ${_args_TARGET}
             ${formatArg}
             ${forceArg}
-            HEADERS ${_args_HEADERS})
+            HEADERS ${_args_HEADERS}
+            MODULES ${_args_MODULES}
+    )
 endfunction()

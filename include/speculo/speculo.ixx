@@ -2,7 +2,6 @@ module;
 
 #include <span>
 #include <string_view>
-#include <optional>
 
 export module speculo;
 export import :details;

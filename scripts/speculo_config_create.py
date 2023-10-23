@@ -16,6 +16,7 @@ def process_arguments():
     parser.add_argument('-o', '--outputdir', required=True)
     parser.add_argument('-I', '--includepaths', action='append', nargs='*', default=[])
     parser.add_argument('-H', '--headerfiles', action='append', nargs='*', default=[])
+    parser.add_argument('-M', '--modulefiles', action='append', nargs='*', default=[])
     parser.add_argument('-D', '--defines', action='append', nargs='*', default=[])
     parser.add_argument('-f', '--compilerflags', nargs=argparse.REMAINDER, default=[])
     return parser.parse_args()
@@ -42,12 +43,14 @@ def main():
     include_paths = proc_list(args.includepaths)
     defines = proc_list(args.defines)
     header_paths = proc_list(args.headerfiles)
+    module_paths = proc_list(args.modulefiles)
     compiler_flags = sorted(list(set(args.compilerflags)))
 
     output = {
         "project": args.projectname,
         "project_root": args.projectroot,
         "include_paths": include_paths,
+        "module_paths": module_paths,
         "compiler_flags": compiler_flags,
         "defines": defines,
         "header_paths": header_paths

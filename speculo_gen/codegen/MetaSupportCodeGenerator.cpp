@@ -1,14 +1,17 @@
-import speculo;
-
-#include "MetaSupportCodeGenerator.hpp"
-#include "../algorithms/join.hpp"
-#include "../idToString.hpp"
+module;
 
 #include <string>
 #include <vector>
 #include <ranges>
+#include <cstdint>
 
 #include <fmt/format.h>
+
+module speculo.gen;
+import speculo;
+import :meta_code_generator;
+import :structs;
+import :algorithms;
 
 namespace speculo::gen {
 

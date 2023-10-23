@@ -1,19 +1,20 @@
-//
-// Created by xflajs00 on 19.03.2023.
-//
+module;
 
-#include "ASTEnumParser.hpp"
-#include "../AttributeParser.hpp"
-
-#include "../clang_utils.hpp"
 #include "../wrap/clang_ast_qualtypenames.hpp"
 #include <spdlog/spdlog.h>
 
-#include "details/FundamentalTypeInfos.hpp"
+module speculo.gen;
+import :ast_enum_parser;
+import :id_generator;
+import :attribute_parser;
+import :types_cache;
+import :structs;
+import :clang_utils;
+import :type_info_factory;
 
 namespace speculo::gen {
     ASTEnumParser::ASTEnumParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
-                                 std::shared_ptr<ParsedTypesCache> cache)
+                                 std::shared_ptr<TypesCache> cache)
         : ASTDeclParser{std::move(idGen), std::move(attribParser), std::move(cache)} {
         spdlog::trace("Creating ASTEnumDeclParser");
     }

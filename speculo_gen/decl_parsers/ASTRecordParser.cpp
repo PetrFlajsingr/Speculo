@@ -1,22 +1,24 @@
-//
-// Created by xflajs00 on 19.03.2023.
-//
+module;
 
-#include "ASTRecordParser.hpp"
-#include "../clang_utils.hpp"
 #include "../wrap/clang_ast_qualtypenames.hpp"
 #include "../wrap/clang_ast_recordlayout.hpp"
 #include "../wrap/clang_sema_sema.hpp"
-#include "ASTEnumParser.hpp"
-#include "details/FundamentalTypeInfos.hpp"
-#include "details/IncompleteTypeInfos.hpp"
 #include <spdlog/spdlog.h>
 #include <ranges>
+#include <memory>
+
+module speculo.gen;
+import :ast_record_parser;
+import :id_generator;
+import :attribute_parser;
+import :structs;
+import :clang_utils;
+import :type_info_factory;
 
 namespace speculo::gen {
 
     ASTRecordParser::ASTRecordParser(std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser,
-                                     std::shared_ptr<ParsedTypesCache> cache)
+                                     std::shared_ptr<TypesCache> cache)
         : ASTDeclParser{std::move(idGen), std::move(attribParser), std::move(cache)}, enumParser{idGenerator, attributeParser, typesCache} {
     }
 
@@ -447,13 +449,13 @@ namespace speculo::gen {
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateFundamentalTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                                IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                                IdGenerator &idGenerator, TypesCache &typesCache,
                                                                                 clang::ASTContext &astContext) {
         return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) { result = getFundamentalTypeInfo(typeName, idGenerator); });
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateIncompleteTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                               IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                               IdGenerator &idGenerator, TypesCache &typesCache,
                                                                                clang::ASTContext &astContext) {
         return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
             result = getIncompleteTypeInfo(getProperQualifiedName(type, astContext), idGenerator);
@@ -461,7 +463,7 @@ namespace speculo::gen {
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateEnumTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                         IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                         IdGenerator &idGenerator, TypesCache &typesCache,
                                                                          clang::ASTContext &astContext, ASTEnumParser &enumParser) {
         return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
             if (const auto enumType = llvm::dyn_cast<clang::EnumType>(type)) {
@@ -482,7 +484,7 @@ namespace speculo::gen {
     }
 
     std::shared_ptr<TypeInfoVariant> ASTRecordParser::CreateRecordTypeInfo(const clang::QualType &type, const std::string &typeName,
-                                                                           IdGenerator &idGenerator, ParsedTypesCache &typesCache,
+                                                                           IdGenerator &idGenerator, TypesCache &typesCache,
                                                                            clang::ASTContext &astContext, ASTRecordParser &recordParser) {
         return typesCache.getOrAdd(typeName, [&](TypeInfoVariant &result) {
             if (const auto recDecl = type->getAsCXXRecordDecl()) {
@@ -501,7 +503,7 @@ namespace speculo::gen {
         });
     }
 
-    TypeUsage ASTRecordParser::CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext, ParsedTypesCache &typesCache,
+    TypeUsage ASTRecordParser::CreateTypeUsage(const clang::QualType &type, clang::ASTContext &astContext, TypesCache &typesCache,
                                                IdGenerator &idGenerator, ASTEnumParser &enumParser, ASTRecordParser &recordParser) {
         TypeUsage result;
         result.fullName = getProperQualifiedName(type.getCanonicalType(), astContext);

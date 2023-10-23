@@ -1,21 +1,19 @@
-//
-// Created by xflajs00 on 18.03.2023.
-//
+module;
 
-#include "ASTParser.hpp"
-#include "AttributeParser.hpp"
-#include "IdGenerator.hpp"
-
-#include "decl_parsers/details/IncompleteTypeInfos.hpp"
-#include "decl_parsers/factory.hpp"
 #include "spdlog/spdlog.h"
 #include "wrap/clang_frontend_compilerinstance.hpp"
+
+module speculo.gen;
+import :ast_parser;
+import :types_cache;
+import :decl_parser_factory;
+import :type_info_factory;
 
 namespace speculo::gen {
 
     ASTParser::ASTParser(const SourceConfig *c, std::shared_ptr<IdGenerator> idGen, std::shared_ptr<AttributeParser> attribParser)
         : config{c}, idGenerator{std::move(idGen)}, attributeParser{std::move(attribParser)},
-          typesCache{std::make_shared<ParsedTypesCache>()} {}
+          typesCache{std::make_shared<TypesCache>()} {}
 
     std::vector<TypeInfoVariant> ASTParser::parse(clang::ASTContext &astContext) {
         auto tuCtx = astContext.getTranslationUnitDecl();

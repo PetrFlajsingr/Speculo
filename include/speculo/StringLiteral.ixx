@@ -3,6 +3,7 @@ module;
 #include <array>
 #include <string_view>
 #include <cstddef>
+#include <compare>
 
 export module speculo:string_literal;
 

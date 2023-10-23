@@ -2,9 +2,9 @@ import speculo;
 
 #include <string>
 
-#include "format.hpp"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+#include <format.hpp>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 #include <fmt/format.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/FileSystem.h>
@@ -12,8 +12,6 @@ import speculo;
 #include <string>
 #include <memory>
 #include <unordered_set>
-#include "speculo_gen/IdGenerator.hpp"
-#include "speculo_gen/idToString.hpp"
 
 static llvm::cl::opt<std::string> Output(llvm::cl::Required, "output", llvm::cl::desc("Specify output path"),
                                          llvm::cl::value_desc("filename"));

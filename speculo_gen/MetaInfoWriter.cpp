@@ -1,31 +1,14 @@
-//
-// Created by xflajs00 on 19.03.2023.
-//
+module;
 
-import speculo;
-
-#include "MetaInfoWriter.hpp"
-
-#include "Visitor.hpp"
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
+#include <variant>
 
-#include "src_templates/GetConstantID.hpp"
-#include "src_templates/GetTypeID.hpp"
-#include "src_templates/StaticArgumentInfo.hpp"
-#include "src_templates/StaticBaseInfo.hpp"
-#include "src_templates/StaticConstructorInfo.hpp"
-#include "src_templates/StaticDestructorInfo.hpp"
-#include "src_templates/StaticMemberFunctionInfo.hpp"
-#include "src_templates/StaticMemberVariableInfo.hpp"
-#include "src_templates/StaticStaticFunctionInfo.hpp"
-#include "src_templates/StaticStaticVariableInfo.hpp"
-#include "src_templates/StaticTypeInfo.hpp"
-#include "src_templates/StaticValueInfo.hpp"
-
-#include "algorithms/contains.hpp"
-#include "idToString.hpp"
-#include "optional_utils.hpp"
+module speculo.gen;
+import speculo;
+import :algorithms;
+import :meta_info_writer;
+import :src_templates;
 
 namespace speculo::gen {
     [[nodiscard]] std::string createDetailsStruct(std::string_view contents) {

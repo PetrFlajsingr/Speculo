@@ -47,6 +47,7 @@ Built-in attributes:
 2. Copy `speculo.cmake` to your project.
 3. Build `speculo_gen` target and put the resulting exe wherever you want.
 4. Register your project in CMake:
+
   ```cmake
   include(cmake/speculo.cmake)
   # ... 
@@ -55,7 +56,7 @@ Built-in attributes:
   speculo_register(
           TARGET meta_test
           FLAGS ${CXXFLAGS}
-          HEADERS src/test.h
+          HEADERS test_src/test.h
           FORMAT
   )
   ```

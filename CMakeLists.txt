@@ -77,9 +77,12 @@ target_include_directories(speculo PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-add_executable(speculo_gen main.cpp
+add_executable(speculo_gen
+        main_speculo_gen.cpp
+        speculo_gen/details/boost_throw.cpp
+        # module impls
         speculo_gen/AttributeParser.cpp
-        speculo_gen/AstActions.cpp
+        speculo_gen/ast_actions.cpp
         speculo_gen/ASTParser.cpp
         speculo_gen/MetaInfoWriter.cpp
         speculo_gen/decl_parsers/ASTDeclParser.cpp
@@ -91,9 +94,46 @@ add_executable(speculo_gen main.cpp
         speculo_gen/IncludeCollector.cpp
         speculo_gen/clang_utils.cpp
         speculo_gen/ProjectDatabase.cpp
-        speculo_gen/details/boost_throw.cpp
         speculo_gen/SourceConfig.cpp
 )
+
+
+target_compile_features(speculo_gen PUBLIC cxx_std_20)
+target_sources(speculo_gen
+        PUBLIC
+        FILE_SET
+            cxx_modules
+        TYPE
+            CXX_MODULES
+        FILES
+            speculo_gen/SpeculoGen.ixx
+            speculo_gen/algorithms.ixx
+            speculo_gen/ast_actions.ixx
+            speculo_gen/ASTParser.ixx
+            speculo_gen/AttributeParser.ixx
+            speculo_gen/clang_utils.ixx
+            speculo_gen/IdGenerator.ixx
+            speculo_gen/IncludeCollector.ixx
+            speculo_gen/json_serializers.ixx
+            speculo_gen/MetaInfoWriter.ixx
+            speculo_gen/TypesCache.ixx
+            speculo_gen/ProjectDatabase.ixx
+            speculo_gen/SafeQueue.ixx
+            speculo_gen/info_structs.ixx
+            speculo_gen/SourceConfig.ixx
+            speculo_gen/DiagnosticConsumer.ixx
+            speculo_gen/ThreadPool.ixx
+            speculo_gen/codegen/CodeGenerator.ixx
+            speculo_gen/codegen/MetaSupportCodeGenerator.ixx
+            speculo_gen/codegen/PluginManager.ixx
+            speculo_gen/decl_parsers/ASTDeclParser.ixx
+            speculo_gen/decl_parsers/ASTEnumParser.ixx
+            speculo_gen/decl_parsers/ASTRecordParser.ixx
+            speculo_gen/decl_parsers/factory.ixx
+            speculo_gen/decl_parsers/TypeInfoFactory.ixx
+            speculo_gen/src_templates.ixx
+)
+
 target_include_directories(speculo_gen PRIVATE ${FLAT_INCLUDE_DIRS})
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -202,15 +242,35 @@ if (${SPECULO_ENABLE_TEST_EXE})
 
     add_executable(meta_test main_test.cpp)
 
+    target_sources(meta_test
+            PUBLIC
+            FILE_SET
+                cxx_modules
+            TYPE
+                CXX_MODULES
+            FILES
+                test_src/mod1.ixx
+                test_src/mod1_1.ixx
+                test_src/mod2.ixx
+    )
+
     target_link_libraries(meta_test PRIVATE fmt::fmt-header-only spdlog::spdlog_header_only tl::expected speculo::speculo)
     target_include_directories(meta_test PRIVATE ${CMAKE_SOURCE_DIR})
     target_compile_options(meta_test PRIVATE ${test_flags})
     add_dependencies(meta_test speculo_gen)
 
     speculo_register(
-            TARGET meta_test
-            FLAGS ${CXXFLAGS}
-            HEADERS src/test.h src/test2.hpp
+            TARGET
+                meta_test
+            FLAGS
+                ${CXXFLAGS}
+            HEADERS
+            test_src/test.h
+            test_src/test2.hpp
+            MODULES
+            test_src/mod1.ixx
+            test_src/mod1_1.ixx
+            test_src/mod2.ixx
             FORMAT
             #FORCE_REGEN
     )

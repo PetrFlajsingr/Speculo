@@ -1,6 +1,10 @@
+module;
 
-#include "PluginManager.hpp"
 #include <spdlog/spdlog.h>
+#include <filesystem>
+
+module speculo.gen;
+import :plugin_manager;
 
 namespace speculo::gen {
 

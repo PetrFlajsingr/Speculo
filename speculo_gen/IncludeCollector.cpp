@@ -1,11 +1,16 @@
+module;
 
-#include "IncludeCollector.hpp"
-#include "fmt/format.h"
+#include <fmt/format.h>
+
+#include <filesystem>
 
 #include "wrap/clang_frontend_compilerinstance.hpp"
 #include "wrap/clang_frontend_frontendactions.hpp"
 #include "wrap/clang_tooling.hpp"
 #include "wrap/clang_tooling_compilationdatabase.hpp"
+
+module speculo.gen;
+import :include_collector;
 
 namespace speculo::gen {
     class IgnoreDiagnosticConsumer : public clang::DiagnosticConsumer {

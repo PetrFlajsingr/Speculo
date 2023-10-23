@@ -1,16 +1,24 @@
+module;
 
-#include "SourceConfig.hpp"
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <spdlog/spdlog.h>
+#include <nlohmann/json.hpp>
+
+module speculo.gen;
+import :source_config;
 
 namespace speculo::gen {
 
-    std::optional<speculo::gen::ProjectConfig> createConfigs(const std::filesystem::path &configPath, bool ignoreIncludes,
+    std::optional<ProjectConfig> createConfigs(const std::filesystem::path &configPath, bool ignoreIncludes,
                                                              bool formatOutput) {
         std::ifstream configFile{configPath};
         if (!configFile.is_open()) {
             spdlog::error("Can't open file '{}'", configPath.string());
             return std::nullopt;
         }
-        speculo::gen::ProjectConfig result{};
+        ProjectConfig result{};
         auto data = nlohmann::json::parse(configFile);
 
         result.name = data["project"];
