@@ -58,7 +58,7 @@ target_include_directories(speculo INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-add_executable(speculo_gen main.cpp
+add_library(speculo_gen_lib
         speculo_gen/AttributeParser.cpp
         speculo_gen/AstActions.cpp
         speculo_gen/ASTParser.cpp
@@ -75,12 +75,26 @@ add_executable(speculo_gen main.cpp
         speculo_gen/details/boost_throw.cpp
         speculo_gen/SourceConfig.cpp
 )
-target_include_directories(speculo_gen PRIVATE ${FLAT_INCLUDE_DIRS})
+
+target_include_directories(speculo_gen_lib PUBLIC ${CLANG_INCLUDE_DIRS})
+target_link_libraries(speculo_gen_lib PUBLIC clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
+target_link_libraries(speculo_gen_lib PUBLIC stduuid speculo::speculo ${Boost_LIBRARIES} )
+if (WIN32)
+    target_link_libraries(speculo_gen_lib PRIVATE synchronization.lib)
+endif()
+target_compile_options(speculo_gen_lib PRIVATE ${flags})
+
+target_include_directories(speculo_gen_lib PUBLIC ${FLAT_INCLUDE_DIRS})
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 
-target_compile_definitions(speculo_gen PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
-target_include_directories(speculo_gen PRIVATE ${LLVM_INCLUDE_DIRS})
+target_compile_definitions(speculo_gen_lib PUBLIC ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
+target_include_directories(speculo_gen_lib PUBLIC ${LLVM_INCLUDE_DIRS})
+
+add_executable(speculo_gen main_speculo_gen.cpp)
+
+target_link_libraries(speculo_gen speculo_gen_lib)
+target_compile_options(speculo_gen PRIVATE ${flags})
 
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
 set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)
@@ -88,14 +102,6 @@ list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 include(HandleLLVMOptions)
 include(AddLLVM)
 
-
-target_include_directories(speculo_gen PRIVATE ${CLANG_INCLUDE_DIRS})
-target_link_libraries(speculo_gen PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected nlohmann_json::nlohmann_json)
-target_link_libraries(speculo_gen PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES} )
-if (WIN32)
-target_link_libraries(speculo_gen PRIVATE synchronization.lib)
-endif()
-target_compile_options(speculo_gen PRIVATE ${flags})
 
 install(TARGETS speculo_gen
         CONFIGURATIONS Debug

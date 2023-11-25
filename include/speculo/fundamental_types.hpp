@@ -9,7 +9,7 @@
 
 namespace speculo::details {
 
-    template<typename T, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
+    template<typename T, std::size_t TSize, ID TID, StringLiteral TypeName, StringLiteral FullTypeName = TypeName> requires(std::is_fundamental_v<T>)
     struct FundamentalStaticTypeInfo {
         using Type = T;
         constexpr static ID Id = TID;
@@ -32,6 +32,8 @@ namespace speculo::details {
         constexpr static bool IsTrivial = true;
         constexpr static bool IsEmpty = false;
         constexpr static bool IsAggregate = false;
+        constexpr static std::size_t Size = TSize;
+        constexpr static std::size_t Alignment = TSize;
 
         constexpr static auto Name = TypeName;
         constexpr static auto FullName = FullTypeName;
@@ -39,7 +41,7 @@ namespace speculo::details {
 /****************************** bool START ******************************/
 
 template<>
-struct StaticInfo<ID{0x5a570b30e217d281u, 0xd68971b95fd84e99u}> : FundamentalStaticTypeInfo<bool, ID{0x5a570b30e217d281u, 0xd68971b95fd84e99u}, StringLiteral{"bool"}, StringLiteral{"bool"}> {};
+struct StaticInfo<ID{0x5a570b30e217d281u, 0xd68971b95fd84e99u}> : FundamentalStaticTypeInfo<bool, 1, ID{0x5a570b30e217d281u, 0xd68971b95fd84e99u}, StringLiteral{"bool"}, StringLiteral{"bool"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<bool>() {
     return ID{0x5a570b30e217d281u, 0xd68971b95fd84e99u};
@@ -135,7 +137,7 @@ template<>
 /****************************** char START ******************************/
 
 template<>
-struct StaticInfo<ID{0x345df9e6c3d2d91eu, 0x9dedd3a74f8fd5a1u}> : FundamentalStaticTypeInfo<char, ID{0x345df9e6c3d2d91eu, 0x9dedd3a74f8fd5a1u}, StringLiteral{"char"}, StringLiteral{"char"}> {};
+struct StaticInfo<ID{0x345df9e6c3d2d91eu, 0x9dedd3a74f8fd5a1u}> : FundamentalStaticTypeInfo<char, 1, ID{0x345df9e6c3d2d91eu, 0x9dedd3a74f8fd5a1u}, StringLiteral{"char"}, StringLiteral{"char"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<char>() {
     return ID{0x345df9e6c3d2d91eu, 0x9dedd3a74f8fd5a1u};
@@ -231,7 +233,7 @@ template<>
 /****************************** signed char START ******************************/
 
 template<>
-struct StaticInfo<ID{0x1c5ece854198fec0u, 0xe8f24cb935bb89fu}> : FundamentalStaticTypeInfo<signed char, ID{0x1c5ece854198fec0u, 0xe8f24cb935bb89fu}, StringLiteral{"signed char"}, StringLiteral{"signed char"}> {};
+struct StaticInfo<ID{0x1c5ece854198fec0u, 0xe8f24cb935bb89fu}> : FundamentalStaticTypeInfo<signed char, 1, ID{0x1c5ece854198fec0u, 0xe8f24cb935bb89fu}, StringLiteral{"signed char"}, StringLiteral{"signed char"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<signed char>() {
     return ID{0x1c5ece854198fec0u, 0xe8f24cb935bb89fu};
@@ -327,7 +329,7 @@ template<>
 /****************************** unsigned char START ******************************/
 
 template<>
-struct StaticInfo<ID{0x5f56c0b531733454u, 0x552996f604766e9au}> : FundamentalStaticTypeInfo<unsigned char, ID{0x5f56c0b531733454u, 0x552996f604766e9au}, StringLiteral{"unsigned char"}, StringLiteral{"unsigned char"}> {};
+struct StaticInfo<ID{0x5f56c0b531733454u, 0x552996f604766e9au}> : FundamentalStaticTypeInfo<unsigned char, 1, ID{0x5f56c0b531733454u, 0x552996f604766e9au}, StringLiteral{"unsigned char"}, StringLiteral{"unsigned char"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<unsigned char>() {
     return ID{0x5f56c0b531733454u, 0x552996f604766e9au};
@@ -423,7 +425,7 @@ template<>
 /****************************** char8_t START ******************************/
 
 template<>
-struct StaticInfo<ID{0x2a5366d825be6734u, 0x5f9d8d9790f1fe80u}> : FundamentalStaticTypeInfo<char8_t, ID{0x2a5366d825be6734u, 0x5f9d8d9790f1fe80u}, StringLiteral{"char8_t"}, StringLiteral{"char8_t"}> {};
+struct StaticInfo<ID{0x2a5366d825be6734u, 0x5f9d8d9790f1fe80u}> : FundamentalStaticTypeInfo<char8_t, 1, ID{0x2a5366d825be6734u, 0x5f9d8d9790f1fe80u}, StringLiteral{"char8_t"}, StringLiteral{"char8_t"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<char8_t>() {
     return ID{0x2a5366d825be6734u, 0x5f9d8d9790f1fe80u};
@@ -519,7 +521,7 @@ template<>
 /****************************** char16_t START ******************************/
 
 template<>
-struct StaticInfo<ID{0xfa58dad47aa85e76u, 0x373b3387706c3aacu}> : FundamentalStaticTypeInfo<char16_t, ID{0xfa58dad47aa85e76u, 0x373b3387706c3aacu}, StringLiteral{"char16_t"}, StringLiteral{"char16_t"}> {};
+struct StaticInfo<ID{0xfa58dad47aa85e76u, 0x373b3387706c3aacu}> : FundamentalStaticTypeInfo<char16_t, 2, ID{0xfa58dad47aa85e76u, 0x373b3387706c3aacu}, StringLiteral{"char16_t"}, StringLiteral{"char16_t"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<char16_t>() {
     return ID{0xfa58dad47aa85e76u, 0x373b3387706c3aacu};
@@ -615,7 +617,7 @@ template<>
 /****************************** char32_t START ******************************/
 
 template<>
-struct StaticInfo<ID{0xcd5a3d19e1cb47e2u, 0x7c85d800ee25e093u}> : FundamentalStaticTypeInfo<char32_t, ID{0xcd5a3d19e1cb47e2u, 0x7c85d800ee25e093u}, StringLiteral{"char32_t"}, StringLiteral{"char32_t"}> {};
+struct StaticInfo<ID{0xcd5a3d19e1cb47e2u, 0x7c85d800ee25e093u}> : FundamentalStaticTypeInfo<char32_t, 4, ID{0xcd5a3d19e1cb47e2u, 0x7c85d800ee25e093u}, StringLiteral{"char32_t"}, StringLiteral{"char32_t"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<char32_t>() {
     return ID{0xcd5a3d19e1cb47e2u, 0x7c85d800ee25e093u};
@@ -711,7 +713,7 @@ template<>
 /****************************** wchar_t START ******************************/
 
 template<>
-struct StaticInfo<ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> : FundamentalStaticTypeInfo<wchar_t, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}, StringLiteral{"wchar_t"}, StringLiteral{"wchar_t"}> {};
+struct StaticInfo<ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}> : FundamentalStaticTypeInfo<wchar_t, 2, ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u}, StringLiteral{"wchar_t"}, StringLiteral{"wchar_t"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<wchar_t>() {
     return ID{0x8b5425071561cc27u, 0xb1399715e98c2b95u};
@@ -807,7 +809,7 @@ template<>
 /****************************** short START ******************************/
 
 template<>
-struct StaticInfo<ID{0x251fd1d86adfe99u, 0xfc3def08bda6d181u}> : FundamentalStaticTypeInfo<short, ID{0x251fd1d86adfe99u, 0xfc3def08bda6d181u}, StringLiteral{"short"}, StringLiteral{"short"}> {};
+struct StaticInfo<ID{0x251fd1d86adfe99u, 0xfc3def08bda6d181u}> : FundamentalStaticTypeInfo<short, 2, ID{0x251fd1d86adfe99u, 0xfc3def08bda6d181u}, StringLiteral{"short"}, StringLiteral{"short"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<short>() {
     return ID{0x251fd1d86adfe99u, 0xfc3def08bda6d181u};
@@ -903,7 +905,7 @@ template<>
 /****************************** unsigned short START ******************************/
 
 template<>
-struct StaticInfo<ID{0x935b0d8640a8c1cau, 0x3a76325e0c3ca49bu}> : FundamentalStaticTypeInfo<unsigned short, ID{0x935b0d8640a8c1cau, 0x3a76325e0c3ca49bu}, StringLiteral{"unsigned short"}, StringLiteral{"unsigned short"}> {};
+struct StaticInfo<ID{0x935b0d8640a8c1cau, 0x3a76325e0c3ca49bu}> : FundamentalStaticTypeInfo<unsigned short, 2, ID{0x935b0d8640a8c1cau, 0x3a76325e0c3ca49bu}, StringLiteral{"unsigned short"}, StringLiteral{"unsigned short"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<unsigned short>() {
     return ID{0x935b0d8640a8c1cau, 0x3a76325e0c3ca49bu};
@@ -999,7 +1001,7 @@ template<>
 /****************************** int START ******************************/
 
 template<>
-struct StaticInfo<ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u}> : FundamentalStaticTypeInfo<int, ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u}, StringLiteral{"int"}, StringLiteral{"int"}> {};
+struct StaticInfo<ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u}> : FundamentalStaticTypeInfo<int, 4, ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u}, StringLiteral{"int"}, StringLiteral{"int"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<int>() {
     return ID{0x6754bf6294b33eaau, 0xee27c164a5eec791u};
@@ -1095,7 +1097,7 @@ template<>
 /****************************** unsigned int START ******************************/
 
 template<>
-struct StaticInfo<ID{0x7c5094c82df7651au, 0x29ec00ba496465acu}> : FundamentalStaticTypeInfo<unsigned int, ID{0x7c5094c82df7651au, 0x29ec00ba496465acu}, StringLiteral{"unsigned int"}, StringLiteral{"unsigned int"}> {};
+struct StaticInfo<ID{0x7c5094c82df7651au, 0x29ec00ba496465acu}> : FundamentalStaticTypeInfo<unsigned int, 4, ID{0x7c5094c82df7651au, 0x29ec00ba496465acu}, StringLiteral{"unsigned int"}, StringLiteral{"unsigned int"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<unsigned int>() {
     return ID{0x7c5094c82df7651au, 0x29ec00ba496465acu};
@@ -1191,7 +1193,7 @@ template<>
 /****************************** long START ******************************/
 
 template<>
-struct StaticInfo<ID{0x195eba21bd9000b8u, 0xfa34afb486ed7da1u}> : FundamentalStaticTypeInfo<long, ID{0x195eba21bd9000b8u, 0xfa34afb486ed7da1u}, StringLiteral{"long"}, StringLiteral{"long"}> {};
+struct StaticInfo<ID{0x195eba21bd9000b8u, 0xfa34afb486ed7da1u}> : FundamentalStaticTypeInfo<long, 4, ID{0x195eba21bd9000b8u, 0xfa34afb486ed7da1u}, StringLiteral{"long"}, StringLiteral{"long"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<long>() {
     return ID{0x195eba21bd9000b8u, 0xfa34afb486ed7da1u};
@@ -1287,7 +1289,7 @@ template<>
 /****************************** unsigned long START ******************************/
 
 template<>
-struct StaticInfo<ID{0x445dbb8fa880cabbu, 0x58af47f69441c9bu}> : FundamentalStaticTypeInfo<unsigned long, ID{0x445dbb8fa880cabbu, 0x58af47f69441c9bu}, StringLiteral{"unsigned long"}, StringLiteral{"unsigned long"}> {};
+struct StaticInfo<ID{0x445dbb8fa880cabbu, 0x58af47f69441c9bu}> : FundamentalStaticTypeInfo<unsigned long, 4, ID{0x445dbb8fa880cabbu, 0x58af47f69441c9bu}, StringLiteral{"unsigned long"}, StringLiteral{"unsigned long"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<unsigned long>() {
     return ID{0x445dbb8fa880cabbu, 0x58af47f69441c9bu};
@@ -1383,7 +1385,7 @@ template<>
 /****************************** long long START ******************************/
 
 template<>
-struct StaticInfo<ID{0x6c528b40bb068e4cu, 0x4613be33456420b1u}> : FundamentalStaticTypeInfo<long long, ID{0x6c528b40bb068e4cu, 0x4613be33456420b1u}, StringLiteral{"long long"}, StringLiteral{"long long"}> {};
+struct StaticInfo<ID{0x6c528b40bb068e4cu, 0x4613be33456420b1u}> : FundamentalStaticTypeInfo<long long, 8, ID{0x6c528b40bb068e4cu, 0x4613be33456420b1u}, StringLiteral{"long long"}, StringLiteral{"long long"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<long long>() {
     return ID{0x6c528b40bb068e4cu, 0x4613be33456420b1u};
@@ -1479,7 +1481,7 @@ template<>
 /****************************** unsigned long long START ******************************/
 
 template<>
-struct StaticInfo<ID{0xfa5c08425b0a22c4u, 0xb47a3509db6ca1b2u}> : FundamentalStaticTypeInfo<unsigned long long, ID{0xfa5c08425b0a22c4u, 0xb47a3509db6ca1b2u}, StringLiteral{"unsigned long long"}, StringLiteral{"unsigned long long"}> {};
+struct StaticInfo<ID{0xfa5c08425b0a22c4u, 0xb47a3509db6ca1b2u}> : FundamentalStaticTypeInfo<unsigned long long, 8, ID{0xfa5c08425b0a22c4u, 0xb47a3509db6ca1b2u}, StringLiteral{"unsigned long long"}, StringLiteral{"unsigned long long"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<unsigned long long>() {
     return ID{0xfa5c08425b0a22c4u, 0xb47a3509db6ca1b2u};
@@ -1575,7 +1577,7 @@ template<>
 /****************************** float START ******************************/
 
 template<>
-struct StaticInfo<ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u}> : FundamentalStaticTypeInfo<float, ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u}, StringLiteral{"float"}, StringLiteral{"float"}> {};
+struct StaticInfo<ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u}> : FundamentalStaticTypeInfo<float, 4, ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u}, StringLiteral{"float"}, StringLiteral{"float"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<float>() {
     return ID{0x2a58833512c58737u, 0x9967d24b6cfbaba3u};
@@ -1671,7 +1673,7 @@ template<>
 /****************************** double START ******************************/
 
 template<>
-struct StaticInfo<ID{0x2250987dc79c7536u, 0x918fef864de1c190u}> : FundamentalStaticTypeInfo<double, ID{0x2250987dc79c7536u, 0x918fef864de1c190u}, StringLiteral{"double"}, StringLiteral{"double"}> {};
+struct StaticInfo<ID{0x2250987dc79c7536u, 0x918fef864de1c190u}> : FundamentalStaticTypeInfo<double, 8, ID{0x2250987dc79c7536u, 0x918fef864de1c190u}, StringLiteral{"double"}, StringLiteral{"double"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<double>() {
     return ID{0x2250987dc79c7536u, 0x918fef864de1c190u};
@@ -1767,7 +1769,7 @@ template<>
 /****************************** long double START ******************************/
 
 template<>
-struct StaticInfo<ID{0x1652ec5d2ecf538fu, 0x4f1f1410fe94a99du}> : FundamentalStaticTypeInfo<long double, ID{0x1652ec5d2ecf538fu, 0x4f1f1410fe94a99du}, StringLiteral{"long double"}, StringLiteral{"long double"}> {};
+struct StaticInfo<ID{0x1652ec5d2ecf538fu, 0x4f1f1410fe94a99du}> : FundamentalStaticTypeInfo<long double, 8, ID{0x1652ec5d2ecf538fu, 0x4f1f1410fe94a99du}, StringLiteral{"long double"}, StringLiteral{"long double"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<long double>() {
     return ID{0x1652ec5d2ecf538fu, 0x4f1f1410fe94a99du};
@@ -1863,7 +1865,7 @@ template<>
 /****************************** void START ******************************/
 
 template<>
-struct StaticInfo<ID{0x115e3a70749cfd72u, 0xadd9686c1dcb30a2u}> : FundamentalStaticTypeInfo<void, ID{0x115e3a70749cfd72u, 0xadd9686c1dcb30a2u}, StringLiteral{"void"}, StringLiteral{"void"}> {};
+struct StaticInfo<ID{0x115e3a70749cfd72u, 0xadd9686c1dcb30a2u}> : FundamentalStaticTypeInfo<void, 0, ID{0x115e3a70749cfd72u, 0xadd9686c1dcb30a2u}, StringLiteral{"void"}, StringLiteral{"void"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<void>() {
     return ID{0x115e3a70749cfd72u, 0xadd9686c1dcb30a2u};
@@ -1889,7 +1891,7 @@ template<>
 /****************************** std::nullptr_t START ******************************/
 
 template<>
-struct StaticInfo<ID{0x38544f066c280c57u, 0xa81e153a29bca6a3u}> : FundamentalStaticTypeInfo<std::nullptr_t, ID{0x38544f066c280c57u, 0xa81e153a29bca6a3u}, StringLiteral{"nullptr_t"}, StringLiteral{"std::nullptr_t"}> {};
+struct StaticInfo<ID{0x38544f066c280c57u, 0xa81e153a29bca6a3u}> : FundamentalStaticTypeInfo<std::nullptr_t, 0, ID{0x38544f066c280c57u, 0xa81e153a29bca6a3u}, StringLiteral{"nullptr_t"}, StringLiteral{"std::nullptr_t"}> {};
 template<>
 [[nodiscard]] consteval ID getTypeId<std::nullptr_t>() {
     return ID{0x38544f066c280c57u, 0xa81e153a29bca6a3u};
