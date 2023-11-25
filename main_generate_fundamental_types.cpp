@@ -1,8 +1,9 @@
 import speculo;
+import speculo.gen;
 
 #include <string>
 
-#include <format.hpp>
+#include "format.hpp"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 #include <fmt/format.h>
