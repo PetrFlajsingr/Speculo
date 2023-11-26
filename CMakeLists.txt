@@ -42,6 +42,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 find_package(LLVM CONFIG REQUIRED)
+find_package(asio CONFIG REQUIRED)
+if(WIN32 AND DEFINED _WIN32_WINNT)
+    add_definitions(-D_WIN32_WINNT=${_WIN32_WINNT})
+endif()
 find_package(Clang CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
@@ -51,6 +55,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_path(FLAT_INCLUDE_DIRS "flat/extra/small_map.hpp")
 set(Boost_NO_WARN_NEW_VERSIONS TRUE)
 find_package(Boost COMPONENTS regex)
+find_package(efsw CONFIG REQUIRED)
 
 add_library(speculo INTERFACE)
 add_library(speculo::speculo ALIAS speculo)
@@ -96,6 +101,11 @@ add_executable(speculo_gen main_speculo_gen.cpp)
 target_link_libraries(speculo_gen speculo_gen_lib)
 target_compile_options(speculo_gen PRIVATE ${flags})
 
+add_executable(speculo_gen_server
+        main_speculo_gen_server.cpp)
+target_link_libraries(speculo_gen_server PRIVATE speculo_gen_lib asio::asio efsw::efsw)
+target_compile_options(speculo_gen_server PRIVATE ${flags})
+
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
 set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
@@ -107,6 +117,13 @@ install(TARGETS speculo_gen
         CONFIGURATIONS Debug
         RUNTIME DESTINATION Debug/bin)
 install(TARGETS speculo_gen
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
+
+install(TARGETS speculo_gen_server
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS speculo_gen_server
         CONFIGURATIONS Release
         RUNTIME DESTINATION Release/bin)
 

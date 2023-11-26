@@ -1,5 +1,5 @@
 {
-  "name": "pf-meta-gen",
+  "name": "speculo-gen",
   "version": "0.0.1",
   "dependencies": [
     {
@@ -25,7 +25,13 @@
     },
     {
       "name": "boost-regex"
+    },
+    {
+      "name": "asio"
+    },
+    {
+      "name": "efsw"
     }
   ],
-  "builtin-baseline": "e8c2a04eb7ca058b6e2f0e6e33c67fdbffeee846"
+  "builtin-baseline": "cd5e746ec203c8c3c61647e0886a8df8c1e78e41"
 }
