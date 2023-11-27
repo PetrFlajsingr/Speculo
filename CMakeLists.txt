@@ -8,9 +8,9 @@ option(SPECULO_BUILD_FUNDAMENTAL_GEN_EXE "Enable fundamental info exe target" OF
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Build options/variables
+
 # Set SPECULO_GEN_EXE_PATH to current binary output if not provided
-# global variables
-# allows for using the project as subdirectory
 if (NOT DEFINED SPECULO_GEN_EXE_PATH)
     if (WIN32)
         set(SPECULO_GEN_EXE_PATH ${CMAKE_CURRENT_BINARY_DIR}/speculo_gen.exe CACHE INTERNAL "SPECULO_GEN_EXE_PATH")
@@ -22,6 +22,9 @@ endif ()
 if (NOT DEFINED SPECULO_GEN_SCRIPTS_PATH)
     set(SPECULO_GEN_SCRIPTS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts CACHE INTERNAL "SPECULO_GEN_SCRIPTS_PATH")
 endif ()
+
+
+# Compiler flags
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     list(APPEND flags "/W4" "/wd4201" "/wd4996" "/wd5030" "/wd4530" "/wd5030")
@@ -41,11 +44,9 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     endif ()
 endif()
 
+#### Dependencies ####
 find_package(LLVM CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
-if(WIN32 AND DEFINED _WIN32_WINNT)
-    add_definitions(-D_WIN32_WINNT=${_WIN32_WINNT})
-endif()
 find_package(Clang CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
@@ -57,12 +58,19 @@ set(Boost_NO_WARN_NEW_VERSIONS TRUE)
 find_package(Boost COMPONENTS regex)
 find_package(efsw CONFIG REQUIRED)
 
+# For asio
+if(WIN32 AND DEFINED _WIN32_WINNT)
+    add_definitions(-D_WIN32_WINNT=${_WIN32_WINNT})
+endif()
+
+# Speculo header only library
 add_library(speculo INTERFACE)
 add_library(speculo::speculo ALIAS speculo)
 target_include_directories(speculo INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# Common functionality for speculo generators.
 add_library(speculo_gen_lib
         speculo_gen/AttributeParser.cpp
         speculo_gen/AstActions.cpp
@@ -88,7 +96,6 @@ if (WIN32)
     target_link_libraries(speculo_gen_lib PRIVATE synchronization.lib)
 endif()
 target_compile_options(speculo_gen_lib PRIVATE ${flags})
-
 target_include_directories(speculo_gen_lib PUBLIC ${FLAT_INCLUDE_DIRS})
 
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
@@ -96,43 +103,45 @@ separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 target_compile_definitions(speculo_gen_lib PUBLIC ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
 target_include_directories(speculo_gen_lib PUBLIC ${LLVM_INCLUDE_DIRS})
 
+# Main generator executable
 add_executable(speculo_gen main_speculo_gen.cpp)
 
 target_link_libraries(speculo_gen speculo_gen_lib)
 target_compile_options(speculo_gen PRIVATE ${flags})
 
+# Server generator executable
 add_executable(speculo_gen_server
         main_speculo_gen_server.cpp)
 target_link_libraries(speculo_gen_server PRIVATE speculo_gen_lib asio::asio efsw::efsw)
 target_compile_options(speculo_gen_server PRIVATE ${flags})
 
+# LLVM setup
 set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
 set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
 include(HandleLLVMOptions)
 include(AddLLVM)
 
-
-install(TARGETS speculo_gen
-        CONFIGURATIONS Debug
-        RUNTIME DESTINATION Debug/bin)
-install(TARGETS speculo_gen
-        CONFIGURATIONS Release
-        RUNTIME DESTINATION Release/bin)
-
-install(TARGETS speculo_gen_server
-        CONFIGURATIONS Debug
-        RUNTIME DESTINATION Debug/bin)
-install(TARGETS speculo_gen_server
-        CONFIGURATIONS Release
-        RUNTIME DESTINATION Release/bin)
-
-
+# Installation
 install(TARGETS speculo
         EXPORT speculo_Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(TARGETS speculo_gen
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS speculo_gen
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
+
+install(TARGETS speculo_gen_server
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION Debug/bin)
+install(TARGETS speculo_gen_server
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION Release/bin)
 
 write_basic_package_version_file("speculoConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
@@ -174,17 +183,11 @@ set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
 include(CPack)
 
-
+# Executable to generate info for fundamental types
 if (${SPECULO_BUILD_FUNDAMENTAL_GEN_EXE})
     add_executable(speculo_generate_fundamental_types main_generate_fundamental_types.cpp)
 
-    target_compile_definitions(speculo_generate_fundamental_types PRIVATE ${LLVM_DEFINITIONS_LIST} WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
-    target_include_directories(speculo_generate_fundamental_types PRIVATE ${LLVM_INCLUDE_DIRS})
-
-    target_include_directories(speculo_generate_fundamental_types PRIVATE ${CLANG_INCLUDE_DIRS})
-    target_include_directories(speculo_generate_fundamental_types PRIVATE speculo_gen/include)
-    target_link_libraries(speculo_generate_fundamental_types PRIVATE clangAST clangFrontend clangTooling clangToolingSyntax fmt::fmt-header-only spdlog::spdlog_header_only tl::expected)
-    target_link_libraries(speculo_generate_fundamental_types PRIVATE stduuid speculo::speculo ${Boost_LIBRARIES})
+    target_link_libraries(speculo_generate_fundamental_types PRIVATE speculo::speculo speculo_gen_lib ${Boost_LIBRARIES})
     target_compile_options(speculo_generate_fundamental_types PRIVATE ${flags})
 
     install(TARGETS speculo_generate_fundamental_types
@@ -193,10 +196,9 @@ if (${SPECULO_BUILD_FUNDAMENTAL_GEN_EXE})
     install(TARGETS speculo_generate_fundamental_types
             CONFIGURATIONS Release
             RUNTIME DESTINATION Release/bin)
-
 endif()
 
-
+# Test executable, TODO: remove
 if (${SPECULO_ENABLE_TEST_EXE})
     include(cmake/speculo.cmake)
     list(APPEND CXXFLAGS "-std=c++20")
